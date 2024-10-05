@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"));
     options.EnableDetailedErrors();
     options.EnableSensitiveDataLogging();
     options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
@@ -33,6 +33,8 @@ app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+
+app.UseRouting();
 
 app.MapControllers();
 app.MapFallbackToFile("index.html");
