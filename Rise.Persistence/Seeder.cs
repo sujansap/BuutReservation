@@ -13,16 +13,22 @@ public class Seeder
 
     public void Seed()
     {
+        //new ProductSeeder(dbContext).Seed();
+        new CruisePeriodSeeder(dbContext).Seed();
+        /*
         if (HasAlreadyBeenSeeded())
             return;
 
         SeedProducts();
+        */
     }
 
+    /*
     private bool HasAlreadyBeenSeeded()
     {
         return dbContext.Products.Any();
     }
+    */
 
     private void SeedProducts()
     {

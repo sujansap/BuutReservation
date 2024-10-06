@@ -28,4 +28,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Rise.Domain\Rise.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Timeslots/" />
+  </ItemGroup>
 </Project>
