@@ -9,7 +9,7 @@
 - Sujan Sapkota - [MEMBER4_EMAIL] - [MEMBER4_GITHUB_USERNAME]
 - Simon De Roeve - simon.deroeve@student.hogent.be - SimonDeRoeve
 - Bas Stokmans - [MEMBER6_EMAIL] - [MEMBER6_GITHUB_USERNAME]
-- Bindo Thorpe - [MEMBER7_EMAIL] - [MEMBER7_GITHUB_USERNAME]
+- Bindo Thorpe - bindo.thorpe@student.hogent.be - bindothorpe
 
 ## Technologies & Packages Used
 - [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - Frontend
