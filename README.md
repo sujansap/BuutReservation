@@ -6,7 +6,7 @@
 - Bram Rampelberg - [MEMBER1_EMAIL] - [MEMBER1_GITHUB_USERNAME]
 - Xan Pinson - [MEMBER2_EMAIL] - [MEMBER2_GITHUB_USERNAME]
 - Pushwant Sagoo - [MEMBER3_EMAIL] - [MEMBER3_GITHUB_USERNAME]
-- Sujan Sapkota - [MEMBER4_EMAIL] - [MEMBER4_GITHUB_USERNAME]
+- Sujan Sapkota - sujan.sapkota@student.hogent.be - sujansapkota2
 - Simon De Roeve - simon.deroeve@student.hogent.be - SimonDeRoeve
 - Bas Stokmans - [MEMBER6_EMAIL] - [MEMBER6_GITHUB_USERNAME]
 - Bindo Thorpe - bindo.thorpe@student.hogent.be - bindothorpe
