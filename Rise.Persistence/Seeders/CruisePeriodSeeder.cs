@@ -6,6 +6,7 @@ public class CruisePeriodSeeder
 {
     private readonly ApplicationDbContext dbContext;
 
+
     public CruisePeriodSeeder(ApplicationDbContext dbContext)
     {
         this.dbContext = dbContext;
@@ -13,10 +14,10 @@ public class CruisePeriodSeeder
 
     public void Seed()
     {
-      
-      if(HasAlreadyBeenSeeded())
-        return;
+        if (HasAlreadyBeenSeeded())
+            return;
 
+        // Seed CruisePeriods
         var cruisePeriods = Enumerable.Range(1, 5)
                                       .Select(i => new CruisePeriod
                                       {
@@ -28,26 +29,27 @@ public class CruisePeriodSeeder
         dbContext.CruisePeriods.AddRange(cruisePeriods);
         dbContext.SaveChanges();
 
+      
         foreach (var cruisePeriod in cruisePeriods)
         {
             var timeSlots = new List<TimeSlot>
             {
                 new TimeSlot
                 {
-                    Start = DateTime.Today.AddHours(10),
-                    End = DateTime.Today.AddHours(13),
+                    Start = new TimeSpan(10, 0, 0), // 10:00 AM
+                    End = new TimeSpan(13, 0, 0),   // 1:00 PM
                     CruisePeriodId = cruisePeriod.Id
                 },
                 new TimeSlot
                 {
-                    Start = DateTime.Today.AddHours(14),
-                    End = DateTime.Today.AddHours(17),
+                    Start = new TimeSpan(14, 0, 0), // 2:00 PM
+                    End = new TimeSpan(17, 0, 0),   // 5:00 PM
                     CruisePeriodId = cruisePeriod.Id
                 },
                 new TimeSlot
                 {
-                    Start = DateTime.Today.AddHours(18),
-                    End = DateTime.Today.AddHours(21),
+                    Start = new TimeSpan(18, 0, 0), // 6:00 PM
+                    End = new TimeSpan(21, 0, 0),   // 9:00 PM
                     CruisePeriodId = cruisePeriod.Id
                 }
             };
@@ -58,8 +60,9 @@ public class CruisePeriodSeeder
         dbContext.SaveChanges();
     }
 
-    private bool HasAlreadyBeenSeeded(){
+    private bool HasAlreadyBeenSeeded()
+    {
         return dbContext.CruisePeriods.Any() || dbContext.TimeSlots.Any();
     }
-  
+
 }

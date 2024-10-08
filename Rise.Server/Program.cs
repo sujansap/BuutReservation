@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Persistence.Triggers;
 using Rise.Services.Products;
+using Rise.Services.TimeSlots;
 using Rise.Shared.Products;
+using Rise.Shared.TimeSlots;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddScoped<IProductService, ProductService>();
+
+
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>(); // Add this line to register the service.
 
 var app = builder.Build();
 

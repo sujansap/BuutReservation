@@ -3,6 +3,7 @@ public class Product : Entity
 {
     private string name = default!;
 
+
     public required string Name
     {
         get => name;
