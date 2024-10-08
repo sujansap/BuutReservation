@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Rise.Domain.Boats;
 using Rise.Domain.Products;
 using Rise.Domain.Users;
 using Rise.Domain.Timeslots;
@@ -10,6 +11,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Product> Products => Set<Product>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Boat> Boats => Set<Boat>();
     public DbSet<CruisePeriod> CruisePeriods => Set<CruisePeriod>();
     public DbSet<TimeSlot> TimeSlots => Set<TimeSlot>();
 
