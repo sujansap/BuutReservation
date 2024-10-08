@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Products;
+using Rise.Domain.Users;
 
 namespace Rise.Persistence;
 
@@ -7,6 +8,7 @@ namespace Rise.Persistence;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<User> Users => Set<User>();
 
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
