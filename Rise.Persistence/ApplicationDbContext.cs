@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Boat> Boats => Set<Boat>();
+    public DbSet<Battery> Batteries => Set<Battery>();
 
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
