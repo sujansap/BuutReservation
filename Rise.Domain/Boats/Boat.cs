@@ -60,6 +60,8 @@ namespace Rise.Domain.Boats
             set => _maximumPets = Guard.Against.Negative(value, "MaximumPets", "Maximum amount of adults cannot be negative");
         }
 
+        public ICollection<IBattery> Batteries { get; } = [];
+
         // TODO add relation to meter and peter users
         // TODO add relation to battery
         // TODO add relation to reservation
@@ -84,7 +86,6 @@ namespace Rise.Domain.Boats
         {
             DefineOutOfOrderPeriod(null);
         }
-
 
 
         public bool IsInOutOfOrderPeriod(DateTime date)
