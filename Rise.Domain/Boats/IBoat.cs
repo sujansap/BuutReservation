@@ -40,6 +40,10 @@ namespace Rise.Domain.Boats
             get;
             set;
         }
+        public ICollection<IBattery> Batteries
+        {
+            get;
+        }
 
 
         /// <summary>
