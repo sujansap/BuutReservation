@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Rise.Domain.Boats;
 using Rise.Domain.Products;
 using Rise.Domain.Users;
 
@@ -9,6 +10,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Product> Products => Set<Product>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Boat> Boats => Set<Boat>();
 
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
