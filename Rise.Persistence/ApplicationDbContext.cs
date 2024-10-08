@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Products;
+using Rise.Domain.Users;
 using Rise.Domain.Timeslots;
 
 namespace Rise.Persistence;
@@ -8,6 +9,7 @@ namespace Rise.Persistence;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<User> Users => Set<User>();
     public DbSet<CruisePeriod> CruisePeriods => Set<CruisePeriod>();
     public DbSet<TimeSlot> TimeSlots => Set<TimeSlot>();
 
