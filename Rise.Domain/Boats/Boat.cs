@@ -24,7 +24,7 @@ namespace Rise.Domain.Boats
         public DateTime? StartOutOfOrder
         {
             get => _startOutOfOrder;
-            private set => _startOutOfOrder = value.HasValue ? Guard.Against.OutOfRange(value.Value, "StartOutOfOrder", _todayProvider.Date, new DateTime(9999, 12, 31), "Start out of order date cannot lay in the past") : null;
+            protected set => _startOutOfOrder = value.HasValue ? Guard.Against.OutOfRange(value.Value, "StartOutOfOrder", _todayProvider.Date, new DateTime(9999, 12, 31), "Start out of order date cannot lay in the past") : null;
         }
 
 
@@ -36,7 +36,7 @@ namespace Rise.Domain.Boats
         public DateTime? EndOutOfOrder
         {
             get => _endOutOfOrder;
-            private set => _endOutOfOrder = _startOutOfOrder.HasValue && value.HasValue ? Guard.Against.OutOfRange(value.Value, "EndOutOfOrder", _startOutOfOrder.Value, new DateTime(9999, 12, 31), "End out of order date cannot be before the start") : null;
+            protected set => _endOutOfOrder = _startOutOfOrder.HasValue && value.HasValue ? Guard.Against.OutOfRange(value.Value, "EndOutOfOrder", _startOutOfOrder.Value, new DateTime(9999, 12, 31), "End out of order date cannot be before the start") : null;
         }
 
         private int _maximumAdults;
@@ -66,7 +66,7 @@ namespace Rise.Domain.Boats
 
         public Boat() : base()
         {
-            _todayProvider = DateTime.Now;
+            _todayProvider = DateTime.UtcNow;
         }
 
         public Boat(DateTime todayProvider) : base()
