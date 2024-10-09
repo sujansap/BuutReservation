@@ -3,23 +3,28 @@
 <MudAppBar Elevation="1">
 
     @* Always display *@
-    <MudImage Src="assets/BUUT_logo_white.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain"
-        Class="mr-3" />
+    <MudLink Href="/">
+        <MudImage Src="assets/BUUT_logo_white.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain"
+            Class="mr-3" />
+    </MudLink>
 
-    @* NavMenu for mobile *@
+    @* NavMenu for desktop *@
     <MudHidden Breakpoint="Breakpoint.SmAndDown">
-        <div class="d-flex">
-            <MudNavLink Href="home">HOME</MudNavLink>
+        <MudStack Row="true">
+            <MudNavLink Href="counter">HOME</MudNavLink>
             <MudNavLink Href="about">ABOUT</MudNavLink>
-        </div>
+        </MudStack>
         <MudSpacer></MudSpacer>
-        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="reservations">BOOK NOW</MudButton>
-        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End" Href="profile" />
+        <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="reservations">
+            BOOK NOW
+        </MudButton>
+        <MudIconButton Class="mr-2" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End"
+            Href="profile" />
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
             Href="notifications" />
     </MudHidden>
 
-    @* NavMenu for desktop *@
+    @* NavMenu for mobile *@
     <MudHidden Breakpoint="Breakpoint.MdAndUp">
         <MudSpacer></MudSpacer>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
@@ -43,7 +48,7 @@
     </MudDrawerHeader>
     <MudNavMenu>
         <MudDivider />
-        <MudNavLink Href="" Match="NavLinkMatch.All">HOME</MudNavLink>
+        <MudNavLink Href="counter" Match="NavLinkMatch.All">HOME</MudNavLink>
         <MudNavLink Href="about">ABOUT</MudNavLink>
         <MudNavLink Href="book">BOOK NOW</MudNavLink>
         <MudDivider />
