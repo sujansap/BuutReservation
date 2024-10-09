@@ -29,6 +29,7 @@ namespace Rise.Persistence.Migrations
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_Battery", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Battery_Boat_BoatId",
                         column: x => x.BoatId,
