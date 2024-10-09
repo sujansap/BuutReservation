@@ -18,6 +18,7 @@ public class Seeder
     {
         //new ProductSeeder(dbContext).Seed();
         new CruisePeriodSeeder(dbContext).Seed();
+        // TODO make seeder template method as this is copy paste
         if (!dbContext.Products.Any())
             SeedProducts();
         if (!dbContext.Users.Any())

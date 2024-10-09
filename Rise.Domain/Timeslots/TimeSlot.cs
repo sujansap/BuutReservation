@@ -1,10 +1,13 @@
 namespace Rise.Domain.Timeslots;
 
-public class TimeSlot : Entity
+public class TimeSlot : Entity, ITimeSlot
 {
-    public int CruisePeriodId { get; set; }
+    // TODO make guard clauses for properties of TimeSlot
+    // TODO make tests for constructors TimeSlot
+    public DateOnly Date { get; set; }
     public TimeSpan Start { get; set; }
     public TimeSpan End { get; set; }
-    
-    public virtual CruisePeriod CruisePeriod { get; set; } = default!;
+
+    public int CruisePeriodId { get; set; }
+    public ICruisePeriod CruisePeriod { get; set; } = default!;
 }

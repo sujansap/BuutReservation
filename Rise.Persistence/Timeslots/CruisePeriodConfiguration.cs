@@ -10,10 +10,5 @@ internal class CruisePeriodConfiguration : IEntityTypeConfiguration<CruisePeriod
     {
         builder.Property(x => x.Start).IsRequired();
         builder.Property(x => x.End).IsRequired();
-
-        // Configure relationships if needed
-        builder.HasMany(x => x.TimeSlots)
-               .WithOne(x => x.CruisePeriod)
-               .HasForeignKey(x => x.CruisePeriodId);
     }
 }
