@@ -18,21 +18,6 @@ public class Seeder
     {
         //new ProductSeeder(dbContext).Seed();
         new CruisePeriodSeeder(dbContext).Seed();
-        /*
-        if (HasAlreadyBeenSeeded())
-            return;
-
-        SeedProducts();
-        SeedUsers();
-        */
-    }
-
-    /*
-    private bool HasAlreadyBeenSeeded()
-    {
-        return dbContext.Products.Any();
-    }
-    */
         if (!dbContext.Products.Any())
             SeedProducts();
         if (!dbContext.Users.Any())
