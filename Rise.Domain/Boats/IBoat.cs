@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Boats
 {
@@ -41,6 +42,11 @@ namespace Rise.Domain.Boats
             set;
         }
         public ICollection<IBattery> Batteries
+        {
+            get;
+        }
+
+        public ICollection<IReservation> Reservations
         {
             get;
         }

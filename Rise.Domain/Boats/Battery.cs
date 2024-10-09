@@ -1,3 +1,5 @@
+using Rise.Domain.Reservations;
+
 namespace Rise.Domain.Boats
 {
     public class Battery : Entity, IBattery
@@ -39,5 +41,9 @@ namespace Rise.Domain.Boats
 
         public int? BoatId { get; set; }
         public IBoat? Boat { get; set; } = null!;
+        public ICollection<IReservation> Reservations
+        {
+            get;
+        } = [];
     }
 }

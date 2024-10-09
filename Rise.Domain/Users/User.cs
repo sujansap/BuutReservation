@@ -1,3 +1,5 @@
+using Rise.Domain.Reservations;
+
 namespace Rise.Domain.Users
 {
     /// <summary>
@@ -12,5 +14,7 @@ namespace Rise.Domain.Users
             get => _familyName;
             set => _familyName = Guard.Against.NullOrWhiteSpace(value);
         }
+
+        public ICollection<IReservation> Reservations { get; } = [];
     }
 }

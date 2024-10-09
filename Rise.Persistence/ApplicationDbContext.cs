@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Battery> Batteries => Set<Battery>();
     public DbSet<CruisePeriod> CruisePeriods => Set<CruisePeriod>();
     public DbSet<TimeSlot> TimeSlots => Set<TimeSlot>();
+    public DbSet<Reservation> Reservations => Set<Reservation>();
 
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
