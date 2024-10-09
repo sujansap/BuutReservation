@@ -1,39 +1,53 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Rise</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@using MudBlazor
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
+<MudAppBar Elevation="1">
+
+    @* Always display *@
+    <MudImage Src="assets/BUUT_logo_white.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain"
+        Class="mr-3" />
+
+    @* NavMenu for mobile *@
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        <div class="d-flex">
+            <MudNavLink Href="home">HOME</MudNavLink>
+            <MudNavLink Href="about">ABOUT</MudNavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="products">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Products
-            </NavLink>
-        </div>
-    </nav>
-</div>
+        <MudSpacer></MudSpacer>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="reservations">BOOK NOW</MudButton>
+        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End" Href="profile" />
+        <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
+            Href="notifications" />
+    </MudHidden>
 
-@code {
-    private bool collapseNavMenu = true;
+    @* NavMenu for desktop *@
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
+        <MudSpacer></MudSpacer>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@ToggleDrawer" />
+    </MudHidden>
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+</MudAppBar>
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+<MudDrawer @bind-Open="@_drawerOpen" Elevation="1" Variant="@DrawerVariant.Temporary" Anchor="Anchor.End">
+    <MudDrawerHeader Class="pr-0">
+        @* <MudImage Src="assets/BUUT_logo.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain" />
+        *@
+
+        <MudStack Row="true" AlignItems="AlignItems.Center">
+            <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Outlined">B</MudAvatar>
+            <MudText>Welkom, Bindo</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.End"
+                OnClick="@ToggleDrawer" />
+        </MudStack>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudDivider />
+        <MudNavLink Href="" Match="NavLinkMatch.All">HOME</MudNavLink>
+        <MudNavLink Href="about">ABOUT</MudNavLink>
+        <MudNavLink Href="book">BOOK NOW</MudNavLink>
+        <MudDivider />
+        <MudNavLink Href="profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
+        <MudNavLink Href="notifications" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
