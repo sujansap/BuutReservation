@@ -1,16 +1,14 @@
 ﻿@page "/reservations"
-
-<MudPopoverProvider />
+@using MudBlazor
+@using Heron.MudCalendar
 
 <PageTitle>Reservaties</PageTitle>
 
 <MudTabs Elevation="0" Centered="true">
-    <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
-        <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
-            data-testid="calendar-reserve" />
+    <MudTabPanel Text="Reserveer">
+        <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8" />
     </MudTabPanel>
-    <MudTabPanel Text="Uw Reservaties" data-testid="tab-your-reservations">
-        <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
-            data-testid="calendar-your-reservations" />
+    <MudTabPanel Text="Uw Reservaties">
+        <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8" />
     </MudTabPanel>
 </MudTabs>
