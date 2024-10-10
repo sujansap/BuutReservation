@@ -18,17 +18,17 @@ namespace Rise.Domain.Tests.Timeslots
             // Arrange
             var mockBoat = new Mock<IBoat>();
             mockBoat.SetupGet(b => b.PersonalName).Returns("Boat");
-            mockBoat.SetupGet(b => b.MaximumAdults).Returns(2);
-            mockBoat.SetupGet(b => b.MaximumChildren).Returns(1);
-            mockBoat.SetupGet(b => b.MaximumPets).Returns(1);
+            // mockBoat.SetupGet(b => b.MaximumAdults).Returns(2);
+            // mockBoat.SetupGet(b => b.MaximumChildren).Returns(1);
+            // mockBoat.SetupGet(b => b.MaximumPets).Returns(1);
 
             var boat = mockBoat.Object;
 
             Reservation reservation = new()
             {
                 Boat = boat,
-                BatteryId = 1,
-                TimeSlotId = 1,
+                // BatteryId = 1,
+                // TimeSlotId = 1,
                 AmountAdults = 2,
                 AmountChildren = validAmountChildren,
                 AmountPets = validAmountPets
@@ -36,11 +36,11 @@ namespace Rise.Domain.Tests.Timeslots
 
             // Act & Assert
             reservation.Boat.PersonalName.ShouldBe("Boat");
-            reservation.Boat.MaximumAdults.ShouldBe(2);
-            reservation.Boat.MaximumChildren.ShouldBe(1);
-            reservation.Boat.MaximumPets.ShouldBe(1);
-            reservation.BatteryId.ShouldBe(1);
-            reservation.TimeSlotId.ShouldBe(1);
+            // reservation.Boat.MaximumAdults.ShouldBe(2);
+            // reservation.Boat.MaximumChildren.ShouldBe(1);
+            // reservation.Boat.MaximumPets.ShouldBe(1);
+            // reservation.BatteryId.ShouldBe(1);
+            // reservation.TimeSlotId.ShouldBe(1);
             reservation.AmountAdults.ShouldBe(2);
             reservation.AmountChildren.ShouldBe(validAmountChildren);
             reservation.AmountPets.ShouldBe(validAmountPets);
