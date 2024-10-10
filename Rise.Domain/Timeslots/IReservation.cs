@@ -34,6 +34,6 @@ namespace Rise.Domain.Reservations
     public int TimeSlotId { get; set; }
     public ITimeSlot TimeSlot { get; set; }
 
-    // public ICollection<IUser> Users { get; }
+    public List<IUser> Users { get; }
   }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Rise.Domain.Reservations;
 // using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Users
@@ -14,10 +15,10 @@ namespace Rise.Domain.Users
             set;
         }
 
-        // public ICollection<IReservation> Reservations
-        // {
-        //     get;
-        // }
+        public ICollection<IReservation> Reservations
+        {
+            get;
+        }
 
         // TODO add field + property givenName (only in authentication!)
         // TODO add field + property email (only in authentication!)

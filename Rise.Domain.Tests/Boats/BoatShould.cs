@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NSubstitute;
 using Rise.Domain.Boats;
+using Rise.Domain.Reservations;
 using Shouldly;
 using Xunit;
 

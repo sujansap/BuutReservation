@@ -1,3 +1,4 @@
+using System.Collections;
 using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
 using Rise.Domain.Users;
@@ -15,7 +16,7 @@ namespace Rise.Domain.Timeslots
     public int TimeSlotId { get; set; }
     public required ITimeSlot TimeSlot { get; set; } = default!;
 
-    // public ICollection<IUser> Users { get; } = [];
+    public List<IUser> Users { get; } = [];
 
     private int _amountAdults;
     public int AmountAdults
@@ -42,6 +43,15 @@ namespace Rise.Domain.Timeslots
       // ! making reservation user story
       // set => _amountPets = Guard.Against.OutOfRange(value, "AmountPets", 0, Boat.MaximumPets);
       set => _amountPets = value;
+    }
+
+    public Reservation()
+    {
+    }
+
+    public Reservation(ICollection<IUser> users)
+    {
+      Users.AddRange(users);
     }
   }
 }
