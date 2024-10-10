@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Rise.Domain.Reservations;
+// using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Timeslots
 {
@@ -19,9 +19,9 @@ namespace Rise.Domain.Timeslots
         public int CruisePeriodId { get; set; }
         public ICruisePeriod CruisePeriod { get; set; }
 
-        public ICollection<IReservation> Reservations
-        {
-            get;
-        }
+        // public ICollection<IReservation> Reservations
+        // {
+        //     get;
+        // }
     }
 }

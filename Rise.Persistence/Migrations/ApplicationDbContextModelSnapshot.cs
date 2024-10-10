@@ -22,122 +22,6 @@ namespace Rise.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.Property<int>("ReservationsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ReservationsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ReservationUser");
-                });
-
-            modelBuilder.Entity("Rise.Domain.Boats.Battery", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("BoatId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<double>("CurrentLoad")
-                        .HasColumnType("double precision");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<double>("MaximumCapacity")
-                        .HasColumnType("double precision");
-
-                    b.Property<bool>("OutOfOrder")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BoatId");
-
-                    b.ToTable("Battery", (string)null);
-                });
-
-            modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<DateTime?>("EndOutOfOrder")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("MaximumAdults")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
-
-                    b.Property<int>("MaximumChildren")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("MaximumPets")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
-
-                    b.Property<string>("PersonalName")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<DateTime?>("StartOutOfOrder")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Boat", (string)null);
-                });
-
             modelBuilder.Entity("Rise.Domain.Products.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -196,59 +80,7 @@ namespace Rise.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CruisePeriods");
-                });
-
-            modelBuilder.Entity("Rise.Domain.Timeslots.Reservation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AmountAdults")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AmountChildren")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AmountPets")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("BatteryId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("BoatId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("TimeSlotId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BatteryId");
-
-                    b.HasIndex("BoatId");
-
-                    b.HasIndex("TimeSlotId");
-
-                    b.ToTable("Reservation", (string)null);
+                    b.ToTable("CruisePeriods", (string)null);
                 });
 
             modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
@@ -264,9 +96,6 @@ namespace Rise.Persistence.Migrations
 
                     b.Property<int>("CruisePeriodId")
                         .HasColumnType("integer");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
 
                     b.Property<TimeSpan>("End")
                         .HasColumnType("interval");
@@ -284,91 +113,7 @@ namespace Rise.Persistence.Migrations
 
                     b.HasIndex("CruisePeriodId");
 
-                    b.ToTable("TimeSlots");
-                });
-
-            modelBuilder.Entity("Rise.Domain.Users.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<string>("FamilyName")
-                        .IsRequired()
-                        .HasMaxLength(65)
-                        .HasColumnType("character varying(65)");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User", (string)null);
-                });
-
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.HasOne("Rise.Domain.Timeslots.Reservation", null)
-                        .WithMany()
-                        .HasForeignKey("ReservationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rise.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Rise.Domain.Boats.Battery", b =>
-                {
-                    b.HasOne("Rise.Domain.Boats.Boat", "Boat")
-                        .WithMany("Batteries")
-                        .HasForeignKey("BoatId");
-
-                    b.Navigation("Boat");
-                });
-
-            modelBuilder.Entity("Rise.Domain.Timeslots.Reservation", b =>
-                {
-                    b.HasOne("Rise.Domain.Boats.Battery", "Battery")
-                        .WithMany("Reservations")
-                        .HasForeignKey("BatteryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rise.Domain.Boats.Boat", "Boat")
-                        .WithMany("Reservations")
-                        .HasForeignKey("BoatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rise.Domain.Timeslots.TimeSlot", "TimeSlot")
-                        .WithMany("Reservations")
-                        .HasForeignKey("TimeSlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Battery");
-
-                    b.Navigation("Boat");
-
-                    b.Navigation("TimeSlot");
+                    b.ToTable("TimeSlots", (string)null);
                 });
 
             modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
@@ -382,26 +127,9 @@ namespace Rise.Persistence.Migrations
                     b.Navigation("CruisePeriod");
                 });
 
-            modelBuilder.Entity("Rise.Domain.Boats.Battery", b =>
-                {
-                    b.Navigation("Reservations");
-                });
-
-            modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
-                {
-                    b.Navigation("Batteries");
-
-                    b.Navigation("Reservations");
-                });
-
             modelBuilder.Entity("Rise.Domain.Timeslots.CruisePeriod", b =>
                 {
                     b.Navigation("TimeSlots");
-                });
-
-            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
-                {
-                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }
