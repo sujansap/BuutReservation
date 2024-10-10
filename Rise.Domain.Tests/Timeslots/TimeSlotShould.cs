@@ -24,6 +24,7 @@ namespace Rise.Domain.Tests.Timeslots
             timeSlot.Date.ShouldBe(ValidDate);
             timeSlot.Start.ShouldBe(ValidStart);
             timeSlot.End.ShouldBe(ValidEnd);
+            timeSlot.Reservations.ShouldBeEmpty();
         }
 
         [Theory]
