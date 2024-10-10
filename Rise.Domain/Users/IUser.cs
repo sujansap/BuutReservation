@@ -8,7 +8,8 @@ namespace Rise.Domain.Users
 {
     public interface IUser
     {
-        public string FamilyName {
+        public string FamilyName
+        {
             get;
             set;
         }

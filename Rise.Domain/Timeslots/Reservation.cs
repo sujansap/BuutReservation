@@ -15,7 +15,9 @@
 //         public int TimeSlotId { get; set; }
 //         public required ITimeSlot TimeSlot { get; set; } = default!;
 
-//         public ICollection<IUser> Users { get; set; } = [];
+
+//why is there no setter for users?
+//       public ICollection<IUser> Users { get; } = [];
 
 //         private int _amountAdults;
 //         public int AmountAdults
