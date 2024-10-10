@@ -21,5 +21,7 @@ public class Seeder
 
         new BoatSeeder(dbContext).Seed();
         // new BatterySeeder(dbContext).Seed();
+
+        new ReservationSeeder(dbContext).Seed();
     }
 }

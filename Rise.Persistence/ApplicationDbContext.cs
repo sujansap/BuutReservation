@@ -19,7 +19,7 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Boat> Boats => Set<Boat>();
 
     // public DbSet<Battery> Batteries => Set<Battery>();
-    // public DbSet<Reservation> Reservations => Set<Reservation>();
+    public DbSet<Reservation> Reservations => Set<Reservation>();
 
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
