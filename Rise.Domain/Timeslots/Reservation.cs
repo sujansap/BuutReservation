@@ -12,13 +12,10 @@ namespace Rise.Domain.Timeslots
     // public int BatteryId { get; set; }
     // public required IBattery Battery { get; set; } = default!;
 
-    // public int TimeSlotId { get; set; }
-    // public required ITimeSlot TimeSlot { get; set; } = default!;
+    public int TimeSlotId { get; set; }
+    public required ITimeSlot TimeSlot { get; set; } = default!;
 
-
-//why is there no setter for users?
-//       public ICollection<IUser> Users { get; } = [];
-    // public ICollection<IUser> Users { get; set; } = [];
+    // public ICollection<IUser> Users { get; } = [];
 
     private int _amountAdults;
     public int AmountAdults

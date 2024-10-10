@@ -32,11 +32,11 @@ namespace Rise.Persistence.Timeslots
       //     .HasForeignKey(e => e.BatteryId)
       //     .IsRequired(true);
 
-      // builder
-      //     .HasOne(e => (TimeSlot)e.TimeSlot)
-      //     .WithMany(e => (ICollection<Reservation>)e.Reservations)
-      //     .HasForeignKey(e => e.TimeSlotId)
-      //     .IsRequired(true);
+      builder
+          .HasOne(e => (TimeSlot)e.TimeSlot)
+          .WithMany(e => (ICollection<Reservation>)e.Reservations)
+          .HasForeignKey(e => e.TimeSlotId)
+          .IsRequired(true);
 
       // builder
       //     .HasMany(e => (ICollection<User>)e.Users)

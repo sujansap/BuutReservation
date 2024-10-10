@@ -1,4 +1,5 @@
 using Ardalis.GuardClauses;
+using Rise.Domain.Reservations;
 
 // using Rise.Domain.Reservations;
 
@@ -47,5 +48,6 @@ public class TimeSlot : Entity, ITimeSlot
 
     public int CruisePeriodId { get; set; }
     public ICruisePeriod CruisePeriod { get; set; } = default!;
-    // public ICollection<IReservation> Reservations { get; } = [];
+
+    public ICollection<IReservation> Reservations { get; } = [];
 }

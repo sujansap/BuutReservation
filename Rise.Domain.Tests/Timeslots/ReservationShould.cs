@@ -1,49 +1,44 @@
-using Moq;
 using Shouldly;
 using Xunit;
 using Rise.Domain.Boats;
 using Rise.Domain.Timeslots;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using NSubstitute;
 
 
 namespace Rise.Domain.Tests.Timeslots
 {
     public class ReservationShould
     {
-        private static readonly int validAmountChildren = 1;
-        private static readonly int validAmountPets = 1;
+        public const int validAmountAdults = 2;
+        public const int validAmountChildren = 1;
+        public const int validAmountPets = 1;
 
         [Fact]
         public void BeCreated()
         {
-            // Arrange
-            var mockBoat = new Mock<IBoat>();
-            mockBoat.SetupGet(b => b.PersonalName).Returns("Boat");
-            // mockBoat.SetupGet(b => b.MaximumAdults).Returns(2);
-            // mockBoat.SetupGet(b => b.MaximumChildren).Returns(1);
-            // mockBoat.SetupGet(b => b.MaximumPets).Returns(1);
+            // Mock boat
+            IBoat mockBoat = Substitute.For<IBoat>();
 
-            var boat = mockBoat.Object;
+            // Mock Time slot
+            ITimeSlot mockTimeSlot = Substitute.For<ITimeSlot>();
 
             Reservation reservation = new()
             {
-                Boat = boat,
-                // BatteryId = 1,
-                // TimeSlotId = 1,
-                AmountAdults = 2,
+                AmountAdults = validAmountAdults,
                 AmountChildren = validAmountChildren,
-                AmountPets = validAmountPets
+                AmountPets = validAmountPets,
+                Boat = mockBoat,
+                TimeSlot = mockTimeSlot,
             };
 
             // Act & Assert
-            reservation.Boat.PersonalName.ShouldBe("Boat");
-            // reservation.Boat.MaximumAdults.ShouldBe(2);
-            // reservation.Boat.MaximumChildren.ShouldBe(1);
-            // reservation.Boat.MaximumPets.ShouldBe(1);
-            // reservation.BatteryId.ShouldBe(1);
-            // reservation.TimeSlotId.ShouldBe(1);
-            reservation.AmountAdults.ShouldBe(2);
+            reservation.AmountAdults.ShouldBe(validAmountAdults);
             reservation.AmountChildren.ShouldBe(validAmountChildren);
             reservation.AmountPets.ShouldBe(validAmountPets);
+
+            reservation.Boat.ShouldBe(mockBoat);
+            reservation.TimeSlot.ShouldBe(mockTimeSlot);
         }
     }
 

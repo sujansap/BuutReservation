@@ -139,5 +139,7 @@ namespace Rise.Domain.Tests.Timeslots
 
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
+
+        // TODO make with constructor for checking relation with cruiseperiod
     }
 }

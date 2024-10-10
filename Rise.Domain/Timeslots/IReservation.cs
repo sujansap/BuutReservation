@@ -31,8 +31,8 @@ namespace Rise.Domain.Reservations
     // public int BatteryId { get; set; }
     // public IBattery Battery { get; set; }
 
-    // public int TimeSlotId { get; set; }
-    // public ITimeSlot TimeSlot { get; set; }
+    public int TimeSlotId { get; set; }
+    public ITimeSlot TimeSlot { get; set; }
 
     // public ICollection<IUser> Users { get; }
   }
