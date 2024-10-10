@@ -6,8 +6,8 @@ namespace Rise.Domain.Timeslots
 {
   public class Reservation : Entity, IReservation
   {
-    // public int BoatId { get; set; }
-    // public required IBoat Boat { get; set; } = default!;
+    public int BoatId { get; set; }
+    public required IBoat Boat { get; set; } = default!;
 
     // public int BatteryId { get; set; }
     // public required IBattery Battery { get; set; } = default!;
@@ -24,6 +24,7 @@ namespace Rise.Domain.Timeslots
     public int AmountAdults
     {
       get => _amountAdults;
+      // ! making reservation user story
       // set => _amountAdults = Guard.Against.OutOfRange(value, "AmountAdults", 0, Boat.MaximumAdults);
       set => _amountAdults = value;
     }
@@ -32,6 +33,7 @@ namespace Rise.Domain.Timeslots
     public int AmountChildren
     {
       get => _amountChildren;
+      // ! making reservation user story
       // set => _amountChildren = Guard.Against.OutOfRange(value, "AmountChildren", 0, Boat.MaximumChildren);
       set => _amountChildren = value;
     }
@@ -40,6 +42,7 @@ namespace Rise.Domain.Timeslots
     public int AmountPets
     {
       get => _amountPets;
+      // ! making reservation user story
       // set => _amountPets = Guard.Against.OutOfRange(value, "AmountPets", 0, Boat.MaximumPets);
       set => _amountPets = value;
     }

@@ -11,8 +11,8 @@ namespace Rise.Domain.Tests.Boats
 {
     public class BoatShould
     {
-        private const string ValidPersonalNameRaw = "Limba";
-        private const string ValidPersonalNameFormatted = "Limba";
+        public const string ValidPersonalNameRaw = "Limba";
+        public const string ValidPersonalNameFormatted = "Limba";
 
         // private const int ValidMaximumAdults = 1;
         // private const int ValidMaximumChildren = 0;
@@ -26,6 +26,7 @@ namespace Rise.Domain.Tests.Boats
             Boat b = new() { PersonalName = ValidPersonalNameRaw };
 
             b.PersonalName.ShouldBe(ValidPersonalNameFormatted);
+            b.Reservations.ShouldBeEmpty();
             // b.MaximumAdults.ShouldBe(ValidMaximumAdults);
             // b.MaximumChildren.ShouldBe(ValidMaximumChildren);
             // b.MaximumPets.ShouldBe(ValidMaximumPets);

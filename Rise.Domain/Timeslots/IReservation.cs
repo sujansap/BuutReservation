@@ -25,15 +25,15 @@ namespace Rise.Domain.Reservations
             set;
         }
 
-        // public int BoatId { get; set; }
-        // public IBoat Boat { get; set; }
+    public int BoatId { get; set; }
+    public IBoat Boat { get; set; }
 
-        // public int BatteryId { get; set; }
-        // public IBattery Battery { get; set; }
+    // public int BatteryId { get; set; }
+    // public IBattery Battery { get; set; }
 
-        // public int TimeSlotId { get; set; }
-        // public ITimeSlot TimeSlot { get; set; }
+    // public int TimeSlotId { get; set; }
+    // public ITimeSlot TimeSlot { get; set; }
 
-        // public ICollection<IUser> Users { get; }
-    }
+    // public ICollection<IUser> Users { get; }
+  }
 }

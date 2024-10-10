@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Rise.Domain.Reservations;
 // using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Boats
@@ -14,6 +15,7 @@ namespace Rise.Domain.Boats
             set;
         }
 
+        // ! out of order admin user story 
         // public DateTime? StartOutOfOrder
         // {
         //     get;
@@ -24,6 +26,7 @@ namespace Rise.Domain.Boats
         //     get;
         // }
 
+        // ! making reservation user story 
         // public int MaximumAdults
         // {
         //     get;
@@ -42,17 +45,19 @@ namespace Rise.Domain.Boats
         //     set;
         // }
 
+        // ! making reservation user story
         // public ICollection<IBattery> Batteries
         // {
         //     get;
         // }
 
-        // public ICollection<IReservation> Reservations
-        // {
-        //     get;
-        // }
+        public ICollection<IReservation> Reservations
+        {
+            get;
+        }
 
 
+        // ! out of order admin user story 
         // /// <summary>
         // /// Defines the period for how long the boat is out of order.
         // /// </summary>

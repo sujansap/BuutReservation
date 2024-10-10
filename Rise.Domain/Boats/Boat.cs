@@ -1,3 +1,5 @@
+using Rise.Domain.Reservations;
+
 namespace Rise.Domain.Boats
 {
 
@@ -62,7 +64,7 @@ namespace Rise.Domain.Boats
 
     // public ICollection<IBattery> Batteries { get; } = [];
 
-    // public ICollection<IReservation> Reservations { get; } = [];
+    public ICollection<IReservation> Reservations { get; } = [];
 
     // TODO add relation to meter and peter users
 

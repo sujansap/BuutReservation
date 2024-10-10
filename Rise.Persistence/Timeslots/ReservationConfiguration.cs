@@ -20,11 +20,11 @@ namespace Rise.Persistence.Timeslots
       builder.Property(e => e.AmountChildren);
       builder.Property(e => e.AmountPets);
 
-      // builder
-      //     .HasOne(e => (Boat)e.Boat)
-      //     .WithMany(e => (ICollection<Reservation>)e.Reservations)
-      //     .HasForeignKey(e => e.BoatId)
-      //     .IsRequired(true);
+      builder
+          .HasOne(e => (Boat)e.Boat)
+          .WithMany(e => (ICollection<Reservation>)e.Reservations)
+          .HasForeignKey(e => e.BoatId)
+          .IsRequired(true);
 
       // builder
       //     .HasOne(e => (Battery)e.Battery)
