@@ -3,6 +3,7 @@
 using Rise.Domain.Products;
 using Rise.Domain.Users;
 using Rise.Domain.Timeslots;
+using Rise.Domain.Boats;
 
 namespace Rise.Persistence;
 
@@ -11,8 +12,15 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Product> Products => Set<Product>();
     public DbSet<User> Users => Set<User>();
+
     public DbSet<CruisePeriod> CruisePeriods => Set<CruisePeriod>();
     public DbSet<TimeSlot> TimeSlots => Set<TimeSlot>();
+
+    public DbSet<Boat> Boats => Set<Boat>();
+
+    // public DbSet<Battery> Batteries => Set<Battery>();
+    // public DbSet<Reservation> Reservations => Set<Reservation>();
+
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
