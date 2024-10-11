@@ -46,17 +46,19 @@ namespace Rise.Services.TimeSlots
             (DateOnly startDay, DateOnly endDay) = GenerateDayRange(year, month, includeCrossOverDays);
             Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> daysWithReservation = [];
 
-            var overlappingCruisePeriod = await dbContext.CruisePeriods
-                .FirstOrDefaultAsync(cruisePeriod => (DateOnly.FromDateTime(cruisePeriod.Start.Date) <= startDay && startDay <= DateOnly.FromDateTime(cruisePeriod.End.Date)) ||
-                (DateOnly.FromDateTime(cruisePeriod.Start.Date) <= endDay && endDay <= DateOnly.FromDateTime(cruisePeriod.End.Date)));
+            CruisePeriod? overlappingCruisePeriod = await dbContext.CruisePeriods
+                .FirstOrDefaultAsync(cruisePeriod => DateOnly.FromDateTime(cruisePeriod.Start.Date) <= endDay && startDay <= DateOnly.FromDateTime(cruisePeriod.End.Date));
 
-            var allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
-                timeSlot => startDay <= timeSlot.Date && timeSlot.Date <= endDay
+            if (overlappingCruisePeriod is not null)
+            {
+                List<DateTimeSlotBoatUse> allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
+                timeSlot => timeSlot.CruisePeriodId == overlappingCruisePeriod.Id
+                && startDay <= timeSlot.Date && timeSlot.Date <= endDay
                 && !timeSlot.IsDeleted)
-                .Select(timeSlot => new
+                .Select(timeSlot => new DateTimeSlotBoatUse()
                 {
-                    timeSlot.Date,
-                    timeSlot.Start,
+                    Date = timeSlot.Date,
+                    Start = timeSlot.Start,
                     UsedBoatCount = dbContext.Reservations.Where(reservation => reservation.TimeSlotId == timeSlot.Id).Count()
                 })
                 .ToListAsync();
@@ -76,9 +78,11 @@ namespace Rise.Services.TimeSlots
                     }
                 ).Select(x =>
                 {
-                    bool IsFullyBooked = x.TotalDayTimeSlotCount * totalAmountBoats <= x.UsedBoatCount;
-                    return new TimeSlotDaySurfaceInfoDto(x.Date, IsFullyBooked, !IsFullyBooked);
+                    bool isFullyBooked = x.TotalDayTimeSlotCount * totalAmountBoats <= x.UsedBoatCount;
+                    bool isSlotAvailable = !isFullyBooked && x.Date.CompareTo(DateOnly.FromDateTime(DateTime.Today).AddDays(Reservation.MinDaysBetweenReservation)) > 0;
+                    return new TimeSlotDaySurfaceInfoDto(x.Date, isFullyBooked, isSlotAvailable);
                 }).ToDictionary(x => x.Date);
+            }
             }
 
             int totalDays = 1 + endDay.ToDateTime(TimeOnly.MinValue).Subtract(startDay.ToDateTime(TimeOnly.MinValue)).Days;
@@ -90,6 +94,13 @@ namespace Rise.Services.TimeSlots
                         });
 
             return new TimeSlotRangeInfoDto(startDay, endDay, totalDays, days);
+        }
+
+        internal class DateTimeSlotBoatUse
+        {
+            public DateOnly Date { get; set; }
+            public TimeSpan Start { get; set; }
+            public int UsedBoatCount { get; set; }
         }
 
         // TODO documentation
