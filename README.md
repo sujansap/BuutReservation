@@ -27,7 +27,7 @@
 1. Clone the repository
 2. Open the `Rise.sln` file in Visual Studio or Visual Studio Code
 3. Set up the database connection
-4. Run the project using the `Rise.Server` project as the startup project
+4. Run the project using the `Rise.Server` project as the startup project: `dotnet run --project .\Rise.Server\`
 5. The project should open in your default browser on port 5001.
 6. Initially the database will not exist, so you will need to run the migrations to [create the database](#creation-of-the-database).
 
@@ -63,3 +63,5 @@ And then update the database using the following command:
 ```bash
 dotnet ef database update --startup-project Rise.Server --project Rise.Persistence
 ```
+## Tests
+You can run the Unit and Components tests by using the command `dotnet test`
