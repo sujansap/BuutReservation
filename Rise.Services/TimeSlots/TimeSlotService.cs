@@ -48,11 +48,11 @@ namespace Rise.Services.TimeSlots
                 () =>
                 {
                     int totalDays = 1 + endDay.Subtract(startDay).Days;
-                    IEnumerable<TimeSlotDayInfoDto> days = Enumerable.Range(0, totalDays)
+                    IEnumerable<TimeSlotDaySurfaceInfoDto> days = Enumerable.Range(0, totalDays)
                     .Select(offset =>
                     {
                         var date = DateOnly.FromDateTime(startDay.AddDays(offset).Date);
-                        return new TimeSlotDayInfoDto(date, true, true);
+                        return new TimeSlotDaySurfaceInfoDto(date, true, true);
                     });
                     return new TimeSlotRangeInfoDto(DateOnly.FromDateTime(startDay), DateOnly.FromDateTime(endDay), totalDays, days);
                 }
