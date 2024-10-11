@@ -1,17 +1,12 @@
 ﻿@inherits LayoutComponentBase
+@using MudBlazor
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<MudLayout>
+    <NavMenu />
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="py-16" Style="min-height: calc(100vh - 56px)">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+    <Footer />
+</MudLayout>

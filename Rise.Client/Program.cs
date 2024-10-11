@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Components.Web;
 using Rise.Client;
 using Rise.Client.Products;
 using Rise.Shared.Products;
+using MudBlazor.Services;
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddMudServices();
 
 builder.Services.AddHttpClient<IProductService, ProductService>(client =>
 {

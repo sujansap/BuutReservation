@@ -1,4 +1,4 @@
-﻿using Rise.Persistence.Seeders;
+using Rise.Persistence.Seeders;
 
 namespace Rise.Persistence;
 
