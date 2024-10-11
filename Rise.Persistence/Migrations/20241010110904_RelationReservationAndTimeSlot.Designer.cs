@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rise.Persistence;
@@ -11,9 +12,11 @@ using Rise.Persistence;
 namespace Rise.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241010110904_RelationReservationAndTimeSlot")]
+    partial class RelationReservationAndTimeSlot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Rise.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.Property<int>("ReservationsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ReservationsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ReservationUser");
-                });
 
             modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
                 {
@@ -245,21 +233,6 @@ namespace Rise.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User", (string)null);
-                });
-
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.HasOne("Rise.Domain.Timeslots.Reservation", null)
-                        .WithMany()
-                        .HasForeignKey("ReservationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rise.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Rise.Domain.Timeslots.Reservation", b =>

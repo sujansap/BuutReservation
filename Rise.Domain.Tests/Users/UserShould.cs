@@ -13,6 +13,7 @@ public class UserShould
         User u = new () { FamilyName = ValidFamilyNameRaw};
 
         u.FamilyName.ShouldBe(ValidFamilyNameFormatted);
+        u.Reservations.ShouldBeEmpty();
     }
 
     [Theory]
