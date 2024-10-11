@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Rise.Domain.Timeslots;
 using Rise.Persistence;
 using Rise.Shared.TimeSlots;
 using System.Data;
@@ -12,12 +13,12 @@ namespace Rise.Services.TimeSlots
         public async Task<List<TimeSlotDto>> GetTimeSlotsByDate(DateTime date)
         {
             // Find the CruisePeriod that contains the given date
-            var cruisePeriod = await dbContext.CruisePeriods
+            CruisePeriod? cruisePeriod = await dbContext.CruisePeriods
                 .FirstOrDefaultAsync(cp => cp.Start.Date <= date.Date && cp.End.Date >= date.Date);
 
-            if (cruisePeriod == null)
+            if (cruisePeriod is null)
             {
-                return new List<TimeSlotDto>(); // No cruise period found for the given date
+                return []; // No cruise period found for the given date
             }
 
             // Fetch the TimeSlots for that CruisePeriod
