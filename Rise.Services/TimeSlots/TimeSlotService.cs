@@ -17,7 +17,7 @@ namespace Rise.Services.TimeSlots
             _dbContext = dbContext;
         }
 
-        public async Task<List<TimeSlotDto>> GetTimeSlotsByDate(DateTime date)
+        public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(DateTime date)
         {
             // Find the CruisePeriod that contains the given date
             var cruisePeriod = await _dbContext.CruisePeriods

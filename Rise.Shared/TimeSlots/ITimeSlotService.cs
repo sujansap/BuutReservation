@@ -2,6 +2,6 @@ namespace Rise.Shared.TimeSlots
 {
     public interface ITimeSlotService
     {
-        Task<List<TimeSlotDto>> GetTimeSlotsByDate(DateTime date);
+        Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(DateTime date);
     }
 }

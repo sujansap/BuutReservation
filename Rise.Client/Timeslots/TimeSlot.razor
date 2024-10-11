@@ -1,0 +1,38 @@
+﻿@page "/timeslots"
+
+<PageTitle>Time Slots</PageTitle>
+
+<h1>Time Slots</h1>
+
+<p>Testing time slots</p>
+
+@if (timeslots == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!timeslots.Any())
+{
+    <p>No Time Slots found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var timeslot in timeslots)
+            {
+                <tr>
+                    <td>@timeslot.Id</td>
+                    <td>@timeslot.Start.ToString("g")</td>
+                    <td>@timeslot.End.ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
