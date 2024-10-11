@@ -1,9 +1,9 @@
-using Rise.Shared.Timeslots;
-
-namespace Rise.Server.Controllers
+namespace Rise.Shared.TimeSlots
 {
     public interface ITimeSlotService
     {
+        Task<List<TimeSlotDto>> GetTimeSlotsByDate(DateTime date);
+
         /// <summary>
         /// Gets all time slots between given 
         /// </summary>

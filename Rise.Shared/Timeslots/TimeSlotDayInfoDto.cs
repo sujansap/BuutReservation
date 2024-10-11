@@ -1,4 +1,4 @@
-namespace Rise.Shared.Timeslots
+namespace Rise.Shared.TimeSlots
 {
     /// <summary>
     /// The surface info on the reservation state of a day

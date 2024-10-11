@@ -1,18 +1,45 @@
+using Microsoft.EntityFrameworkCore;
+using Rise.Persistence;
+using Rise.Shared.TimeSlots;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Rise.Persistence;
-using Rise.Server.Controllers;
-using Rise.Shared.Timeslots;
 
-namespace Rise.Services.Timeslots
+namespace Rise.Services.TimeSlots
 {
     public class TimeSlotService(ApplicationDbContext dbContext) : ITimeSlotService
     {
         private readonly ApplicationDbContext dbContext = dbContext;
-        public Task<TimeSlotRangeInfoDto> GetAllTimeSlots(int year,
+
+        public async Task<List<TimeSlotDto>> GetTimeSlotsByDate(DateTime date)
+        {
+            // Find the CruisePeriod that contains the given date
+            var cruisePeriod = await dbContext.CruisePeriods
+                .FirstOrDefaultAsync(cp => cp.Start.Date <= date.Date && cp.End.Date >= date.Date);
+
+            if (cruisePeriod == null)
+            {
+                return new List<TimeSlotDto>(); // No cruise period found for the given date
+            }
+
+            // Fetch the TimeSlots for that CruisePeriod
+            var timeSlots = await dbContext.TimeSlots
+                .Where(ts => ts.CruisePeriodId == cruisePeriod.Id)
+                .Select(ts => new TimeSlotDto
+                {
+                    Id = ts.Id,
+                    Start = ts.Start,
+                    End = ts.End,
+                    CruisePeriodId = ts.CruisePeriodId
+                })
+                .ToListAsync();
+
+            return timeSlots;
+        }
+
+        public Task<TimeSlotRangeInfoDto> GetAllTimeSlots(
+            int year,
             int month,
             bool includeCrossOverDays)
         {
