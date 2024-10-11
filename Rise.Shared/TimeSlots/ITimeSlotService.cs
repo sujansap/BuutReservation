@@ -11,7 +11,7 @@ namespace Rise.Shared.TimeSlots
         /// <param name="month"></param>
         /// <param name="includeCrossOverDays"></param>
         /// <returns></returns>
-        Task<TimeSlotRangeInfoDto> GetAllTimeSlots(
+        Task<TimeSlotRangeInfoDto> GetAllTimeSlotsFromMonth(
             int year,
             int month,
             bool includeCrossOverDays

@@ -1,10 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Shared.TimeSlots;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Data;
 
 namespace Rise.Services.TimeSlots
 {
@@ -38,27 +35,60 @@ namespace Rise.Services.TimeSlots
             return timeSlots;
         }
 
-        public Task<TimeSlotRangeInfoDto> GetAllTimeSlots(
+        public async Task<TimeSlotRangeInfoDto> GetAllTimeSlotsFromMonth(
             int year,
             int month,
             bool includeCrossOverDays)
         {
-            var (startDay, endDay) = GenerateDayRange(year, month, includeCrossOverDays);
-            var task = new Task<TimeSlotRangeInfoDto>(
-                () =>
+            // TODO double check persistence if queries can be indexed better
+            // TODO query can be reused GetTimeSlotsByDate
+            (DateOnly startDay, DateOnly endDay) = GenerateDayRange(year, month, includeCrossOverDays);
+            Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> daysWithReservation = [];
+
+            var overlappingCruisePeriod = await dbContext.CruisePeriods
+                .FirstOrDefaultAsync(cruisePeriod => (DateOnly.FromDateTime(cruisePeriod.Start.Date) <= startDay && startDay <= DateOnly.FromDateTime(cruisePeriod.End.Date)) ||
+                (DateOnly.FromDateTime(cruisePeriod.Start.Date) <= endDay && endDay <= DateOnly.FromDateTime(cruisePeriod.End.Date)));
+
+            var allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
+                timeSlot => startDay <= timeSlot.Date && timeSlot.Date <= endDay
+                && !timeSlot.IsDeleted)
+                .Select(timeSlot => new
                 {
-                    int totalDays = 1 + endDay.Subtract(startDay).Days;
-                    IEnumerable<TimeSlotDaySurfaceInfoDto> days = Enumerable.Range(0, totalDays)
-                    .Select(offset =>
+                    timeSlot.Date,
+                    timeSlot.Start,
+                    UsedBoatCount = dbContext.Reservations.Where(reservation => reservation.TimeSlotId == timeSlot.Id).Count()
+                })
+                .ToListAsync();
+
+            if (allTimeSlotsDuringRange.Count != 0)
+            {
+                int totalAmountBoats = dbContext.Boats.Count();
+
+                daysWithReservation = allTimeSlotsDuringRange
+                .GroupBy(
+                    x => x.Date,
+                    (date, subset) => new
                     {
-                        var date = DateOnly.FromDateTime(startDay.AddDays(offset).Date);
-                        return new TimeSlotDaySurfaceInfoDto(date, true, true);
-                    });
-                    return new TimeSlotRangeInfoDto(DateOnly.FromDateTime(startDay), DateOnly.FromDateTime(endDay), totalDays, days);
-                }
-            );
-            task.Start();
-            return task;
+                        Date = date,
+                        TotalDayTimeSlotCount = subset.DistinctBy(x => x.Start).Count(),
+                        UsedBoatCount = subset.Select(x => x.UsedBoatCount).Sum()
+                    }
+                ).Select(x =>
+                {
+                    bool IsFullyBooked = x.TotalDayTimeSlotCount * totalAmountBoats <= x.UsedBoatCount;
+                    return new TimeSlotDaySurfaceInfoDto(x.Date, IsFullyBooked, !IsFullyBooked);
+                }).ToDictionary(x => x.Date);
+            }
+
+            int totalDays = 1 + endDay.ToDateTime(TimeOnly.MinValue).Subtract(startDay.ToDateTime(TimeOnly.MinValue)).Days;
+            IEnumerable<TimeSlotDaySurfaceInfoDto> days = Enumerable.Range(0, totalDays)
+                    .Select(offset =>
+                        {
+                            DateOnly date = startDay.AddDays(offset);
+                            return daysWithReservation.GetValueOrDefault(date, new TimeSlotDaySurfaceInfoDto(date, false, false));
+                        });
+
+            return new TimeSlotRangeInfoDto(startDay, endDay, totalDays, days);
         }
 
         // TODO documentation
@@ -69,7 +99,7 @@ namespace Rise.Services.TimeSlots
         /// <param name="month"></param>
         /// <param name="includeCrossOverDays"></param>
         /// <returns></returns>
-        private static (DateTime, DateTime) GenerateDayRange(int year, int month, bool includeCrossOverDays)
+        private static (DateOnly, DateOnly) GenerateDayRange(int year, int month, bool includeCrossOverDays)
         {
             // ? use local for calendars where Sunday is start of the week
             DateOnly firstDayMonth = new(year, month, 1);
@@ -81,7 +111,7 @@ namespace Rise.Services.TimeSlots
             DateOnly startDay = includeCrossOverDays ? firstDayMonth.AddDays(1 - firstDayIndex) : firstDayMonth;
             DateOnly endDay = includeCrossOverDays ? lastDayMonth.AddDays(7 - lastDayIndex) : lastDayMonth;
 
-            return (startDay.ToDateTime(new TimeOnly(0)), endDay.ToDateTime(new TimeOnly(0)));
+            return (startDay, endDay);
         }
 
         private static int NormalDayIndexToMonday(DayOfWeek dayOfWeek)

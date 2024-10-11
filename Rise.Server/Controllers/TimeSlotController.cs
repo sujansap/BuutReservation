@@ -41,7 +41,7 @@ namespace Rise.Server.Controllers
         {
             // TODO add validation
             // TODO add simple data range
-            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlots(
+            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsFromMonth(
                 year,
                 month,
                 includeCrossOverDays);
