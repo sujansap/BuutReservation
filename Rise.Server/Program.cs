@@ -3,14 +3,17 @@ using Rise.Persistence;
 using Rise.Persistence.Triggers;
 using Rise.Server.Controllers;
 using Rise.Services.Products;
-using Rise.Services.Timeslots;
+using Rise.Services.TimeSlots;
 using Rise.Shared.Products;
+using Rise.Shared.TimeSlots;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

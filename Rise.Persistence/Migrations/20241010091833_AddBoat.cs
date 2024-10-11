@@ -7,11 +7,18 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Rise.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class soleBoat : Migration
+    public partial class AddBoat : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<DateOnly>(
+                name: "Date",
+                table: "TimeSlots",
+                type: "date",
+                nullable: false,
+                defaultValue: new DateOnly(1, 1, 1));
+
             migrationBuilder.CreateTable(
                 name: "Boat",
                 columns: table => new
@@ -19,13 +26,8 @@ namespace Rise.Persistence.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     PersonalName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    StartOutOfOrder = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    EndOutOfOrder = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    MaximumAdults = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
-                    MaximumChildren = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    MaximumPets = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "NOW()"),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -39,6 +41,10 @@ namespace Rise.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Boat");
+
+            migrationBuilder.DropColumn(
+                name: "Date",
+                table: "TimeSlots");
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rise.Persistence;
@@ -11,9 +12,11 @@ using Rise.Persistence;
 namespace Rise.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241010100235_RelationReservationAndBoat")]
+    partial class RelationReservationAndBoat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Rise.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.Property<int>("ReservationsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ReservationsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ReservationUser");
-                });
 
             modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
                 {
@@ -161,9 +149,6 @@ namespace Rise.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("TimeSlotId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
@@ -172,8 +157,6 @@ namespace Rise.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BoatId");
-
-                    b.HasIndex("TimeSlotId");
 
                     b.ToTable("Reservation", (string)null);
                 });
@@ -247,21 +230,6 @@ namespace Rise.Persistence.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.HasOne("Rise.Domain.Timeslots.Reservation", null)
-                        .WithMany()
-                        .HasForeignKey("ReservationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rise.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Rise.Domain.Timeslots.Reservation", b =>
                 {
                     b.HasOne("Rise.Domain.Boats.Boat", "Boat")
@@ -270,15 +238,7 @@ namespace Rise.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Rise.Domain.Timeslots.TimeSlot", "TimeSlot")
-                        .WithMany("Reservations")
-                        .HasForeignKey("TimeSlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Boat");
-
-                    b.Navigation("TimeSlot");
                 });
 
             modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
@@ -300,11 +260,6 @@ namespace Rise.Persistence.Migrations
             modelBuilder.Entity("Rise.Domain.Timeslots.CruisePeriod", b =>
                 {
                     b.Navigation("TimeSlots");
-                });
-
-            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
-                {
-                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }
