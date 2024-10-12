@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.TimeSlots;
 
@@ -31,20 +32,24 @@ namespace Rise.Server.Controllers
         /// <param name="includeCrossOverDays">If days need to be included from the weeks where in the month crosses over from/into the other</param>
         /// <returns></returns>
         [HttpGet("{year}/{month}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotRangeInfoDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<TimeSlotRangeInfoDto> Get(
+            [FromRoute]
+            [Range(1, 9999, ErrorMessage = "Year cannot be negative")]
             int year,
+            [FromRoute]
+            [Range(1, 12, ErrorMessage = "Month must be between 1 and 12")]
             int month,
+            [FromQuery]
             bool includeCrossOverDays = false
             )
         {
-            // TODO add validation
-            // TODO add simple data range
             TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsFromMonth(
                 year,
                 month,
                 includeCrossOverDays);
+
             return timeSlotRangeInfoDto;
         }
     }

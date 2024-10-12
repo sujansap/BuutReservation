@@ -10,6 +10,32 @@ namespace Rise.Services.TimeSlots
     {
         private readonly ApplicationDbContext dbContext = dbContext;
 
+        internal class DateTimeSlotBoatUse
+        {
+            /// <summary>
+            /// The date of the time slot
+            /// </summary>
+            public DateOnly Date { get; set; }
+            /// <summary>
+            /// The start time of the time slot
+            /// </summary>
+            public TimeSpan Start { get; set; }
+            /// <summary>
+            /// The amount of boats who already have been reserved
+            /// </summary>
+            public int UsedBoatCount { get; set; }
+        }
+
+        // TODO move to CruisePeriod Service?
+        /// <param name="start">The start date</param>
+        /// <param name="end">The end date</param>
+        /// <returns>If there is a cruise period active in given date range</returns>
+        private Task<CruisePeriod?> CruisePeriodInDateRange(DateTime start, DateTime end)
+        {
+            return dbContext.CruisePeriods
+                .FirstOrDefaultAsync(cruisePeriod => cruisePeriod.Start.Date <= end && start <= cruisePeriod.End.Date);
+        }
+
         public async Task<List<TimeSlotDto>> GetTimeSlotsByDate(DateTime date)
         {
             // Find the CruisePeriod that contains the given date
@@ -41,13 +67,13 @@ namespace Rise.Services.TimeSlots
             int month,
             bool includeCrossOverDays)
         {
-            // TODO double check persistence if queries can be indexed better
-            // TODO query can be reused GetTimeSlotsByDate
             (DateOnly startDay, DateOnly endDay) = GenerateDayRange(year, month, includeCrossOverDays);
             Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> daysWithReservation = [];
 
-            CruisePeriod? overlappingCruisePeriod = await dbContext.CruisePeriods
-                .FirstOrDefaultAsync(cruisePeriod => DateOnly.FromDateTime(cruisePeriod.Start.Date) <= endDay && startDay <= DateOnly.FromDateTime(cruisePeriod.End.Date));
+            CruisePeriod? overlappingCruisePeriod = await CruisePeriodInDateRange(
+                startDay.ToDateTime(TimeOnly.MinValue),
+                endDay.ToDateTime(TimeOnly.MaxValue)
+            );
 
             if (overlappingCruisePeriod is not null)
             {
@@ -63,26 +89,26 @@ namespace Rise.Services.TimeSlots
                 })
                 .ToListAsync();
 
-            if (allTimeSlotsDuringRange.Count != 0)
-            {
-                int totalAmountBoats = dbContext.Boats.Count();
-
-                daysWithReservation = allTimeSlotsDuringRange
-                .GroupBy(
-                    x => x.Date,
-                    (date, subset) => new
-                    {
-                        Date = date,
-                        TotalDayTimeSlotCount = subset.DistinctBy(x => x.Start).Count(),
-                        UsedBoatCount = subset.Select(x => x.UsedBoatCount).Sum()
-                    }
-                ).Select(x =>
+                if (allTimeSlotsDuringRange.Count != 0)
                 {
-                    bool isFullyBooked = x.TotalDayTimeSlotCount * totalAmountBoats <= x.UsedBoatCount;
-                    bool isSlotAvailable = !isFullyBooked && x.Date.CompareTo(DateOnly.FromDateTime(DateTime.Today).AddDays(Reservation.MinDaysBetweenReservation)) > 0;
-                    return new TimeSlotDaySurfaceInfoDto(x.Date, isFullyBooked, isSlotAvailable);
-                }).ToDictionary(x => x.Date);
-            }
+                    int totalAmountBoats = dbContext.Boats.Count();
+
+                    daysWithReservation = allTimeSlotsDuringRange
+                    .GroupBy(
+                        x => x.Date,
+                        (date, subset) => new
+                        {
+                            Date = date,
+                            TotalDayTimeSlotCount = subset.DistinctBy(x => x.Start).Count(),
+                            UsedBoatCount = subset.Select(x => x.UsedBoatCount).Sum()
+                        }
+                    ).Select(x =>
+                    {
+                        bool isFullyBooked = x.TotalDayTimeSlotCount * totalAmountBoats <= x.UsedBoatCount;
+                        bool isSlotAvailable = !isFullyBooked && x.Date.CompareTo(DateOnly.FromDateTime(DateTime.Today).AddDays(Reservation.MinDaysBetweenReservation)) > 0;
+                        return new TimeSlotDaySurfaceInfoDto(x.Date, isFullyBooked, isSlotAvailable);
+                    }).ToDictionary(x => x.Date);
+                }
             }
 
             int totalDays = 1 + endDay.ToDateTime(TimeOnly.MinValue).Subtract(startDay.ToDateTime(TimeOnly.MinValue)).Days;
@@ -96,21 +122,13 @@ namespace Rise.Services.TimeSlots
             return new TimeSlotRangeInfoDto(startDay, endDay, totalDays, days);
         }
 
-        internal class DateTimeSlotBoatUse
-        {
-            public DateOnly Date { get; set; }
-            public TimeSpan Start { get; set; }
-            public int UsedBoatCount { get; set; }
-        }
-
-        // TODO documentation
         /// <summary>
-        /// 
+        ///  Gets the start and end day of a month with the possibility
         /// </summary>
         /// <param name="year"></param>
         /// <param name="month"></param>
-        /// <param name="includeCrossOverDays"></param>
-        /// <returns></returns>
+        /// <param name="includeCrossOverDays">If days need to be included from the weeks where in the month crosses over from/into the other</param>
+        /// <returns>Start day and end day</returns>
         private static (DateOnly, DateOnly) GenerateDayRange(int year, int month, bool includeCrossOverDays)
         {
             // ? use local for calendars where Sunday is start of the week
@@ -126,6 +144,11 @@ namespace Rise.Services.TimeSlots
             return (startDay, endDay);
         }
 
+        /// <summary>
+        /// Shifts start day of the week to Monday in place of the default Sunday
+        /// </summary>
+        /// <param name="dayOfWeek">Which day of the week to shift</param>
+        /// <returns>Index of the day of the week starting from Monday (index 1)</returns>
         private static int NormalDayIndexToMonday(DayOfWeek dayOfWeek)
         {
             return dayOfWeek == DayOfWeek.Sunday ? 7 : (int)dayOfWeek;
