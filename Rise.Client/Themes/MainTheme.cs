@@ -13,6 +13,9 @@ namespace Rise.Client.Themes
                 PrimaryDarken = "#339995",
                 Secondary = "#ffffff",
                 SecondaryContrastText = "#272c34",
+                TextPrimary = "#FFFFFF",
+                TextSecondary = "#030303",
+
                 AppbarBackground = "#42C4BE",
             },
             PaletteDark = new PaletteDark()
