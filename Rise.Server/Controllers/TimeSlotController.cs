@@ -17,9 +17,9 @@ namespace Rise.API.Controllers
 
         // GET api/timeslot?date=2024-10-08
         [HttpGet]
-        public async Task<IActionResult> GetTimeSlotsByDate([FromQuery] DateTime date)
+        public async Task<IActionResult> GetTimeSlotsByDate([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
         {
-            var timeSlots = await _timeSlotService.GetTimeSlotsByDate(date);
+            var timeSlots = await _timeSlotService.GetTimeSlotsByDate(year, month, day);
 
             if (timeSlots == null || !timeSlots.Any())
             {

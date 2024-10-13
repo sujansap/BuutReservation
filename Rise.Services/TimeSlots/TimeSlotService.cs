@@ -17,30 +17,20 @@ namespace Rise.Services.TimeSlots
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(DateTime date)
+        public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
         {
-            // Find the CruisePeriod that contains the given date
-            var cruisePeriod = await _dbContext.CruisePeriods
-                .FirstOrDefaultAsync(cp => cp.Start.Date <= date.Date && cp.End.Date >= date.Date);
+            var date = new DateOnly(year, month, day);
 
-            if (cruisePeriod == null)
+            var timeSlots = await _dbContext.TimeSlots.Where(ts => ts.Date == date).
+            Select(ts => new TimeSlotDto
             {
-                return new List<TimeSlotDto>(); // No cruise period found for the given date
-            }
-
-            // Fetch the TimeSlots for that CruisePeriod
-            var timeSlots = await _dbContext.TimeSlots
-                .Where(ts => ts.CruisePeriodId == cruisePeriod.Id)
-                .Select(ts => new TimeSlotDto
-                {
-                    Id = ts.Id,
-                    Start = ts.Start,
-                    End = ts.End,
-                    CruisePeriodId = ts.CruisePeriodId
-                })
-                .ToListAsync();
+                Id = ts.Id,
+                Start = ts.Start,
+                End = ts.End
+            }).ToListAsync();
 
             return timeSlots;
+
         }
     }
 }
