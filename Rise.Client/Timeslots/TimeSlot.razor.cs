@@ -13,7 +13,7 @@ namespace Rise.Client.Timeslots
 
         protected override async Task OnInitializedAsync()
         {
-            timeslots = await TimeSlotService.GetTimeSlotsByDate(2024, 10, 14);
+            timeslots = await TimeSlotService.GetTimeSlotsByDate(2024, 10, 12);
         }
     }
 }

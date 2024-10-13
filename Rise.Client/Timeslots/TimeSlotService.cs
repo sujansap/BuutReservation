@@ -18,8 +18,7 @@ namespace Rise.Client.Timeslots
 
         public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
         {
-            var timeslots = await httpClient.GetFromJsonAsync<IEnumerable<TimeSlotDto>>($"timeslot?date={year}-{month}-{day}");
-            //var timeslots = await httpClient.GetFromJsonAsync<IEnumerable<TimeSlotDto>>($"timeslot?date={date:2024-10-12}");
+            var timeslots = await httpClient.GetFromJsonAsync<IEnumerable<TimeSlotDto>>($"TimeSlot/{year}/{month}/{day}");
             return timeslots!;
         }
 
