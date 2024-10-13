@@ -1,0 +1,16 @@
+@using MudBlazor
+@using Rise.Shared.TimeSlots;
+
+<MudCard Style="border-radius: 8px; border: 1px solid black;" Class="mud-theme-primary" Border="1px black">
+    <MudCardContent>
+        <MudText Align="Align.Center" Typo="Typo.h6">
+            @Timeslot?.Start.Hours:@(Timeslot?.Start.Minutes.ToString("00")) -
+            @Timeslot?.End.Hours:@(Timeslot?.End.Minutes.ToString("00"))
+        </MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public TimeSlotDto? Timeslot { get; set; }
+}

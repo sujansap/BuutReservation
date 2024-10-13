@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Rise.Shared.TimeSlots;
 
-namespace Rise.Client.Timeslots
+namespace Rise.Client.TimeSlots
 {
     public class TimeSlotService : ITimeSlotService
     {

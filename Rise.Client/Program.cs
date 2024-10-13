@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.Web;
 using Rise.Client;
 using Rise.Client.Products;
-using Rise.Client.Timeslots;
+using Rise.Client.TimeSlots;
 using Rise.Shared.Products;
 using Rise.Shared.TimeSlots;
 using MudBlazor.Services;
+
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

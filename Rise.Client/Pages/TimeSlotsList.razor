@@ -1,0 +1,41 @@
+﻿<!-- Pages/TimeslotList.razor -->
+@page "/timeslots"
+@using Rise.Shared.TimeSlots
+@using static System.Net.WebRequestMethods
+@using Rise.Client.Components
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudText Typo="Typo.h4">Available Timeslots</MudText>
+
+    @if (timeslots == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        <p>Loading timeslots...</p>
+    }
+    else if (timeslots?.Count() == 0)
+    {
+        <MudAlert Severity="Severity.Info">No timeslots available.</MudAlert>
+    }
+    else
+    {
+        <MudStack Spacing="2">
+            @foreach (var timeslot in timeslots)
+            {
+
+                <TimeSlotComponent Timeslot="timeslot" />
+
+            }
+        </MudStack>
+    }
+</MudContainer>
+
+@code {
+    private IEnumerable<TimeSlotDto>? timeslots;
+
+    [Inject] public required ITimeSlotService TimeSlotService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        timeslots = await TimeSlotService.GetTimeSlotsByDate(2024, 10, 12);
+    }
+}
