@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Rise.Services.TimeSlots;
 using Rise.Shared.TimeSlots;
+using System.ComponentModel.DataAnnotations;
 
 namespace Rise.API.Controllers
 {
@@ -15,18 +16,41 @@ namespace Rise.API.Controllers
             _timeSlotService = timeSlotService;
         }
 
-        // GET api/timeslot?date=2024-10-08
-        [HttpGet]
-        public async Task<IActionResult> GetTimeSlotsByDate([FromQuery] int year, [FromQuery] int month, [FromQuery] int day)
-        {
-            var timeSlots = await _timeSlotService.GetTimeSlotsByDate(year, month, day);
 
-            if (timeSlots == null || !timeSlots.Any())
+        [HttpGet("{year}/{month}/{day}")]
+        public async Task<IActionResult> GetTimeSlotsByDate(
+            [FromRoute]
+            [Range(1, 9999, ErrorMessage = "Year must be between 1 and 9999")]
+            int year,
+            [FromRoute]
+            [Range(1, 12, ErrorMessage = "Month must be between 1 and 12")]
+            int month,
+            [FromRoute]
+            [Range(1, 31, ErrorMessage = "Day must be between 1 and 31")]
+            int day)
+        {
+            // Validate the date parameters
+            if (!IsValidDate(year, month, day))
             {
-                return NotFound("No TimeSlots found for the given date.");
+                return BadRequest("Invalid date parameters.");
             }
 
+            var timeSlots = await _timeSlotService.GetTimeSlotsByDate(year, month, day);
+
             return Ok(timeSlots);
+        }
+
+        private bool IsValidDate(int year, int month, int day)
+        {
+            try
+            {
+                var date = new DateTime(year, month, day);
+                return true;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return false;
+            }
         }
     }
 }
