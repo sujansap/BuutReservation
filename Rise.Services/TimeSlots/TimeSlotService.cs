@@ -36,32 +36,6 @@ namespace Rise.Services.TimeSlots
                 .FirstOrDefaultAsync(cruisePeriod => cruisePeriod.Start.Date <= end && start <= cruisePeriod.End.Date);
         }
 
-        public async Task<List<TimeSlotDto>> GetTimeSlotsByDate(DateTime date)
-        {
-            // Find the CruisePeriod that contains the given date
-            CruisePeriod? cruisePeriod = await dbContext.CruisePeriods
-                .FirstOrDefaultAsync(cp => cp.Start.Date <= date.Date && cp.End.Date >= date.Date);
-
-            if (cruisePeriod is null)
-            {
-                return []; // No cruise period found for the given date
-            }
-
-            // Fetch the TimeSlots for that CruisePeriod
-            var timeSlots = await dbContext.TimeSlots
-                .Where(ts => ts.CruisePeriodId == cruisePeriod.Id)
-                .Select(ts => new TimeSlotDto
-                {
-                    Id = ts.Id,
-                    Start = ts.Start,
-                    End = ts.End,
-                    CruisePeriodId = ts.CruisePeriodId
-                })
-                .ToListAsync();
-
-            return timeSlots;
-        }
-
         public async Task<TimeSlotRangeInfoDto> GetAllTimeSlotsFromMonth(
             int year,
             int month,

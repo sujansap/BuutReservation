@@ -11,19 +11,6 @@ namespace Rise.Server.Controllers
         private readonly ILogger _logger = logger;
         private readonly ITimeSlotService timeSlotService = timeSlotService;
 
-        // GET api/timeslot?date=2024-10-08
-        [HttpGet]
-        public async Task<IActionResult> GetTimeSlotsByDate([FromQuery] DateTime date)
-        {
-            var timeSlots = await timeSlotService.GetTimeSlotsByDate(date);
-
-            if (timeSlots == null || !timeSlots.Any())
-            {
-                return NotFound("No TimeSlots found for the given date.");
-            }
-
-            return Ok(timeSlots);
-        }
 
         /// <summary>
         /// Gets all time slots during the given month of a year
@@ -35,7 +22,7 @@ namespace Rise.Server.Controllers
         [HttpGet("{year}/{month}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotRangeInfoDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<TimeSlotRangeInfoDto> Get(
+        public async Task<TimeSlotRangeInfoDto> GetAvailableTimeSlotsInMonth(
             [FromRoute]
             [Range(1, 9999, ErrorMessage = "Year cannot be negative")]
             int year,
