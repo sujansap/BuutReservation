@@ -6,8 +6,9 @@ namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TimeSlotController(ITimeSlotService timeSlotService) : ControllerBase
+    public class TimeSlotController(ITimeSlotService timeSlotService, ILogger<TimeSlotController> logger) : ControllerBase
     {
+        private readonly ILogger _logger = logger;
         private readonly ITimeSlotService timeSlotService = timeSlotService;
 
         // GET api/timeslot?date=2024-10-08
@@ -45,10 +46,13 @@ namespace Rise.Server.Controllers
             bool includeCrossOverDays = false
             )
         {
+            _logger.LogInformation("GET TimeSlot/{year}/{month}?includeCrossOverDays={includeCrossOverDays}", [year, month, includeCrossOverDays]);
+            _logger.LogDebug("Getting days from year {year} and mont {month} including cross over days = {includeCrossOverDays} from service layer", [year, month, includeCrossOverDays]);
             TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsFromMonth(
                 year,
                 month,
                 includeCrossOverDays);
+            _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Start, timeSlotRangeInfoDto.End]);
 
             return timeSlotRangeInfoDto;
         }
