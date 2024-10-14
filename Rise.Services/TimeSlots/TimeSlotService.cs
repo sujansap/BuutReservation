@@ -44,16 +44,8 @@ namespace Rise.Services.TimeSlots
             (DateOnly startDay, DateOnly endDay) = GenerateDayRange(year, month, includeCrossOverDays);
             Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> daysWithReservation = [];
 
-            CruisePeriod? overlappingCruisePeriod = await CruisePeriodInDateRange(
-                startDay.ToDateTime(TimeOnly.MinValue),
-                endDay.ToDateTime(TimeOnly.MaxValue)
-            );
-
-            if (overlappingCruisePeriod is not null)
-            {
-                List<DateTimeSlotBoatUse> allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
-                timeSlot => timeSlot.CruisePeriodId == overlappingCruisePeriod.Id
-                && startDay <= timeSlot.Date && timeSlot.Date <= endDay
+            List<DateTimeSlotBoatUse> allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
+                timeSlot => startDay <= timeSlot.Date && timeSlot.Date <= endDay
                 && !timeSlot.IsDeleted)
                 .Select(timeSlot => new DateTimeSlotBoatUse()
                 {
@@ -82,7 +74,6 @@ namespace Rise.Services.TimeSlots
                         bool isSlotAvailable = !isFullyBooked && x.Date.CompareTo(DateOnly.FromDateTime(DateTime.Today).AddDays(Reservation.MinDaysBetweenReservation)) > 0;
                         return new TimeSlotDaySurfaceInfoDto(x.Date, isFullyBooked, isSlotAvailable);
                     }).ToDictionary(x => x.Date);
-                }
             }
 
             int totalDays = 1 + endDay.ToDateTime(TimeOnly.MinValue).Subtract(startDay.ToDateTime(TimeOnly.MinValue)).Days;
