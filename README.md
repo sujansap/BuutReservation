@@ -8,7 +8,7 @@
 - Pushwant Sagoo - [MEMBER3_EMAIL] - [MEMBER3_GITHUB_USERNAME]
 - Sujan Sapkota - sujan.sapkota@student.hogent.be - sujansapkota2
 - Simon De Roeve - simon.deroeve@student.hogent.be - SimonDeRoeve
-- Bas Stokmans - [MEMBER6_EMAIL] - [MEMBER6_GITHUB_USERNAME]
+- Bas Stokmans - [bas.stokmans@student.hogent.be] - [baziniser]
 - Bindo Thorpe - bindo.thorpe@student.hogent.be - bindothorpe
 
 ## Technologies & Packages Used
