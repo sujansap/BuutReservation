@@ -18,14 +18,16 @@
     }
     else
     {
-        <MudStack Spacing="2">
-            @foreach (var timeslot in timeslots)
-            {
+        <MudPaper Style="height: 400px; overflow-y: auto; background-color: #e4e4e4;" Class="pa-2">
+            <MudStack>
+                @foreach (var timeslot in timeslots)
+                {
 
-                <TimeSlotComponent Timeslot="timeslot" />
+                    <TimeSlotComponent Timeslot="timeslot" />
 
-            }
-        </MudStack>
+                }
+            </MudStack>
+        </MudPaper>
     }
 </MudContainer>
 
