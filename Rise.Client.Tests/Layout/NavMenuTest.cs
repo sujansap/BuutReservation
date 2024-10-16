@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
+using MudBlazor;
 using Shouldly;
 
 namespace Rise.Client.Layout
@@ -28,6 +29,25 @@ namespace Rise.Client.Layout
 
             Page.Url.ShouldNotBe(beginUri);
             Page.Url.ShouldEndWith(resultSuffix);
+        }
+
+        [TestMethod]
+        [DataRow("nav-mobile-about", "about")]
+        [DataRow("nav-mobile-profile", "profile")]
+        [DataRow("nav-mobile-reservations", "reservations")]
+        [DataRow("nav-mobile-book", "book")]
+        [DataRow("nav-mobile-notifications", "notifications")]
+        [DataRow("nav-mobile-settings", "settings")]
+        public async Task Mobile_NavNotifications(string testId, string resultSuffix)
+        {
+            await Page.SetViewportSizeAsync(959, 1920);
+            await Page.GotoAsync("https://localhost:5001");
+            string beginUri = Page.Url;
+            await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
+            await Page.GetByTestId(testId).ClickAsync();
+
+            Page.Url.ShouldNotBe(beginUri);
+            Page.Url.ShouldEndWith($"/{resultSuffix}");
         }
     }
 }
