@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.TimeSlots;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Rise.Server.Controllers
 {
@@ -21,9 +22,9 @@ namespace Rise.Server.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotRangeInfoDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAvailableTimeSlotsInMonth(
-            [FromQuery]
+            [FromQuery, SwaggerParameter(Required = true)]
             DateOnly startDay,
-            [FromQuery]
+            [FromQuery, SwaggerParameter(Required = true)]
             DateOnly endDay
             )
         {
