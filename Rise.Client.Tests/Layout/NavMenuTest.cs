@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
@@ -9,20 +10,24 @@ namespace Rise.Client.Layout
     [TestClass]
     public class NavMenuTest : PageTest
     {
+        private const int DefaultHeight = 1920;
+
         [TestMethod]
-        // [DataRow(600, 960)]
-        [DataRow(960, 1280)]
-        [DataRow(1280, 1920)]
-        [DataRow(1920, 2560)]
-        public async Task Desktop_NavReservations(int width, int height)
+        [DataRow("nav-brand-logo", "/", "/reservations")]
+        [DataRow("nav-desktop-about", "/about", "")]
+        [DataRow("nav-desktop-reservations", "/reservations", "")]
+        [DataRow("nav-desktop-book", "/book", "")]
+        [DataRow("nav-desktop-profile", "/profile", "")]
+        [DataRow("nav-desktop-notifications", "/notifications", "")]
+        public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix)
         {
-            await Page.SetViewportSizeAsync(width, height);
-            await Page.GotoAsync("https://localhost:5001");
+            await Page.SetViewportSizeAsync(961, DefaultHeight);
+            await Page.GotoAsync("https://localhost:5001" + startSuffix);
             string beginUri = Page.Url;
-            await Page.GetByTestId("nav-desktop-reservations").ClickAsync();
+            await Page.GetByTestId(testId).ClickAsync();
 
             Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldEndWith("/reservations");
+            Page.Url.ShouldEndWith(resultSuffix);
         }
     }
 }
