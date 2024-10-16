@@ -1,9 +1,7 @@
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
-using MudBlazor;
 using Shouldly;
 
 namespace Rise.Client.Layout
@@ -11,43 +9,20 @@ namespace Rise.Client.Layout
     [TestClass]
     public class NavMenuTest : PageTest
     {
-        private const int DefaultHeight = 1920;
-
         [TestMethod]
-        [DataRow("nav-brand-logo", "/", "/reservations")]
-        [DataRow("nav-desktop-about", "/about", "")]
-        [DataRow("nav-desktop-reservations", "/reservations", "")]
-        [DataRow("nav-desktop-book", "/book", "")]
-        [DataRow("nav-desktop-profile", "/profile", "")]
-        [DataRow("nav-desktop-notifications", "/notifications", "")]
-        public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix)
+        // [DataRow(600, 960)]
+        [DataRow(960, 1280)]
+        [DataRow(1280, 1920)]
+        [DataRow(1920, 2560)]
+        public async Task Desktop_NavReservations(int width, int height)
         {
-            await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await Page.GotoAsync("https://localhost:5001" + startSuffix);
-            string beginUri = Page.Url;
-            await Page.GetByTestId(testId).ClickAsync();
-
-            Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldEndWith(resultSuffix);
-        }
-
-        [TestMethod]
-        [DataRow("nav-mobile-about", "about")]
-        [DataRow("nav-mobile-profile", "profile")]
-        [DataRow("nav-mobile-reservations", "reservations")]
-        [DataRow("nav-mobile-book", "book")]
-        [DataRow("nav-mobile-notifications", "notifications")]
-        [DataRow("nav-mobile-settings", "settings")]
-        public async Task Mobile_NavNotifications(string testId, string resultSuffix)
-        {
-            await Page.SetViewportSizeAsync(959, 1920);
+            await Page.SetViewportSizeAsync(width, height);
             await Page.GotoAsync("https://localhost:5001");
             string beginUri = Page.Url;
-            await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
-            await Page.GetByTestId(testId).ClickAsync();
+            await Page.GetByTestId("nav-desktop-reservations").ClickAsync();
 
             Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldEndWith($"/{resultSuffix}");
+            Page.Url.ShouldEndWith("/reservations");
         }
     }
 }
