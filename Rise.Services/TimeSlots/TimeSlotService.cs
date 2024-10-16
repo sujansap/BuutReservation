@@ -39,6 +39,7 @@ namespace Rise.Services.TimeSlots
             .Where(item => item.ReservationCount < amountOfAvailableBoats)
             .Select(item => new TimeSlotDto
             {
+                Id = item.TimeSlot.Id,
                 Start = item.TimeSlot.Start,
                 End = item.TimeSlot.End,
             })
