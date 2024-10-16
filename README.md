@@ -80,3 +80,4 @@ dotnet ef database update --startup-project Rise.Server --project Rise.Persisten
 ### E2E testing via playwright
 
 Install via the [instructions](https://playwright.dev/dotnet/docs/intro) on playwright docs
+To test the E2E tests, be sure that the project is running.
