@@ -3,7 +3,7 @@
 <MudAppBar Elevation="1">
 
     @* Always display *@
-    <MudLink Href="/">
+    <MudLink Href="/" data-testid="nav-brand-logo">
         <MudImage Src="assets/BUUT_logo_white.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain"
             Class="mr-3" />
     </MudLink>
@@ -11,18 +11,19 @@
     @* NavMenu for desktop *@
     <MudHidden Breakpoint="Breakpoint.SmAndDown">
         <MudStack Row="true">
-            <MudNavLink Href="counter">HOME</MudNavLink>
-            <MudNavLink Href="about">ABOUT</MudNavLink>
-            <MudNavLink Href="reservations">RESERVEER</MudNavLink>
+            <MudNavLink Href="counter" data-testid="nav-desktop-counter">HOME</MudNavLink>
+            <MudNavLink Href="about" data-testid="nav-desktop-about">ABOUT</MudNavLink>
+            <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">RESERVEER</MudNavLink>
         </MudStack>
         <MudSpacer></MudSpacer>
-        <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="reservations">
+        <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
+            data-testid="nav-desktop-book">
             BOOK NOW
         </MudButton>
         <MudIconButton Class="mr-2" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End"
-            Href="profile" />
+            Href="profile" data-testid="nav-desktop-profile" />
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
-            Href="notifications" />
+            Href="notifications" data-testid="nav-desktop-notifications" />
     </MudHidden>
 
     @* NavMenu for mobile *@
@@ -36,25 +37,26 @@
 
 <MudDrawer @bind-Open="@_drawerOpen" Elevation="1" Variant="@DrawerVariant.Temporary" Anchor="Anchor.End">
     <MudDrawerHeader Class="pr-0">
-        @* <MudImage Src="assets/BUUT_logo.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain" />
-        *@
-
+        @* TODO make mobile profile *@
         <MudStack Row="true" AlignItems="AlignItems.Center">
             <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Outlined">B</MudAvatar>
             <MudText>Welkom, Bindo</MudText>
             <MudSpacer />
             <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.End"
-                OnClick="@ToggleDrawer" />
+                OnClick="@ToggleDrawer" data-testid="nav-mobile-profile" />
+            @* TODO dubble ids? *@
         </MudStack>
     </MudDrawerHeader>
     <MudNavMenu>
         <MudDivider />
-        <MudNavLink Href="counter" Match="NavLinkMatch.All">HOME</MudNavLink>
-        <MudNavLink Href="about">ABOUT</MudNavLink>
-        <MudNavLink Href="book">BOOK NOW</MudNavLink>
-        <MudNavLink Href="reservations">RESERVEER</MudNavLink>
+        <MudNavLink Href="counter" data-testid="nav-mobile-counter" Match="NavLinkMatch.All">HOME</MudNavLink>
+        <MudNavLink Href="about" data-testid="nav-mobile-about">ABOUT</MudNavLink>
+        <MudNavLink Href="book" data-testid="nav-mobile-book">BOOK NOW</MudNavLink>
+        <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">RESERVEER</MudNavLink>
         <MudDivider />
-        <MudNavLink Href="profile" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
-        <MudNavLink Href="notifications" Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+        <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">Profile
+        </MudNavLink>
+        <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
+            Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
