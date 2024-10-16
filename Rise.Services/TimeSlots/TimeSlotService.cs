@@ -1,10 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Shared.TimeSlots;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Rise.Services.TimeSlots
 {
