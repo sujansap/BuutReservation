@@ -12,7 +12,8 @@
             Items="AvailableDays" DateRangeChanged="OnDateRangeChanged">
             <MonthTemplate>
                 <div class="d-flex gap-1">
-                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" Size="Size.Small" />
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small"
+                        Color="((ColoredCalendarItem)context).Color" />
                     <div>@context.Text</div>
                 </div>
             </MonthTemplate>
@@ -23,3 +24,15 @@
             data-testid="calendar-your-reservations" />
     </MudTabPanel>
 </MudTabs>
+
+@* Legende *@
+<MudStack>
+    <div class="d-flex gap-1">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small" Color="Color.Primary" />
+        <div>Beschikbaar</div>
+    </div>
+    <div class="d-flex gap-1">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small" Color="Color.Warning" />
+        <div>Volzet</div>
+    </div>
+</MudStack>

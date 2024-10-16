@@ -11,7 +11,7 @@ namespace Rise.Client.Reservations
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; }
 
-        private List<CalendarItem> AvailableDays = new();
+        private List<ColoredCalendarItem> AvailableDays = new();
 
         protected override async Task OnInitializedAsync()
         {
@@ -32,15 +32,22 @@ namespace Rise.Client.Reservations
             .Where(item => item != null)
             .ToList();
         }
+        private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
 
-        private CalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
+        private ColoredCalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
         {
-            return new CalendarItem()
+            return new ColoredCalendarItem()
             {
                 Start = day.Date.ToDateTime(TimeOnly.MinValue),
                 End = day.Date.ToDateTime(TimeOnly.MaxValue),
-                Text = day.IsSlotAvailable ? "Available" : "Fully Booked",
+                Text = day.IsSlotAvailable ? "Beschikbaar" : "Volzet",
+                Color = day.IsSlotAvailable ? Color.Primary : Color.Warning
             };
+        }
+
+        private class ColoredCalendarItem : CalendarItem
+        {
+            public Color Color { get; set; } = Color.Primary;
         }
     }
 }
