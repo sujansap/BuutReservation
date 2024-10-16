@@ -53,4 +53,6 @@ using (var scope = app.Services.CreateScope())
     seeder.Seed();
 }
 
-app.Run();
+await app.RunAsync();
+
+public partial class Program { }
