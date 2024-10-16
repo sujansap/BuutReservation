@@ -18,6 +18,7 @@ namespace Rise.Services.TimeSlots
         }
         public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
         {
+
             //Right now we don't keep the information of whether a boat is available or not
             var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
 

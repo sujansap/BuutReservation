@@ -12,11 +12,21 @@ internal class TimeSlotConfiguration : IEntityTypeConfiguration<TimeSlot>
         builder.Property(x => x.Start).IsRequired();
         builder.Property(x => x.End).IsRequired();
 
+        builder.HasAlternateKey(x => new { x.Date, x.Start, x.End });
+
         // Configure foreign key relationship
         builder.HasOne(x => (CruisePeriod)x.CruisePeriod)
                .WithMany(x => (ICollection<TimeSlot>)x.TimeSlots)
                .HasForeignKey(x => x.CruisePeriodId)
                .OnDelete(DeleteBehavior.Cascade);
         //    TODO verify onDelete for TimeSlotConfiguration
+
+        builder.HasOne(x => (CruisePeriod)x.CruisePeriod)
+       .WithMany(x => (ICollection<TimeSlot>)x.TimeSlots)
+       .HasForeignKey(x => x.CruisePeriodId)
+       .OnDelete(DeleteBehavior.Cascade);
     }
 }
+
+
+
