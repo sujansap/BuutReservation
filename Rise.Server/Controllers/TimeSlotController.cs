@@ -18,6 +18,8 @@ namespace Rise.API.Controllers
 
 
         [HttpGet("{year}/{month}/{day}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTimeSlotsByDate(
             [FromRoute]
             [Range(1, 9999, ErrorMessage = "Year must be between 1 and 9999")]
