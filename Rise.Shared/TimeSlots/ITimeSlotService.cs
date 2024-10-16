@@ -4,16 +4,11 @@ namespace Rise.Shared.TimeSlots
     {
 
         /// <summary>
-        /// Gets all time slots between given 
+        /// Gets all time slots between given range
         /// </summary>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="includeCrossOverDays">If days need to be included from the weeks where in the month crosses over from/into the other</param>
-        /// <returns>All time slots with there general info</returns>
-        Task<TimeSlotRangeInfoDto> GetAllTimeSlotsFromMonth(
-            int year,
-            int month,
-            bool includeCrossOverDays
-        );
+        /// <param name="startDay">Date from where the range starts</param>
+        /// <param name="endDay">Date from where the range ends (inclusive)</param>
+        /// <returns>All time slots with their general info</returns>
+        Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDay, DateOnly endDay);
     }
 }

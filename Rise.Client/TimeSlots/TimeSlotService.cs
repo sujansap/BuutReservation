@@ -6,9 +6,9 @@ namespace Rise.Client.TimeSlots
     public class TimeSlotService(HttpClient httpClient) : ITimeSlotService
     {
         private readonly HttpClient httpClient = httpClient;
-        public Task<TimeSlotRangeInfoDto> GetAllTimeSlotsFromMonth(int year, int month, bool includeCrossOverDays = false)
+        public Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDay, DateOnly endDay)
         {
-            return httpClient.GetFromJsonAsync<TimeSlotRangeInfoDto>($"TimeSlot/{year}/{month}?includeCrossOverDays={includeCrossOverDays}")!;
+            return httpClient.GetFromJsonAsync<TimeSlotRangeInfoDto>($"TimeSlot/range?startDay={startDay}&endDay={endDay}")!;
         }
     }
 }

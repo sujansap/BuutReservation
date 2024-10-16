@@ -26,22 +26,8 @@ namespace Rise.Services.TimeSlots
             public int UsedBoatCount { get; set; }
         }
 
-        // TODO move to CruisePeriod Service?
-        /// <param name="start">The start date</param>
-        /// <param name="end">The end date</param>
-        /// <returns>If there is a cruise period active in given date range</returns>
-        private Task<CruisePeriod?> CruisePeriodInDateRange(DateTime start, DateTime end)
+        public async Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDay, DateOnly endDay)
         {
-            return dbContext.CruisePeriods
-                .FirstOrDefaultAsync(cruisePeriod => cruisePeriod.Start.Date <= end && start <= cruisePeriod.End.Date);
-        }
-
-        public async Task<TimeSlotRangeInfoDto> GetAllTimeSlotsFromMonth(
-            int year,
-            int month,
-            bool includeCrossOverDays)
-        {
-            (DateOnly startDay, DateOnly endDay) = GenerateDayRange(year, month, includeCrossOverDays);
             Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> daysWithReservation = [];
 
             List<DateTimeSlotBoatUse> allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
@@ -85,38 +71,6 @@ namespace Rise.Services.TimeSlots
                         });
 
             return new TimeSlotRangeInfoDto(startDay, endDay, totalDays, days);
-        }
-
-        /// <summary>
-        ///  Gets the start and end day of a month with the possibility
-        /// </summary>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="includeCrossOverDays">If days need to be included from the weeks where in the month crosses over from/into the other</param>
-        /// <returns>Start day and end day</returns>
-        private static (DateOnly, DateOnly) GenerateDayRange(int year, int month, bool includeCrossOverDays)
-        {
-            // ? use local for calendars where Sunday is start of the week
-            DateOnly firstDayMonth = new(year, month, 1);
-            DateOnly lastDayMonth = firstDayMonth.AddMonths(1).AddDays(-1);
-
-            int firstDayIndex = NormalDayIndexToMonday(firstDayMonth.DayOfWeek);
-            int lastDayIndex = NormalDayIndexToMonday(lastDayMonth.DayOfWeek);
-
-            DateOnly startDay = includeCrossOverDays ? firstDayMonth.AddDays(1 - firstDayIndex) : firstDayMonth;
-            DateOnly endDay = includeCrossOverDays ? lastDayMonth.AddDays(7 - lastDayIndex) : lastDayMonth;
-
-            return (startDay, endDay);
-        }
-
-        /// <summary>
-        /// Shifts start day of the week to Monday in place of the default Sunday
-        /// </summary>
-        /// <param name="dayOfWeek">Which day of the week to shift</param>
-        /// <returns>Index of the day of the week starting from Monday (index 1)</returns>
-        private static int NormalDayIndexToMonday(DayOfWeek dayOfWeek)
-        {
-            return dayOfWeek == DayOfWeek.Sunday ? 7 : (int)dayOfWeek;
         }
     }
 }

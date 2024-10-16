@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.TimeSlots;
 
@@ -13,35 +12,38 @@ namespace Rise.Server.Controllers
 
 
         /// <summary>
-        /// Gets all time slots during the given month of a year
+        /// Gets all time slots during the given date range
         /// </summary>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="includeCrossOverDays">If days need to be included from the weeks where in the month crosses over from/into the other</param>
+        /// <param name="startDay">Date from where the range starts</param>
+        /// <param name="endDay">Date from where the range ends (inclusive)</param>        
         /// <returns></returns>
-        [HttpGet("{year}/{month}")]
+        [HttpGet("range")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotRangeInfoDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<TimeSlotRangeInfoDto> GetAvailableTimeSlotsInMonth(
-            [FromRoute]
-            [Range(1, 9999, ErrorMessage = "Year cannot be negative")]
-            int year,
-            [FromRoute]
-            [Range(1, 12, ErrorMessage = "Month must be between 1 and 12")]
-            int month,
+        public async Task<IActionResult> GetAvailableTimeSlotsInMonth(
             [FromQuery]
-            bool includeCrossOverDays = false
+            DateOnly startDay,
+            [FromQuery]
+            DateOnly endDay
             )
         {
-            _logger.LogInformation("GET TimeSlot/{year}/{month}?includeCrossOverDays={includeCrossOverDays}", [year, month, includeCrossOverDays]);
-            _logger.LogDebug("Getting days from year {year} and mont {month} including cross over days = {includeCrossOverDays} from service layer", [year, month, includeCrossOverDays]);
-            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsFromMonth(
-                year,
-                month,
-                includeCrossOverDays);
+            _logger.LogInformation("GET range?startDay={startDay}&endDay={endDay}", [startDay, endDay]);
+            _logger.LogDebug("Checking if {startDay} becomes before {endDay} ", [startDay, endDay]);
+            if (startDay > endDay)
+            {
+                _logger.LogWarning("Invalid date range: {startDay} comes after {endDay}", [startDay, endDay]);
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "DateRange", [$"The start date ({startDay}) cannot be later than the end date ({endDay})"] }
+                }));
+            }
+
+            _logger.LogDebug("Getting days between range {startDay} and {endDay} from service layer", [startDay, endDay]);
+            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsInRange(
+                startDay, endDay);
             _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Start, timeSlotRangeInfoDto.End]);
 
-            return timeSlotRangeInfoDto;
+            return Ok(timeSlotRangeInfoDto);
         }
     }
 }
