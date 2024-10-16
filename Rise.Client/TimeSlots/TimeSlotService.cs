@@ -20,7 +20,7 @@ namespace Rise.Client.TimeSlots
             for (var date = startDay; date <= endDay; date = date.AddDays(1))
             {
                 bool isFullyBooked = random.Next(2) == 0;
-                bool isSlotAvailable = !isFullyBooked && random.Next(2) == 0;
+                bool isSlotAvailable = random.Next(2) == 0;
 
                 mockDays.Add(new TimeSlotDaySurfaceInfoDto(
                     Date: date,

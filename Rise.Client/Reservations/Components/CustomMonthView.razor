@@ -1,0 +1,26 @@
+﻿@using MudBlazor.Utilities
+@inherits Heron.MudCalendar.MonthView
+
+@Render
+
+@code {
+    [Parameter]
+    public List<DateTime> GreyedOutDates { get; set; } = new List<DateTime>();
+
+    protected override string DayClassname(CalendarCell calendarCell)
+    {
+        return new CssBuilder(base.DayClassname(calendarCell))
+        .AddClass("greyed-out-text", GreyedOutDates.Contains(calendarCell.Date.Date))
+        .Build();
+    }
+
+    protected override string DayStyle(CalendarCell calendarCell, int index)
+    {
+        return new StyleBuilder()
+        .AddStyle(base.DayStyle(calendarCell, index))
+        .AddStyle("background-color", "var(--custom-grey-out-color)", GreyedOutDates.Contains(calendarCell.Date.Date))
+        .AddStyle("color", "var(--mud-palette-text-disabled)", GreyedOutDates.Contains(calendarCell.Date.Date))
+        .Build();
+    }
+
+}

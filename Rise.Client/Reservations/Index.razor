@@ -1,15 +1,17 @@
 ﻿@page "/reservations"
 @using MudBlazor
+@using Rise.Client.Reservations.Components
 @using Heron.MudCalendar
 
 <MudPopoverProvider />
 
 <PageTitle>Reservaties</PageTitle>
 
-<MudTabs Elevation="0" Centered="true">
+<MudTabs Elevation="0" Centered="true" Class="mb-16">
     <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
-        <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8" data-testid="calendar-reserve"
-            Items="AvailableDays" DateRangeChanged="OnDateRangeChanged">
+        <CustomCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
+            data-testid="calendar-reserve" Items="AvailableDays" GreyedOutDates="GreyedOutDates"
+            DateRangeChanged="OnDateRangeChanged">
             <MonthTemplate>
                 <div class="d-flex gap-1">
                     <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small"
@@ -17,7 +19,7 @@
                     <div>@context.Text</div>
                 </div>
             </MonthTemplate>
-        </MudCalendar>
+        </CustomCalendar>
     </MudTabPanel>
     <MudTabPanel Text="Uw Reservaties" data-testid="tab-your-reservations">
         <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
@@ -27,12 +29,19 @@
 
 @* Legende *@
 <MudStack>
+    <MudText Typo="Typo.h5">Legende</MudText>
     <div class="d-flex gap-1">
         <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small" Color="Color.Primary" />
+        <div>Uw reservatie</div>
+    </div>
+    <div class="d-flex gap-1">
+        <MudIcon Icon="@Icons.Material.Filled.Square" Size="Size.Small"
+            Style="color: var(--mud-palette-gray-lighter)" />
         <div>Beschikbaar</div>
     </div>
     <div class="d-flex gap-1">
-        <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small" Color="Color.Warning" />
+        <MudIcon Icon="@Icons.Material.Filled.Square" Size="Size.Small"
+            Style="color: var(--mud-palette-gray-default)" />
         <div>Volzet</div>
     </div>
 </MudStack>

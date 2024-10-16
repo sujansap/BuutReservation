@@ -12,14 +12,22 @@ namespace Rise.Client.Reservations
         private ITimeSlotService TimeSlotService { get; set; }
 
         private List<ColoredCalendarItem> AvailableDays = new();
+        private List<DateTime> GreyedOutDates = new();
 
         protected override async Task OnInitializedAsync()
         {
-            var response = await TimeSlotService.GetAllTimeSlotsInRange(new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1), new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)));
-            AvailableDays = response.Days.Select(ConvertToCalendarItems).ToList();
+            var dateStart = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var dateEnd = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+            var dateRange = new DateRange(dateStart.ToDateTime(TimeOnly.MinValue), dateEnd.ToDateTime(TimeOnly.MaxValue));
+            await UpdateDates(dateRange);
         }
 
         private async Task OnDateRangeChanged(DateRange dateRange)
+        {
+            await UpdateDates(dateRange);
+        }
+
+        private async Task UpdateDates(DateRange dateRange)
         {
             var response = await TimeSlotService.GetAllTimeSlotsInRange(
                 DateOnly.FromDateTime(dateRange.Start.GetValueOrDefault()),
@@ -27,12 +35,12 @@ namespace Rise.Client.Reservations
             );
 
             AvailableDays = response.Days
-            .Where(day => day != null && !day.IsFullyBooked)
+            .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
             .Select(ConvertToCalendarItems)
-            .Where(item => item != null)
             .ToList();
+
+            GreyedOutDates = response.Days.Where(day => day.IsFullyBooked).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
         }
-        private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
 
         private ColoredCalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
         {
@@ -40,8 +48,8 @@ namespace Rise.Client.Reservations
             {
                 Start = day.Date.ToDateTime(TimeOnly.MinValue),
                 End = day.Date.ToDateTime(TimeOnly.MaxValue),
-                Text = day.IsSlotAvailable ? "Beschikbaar" : "Volzet",
-                Color = day.IsSlotAvailable ? Color.Primary : Color.Warning
+                Text = day.IsFullyBooked ? "Volzet" : day.IsSlotAvailable ? "" : "Niet beschikbaar",
+                Color = day.IsFullyBooked ? Color.Error : day.IsSlotAvailable ? Color.Primary : Color.Warning,
             };
         }
 
