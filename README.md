@@ -18,7 +18,7 @@
 - [EntityFrameworkCore Triggered](https://github.com/koenbeuk/EntityFrameworkCore.Triggered) - Database Triggers
 - [User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) - Securely store secrets in DEV.
 - [GuardClauses](https://github.com/ardalis/GuardClauses) - Validation Helper
-- [bUnit](https://bunit.dev) - Blazor Component Testing
+- [Playwright](https://playwright.dev/dotnet/) - E2E tests
 - [xUnit](https://xunit.net) - (Unit) Testing
 - [nSubstitute](https://nsubstitute.github.io) - Mocking for testing
 - [Shouldly](https://docs.shouldly.org) - Helper for testing
@@ -63,3 +63,6 @@ And then update the database using the following command:
 ```bash
 dotnet ef database update --startup-project Rise.Server --project Rise.Persistence
 ```
+## Testing
+### E2E testing via playwright
+Install via the [instructions](https://playwright.dev/dotnet/docs/intro) on playwright docs
