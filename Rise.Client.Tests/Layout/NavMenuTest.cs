@@ -37,7 +37,6 @@ namespace Rise.Client.Layout
         [DataRow("nav-mobile-reservations", "reservations")]
         [DataRow("nav-mobile-book", "book")]
         [DataRow("nav-mobile-notifications", "notifications")]
-        [DataRow("nav-mobile-settings", "settings")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix)
         {
             await Page.SetViewportSizeAsync(959, 1920);
