@@ -30,7 +30,7 @@
     <MudHidden Breakpoint="Breakpoint.MdAndUp">
         <MudSpacer></MudSpacer>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-            OnClick="@ToggleDrawer" />
+            OnClick="@ToggleDrawer" data-testid="nav-drawer-open-button" />
     </MudHidden>
 
 </MudAppBar>
@@ -43,7 +43,7 @@
             <MudText>Welkom, Bindo</MudText>
             <MudSpacer />
             <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.End"
-                OnClick="@ToggleDrawer" data-testid="nav-mobile-profile" />
+                OnClick="@ToggleDrawer" data-testid="nav-drawer-close-button" />
             @* TODO dubble ids? *@
         </MudStack>
     </MudDrawerHeader>
