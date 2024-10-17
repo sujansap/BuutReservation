@@ -103,17 +103,28 @@ namespace Rise.Client.Reservations
             if (!StartDate.HasValue || !EndDate.HasValue)
                 return;
 
-            TimeSlotRangeInfoDto response = await TimeSlotService.GetAllTimeSlotsInRange(
+            try
+            {
+                TimeSlotRangeInfoDto response = await TimeSlotService.GetAllTimeSlotsInRange(
                 StartDate.Value,
                 EndDate.Value
             );
 
-            AvailableDays = response.Days
-            .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
-            .Select(ConvertToCalendarItems)
-            .ToList();
 
-            GreyedOutDates = response.Days.Where(day => day.IsFullyBooked).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
+                AvailableDays = response.Days
+                .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
+                .Select(ConvertToCalendarItems)
+                .ToList();
+
+                GreyedOutDates = response.Days.Where(day => day.IsFullyBooked).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
+            }
+
+            catch
+            {
+                var errorMessage = "Er is iets mis gegaan bij het ophalen van de beschikbare dagen";
+                Snackbar.Add(new MarkupString($"<span data-testid='error-message'>{errorMessage}</span>"), Severity.Error);
+                return;
+            }
         }
 
         /// <summary>

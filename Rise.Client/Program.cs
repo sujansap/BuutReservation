@@ -4,14 +4,16 @@ using Rise.Client;
 using MudBlazor.Services;
 using Rise.Shared.TimeSlots;
 using Rise.Client.TimeSlots;
-using Rise.Shared.Products;
-using Rise.Client.Products;
+using MudBlazor;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+});
 builder.Services.AddMudPopoverService();
 
 builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
