@@ -1,7 +1,12 @@
+using System;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DiffEngine;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
+using MudBlazor.Extensions;
+using Rise.Shared.TimeSlots;
 using Shouldly;
 
 namespace Rise.Client.Reservations
@@ -9,6 +14,8 @@ namespace Rise.Client.Reservations
     [TestClass]
     public class ReservationPageTest : PageTest
     {
+        private const string universalDateFormat = "yyyy-MM-dd";
+
         [TestMethod]
         public async Task HasTabs()
         {
@@ -52,5 +59,62 @@ namespace Rise.Client.Reservations
             await Page.GotoAsync("https://localhost:5001/reservations");
             await Page.GetByTestId("calendar-your-reservations").IsVisibleAsync();
         }
+
+        [TestMethod]
+        public async Task HasUnexpectedError()
+        {
+            await Page.RouteAsync("*/**/api/TimeSlot/range/**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 400,
+                    ContentType = "text/plain",
+                    Body = "Bad argument!"
+                });
+            });
+            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GetByTestId("error-message").IsVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task CheckDateTypes()
+        {
+            int totalDays = 4;
+            DateOnly startDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateOnly endDate = startDate.AddDays(totalDays);
+            TimeSlotRangeInfoDto dto = new(
+                Start: startDate,
+                End: startDate.AddDays(totalDays),
+                TotalDays: totalDays,
+                Days: [
+                    new(startDate, false, false),
+                    new(startDate.AddDays(1), true, false),
+                    new(startDate.AddDays(2), false, true),
+                    new(startDate.AddDays(3), true, true),
+                ]
+            );
+            await Page.RouteAsync("*/**/api/TimeSlot/range/**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(dto)
+                });
+            });
+            await Page.GotoAsync("https://localhost:5001/reservations");
+            var locator = Page.Locator($"[identifier={startDate}]");
+            var child = locator.GetByTestId("custom-calendar-day");
+            child.ShouldNotBeNull();
+        }
+
+        // [TestMethod]
+        // public async Task CheckRedirectToThisMonthsRange()
+        // {
+        //     DateTime startDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1).ToDateTime(TimeOnly.MinValue).StartOfWeek(DayOfWeek.Sunday);
+        //     DateTime endDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).ToDateTime(TimeOnly.MinValue).StartOfWeek(DayOfWeek.Saturday);
+        //     await Page.GotoAsync("https://localhost:5001/reservations", new PageGotoOptions() {});
+        //     Page.Url.ShouldEndWith($"?StartDate={startDate.ToString(universalDateFormat)}&EndDate={endDate.ToString(universalDateFormat)}");
+        // }
     }
 }
