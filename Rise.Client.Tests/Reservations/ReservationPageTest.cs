@@ -106,6 +106,8 @@ namespace Rise.Client.Reservations
             var locator = Page.Locator($"[identifier={startDate}]");
             var child = locator.GetByTestId("custom-calendar-day");
             child.ShouldNotBeNull();
+
+            // TODO make beter tests for checking date availability
         }
 
         // [TestMethod]

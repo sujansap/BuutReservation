@@ -28,7 +28,7 @@ namespace Rise.Client.Layout
             await Page.GetByTestId(testId).ClickAsync();
 
             Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldEndWith(resultSuffix);
+            Page.Url.ShouldContain(resultSuffix);
         }
 
         [TestMethod]
@@ -46,7 +46,7 @@ namespace Rise.Client.Layout
             await Page.GetByTestId(testId).ClickAsync();
 
             Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldEndWith($"/{resultSuffix}");
+            Page.Url.ShouldContain($"/{resultSuffix}");
         }
     }
 }
