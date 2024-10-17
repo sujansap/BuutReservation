@@ -15,33 +15,33 @@ namespace Rise.Server.Controllers
         /// <summary>
         /// Gets all time slots during the given date range
         /// </summary>
-        /// <param name="startDay">Date from where the range starts</param>
-        /// <param name="endDay">Date from where the range ends (inclusive)</param>        
+        /// <param name="startDate">Date from where the range starts</param>
+        /// <param name="endDate">Date from where the range ends (inclusive)</param>        
         /// <returns></returns>
         [HttpGet("range")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotRangeInfoDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAvailableTimeSlotsInMonth(
             [FromQuery, SwaggerParameter(Required = true)]
-            DateOnly startDay,
+            DateOnly startDate,
             [FromQuery, SwaggerParameter(Required = true)]
-            DateOnly endDay
+            DateOnly endDate
             )
         {
-            _logger.LogInformation("GET range?startDay={startDay}&endDay={endDay}", [startDay, endDay]);
-            _logger.LogDebug("Checking if {startDay} becomes before {endDay} ", [startDay, endDay]);
-            if (startDay > endDay)
+            _logger.LogInformation("GET range?startDate={startDate}&endDay={endDay}", [startDate, endDate]);
+            _logger.LogDebug("Checking if {startDate} becomes before {endDay} ", [startDate, endDate]);
+            if (startDate > endDate)
             {
-                _logger.LogWarning("Invalid date range: {startDay} comes after {endDay}", [startDay, endDay]);
+                _logger.LogWarning("Invalid date range: {startDate} comes after {endDay}", [startDate, endDate]);
                 return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
                 {
-                    { "DateRange", [$"The start date ({startDay}) cannot be later than the end date ({endDay})"] }
+                    { "DateRange", [$"The start date ({startDate}) cannot be later than the end date ({endDate})"] }
                 }));
             }
 
-            _logger.LogDebug("Getting days between range {startDay} and {endDay} from service layer", [startDay, endDay]);
+            _logger.LogDebug("Getting days between range {startDate} and {endDay} from service layer", [startDate, endDate]);
             TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsInRange(
-                startDay, endDay);
+                startDate, endDate);
             _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Start, timeSlotRangeInfoDto.End]);
 
             return Ok(timeSlotRangeInfoDto);

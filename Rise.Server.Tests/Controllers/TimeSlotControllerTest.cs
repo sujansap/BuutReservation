@@ -16,11 +16,11 @@ namespace Rise.Server.Tests.Controllers
         {
             return date.ToString(universalDateFormat);
         }
-        private static string MakeTimeSlotRangeUrl(DateOnly? startDay, DateOnly? endDay)
+        private static string MakeTimeSlotRangeUrl(DateOnly? startDate, DateOnly? endDate)
         {
             List<string> queries = [];
-            if (startDay is not null) queries.Add($"startDay={DateOnlyToUniversalDate((DateOnly)startDay)}");
-            if (endDay is not null) queries.Add($"endDay={DateOnlyToUniversalDate((DateOnly)endDay)}");
+            if (startDate is not null) queries.Add($"startDate={DateOnlyToUniversalDate((DateOnly)startDate)}");
+            if (endDate is not null) queries.Add($"endDate={DateOnlyToUniversalDate((DateOnly)endDate)}");
 
             string joinedQueries = queries.Count == 0 ? "" : ("?" + string.Join("&", queries));
 
@@ -31,21 +31,21 @@ namespace Rise.Server.Tests.Controllers
         public async Task GET_ValidDateRange_GivesDates()
         {
             int daysDifference = 7;
-            DateOnly startDay = DateOnly.FromDateTime(DateTime.Now);
-            DateOnly endDay = startDay.AddDays(daysDifference);
-            TimeSlotRangeInfoDto response = (await _client.GetFromJsonAsync<TimeSlotRangeInfoDto>(MakeTimeSlotRangeUrl(startDay, endDay)))!;
-            response.Start.ShouldBe(startDay);
-            response.End.ShouldBe(endDay);
+            DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
+            DateOnly endDate = startDate.AddDays(daysDifference);
+            TimeSlotRangeInfoDto response = (await _client.GetFromJsonAsync<TimeSlotRangeInfoDto>(MakeTimeSlotRangeUrl(startDate, endDate)))!;
+            response.Start.ShouldBe(startDate);
+            response.End.ShouldBe(endDate);
             response.TotalDays.ShouldBe(8);
             response.Days.ShouldBe([
-                new (startDay, false, false),
-                new (startDay.AddDays(1), false, false),
-                new (startDay.AddDays(2), false, false),
-                new (startDay.AddDays(3), false, true),
-                new (startDay.AddDays(4), false, true),
-                new (startDay.AddDays(5), false, true),
-                new (startDay.AddDays(6), true, false),
-                new (startDay.AddDays(7), false, false),
+                new (startDate, false, false),
+                new (startDate.AddDays(1), false, false),
+                new (startDate.AddDays(2), false, false),
+                new (startDate.AddDays(3), false, true),
+                new (startDate.AddDays(4), false, true),
+                new (startDate.AddDays(5), false, true),
+                new (startDate.AddDays(6), true, false),
+                new (startDate.AddDays(7), false, false),
             ]);
         }
 
@@ -69,27 +69,27 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_InvalidStartDate_Expects404()
         {
-            var response = await _client.GetAsync($"TimeSlot/range?startDay=&endDay={DateOnlyToUniversalDate(DateOnly.MaxValue)}");
+            var response = await _client.GetAsync($"TimeSlot/range?startDate=&endDate={DateOnlyToUniversalDate(DateOnly.MaxValue)}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var result = (await response.Content.ReadFromJsonAsync<ValidationProblemDetails>())!;
 
             result.Title.ShouldBe(defaultValidationErrorTitle);
             result.Errors.Count.ShouldBe(1);
-            result.Errors.ShouldContainKey("startDay");
+            result.Errors.ShouldContainKey("startDate");
         }
 
         [Fact]
         public async Task GET_InvalidEndDate_Expects404()
         {
-            var response = await _client.GetAsync($"TimeSlot/range?startDay={DateOnlyToUniversalDate(DateOnly.MinValue)}&endDay=");
+            var response = await _client.GetAsync($"TimeSlot/range?startDate={DateOnlyToUniversalDate(DateOnly.MinValue)}&endDate=");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var result = (await response.Content.ReadFromJsonAsync<ValidationProblemDetails>())!;
 
             result.Title.ShouldBe(defaultValidationErrorTitle);
             result.Errors.Count.ShouldBe(1);
-            result.Errors.ShouldContainKey("endDay");
+            result.Errors.ShouldContainKey("endDate");
         }
 
         [Fact]

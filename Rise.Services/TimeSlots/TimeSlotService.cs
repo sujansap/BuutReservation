@@ -26,12 +26,12 @@ namespace Rise.Services.TimeSlots
             public int UsedBoatCount { get; set; }
         }
 
-        public async Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDay, DateOnly endDay)
+        public async Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDate, DateOnly endDate)
         {
             Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> daysWithReservation = [];
 
             List<DateTimeSlotBoatUse> allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
-                timeSlot => startDay <= timeSlot.Date && timeSlot.Date <= endDay
+                timeSlot => startDate <= timeSlot.Date && timeSlot.Date <= endDate
                 && !timeSlot.IsDeleted)
                 .Select(timeSlot => new DateTimeSlotBoatUse()
                 {
@@ -62,15 +62,15 @@ namespace Rise.Services.TimeSlots
                     }).ToDictionary(x => x.Date);
             }
 
-            int totalDays = 1 + endDay.ToDateTime(TimeOnly.MinValue).Subtract(startDay.ToDateTime(TimeOnly.MinValue)).Days;
+            int totalDays = 1 + endDate.ToDateTime(TimeOnly.MinValue).Subtract(startDate.ToDateTime(TimeOnly.MinValue)).Days;
             IEnumerable<TimeSlotDaySurfaceInfoDto> days = Enumerable.Range(0, totalDays)
                     .Select(offset =>
                         {
-                            DateOnly date = startDay.AddDays(offset);
+                            DateOnly date = startDate.AddDays(offset);
                             return daysWithReservation.GetValueOrDefault(date, new TimeSlotDaySurfaceInfoDto(date, false, false));
                         });
 
-            return new TimeSlotRangeInfoDto(startDay, endDay, totalDays, days);
+            return new TimeSlotRangeInfoDto(startDate, endDate, totalDays, days);
         }
     }
 }
