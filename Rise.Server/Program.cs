@@ -1,14 +1,26 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Persistence.Triggers;
+using Rise.Server.Controllers;
 using Rise.Services.Products;
+using Rise.Services.TimeSlots;
 using Rise.Shared.Products;
+using Rise.Shared.TimeSlots;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+    options.EnableAnnotations();
+});
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -19,6 +31,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 
 var app = builder.Build();
 
@@ -39,11 +52,17 @@ app.UseRouting();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
-using (var scope = app.Services.CreateScope())
-{ // Require a DbContext from the service provider and seed the database.
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    Seeder seeder = new(dbContext);
-    seeder.Seed();
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+{
+    using (var scope = app.Services.CreateScope())
+    { // Require a DbContext from the service provider and seed the database.
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+        Seeder seeder = new(dbContext);
+        seeder.Seed();
+    }
 }
 
-app.Run();
+await app.RunAsync();
+
+public partial class Program { }

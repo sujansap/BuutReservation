@@ -1,4 +1,4 @@
-﻿using Rise.Domain.Products;
+using Rise.Persistence.Seeders;
 
 namespace Rise.Persistence;
 
@@ -13,25 +13,15 @@ public class Seeder
 
     public void Seed()
     {
-        if (HasAlreadyBeenSeeded())
-            return;
+        new ProductSeeder(dbContext).Seed();
+        new UserSeeder(dbContext).Seed();
 
-        SeedProducts();
-    }
+        new CruisePeriodSeeder(dbContext).Seed();
+        new TimeSlotSeeder(dbContext).Seed();
 
-    private bool HasAlreadyBeenSeeded()
-    {
-        return dbContext.Products.Any();
-    }
+        new BoatSeeder(dbContext).Seed();
+        // new BatterySeeder(dbContext).Seed();
 
-    private void SeedProducts()
-    {
-        var products = Enumerable.Range(1, 20)
-                                 .Select(i => new Product { Name = $"Product {i}"})
-                                 .ToList();
-
-        dbContext.Products.AddRange(products);
-        dbContext.SaveChanges();
+        new ReservationSeeder(dbContext).Seed();
     }
 }
-

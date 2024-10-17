@@ -1,39 +1,60 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Rise</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@using MudBlazor
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="products">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Products
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<MudAppBar Elevation="1">
 
-@code {
-    private bool collapseNavMenu = true;
+    @* Always display *@
+    <MudLink Href="/" data-testid="nav-brand-logo">
+        <MudImage Src="assets/BUUT_logo_white.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain"
+            Class="mr-3" />
+    </MudLink>
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    @* NavMenu for desktop *@
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        <MudStack Row="true">
+            <MudNavLink Href="counter" data-testid="nav-desktop-counter">HOME</MudNavLink>
+            <MudNavLink Href="about" data-testid="nav-desktop-about">ABOUT</MudNavLink>
+            <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">RESERVEER</MudNavLink>
+        </MudStack>
+        <MudSpacer></MudSpacer>
+        <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
+            data-testid="nav-desktop-book">
+            BOOK NOW
+        </MudButton>
+        <MudIconButton Class="mr-2" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End"
+            Href="profile" data-testid="nav-desktop-profile" />
+        <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
+            Href="notifications" data-testid="nav-desktop-notifications" />
+    </MudHidden>
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+    @* NavMenu for mobile *@
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
+        <MudSpacer></MudSpacer>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+            OnClick="@ToggleDrawer" data-testid="nav-drawer-open-button" />
+    </MudHidden>
+
+</MudAppBar>
+
+<MudDrawer @bind-Open="@_drawerOpen" Elevation="1" Variant="@DrawerVariant.Temporary" Anchor="Anchor.End">
+    <MudDrawerHeader Class="pr-0">
+        <MudStack Row="true" AlignItems="AlignItems.Center">
+            <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Outlined">B</MudAvatar>
+            <MudText>Welkom, Bindo</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.End"
+                OnClick="@ToggleDrawer" data-testid="nav-drawer-close-button" />
+        </MudStack>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudDivider />
+        <MudNavLink Href="counter" data-testid="nav-mobile-counter" Match="NavLinkMatch.All">HOME</MudNavLink>
+        <MudNavLink Href="about" data-testid="nav-mobile-about">ABOUT</MudNavLink>
+        <MudNavLink Href="book" data-testid="nav-mobile-book">BOOK NOW</MudNavLink>
+        <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">RESERVEER</MudNavLink>
+        <MudDivider />
+        <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">Profile
+        </MudNavLink>
+        <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
+            Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>

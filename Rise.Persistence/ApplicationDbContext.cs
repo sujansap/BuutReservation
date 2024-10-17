@@ -1,17 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+// using Rise.Domain.Boats;
 using Rise.Domain.Products;
+using Rise.Domain.Users;
+using Rise.Domain.Timeslots;
+using Rise.Domain.Boats;
 
 namespace Rise.Persistence;
 
 /// <inheritdoc />
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<User> Users => Set<User>();
 
-    public ApplicationDbContext(DbContextOptions options) : base(options)
-    {
+    public DbSet<CruisePeriod> CruisePeriods => Set<CruisePeriod>();
+    public DbSet<TimeSlot> TimeSlots => Set<TimeSlot>();
 
-    }
+    public DbSet<Boat> Boats => Set<Boat>();
+
+    // public DbSet<Battery> Batteries => Set<Battery>();
+    public DbSet<Reservation> Reservations => Set<Reservation>();
+
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
