@@ -4,7 +4,7 @@
 
 - Bram Rampelberg - [MEMBER1_EMAIL] - [MEMBER1_GITHUB_USERNAME]
 - Xan Pinson - <xan.pinson@student.hogent.be> - Snowyxa
-- Pushwant Sagoo - [MEMBER3_EMAIL] - [MEMBER3_GITHUB_USERNAME]
+- Pushwant Sagoo - <pushwant.sagoo@student.hogent.be> - PushwantSagoo
 - Sujan Sapkota - <sujan.sapkota@student.hogent.be> - sujansapkota2
 - Simon De Roeve - <simon.deroeve@student.hogent.be> - SimonDeRoeve
 - Bas Stokmans - <bas.stokmans@student.hogent.be> - baziniser
@@ -108,6 +108,7 @@ dotnet ef migrations remove --startup-project Rise.Server --project Rise.Persist
 | E2E  | `Rise.Client.Tests`  | Testing the front-end | [Playwright](https://playwright.dev/dotnet/) | [Playwright must be installed](https://playwright.dev/dotnet/docs/intro) and that application must be [fully up and running](#installation-instructions) |
 
 Additional tools used to help write tests:
+
 - [nSubstitute](https://nsubstitute.github.io) - Mocking for testing
 - [Shouldly](https://docs.shouldly.org) - Helper for testing (asserts)
 
