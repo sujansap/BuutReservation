@@ -2,6 +2,8 @@
 @using MudBlazor
 @using Rise.Client.Reservations.Components
 @using Heron.MudCalendar
+@inject NavigationManager Navigation
+
 
 <MudPopoverProvider />
 
@@ -9,7 +11,7 @@
 
 <MudTabs Elevation="0" Centered="true" Class="mb-16">
     <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
-        <CustomCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
+        <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
             data-testid="custom-calendar-reserve" Items="AvailableDays" GreyedOutDates="GreyedOutDates"
             DateRangeChanged="OnDateRangeChanged">
             <MonthTemplate>
