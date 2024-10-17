@@ -37,14 +37,12 @@
 
 <MudDrawer @bind-Open="@_drawerOpen" Elevation="1" Variant="@DrawerVariant.Temporary" Anchor="Anchor.End">
     <MudDrawerHeader Class="pr-0">
-        @* TODO make mobile profile *@
         <MudStack Row="true" AlignItems="AlignItems.Center">
             <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Outlined">B</MudAvatar>
             <MudText>Welkom, Bindo</MudText>
             <MudSpacer />
             <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.End"
                 OnClick="@ToggleDrawer" data-testid="nav-drawer-close-button" />
-            @* TODO dubble ids? *@
         </MudStack>
     </MudDrawerHeader>
     <MudNavMenu>

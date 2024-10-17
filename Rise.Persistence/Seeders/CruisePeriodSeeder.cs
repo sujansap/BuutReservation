@@ -10,7 +10,7 @@ internal class CruisePeriodSeeder(ApplicationDbContext dbContext) : GeneralSeede
 
     static CruisePeriodSeeder()
     {
-        cruisePeriods = Enumerable.Range(1, 5)
+        cruisePeriods = Enumerable.Range(1, 6)
                                   .Select(i => new CruisePeriod
                                   {
                                       Start = DateTime.Now.AddDays(i),

@@ -33,7 +33,7 @@
 1. Clone the repository
 2. Open the `Rise.sln` file in Visual Studio or Visual Studio Code
 3. Set up the database connection
-4. Run the project using the `Rise.Server` project as the startup project
+4. Run the project using the `Rise.Server` project as the startup project: `dotnet run --project .\Rise.Server\`
 5. The project should open in your default browser on port 5001.
 
 ## Database
@@ -101,14 +101,13 @@ dotnet ef migrations remove --startup-project Rise.Server --project Rise.Persist
 
 ## Testing
 
-| Type of test | Project             | Reason                | Framework                                                                                 | Additional setup                                                                                                                                         |
-| ------------ | ------------------- | --------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit         | `Rise.Domain.Tests` | Testing the domain    | [xUnit](https://xunit.net)                                                                | None                                                                                                                                                     |
-| Integration  | `Rise.Server.Tests` | Testing the back-end  | [AspNetCore MVC testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) | [Test Postgres database set-up](#test-database-setup)                                                                                                    |
-| E2E          | `Rise.Client.Tests` | Testing the front-end | [Playwright](https://playwright.dev/dotnet/)                                              | [Playwright must be installed](https://playwright.dev/dotnet/docs/intro) and that application must be [fully up and running](#installation-instructions) |
+| Type of test  | Project  | Reason        | Framework        | Additional setup        |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Unit          | `Rise.Domain.Tests`          | Testing the domain | [xUnit](https://xunit.net) | None |
+| Integration   | `Rise.Server.Tests`   | Testing the back-end | [AspNetCore MVC testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) | [Test Postgres database set-up](#test-database-setup) |
+| E2E  | `Rise.Client.Tests`  | Testing the front-end | [Playwright](https://playwright.dev/dotnet/) | [Playwright must be installed](https://playwright.dev/dotnet/docs/intro) and that application must be [fully up and running](#installation-instructions) |
 
 Additional tools used to help write tests:
-
 - [nSubstitute](https://nsubstitute.github.io) - Mocking for testing
 - [Shouldly](https://docs.shouldly.org) - Helper for testing (asserts)
 
@@ -120,13 +119,13 @@ dotnet test
 
 !! Be sure that !!
 
-1. [Application is fully running](#installation-instructions)
-2. [Test database is setup](#test-database-setup)
-3. [Playwright is fully installed](https://playwright.dev/dotnet/docs/intro)
-4. The Test database is **_NOT_** the production database is it will be dropped!!!
+1) [Application is fully running](#installation-instructions)
+2) [Test database is setup](#test-database-setup)
+3) [Playwright is fully installed](https://playwright.dev/dotnet/docs/intro)
+4) The Test database is ***NOT*** the production database is it will be dropped!!!
 
 If you want to test only a specific part of type, change the working directory to the preferred project and run the aforementioned test command earlier.
 
 ### Test database setup
 
-This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction. It is important that the database is different from the application database is this will be **_dropped_** and re-created automatically during tests to ensure the correct state!!
+This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction. It is important that the database is different from the application database is this will be ***dropped*** and re-created automatically during tests to ensure the correct state!!
