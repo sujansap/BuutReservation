@@ -40,6 +40,8 @@ namespace Rise.Client.Reservations
         /// </summary>
         private List<DateTime> GreyedOutDates = [];
 
+        private DateOnly? SelectedDate { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             if (!StartDate.HasValue || !EndDate.HasValue)
@@ -141,6 +143,16 @@ namespace Rise.Client.Reservations
                 Text = day.IsFullyBooked ? "Volzet" : day.IsSlotAvailable ? "" : "Niet beschikbaar",
                 Color = day.IsFullyBooked ? Color.Error : day.IsSlotAvailable ? Color.Primary : Color.Warning,
             };
+        }
+
+        /// <summary>
+        /// When a day is being selected
+        /// </summary>
+        /// <param name="date">The clicked date</param>
+        /// <returns></returns>
+        private void OnCellClicked(DateTime date)
+        {
+            SelectedDate = DateOnly.FromDateTime(date);
         }
     }
 

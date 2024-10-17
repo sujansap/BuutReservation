@@ -32,12 +32,22 @@
 </MudContainer>
 
 @code {
-    private IEnumerable<TimeSlotDto>? timeslots;
+    @* TODO move code to own file *@
+    private IEnumerable<TimeSlotDto> timeslots = [];
 
     [Inject] public required ITimeSlotService TimeSlotService { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    [Parameter]
+    public DateOnly SelectedDate { get; set; }
+
+    protected override async Task OnParametersSetAsync()
     {
-        timeslots = await TimeSlotService.GetTimeSlotsByDate(2024, 10, 12);
+        await base.OnParametersSetAsync();
+        await UpdateTimeSlots();
+    }
+
+    private async Task UpdateTimeSlots()
+    {
+        timeslots = await TimeSlotService.GetTimeSlotsByDate(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day);
     }
 }

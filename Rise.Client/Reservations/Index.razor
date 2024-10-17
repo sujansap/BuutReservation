@@ -1,6 +1,7 @@
 ﻿@page "/reservations"
 @using MudBlazor
 @using Rise.Client.Reservations.Components
+@using Rise.Client.TimeSlots
 @using Heron.MudCalendar
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -12,18 +13,34 @@
 
 <MudTabs Elevation="0" Centered="true" Class="mb-16">
     <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
-        <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
-            data-testid="custom-calendar-reserve" Items="AvailableDays" GreyedOutDates="GreyedOutDates"
-            DateRangeChanged="OnDateRangeChanged">
-            <MonthTemplate>
-                <CustomDayComponent Context="context" />
-            </MonthTemplate>
-        </CustomCalendar>
+        <MudGrid>
+            @* TODO make mobile first *@
+            @* TODO margin is messing with tabs *@
+            @* TODO calendar is clickable and navigeable to the past *@
+            @* TODO everything is clickeable (this is hell) *@
+            <MudItem xs="12" md="8">
+                <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
+                    Class="mt-8" data-testid="custom-calendar-reserve" Items="AvailableDays"
+                    GreyedOutDates="GreyedOutDates" DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
+                    <MonthTemplate>
+                        <CustomDayComponent Context="context" />
+                    </MonthTemplate>
+                </CustomCalendar>
+            </MudItem>
+            <MudItem xs="12" md="4">
+                @if (SelectedDate.HasValue)
+                {
+                    <TimeSlotsList SelectedDate="SelectedDate.Value" />
+                }
+            </MudItem>
+        </MudGrid>
+
     </MudTabPanel>
     <MudTabPanel Text="Uw Reservaties" data-testid="tab-your-reservations">
         <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
             data-testid="calendar-your-reservations" />
     </MudTabPanel>
 </MudTabs>
+
 
 <ReservationCalendarLegend data-testid="custom-calendar-legend" />
