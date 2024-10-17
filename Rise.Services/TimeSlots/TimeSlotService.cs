@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Shared.TimeSlots;
@@ -42,13 +43,13 @@ namespace Rise.Services.TimeSlots
                 Start = item.TimeSlot.Start,
                 End = item.TimeSlot.End,
             })
+            .OrderBy(item => item.Start)
             .ToList();
 
             //later this needs to change to check whether a timeslot has a reservation that is made by the
             //curent logged in user 
             //what we need to do is check if there is a reservation with userid and timeslotid from availableTimeSlots
             return availableTimeSlots;
-
         }
 
 
