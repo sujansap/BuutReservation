@@ -6,9 +6,11 @@ namespace Rise.Client.TimeSlots
     public class TimeSlotService(HttpClient httpClient) : ITimeSlotService
     {
         private readonly HttpClient httpClient = httpClient;
+
+        private const string universalDateFormat = "yyyy-MM-dd";
         public Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDay, DateOnly endDay)
         {
-            return httpClient.GetFromJsonAsync<TimeSlotRangeInfoDto>($"TimeSlot/range?startDay={startDay}&endDay={endDay}")!;
+            return httpClient.GetFromJsonAsync<TimeSlotRangeInfoDto>($"TimeSlot/range?startDay={startDay.ToString(universalDateFormat)}&endDay={endDay.ToString(universalDateFormat)}")!;
         }
     }
 }
