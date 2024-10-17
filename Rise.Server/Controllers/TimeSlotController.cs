@@ -10,7 +10,7 @@ namespace Rise.Server.Controllers
     public class TimeSlotController(ITimeSlotService timeSlotService, ILogger<TimeSlotController> logger) : ControllerBase
     {
         private readonly ILogger _logger = logger;
-        private readonly ITimeSlotService timeSlotService = timeSlotService;
+        private readonly ITimeSlotService _timeSlotService = timeSlotService;
 
 
         /// <summary>
@@ -41,19 +41,15 @@ namespace Rise.Server.Controllers
             }
 
             _logger.LogDebug("Getting days between range {startDate} and {endDay} from service layer", [startDate, endDate]);
-            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsInRange(
+            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await _timeSlotService.GetAllTimeSlotsInRange(
                 startDate, endDate);
             _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Start, timeSlotRangeInfoDto.End]);
 
             return Ok(timeSlotRangeInfoDto);
-        private readonly ITimeSlotService _timeSlotService;
-
-        public TimeSlotController(ITimeSlotService timeSlotService)
-        {
-            _timeSlotService = timeSlotService;
         }
 
 
+        // TODO document route GetTimeSlotsByDate
         [HttpGet("{year}/{month}/{day}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -74,12 +70,14 @@ namespace Rise.Server.Controllers
                 return BadRequest("Invalid date parameters.");
             }
 
+            // TODO make service still allows to get dates 2+ from now and past
+
             var timeSlots = await _timeSlotService.GetTimeSlotsByDate(year, month, day);
 
             return Ok(timeSlots);
         }
 
-        private bool IsValidDate(int year, int month, int day)
+        private static bool IsValidDate(int year, int month, int day)
         {
             try
             {

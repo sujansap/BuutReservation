@@ -23,6 +23,11 @@ builder.Services.AddHttpClient<IProductService, ProductService>(client =>
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/");
 });
 
+builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/TimeSlot/");
+});
+
 
 
 await builder.Build().RunAsync();

@@ -104,16 +104,7 @@ namespace Rise.Server.Tests.Controllers
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("DateRange");
         }
-    }
-}using Rise.Server.Tests.Fixtures;
-using Shouldly;
-using Rise.Shared.TimeSlots;
-using System.Net.Http.Json;
 
-namespace Rise.Server.Tests.Controllers
-{
-    public class TimeSlotControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture)
-    {
         [Fact]
         public async Task GET_TimeSlotsByDate_GivesTimeSlots()
         {

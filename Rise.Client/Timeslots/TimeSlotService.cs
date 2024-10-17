@@ -1,27 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Rise.Shared.TimeSlots;
 
 namespace Rise.Client.TimeSlots
 {
-    public class TimeSlotService : ITimeSlotService
+    public class TimeSlotService(HttpClient httpClient) : ITimeSlotService
     {
-        private readonly HttpClient httpClient;
+        private readonly HttpClient httpClient = httpClient;
 
-        public TimeSlotService(HttpClient httpClient)
+        private const string universalDateFormat = "yyyy-MM-dd";
+        public Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDate, DateOnly endDate)
         {
-            this.httpClient = httpClient;
+            return httpClient.GetFromJsonAsync<TimeSlotRangeInfoDto>($"range?startDate={startDate.ToString(universalDateFormat)}&endDate={endDate.ToString(universalDateFormat)}")!;
         }
 
-        public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
+        public Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
         {
-            var timeslots = await httpClient.GetFromJsonAsync<IEnumerable<TimeSlotDto>>($"TimeSlot/{year}/{month}/{day}");
-            return timeslots!;
+            return httpClient.GetFromJsonAsync<IEnumerable<TimeSlotDto>>($"{year}/{month}/{day}")!;
         }
-
-
     }
 }
