@@ -1,0 +1,24 @@
+<MudStack @attributes="AdditionalAttributes">
+    <MudText Typo="Typo.h5">Legende</MudText>
+    <div class="d-flex gap-1">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small" Color="Color.Primary" />
+        <div>Uw reservatie</div>
+    </div>
+    <div class="d-flex gap-1">
+        <MudIcon Icon="@Icons.Material.Filled.Square" Size="Size.Small"
+            Style="color: var(--mud-palette-gray-lighter)" />
+        <div>Beschikbaar</div>
+    </div>
+    <div class="d-flex gap-1">
+        <MudIcon Icon="@Icons.Material.Filled.Square" Size="Size.Small"
+            Style="color: var(--mud-palette-gray-default)" />
+        <div>Volzet</div>
+    </div>
+</MudStack>
+
+@code {
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+}

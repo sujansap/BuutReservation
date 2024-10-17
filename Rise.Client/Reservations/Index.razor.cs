@@ -52,10 +52,10 @@ namespace Rise.Client.Reservations
                 Color = day.IsFullyBooked ? Color.Error : day.IsSlotAvailable ? Color.Primary : Color.Warning,
             };
         }
+    }
 
-        private class ColoredCalendarItem : CalendarItem
-        {
-            public Color Color { get; set; } = Color.Primary;
-        }
+    public partial class ColoredCalendarItem : CalendarItem
+    {
+        public Color Color { get; set; } = Color.Primary;
     }
 }

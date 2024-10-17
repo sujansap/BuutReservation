@@ -10,14 +10,10 @@
 <MudTabs Elevation="0" Centered="true" Class="mb-16">
     <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
         <CustomCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
-            data-testid="calendar-reserve" Items="AvailableDays" GreyedOutDates="GreyedOutDates"
+            data-testid="custom-calendar-reserve" Items="AvailableDays" GreyedOutDates="GreyedOutDates"
             DateRangeChanged="OnDateRangeChanged">
             <MonthTemplate>
-                <div class="d-flex gap-1">
-                    <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small"
-                        Color="((ColoredCalendarItem)context).Color" />
-                    <div>@context.Text</div>
-                </div>
+                <CustomDayComponent Context="context" />
             </MonthTemplate>
         </CustomCalendar>
     </MudTabPanel>
@@ -27,21 +23,4 @@
     </MudTabPanel>
 </MudTabs>
 
-@* Legende *@
-<MudStack>
-    <MudText Typo="Typo.h5">Legende</MudText>
-    <div class="d-flex gap-1">
-        <MudIcon Icon="@Icons.Material.Filled.Circle" Size="Size.Small" Color="Color.Primary" />
-        <div>Uw reservatie</div>
-    </div>
-    <div class="d-flex gap-1">
-        <MudIcon Icon="@Icons.Material.Filled.Square" Size="Size.Small"
-            Style="color: var(--mud-palette-gray-lighter)" />
-        <div>Beschikbaar</div>
-    </div>
-    <div class="d-flex gap-1">
-        <MudIcon Icon="@Icons.Material.Filled.Square" Size="Size.Small"
-            Style="color: var(--mud-palette-gray-default)" />
-        <div>Volzet</div>
-    </div>
-</MudStack>
+<ReservationCalendarLegend data-testid="custom-calendar-legend" />
