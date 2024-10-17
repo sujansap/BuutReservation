@@ -18,6 +18,7 @@ namespace Rise.Server.Tests.Fixtures
             {
                 Configuration = new ConfigurationBuilder()
                   .AddUserSecrets("d8435739-e257-4e40-b03f-9b9a66bbc18c")
+                  .AddEnvironmentVariables("ASPNETCORE_ENVIRONMENT:Testing")
                   .Build();
 
                 config.AddConfiguration(Configuration);
@@ -26,21 +27,10 @@ namespace Rise.Server.Tests.Fixtures
             // For stubbing services
             builder.ConfigureServices(services =>
             {
-                // Check if service exists
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions));
+                // Database will be made, trust the process
 
-                if (descriptor == null)
-                {
-                    // Connection
-                    services.AddDbContext<ApplicationDbContext>(options =>
-                    {
-                        options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL"));
-                        options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
-                    });
-
-                    // Create and seed database
-                    services.AddSingleton<TestDatabaseInitializer>();
-                }
+                var serviceProvider = services.BuildServiceProvider();
+                TestDatabaseInitializer.Init(serviceProvider);
             }
             );
         }
@@ -54,7 +44,7 @@ namespace Rise.Server.Tests.Fixtures
         private static readonly object _lock = new();
         private static bool _databaseInitialized = false;
 
-        public TestDatabaseInitializer(IServiceProvider serviceProvider)
+        public static void Init(IServiceProvider serviceProvider)
         {
             lock (_lock)
             {
