@@ -8,6 +8,8 @@ internal class TimeSlotConfiguration : IEntityTypeConfiguration<TimeSlot>
 {
     public void Configure(EntityTypeBuilder<TimeSlot> builder)
     {
+        builder.ToTable("TimeSlot");
+
         builder.Property(x => x.Date).IsRequired();
         builder.Property(x => x.Start).IsRequired();
         builder.Property(x => x.End).IsRequired();
