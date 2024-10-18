@@ -30,6 +30,16 @@ namespace Rise.Persistence.Seeders
                 new ([UserSeeder.users[0]]){ AmountAdults = 1, AmountChildren = 2, AmountPets = 1, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[12], },
                 new ([UserSeeder.users[0]]){ AmountAdults = 1, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[13], },
                 new ([UserSeeder.users[0]]){ AmountAdults = 1, AmountChildren = 0, AmountPets = 1, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[14], },
+
+                new ([UserSeeder.users[0], UserSeeder.users[1]]){ AmountAdults = 6, AmountChildren = 2, AmountPets = 1, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[15], },
+                new ([UserSeeder.users[0]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[16], },
+                new ([UserSeeder.users[0]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[17], },
+                new ([UserSeeder.users[2], UserSeeder.users[4]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[15], },
+                new ([UserSeeder.users[3], UserSeeder.users[5]]){ AmountAdults = 3, AmountChildren = 0, AmountPets = 1, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[16], },
+                new ([UserSeeder.users[2]]){ AmountAdults = 3, AmountChildren = 0, AmountPets = 1, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[17], },
+                new ([UserSeeder.users[5]]){ AmountAdults = 2, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[15], },
+                new ([UserSeeder.users[1]]){ AmountAdults = 1, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[16], },
+                new ([UserSeeder.users[1]]){ AmountAdults = 1, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[17], },
             ];
         }
 
