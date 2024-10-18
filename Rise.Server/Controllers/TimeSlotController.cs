@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.TimeSlots;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
+using Rise.Domain.Timeslots;
 
 namespace Rise.Server.Controllers
 {
@@ -70,7 +71,11 @@ namespace Rise.Server.Controllers
                 return BadRequest("Invalid date parameters.");
             }
 
-            // TODO make service still allows to get dates 2+ from now and past
+            var date = new DateTime(year, month, day);
+            if (date <= DateTime.Today.AddDays(Reservation.MinDaysBetweenReservation))
+            {
+                return Ok(new List<TimeSlotDto>());
+            }
 
             var timeSlots = await _timeSlotService.GetTimeSlotsByDate(year, month, day);
 
