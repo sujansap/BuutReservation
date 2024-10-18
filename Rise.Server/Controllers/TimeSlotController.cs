@@ -50,7 +50,13 @@ namespace Rise.Server.Controllers
         }
 
 
-        // TODO document route GetTimeSlotsByDate
+        /// <summary>
+        /// Gets all time slots for the given date (+2 days from today onwards)
+        /// </summary>
+        /// <param name="year">The year</param>
+        /// <param name="month">The month</param>
+        /// <param name="day">The day</param>
+        /// <returns>The timeslots for that day</returns>
         [HttpGet("{year}/{month}/{day}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -68,10 +74,14 @@ namespace Rise.Server.Controllers
             // Validate the date parameters
             if (!IsValidDate(year, month, day))
             {
-                return BadRequest("Invalid date parameters.");
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "Date", [$"The given date is not valid"] }
+                }));
             }
 
             var date = new DateTime(year, month, day);
+
             if (date <= DateTime.Today.AddDays(Reservation.MinDaysBetweenReservation))
             {
                 return Ok(new List<TimeSlotDto>());
