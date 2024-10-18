@@ -10,5 +10,9 @@ namespace Rise.Shared.TimeSlots
         /// <param name="endDate">Date from where the range ends (inclusive)</param>
         /// <returns>All time slots with their general info</returns>
         Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDate, DateOnly endDate);
+        Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(
+            int year,
+            int month,
+            int day);
     }
 }

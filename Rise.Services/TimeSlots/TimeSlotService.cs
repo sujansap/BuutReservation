@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Timeslots;
 using Rise.Persistence;
@@ -8,7 +9,7 @@ namespace Rise.Services.TimeSlots
 {
     public class TimeSlotService(ApplicationDbContext dbContext) : ITimeSlotService
     {
-        private readonly ApplicationDbContext dbContext = dbContext;
+        private readonly ApplicationDbContext _dbContext = dbContext;
 
         internal class DateTimeSlotBoatUse
         {
@@ -30,22 +31,22 @@ namespace Rise.Services.TimeSlots
         {
             Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> daysWithReservation = [];
 
-            List<DateTimeSlotBoatUse> allTimeSlotsDuringRange = await dbContext.TimeSlots.Where(
+            List<DateTimeSlotBoatUse> allTimeSlotsDuringRange = await _dbContext.TimeSlots.Where(
                 timeSlot => startDate <= timeSlot.Date && timeSlot.Date <= endDate
                 && !timeSlot.IsDeleted)
                 .Select(timeSlot => new DateTimeSlotBoatUse()
                 {
                     Date = timeSlot.Date,
                     Start = timeSlot.Start,
-                    UsedBoatCount = dbContext.Reservations.Where(reservation => reservation.TimeSlotId == timeSlot.Id).Count()
+                    UsedBoatCount = _dbContext.Reservations.Where(reservation => reservation.TimeSlotId == timeSlot.Id).Count()
                 })
                 .ToListAsync();
 
-                if (allTimeSlotsDuringRange.Count != 0)
-                {
-                    int totalAmountBoats = dbContext.Boats.Count();
+            if (allTimeSlotsDuringRange.Count != 0)
+            {
+                int totalAmountBoats = _dbContext.Boats.Count();
 
-                    daysWithReservation = allTimeSlotsDuringRange
+                daysWithReservation = allTimeSlotsDuringRange
                     .GroupBy(
                         x => x.Date,
                         (date, subset) => new
@@ -71,6 +72,45 @@ namespace Rise.Services.TimeSlots
                         });
 
             return new TimeSlotRangeInfoDto(startDate, endDate, totalDays, days);
+
         }
+
+        public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
+        {
+            //Right now we don't keep the information of whether a boat is available or not
+            var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
+
+            var date = new DateOnly(year, month, day);
+
+            //we get all the timeslots for a given date and the amount of reservations for that timeslot
+            var timeSlotReservationCounts = await _dbContext.TimeSlots
+            .Where(ts => ts.Date == date)
+            .Select(ts => new
+            {
+                TimeSlot = ts, // The timeslot itself
+                ReservationCount = ts.Reservations.Count() // how many times this timeslot is reserved
+            })
+            .ToListAsync();
+
+            //if the timeslot is available we add it to the availableTimeSlots list
+            //we check whether the amount of reservations is less than the amount of boats for a given timeslot
+            var availableTimeSlots = timeSlotReservationCounts
+            .Where(item => item.ReservationCount < amountOfAvailableBoats)
+            .Select(item => new TimeSlotDto
+            {
+                Id = item.TimeSlot.Id,
+                Start = item.TimeSlot.Start,
+                End = item.TimeSlot.End,
+            })
+            .OrderBy(item => item.Start)
+            .ToList();
+
+            //later this needs to change to check whether a timeslot has a reservation that is made by the
+            //curent logged in user 
+            //what we need to do is check if there is a reservation with userid and timeslotid from availableTimeSlots
+            return availableTimeSlots;
+        }
+
+
     }
 }

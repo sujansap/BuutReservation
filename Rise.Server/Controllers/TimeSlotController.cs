@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.TimeSlots;
+using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
+using Rise.Domain.Timeslots;
 
 namespace Rise.Server.Controllers
 {
@@ -9,7 +11,7 @@ namespace Rise.Server.Controllers
     public class TimeSlotController(ITimeSlotService timeSlotService, ILogger<TimeSlotController> logger) : ControllerBase
     {
         private readonly ILogger _logger = logger;
-        private readonly ITimeSlotService timeSlotService = timeSlotService;
+        private readonly ITimeSlotService _timeSlotService = timeSlotService;
 
 
         /// <summary>
@@ -40,11 +42,67 @@ namespace Rise.Server.Controllers
             }
 
             _logger.LogDebug("Getting days between range {startDate} and {endDay} from service layer", [startDate, endDate]);
-            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await timeSlotService.GetAllTimeSlotsInRange(
+            TimeSlotRangeInfoDto timeSlotRangeInfoDto = await _timeSlotService.GetAllTimeSlotsInRange(
                 startDate, endDate);
             _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Start, timeSlotRangeInfoDto.End]);
 
             return Ok(timeSlotRangeInfoDto);
+        }
+
+
+        /// <summary>
+        /// Gets all time slots for the given date (+2 days from today onwards)
+        /// </summary>
+        /// <param name="year">The year</param>
+        /// <param name="month">The month</param>
+        /// <param name="day">The day</param>
+        /// <returns>The timeslots for that day</returns>
+        [HttpGet("{year}/{month}/{day}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTimeSlotsByDate(
+            [FromRoute]
+            [Range(1, 9999, ErrorMessage = "Year must be between 1 and 9999")]
+            int year,
+            [FromRoute]
+            [Range(1, 12, ErrorMessage = "Month must be between 1 and 12")]
+            int month,
+            [FromRoute]
+            [Range(1, 31, ErrorMessage = "Day must be between 1 and 31")]
+            int day)
+        {
+            // Validate the date parameters
+            if (!IsValidDate(year, month, day))
+            {
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "Date", [$"The given date is not valid"] }
+                }));
+            }
+
+            var date = new DateTime(year, month, day);
+
+            if (date <= DateTime.Today.AddDays(Reservation.MinDaysBetweenReservation))
+            {
+                return Ok(new List<TimeSlotDto>());
+            }
+
+            var timeSlots = await _timeSlotService.GetTimeSlotsByDate(year, month, day);
+
+            return Ok(timeSlots);
+        }
+
+        private static bool IsValidDate(int year, int month, int day)
+        {
+            try
+            {
+                var date = new DateTime(year, month, day);
+                return true;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return false;
+            }
         }
     }
 }
