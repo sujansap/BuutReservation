@@ -3,6 +3,7 @@
 @using Rise.Client.Reservations.Components
 @using Rise.Client.TimeSlots
 @using Heron.MudCalendar
+@using Rise.Client.Reservations.Components.TimeSlotList
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
@@ -27,7 +28,7 @@
                     </MonthTemplate>
                 </CustomCalendar>
             </MudItem>
-            <MudItem xs="12" md="4">
+            <MudItem xs="12" md="4" Class="mt-8">
                 @if (SelectedDate.HasValue)
                 {
                     <TimeSlotsList SelectedDate="SelectedDate.Value" />

@@ -4,21 +4,22 @@
 @using static System.Net.WebRequestMethods
 
 
-<MudContainer MaxWidth="MaxWidth.Small">
-    <MudText Typo="Typo.h4" Class="mud-text-secondary">Available Timeslots</MudText>
 
+<MudPaper Class="pa-2 h-fill">
+    <MudText Typo="Typo.h5" Class="mud-text-secondary mb-4">@SelectedDate.ToString("dd MMMM yyyy")</MudText>
     @if (timeslots == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         <p>Loading timeslots...</p>
     }
-    else if (timeslots?.Count() == 0)
-    {
-        <MudAlert Severity="Severity.Info">No timeslots available.</MudAlert>
-    }
     else
     {
-        <MudPaper Style="height: 400px; overflow-y: auto; background-color: #e4e4e4;" Class="pa-2">
+        if (timeslots?.Count() == 0)
+        {
+            <MudAlert Severity="Severity.Info">No timeslots available.</MudAlert>
+        }
+        else
+        {
             <MudStack>
                 @foreach (var timeslot in timeslots)
                 {
@@ -27,9 +28,10 @@
 
                 }
             </MudStack>
-        </MudPaper>
+        }
+
     }
-</MudContainer>
+</MudPaper>
 
 @code {
     @* TODO move code to own file *@
