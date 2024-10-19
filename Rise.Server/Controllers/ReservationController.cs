@@ -19,13 +19,13 @@ namespace Rise.Server.Controllers
 
         /// <summary>
         /// Gets all reservations for a user
-        /// </summary>
-        /// <param name="userId">ID of the current user</param>      
+        /// </summary>   
         /// <returns>List of reservations</returns>
-        [HttpGet("user/{userId}/range")]
+        [HttpGet("user/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationListDto>))]
-        public async Task<IActionResult> GetReservationsForUserInRange(int userId)
+        public async Task<IActionResult> GetCurrentUserReservations()
         {
+            int userId = 1; // Get the user ID from the token
             var reservations = await _reservationService.GetCurrentUserReservations(userId);
             return Ok(reservations);
         }
