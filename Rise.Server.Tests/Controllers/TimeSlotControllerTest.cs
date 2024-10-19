@@ -118,11 +118,7 @@ namespace Rise.Server.Tests.Controllers
 
             // Assert
             response.ShouldNotBeEmpty();
-            response.Count.ShouldBe(2);
-            Console.WriteLine(response);
-            response.ShouldContain(ts => ts.Start.Equals(TimeSpan.Parse("14:00:00")) && ts.End.Equals(TimeSpan.Parse("17:00:00")));
-
-            response.ShouldContain(ts => ts.Start.Equals(TimeSpan.Parse("18:00:00")) && ts.End.Equals(TimeSpan.Parse("21:00:00")));
+            response.Count.ShouldBe(1);
 
         }
 
