@@ -4,8 +4,10 @@ using Rise.Persistence;
 using Rise.Persistence.Triggers;
 using Rise.Server.Controllers;
 using Rise.Services.Products;
+using Rise.Services.Reservations;
 using Rise.Services.TimeSlots;
 using Rise.Shared.Products;
+using Rise.Shared.Reservations;
 using Rise.Shared.TimeSlots;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +34,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 var app = builder.Build();
 
