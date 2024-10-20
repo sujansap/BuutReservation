@@ -49,14 +49,12 @@ app.MapFallbackToFile("index.html");
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
-    using (var scope = app.Services.CreateScope())
-    { // Require a DbContext from the service provider and seed the database.
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
-        Seeder seeder = new(dbContext);
-        seeder.Seed();
-    }
+    using var scope = app.Services.CreateScope();
+    // Require a DbContext from the service provider and seed the database.
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    new Seeder(dbContext).Seed();
 }
+
 
 await app.RunAsync();
 
