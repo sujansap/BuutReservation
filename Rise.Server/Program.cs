@@ -60,7 +60,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     new Seeder(dbContext).Seed();
 }
 
-
 await app.RunAsync();
 
 public partial class Program { }
