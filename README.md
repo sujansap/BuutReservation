@@ -12,7 +12,7 @@
 
 ## Technologies & Packages Used
 
-- [Postgres](https://www.postgresql.org/) - Database
+- [Postgres 16.4](https://www.postgresql.org/) - Database
 - [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - Frontend
 - [ASP.NET 8](https://dotnet.microsoft.com/en-us/apps/aspnet) - Backend
 - [Entity Framework 8](https://learn.microsoft.com/en-us/ef/) - Database Access
@@ -35,6 +35,9 @@
 3. Set up the database connection
 4. Run the project using the `Rise.Server` project as the startup project: `dotnet run --project .\Rise.Server\`
 5. The project should open in your default browser on port 5001.
+
+Running the application in production specify it in the command like: `dotnet run --project .\Rise.Server\ --environment Production`
+For more info on running the application in a specifying environment, check out the ASP.NET docs on [Using multiple environments in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-8.0)
 
 ## Database
 
