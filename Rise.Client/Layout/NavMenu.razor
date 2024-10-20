@@ -13,17 +13,18 @@
 
     @* NavMenu for desktop *@
     <MudHidden Breakpoint="Breakpoint.SmAndDown">
-        <MudStack Row="true">
+        <MudStack Row="true" AlignItems="AlignItems.Center">
             <MudNavLink Href="counter" data-testid="nav-desktop-counter">HOME</MudNavLink>
             <MudNavLink Href="about" data-testid="nav-desktop-about">ABOUT</MudNavLink>
             <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">RESERVEER</MudNavLink>
         </MudStack>
         <MudSpacer></MudSpacer>
-        <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
+        <MudButton Class="mr-8" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
             data-testid="nav-desktop-book">
             BOOK NOW
         </MudButton>
-        <MudStack Row="true">
+        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
+            StretchItems="StretchItems.Start">
             <AuthorizeView>
                 <Authorized>
                     <MudButton Href="profile" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Person"
@@ -33,7 +34,7 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
                         Href="notifications" data-testid="nav-desktop-notifications" />
                     <MudNavLink OnClick="BeginLogOut" data-testid="nav-desktop-logout"
-                        Icon="@Icons.Material.Filled.Logout">
+                        Icon="@Icons.Material.Filled.Logout" IconColor="Color.Inherit">
                         Log out
                     </MudNavLink>
                 </Authorized>
@@ -64,7 +65,7 @@
                     <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Outlined">
                         @(!string.IsNullOrWhiteSpace(context.User.Identity?.Name) ? context.User.Identity?.Name[0] :
                             '?')</MudAvatar>
-
+                        <MudText>Welkom, @context.User.Identity?.Name</MudText>
                     </Authorized>
                     <NotAuthorized>
                         <MudButton Variant="Variant.Filled" Size="Size.Medium" Color="Color.Primary"
