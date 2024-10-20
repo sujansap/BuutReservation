@@ -1,7 +1,14 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization
+
+@inject IStringLocalizer<LandingPageResource> Localizer
+
+@using Rise.Client.Components
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
-
+<CultureSelector />
+<h2>@Localizer["WelcomeMessage"]</h2>
 Welcome to your new app.
