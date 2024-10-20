@@ -1,0 +1,25 @@
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">
+            @context.User.Identity?.Name
+        </MudNavLink>
+        <MudNavLink OnClick="BeginLogOut" data-testid="nav-mobile-logout" Icon="@Icons.Material.Filled.Logout">Log out
+        </MudNavLink>
+    </Authorized>
+    <NotAuthorized>
+        <MudNavLink Href="authentication/login" data-testid="nav-mobile-login" Icon="@Icons.Material.Filled.Login">Log
+            in
+        </MudNavLink>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    public void BeginLogOut()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
+    }
+}
