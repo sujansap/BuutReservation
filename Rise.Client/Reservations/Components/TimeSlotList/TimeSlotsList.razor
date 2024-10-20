@@ -1,0 +1,34 @@
+﻿<!-- Pages/TimeslotList.razor -->
+@page "/timeslots"
+@using Rise.Shared.TimeSlots
+@using static System.Net.WebRequestMethods
+
+
+
+<MudPaper Class="pa-2 h-fill">
+    <MudText Typo="Typo.h5" Class="mud-text-secondary mb-4">@SelectedDate.ToString("dd MMMM yyyy")</MudText>
+    @if (timeslots == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        <p>Loading timeslots...</p>
+    }
+    else
+    {
+        if (timeslots?.Count() == 0)
+        {
+            <MudAlert Severity="Severity.Info">No timeslots available.</MudAlert>
+        }
+        else
+        {
+            <MudStack>
+                @foreach (var timeslot in timeslots)
+                {
+
+                    <TimeSlotComponent Timeslot="timeslot" />
+
+                }
+            </MudStack>
+        }
+
+    }
+</MudPaper>

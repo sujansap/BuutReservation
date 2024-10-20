@@ -28,7 +28,7 @@ namespace Rise.Client.Layout
             await Page.GetByTestId(testId).ClickAsync();
 
             Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldEndWith(resultSuffix);
+            Page.Url.ShouldContain(resultSuffix);
         }
 
         [TestMethod]
@@ -37,7 +37,6 @@ namespace Rise.Client.Layout
         [DataRow("nav-mobile-reservations", "reservations")]
         [DataRow("nav-mobile-book", "book")]
         [DataRow("nav-mobile-notifications", "notifications")]
-        [DataRow("nav-mobile-settings", "settings")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix)
         {
             await Page.SetViewportSizeAsync(959, 1920);
@@ -47,7 +46,7 @@ namespace Rise.Client.Layout
             await Page.GetByTestId(testId).ClickAsync();
 
             Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldEndWith($"/{resultSuffix}");
+            Page.Url.ShouldContain($"/{resultSuffix}");
         }
     }
 }

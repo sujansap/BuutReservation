@@ -5,6 +5,5 @@ namespace Rise.Shared.TimeSlots
         public int Id { get; set; }
         public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }
-        public int CruisePeriodId { get; set; }
     }
 }

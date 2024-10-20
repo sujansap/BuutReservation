@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rise.Persistence;
@@ -11,9 +12,11 @@ using Rise.Persistence;
 namespace Rise.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241016080053_compositeKeyForTimeSlot")]
+    partial class compositeKeyForTimeSlot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,7 +131,7 @@ namespace Rise.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CruisePeriod", (string)null);
+                    b.ToTable("CruisePeriods");
                 });
 
             modelBuilder.Entity("Rise.Domain.Timeslots.Reservation", b =>
@@ -213,7 +216,7 @@ namespace Rise.Persistence.Migrations
 
                     b.HasIndex("CruisePeriodId");
 
-                    b.ToTable("TimeSlot", (string)null);
+                    b.ToTable("TimeSlots");
                 });
 
             modelBuilder.Entity("Rise.Domain.Users.User", b =>
