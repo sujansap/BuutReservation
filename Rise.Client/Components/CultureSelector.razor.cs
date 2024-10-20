@@ -3,7 +3,6 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using System.Globalization;
 
-
 namespace Rise.Client.Components
 {
     public partial class CultureSelector

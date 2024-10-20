@@ -3,12 +3,27 @@
 @inject NavigationManager Navigation
 
 
+@using MudBlazor
 
-<label>
-    <select @bind="selectedCulture" @bind:after="ApplySelectedCultureAsync">
-        @foreach (var culture in supportedCultures)
-        {
-            <option value="@culture">@culture.DisplayName</option>
-        }
-    </select>
-</label>
+
+
+
+<MudSelect @bind-Value="selectedCulture" @bind-Value:after="ApplySelectedCultureAsync">
+    @foreach (var culture in supportedCultures)
+    {
+        <MudSelectItem Value="@culture">@culture.DisplayName</MudSelectItem>
+    }
+    </MudSelect>
+
+
+
+    <!--
+                                                                            <label>
+                                                                                <select @bind="selectedCulture" @bind:after="ApplySelectedCultureAsync">
+    @foreach (var culture in supportedCultures)
+    {
+                                                                                        <option value="@culture">@culture.DisplayName</option>
+    }
+                                                                                </select>
+                                                                            </label>
+                                                                            -->
