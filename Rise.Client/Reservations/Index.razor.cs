@@ -32,10 +32,6 @@ namespace Rise.Client.Reservations
         private ITimeSlotService TimeSlotService { get; set; } = default!;
 
         /// <summary>
-        /// All available days on the calendar
-        /// </summary>
-        private List<ColoredCalendarItem> AvailableDays = [];
-        /// <summary>
         /// All unavailable days on the calendar
         /// </summary>
         private List<DateTime> GreyedOutDates = [];
@@ -113,12 +109,12 @@ namespace Rise.Client.Reservations
             );
 
 
-                AvailableDays = response.Days
-                .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
-                .Select(ConvertToCalendarItems)
-                .ToList();
+                // AvailableDays = response.Days
+                // .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
+                // .Select(ConvertToCalendarItems)
+                // .ToList();
 
-                GreyedOutDates = response.Days.Where(day => day.IsFullyBooked).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
+                GreyedOutDates = response.Days.Where(day => day.IsFullyBooked || !day.IsSlotAvailable).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
             }
 
             catch
