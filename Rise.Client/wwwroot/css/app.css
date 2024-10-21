@@ -1,4 +1,3 @@
-@import url("open-iconic/font/css/open-iconic-bootstrap.min.css");
 :root {
   --custom-grey-out-color: #ececec; /* Adjust this hex color to your preferred shade */
   --custom-today-border: 3px solid var(--mud-palette-primary) !important;
