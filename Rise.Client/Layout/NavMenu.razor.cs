@@ -1,4 +1,6 @@
 using System;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace Rise.Client.Layout
 {
@@ -8,6 +10,13 @@ namespace Rise.Client.Layout
         private void ToggleDrawer()
         {
             _drawerOpen = !_drawerOpen;
+        }
+
+        [Inject] protected NavigationManager Navigation { get; set; } = default!;
+
+        public void BeginLogOut()
+        {
+            Navigation.NavigateToLogout("authentication/logout");
         }
     }
 }

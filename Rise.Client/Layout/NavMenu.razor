@@ -1,7 +1,5 @@
 @using MudBlazor
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Authorization;
 
 <MudAppBar Elevation="1">
 
@@ -101,10 +99,3 @@
             </AuthorizeView>
         </MudNavMenu>
     </MudDrawer>
-
-    @code {
-    public void BeginLogOut()
-    {
-        Navigation.NavigateToLogout("authentication/logout");
-    }
-}
