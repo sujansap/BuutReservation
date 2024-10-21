@@ -1,11 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Persistence.Triggers;
-using Rise.Server.Controllers;
-using Rise.Services.Products;
 using Rise.Services.TimeSlots;
-using Rise.Shared.Products;
 using Rise.Shared.TimeSlots;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +26,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
 });
 
-builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 
 var app = builder.Build();
