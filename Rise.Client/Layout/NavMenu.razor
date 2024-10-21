@@ -3,7 +3,7 @@
 <MudAppBar Elevation="1">
 
     @* Always display *@
-    <MudLink Href="/" data-testid="nav-brand-logo">
+    <MudLink Href="home" data-testid="nav-brand-logo">
         <MudImage Src="assets/BUUT_logo_white.webp" Alt="buut logo" Height="60" Width="60" ObjectFit="ObjectFit.Contain"
             Class="mr-3" />
     </MudLink>
@@ -11,7 +11,7 @@
     @* NavMenu for desktop *@
     <MudHidden Breakpoint="Breakpoint.SmAndDown">
         <MudStack Row="true">
-            <MudNavLink Href="counter" data-testid="nav-desktop-counter">HOME</MudNavLink>
+            <MudNavLink Href="home" data-testid="nav-desktop-home">HOME</MudNavLink>
             <MudNavLink Href="about" data-testid="nav-desktop-about">ABOUT</MudNavLink>
             <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">RESERVEER</MudNavLink>
         </MudStack>
@@ -47,7 +47,7 @@
     </MudDrawerHeader>
     <MudNavMenu>
         <MudDivider />
-        <MudNavLink Href="counter" data-testid="nav-mobile-counter" Match="NavLinkMatch.All">HOME</MudNavLink>
+        <MudNavLink Href="home" data-testid="nav-mobile-home" Match="NavLinkMatch.All">HOME</MudNavLink>
         <MudNavLink Href="about" data-testid="nav-mobile-about">ABOUT</MudNavLink>
         <MudNavLink Href="book" data-testid="nav-mobile-book">BOOK NOW</MudNavLink>
         <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">RESERVEER</MudNavLink>
