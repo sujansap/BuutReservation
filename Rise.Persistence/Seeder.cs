@@ -13,7 +13,6 @@ public class Seeder
 
     public void Seed()
     {
-        new ProductSeeder(dbContext).Seed();
         new UserSeeder(dbContext).Seed();
 
         new CruisePeriodSeeder(dbContext).Seed();
