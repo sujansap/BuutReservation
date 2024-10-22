@@ -40,7 +40,7 @@
 
 ### Running In Production
 
-Running the application in production environment can be specified as an argument in the command like
+To run the application in the `production` environment, add the following argument to the `dotnet run` command:
 
 ```bash
 --environment Production
@@ -52,7 +52,7 @@ For changing the urls the server is running can be specified via the argument `-
 --urls "https://localhost:5100;http://localhost:5200"
 ```
 
-So the result run command would be something along the lines of:
+So the resulting `run` command would be something along the lines of:
 
 ```bash
 dotnet run --project Rise.Server --environment Production --urls "https://0.0.0.0:5100"
