@@ -4,11 +4,12 @@
 
 @using MudBlazor
 
-<MudMenu StartIcon="@Icons.Material.Filled.Translate" EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
-    Label="@selectedCulture?.DisplayName" Color="Color.Secondary">
+<MudMenu data-testid="culture-selector" Class="ml-4 " StartIcon="@Icons.Material.Filled.Translate"
+    EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Label="@selectedCulture?.DisplayName" Color="@MenuColor"
+    Edge="Edge.End">
     @foreach (var culture in supportedCultures)
     {
-        <MudMenuItem @onclick="async () => await OnCultureSelectedAsync(culture)">
+        <MudMenuItem data-testid="@culture.DisplayName" @onclick="async () => await OnCultureSelectedAsync(culture)">
             @culture.DisplayName
         </MudMenuItem>
     }

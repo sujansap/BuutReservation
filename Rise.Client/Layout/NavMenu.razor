@@ -29,7 +29,8 @@
             Href="profile" data-testid="nav-desktop-profile" />
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
             Href="notifications" data-testid="nav-desktop-notifications" />
-        <CultureSelector />
+
+        <CultureSelector MenuColor="Color.Secondary" />
     </MudHidden>
 
     @* NavMenu for mobile *@
@@ -64,5 +65,12 @@
         </MudNavLink>
         <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
             Icon="@Icons.Material.Filled.Notifications">@Localizer["Notifications"]</MudNavLink>
+
+
+
+
+
     </MudNavMenu>
+    <MudDivider />
+    <CultureSelector MenuColor="Color.Inherit" />
 </MudDrawer>

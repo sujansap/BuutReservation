@@ -7,6 +7,9 @@ namespace Rise.Client.Components
 {
     public partial class CultureSelector
     {
+        [Parameter]
+        public Color MenuColor { get; set; } = Color.Secondary;
+
         private CultureInfo[] supportedCultures = new[]
         {
         new CultureInfo("nl-BE"),
