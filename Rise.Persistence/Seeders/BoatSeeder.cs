@@ -15,23 +15,10 @@ namespace Rise.Persistence.Seeders
             new() {PersonalName = "Leith", },
             new() {PersonalName = "Lubeck",},
         ];
-            //     boats = [
-            //     new() {PersonalName = "Limba", MaximumAdults = 6, MaximumChildren = 2, MaximumPets = 1},
-            //     new() {PersonalName = "Leith", MaximumAdults = 3, MaximumChildren = 2, MaximumPets = 1},
-            //     new() {PersonalName = "Lubeck", MaximumAdults = 4, MaximumChildren = 2, MaximumPets = 1},
-            // ];
-            // // TODO code smell of not setting the start and end period via the constructor
-            // boats[1].DefineOutOfOrderPeriod(DateTime.UtcNow);
-            // boats[2].DefineOutOfOrderPeriod(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
         }
 
-        internal override DbSet<Boat> DbSet => dbContext.Boats;
+        protected override DbSet<Boat> DbSet => _dbContext.Boats;
 
-        internal override ICollection<Boat> Items { get => boats; }
-
-        internal override bool HasAlreadyBeenSeeded()
-        {
-            return dbContext.Boats.Any();
-        }
+        protected override ICollection<Boat> Items { get => boats; }
     }
 }
