@@ -1,0 +1,54 @@
+@page "/user-reservations"
+@using Rise.Shared.Reservations
+@using MudBlazor
+@using Rise.Client.Services
+
+
+<MudGrid>
+    @if (reservations == null)
+    {
+        <MudItem xs="12">
+            <MudProgressCircular Indeterminate="true" />
+        </MudItem>
+    }
+    else if (reservations.Any())
+    {
+        @foreach (var reservation in reservations)
+        {
+            <MudItem xs="12" md="6">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText>Date: @reservation.Date</MudText>
+                        <MudText>Start: @reservation.Start</MudText>
+                        <MudText>End: @reservation.End</MudText>
+                        <MudText>Adults: @reservation.AmountAdults</MudText>
+                        <MudText>Children: @reservation.AmountChildren</MudText>
+                        <MudText>Pets: @reservation.AmountPets</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    }
+    else
+    {
+        <MudItem xs="12">
+            <MudText>No reservations found.</MudText>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private IEnumerable<ReservationListDto> reservations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReservations();
+    }
+    [Inject]
+    private IReservationService ReservationService { get; set; } = default!;
+    private async Task LoadReservations()
+    {
+        //TODO: Moet nog geedit user id via token
+     reservations = await ReservationService.GetCurrentUserReservations(1);
+    }
+}
