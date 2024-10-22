@@ -12,7 +12,7 @@
 
 ## Technologies & Packages Used
 
-- [Postgres](https://www.postgresql.org/) - Database
+- [Postgres 16.4](https://www.postgresql.org/) - Database
 - [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) - Frontend
 - [ASP.NET 8](https://dotnet.microsoft.com/en-us/apps/aspnet) - Backend
 - [Entity Framework 8](https://learn.microsoft.com/en-us/ef/) - Database Access
@@ -26,15 +26,39 @@
 - [Shouldly](https://docs.shouldly.org) - Helper for testing
 - [AspNetCore MVC testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) - Integration testing
 
-## Installation Instructions
+## Running the application
+
+### Installation Instructions
 
 > Note: Initially the database will not exist, so you will need to run the migrations to [create the database](#creation-of-the-database).
 
 1. Clone the repository
 2. Open the `Rise.sln` file in Visual Studio or Visual Studio Code
 3. Set up the database connection
-4. Run the project using the `Rise.Server` project as the startup project: `dotnet run --project .\Rise.Server\`
+4. Run the project using the `Rise.Server` project as the startup project: `dotnet run --project Rise.Server`
 5. The project should open in your default browser on port 5001.
+
+### Running In Production
+
+To run the application in the `production` environment, add the following argument to the `dotnet run` command:
+
+```bash
+--environment Production
+```
+
+For changing the urls the server is running can be specified via the argument `--urls` like so:
+
+```bash
+--urls "https://localhost:5100;http://localhost:5200"
+```
+
+So the resulting `run` command would be something along the lines of:
+
+```bash
+dotnet run --project Rise.Server --environment Production --urls "https://0.0.0.0:5100"
+```
+
+For more info on running the application in a specifying environment, check out the ASP.NET docs on [Using multiple environments in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-8.0) and the general [`dotnet run`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) commando.
 
 ## Database
 
@@ -108,6 +132,7 @@ dotnet ef migrations remove --startup-project Rise.Server --project Rise.Persist
 | E2E  | `Rise.Client.Tests`  | Testing the front-end | [Playwright](https://playwright.dev/dotnet/) | [Playwright must be installed](https://playwright.dev/dotnet/docs/intro) and that application must be [fully up and running](#installation-instructions) |
 
 Additional tools used to help write tests:
+
 - [nSubstitute](https://nsubstitute.github.io) - Mocking for testing
 - [Shouldly](https://docs.shouldly.org) - Helper for testing (asserts)
 
@@ -119,7 +144,7 @@ dotnet test
 
 !! Be sure that !!
 
-1) [Application is fully running](#installation-instructions)
+1) [Application is fully running](#running-the-application)
 2) [Test database is setup](#test-database-setup)
 3) [Playwright is fully installed](https://playwright.dev/dotnet/docs/intro)
 4) The Test database is ***NOT*** the production database is it will be dropped!!!
