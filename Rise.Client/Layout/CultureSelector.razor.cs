@@ -9,7 +9,7 @@ namespace Rise.Client.Layout
     {
 
         /// <summary>
-        /// The color of the menu, default is <see cref="Color.Secondary"/>.
+        /// The color of the menu, default is, Color.Secondary.
         /// </summary>
         [Parameter]
         public Color MenuColor { get; set; } = Color.Secondary;
