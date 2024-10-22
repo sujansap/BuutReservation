@@ -20,12 +20,17 @@ namespace Rise.Client.Components
             selectedCulture = CultureInfo.CurrentCulture;
         }
 
+        private async Task OnCultureSelectedAsync(CultureInfo culture)
+        {
+            selectedCulture = culture;
+            await ApplySelectedCultureAsync();
+        }
+
         private async Task ApplySelectedCultureAsync()
         {
             if (CultureInfo.CurrentCulture != selectedCulture)
             {
                 await JS.InvokeVoidAsync("blazorCulture.set", selectedCulture!.Name);
-
                 Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
             }
         }

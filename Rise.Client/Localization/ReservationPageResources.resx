@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<data name="NoTimeSlotAvailable" xml:space="preserve">
+	<value>Geen tijdsloten beschikbaar.</value>
+  	</data>
+    <data name="Reserve" xml:space="preserve">
+	<value>Reserveer</value>
+  	</data>
+    <data name="YourReservations" xml:space="preserve">
+	<value>Uw Reservaties</value>
+  	</data>
+</root>

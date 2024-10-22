@@ -1,4 +1,9 @@
 ﻿@using MudBlazor
+@using Rise.Client.Components
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization
+
+@inject IStringLocalizer<LandingPageResource> Localizer
 
 <MudAppBar Elevation="1">
 
@@ -11,19 +16,20 @@
     @* NavMenu for desktop *@
     <MudHidden Breakpoint="Breakpoint.SmAndDown">
         <MudStack Row="true">
-            <MudNavLink Href="counter" data-testid="nav-desktop-counter">HOME</MudNavLink>
-            <MudNavLink Href="about" data-testid="nav-desktop-about">ABOUT</MudNavLink>
-            <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">RESERVEER</MudNavLink>
+            <MudNavLink Href="counter" data-testid="nav-desktop-counter">@Localizer["Home"]</MudNavLink>
+            <MudNavLink Href="about" data-testid="nav-desktop-about">@Localizer["About"]</MudNavLink>
+            <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]</MudNavLink>
         </MudStack>
         <MudSpacer></MudSpacer>
         <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
             data-testid="nav-desktop-book">
-            BOOK NOW
+            @Localizer["BookNow"]
         </MudButton>
         <MudIconButton Class="mr-2" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End"
             Href="profile" data-testid="nav-desktop-profile" />
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
             Href="notifications" data-testid="nav-desktop-notifications" />
+        <CultureSelector />
     </MudHidden>
 
     @* NavMenu for mobile *@
@@ -39,7 +45,7 @@
     <MudDrawerHeader Class="pr-0">
         <MudStack Row="true" AlignItems="AlignItems.Center">
             <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Outlined">B</MudAvatar>
-            <MudText>Welkom, Bindo</MudText>
+            <MudText>@string.Format(Localizer["WelcomeMessage"], "Bindo")</MudText>
             <MudSpacer />
             <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.End"
                 OnClick="@ToggleDrawer" data-testid="nav-drawer-close-button" />
@@ -47,14 +53,16 @@
     </MudDrawerHeader>
     <MudNavMenu>
         <MudDivider />
-        <MudNavLink Href="counter" data-testid="nav-mobile-counter" Match="NavLinkMatch.All">HOME</MudNavLink>
-        <MudNavLink Href="about" data-testid="nav-mobile-about">ABOUT</MudNavLink>
-        <MudNavLink Href="book" data-testid="nav-mobile-book">BOOK NOW</MudNavLink>
-        <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">RESERVEER</MudNavLink>
+        <MudNavLink Href="counter" data-testid="nav-mobile-counter" Match="NavLinkMatch.All">@Localizer["Home"]
+        </MudNavLink>
+        <MudNavLink Href="about" data-testid="nav-mobile-about">@Localizer["About"]</MudNavLink>
+        <MudNavLink Href="book" data-testid="nav-mobile-book">@Localizer["BookNow"]</MudNavLink>
+        <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">@Localizer["Reserve"]</MudNavLink>
         <MudDivider />
-        <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">Profile
+        <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">
+            @Localizer["Profile"]
         </MudNavLink>
         <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
-            Icon="@Icons.Material.Filled.Notifications">Notifications</MudNavLink>
+            Icon="@Icons.Material.Filled.Notifications">@Localizer["Notifications"]</MudNavLink>
     </MudNavMenu>
 </MudDrawer>

@@ -2,28 +2,14 @@
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-
 @using MudBlazor
 
-
-
-
-<MudSelect @bind-Value="selectedCulture" @bind-Value:after="ApplySelectedCultureAsync">
+<MudMenu StartIcon="@Icons.Material.Filled.Translate" EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+    Label="@selectedCulture?.DisplayName" Color="Color.Secondary">
     @foreach (var culture in supportedCultures)
     {
-        <MudSelectItem Value="@culture">@culture.DisplayName</MudSelectItem>
+        <MudMenuItem @onclick="async () => await OnCultureSelectedAsync(culture)">
+            @culture.DisplayName
+        </MudMenuItem>
     }
-    </MudSelect>
-
-
-
-    <!--
-                                                                            <label>
-                                                                                <select @bind="selectedCulture" @bind:after="ApplySelectedCultureAsync">
-    @foreach (var culture in supportedCultures)
-    {
-                                                                                        <option value="@culture">@culture.DisplayName</option>
-    }
-                                                                                </select>
-                                                                            </label>
-                                                                            -->
+    </MudMenu>

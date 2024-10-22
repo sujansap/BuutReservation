@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Heron.MudCalendar;
 using MudBlazor;
 using Rise.Shared.TimeSlots;
+using System.Globalization;
 
 namespace Rise.Client.Reservations
 {
@@ -15,6 +16,11 @@ namespace Rise.Client.Reservations
         /// The end date if the date range, by default the current's month end date
         /// </summary>
         private readonly DateOnly defaultEndDay = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+
+        ///  <summary>
+        /// The selected culture (language)
+        /// </summary>        
+        private CultureInfo selectedCulture = CultureInfo.CurrentCulture;
 
         [SupplyParameterFromQuery]
         /// <summary>
