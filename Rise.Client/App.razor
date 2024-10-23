@@ -3,13 +3,14 @@
 
 @* Required *@
 <MudThemeProvider Theme="MainTheme.CustomTheme" />
-@* <MudPopoverProvider /> *@
 
 @* Needed for dialogs *@
 <MudDialogProvider />
 
 @* Needed for snackbars *@
 <MudSnackbarProvider />
+
+<MudPopoverProvider />
 
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">

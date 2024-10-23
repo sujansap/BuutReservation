@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<data name="WelcomeMessage" xml:space="preserve">
+		<value>Welcome to Buut!</value>
+	</data>
+	<!--nav
+	menu-->
+	<data name="Home" xml:space="preserve">
+		<value>HOME</value>
+	</data>
+	<data name="About" xml:space="preserve">
+		<value>ABOUT</value>
+	</data>
+	<data name="Reserve" xml:space="preserve">
+		<value>RESERVE</value>
+	</data>
+	<data name="BookNow" xml:space="preserve">
+		<value>BOOK NOW</value>
+	</data>
+	<data name="WelcomeMessage" xml:space="preserve">
+		<value>Welcome, {0}</value>
+	</data>
+	<data name="Profile" xml:space="preserve">
+		<value>Profile</value>
+	</data>
+	<data name="Notifications" xml:space="preserve">
+		<value>Notifications</value>
+	</data>
+	<!--navmenu-->
+	<!--footer-->
+	<data name="GeneralTerms" xml:space="preserve">
+		<value>General Terms</value>
+	</data>
+	<data name="PrivacyPolicy" xml:space="preserve">
+		<value>Privacy Policy</value>
+	</data>
+	<data name="ThanksTo" xml:space="preserve">
+		<value>Thanks to:</value>
+	</data>
+	<!--footer-->
+</root>

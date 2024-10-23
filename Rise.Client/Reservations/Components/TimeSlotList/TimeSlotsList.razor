@@ -1,10 +1,13 @@
 ﻿<!-- Pages/TimeslotList.razor -->
 @page "/timeslots"
+@using Rise.Client.Localization.Reservations
 @using Rise.Shared.TimeSlots
 @using static System.Net.WebRequestMethods
 
+@using Microsoft.Extensions.Localization
 
 
+@inject IStringLocalizer<ReservationPageResources> Localizer
 <MudPaper Class="pa-2 h-fill" data-testid="time-slot-list">
     <MudText Typo="Typo.h5" Class="mud-text-secondary mb-4">@SelectedDate.ToString("dd MMMM yyyy")</MudText>
     @if (timeslots == null)
@@ -16,14 +19,13 @@
     {
         if (timeslots?.Count() == 0)
         {
-            <MudAlert Severity="Severity.Info">No timeslots available.</MudAlert>
+            <MudAlert Severity="Severity.Info">@Localizer["NoTimeSlotAvailable"]</MudAlert>
         }
         else
         {
             <MudStack>
                 @foreach (var timeslot in timeslots)
                 {
-
                     <TimeSlotComponent Timeslot="timeslot" />
 
                 }
