@@ -3,7 +3,7 @@ using Rise.Domain.Reservations;
 
 // using Rise.Domain.Reservations;
 
-namespace Rise.Domain.Reservations;
+namespace Rise.Domain.Timeslots;
 
 public class TimeSlot : Entity, ITimeSlot
 {
