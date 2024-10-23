@@ -53,3 +53,4 @@ jobs:
             #${{ steps.meta.outputs.tags }}  # Metadata tags
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}-${{ github.run_number }}  # Gebruik branch-naam en job number
           labels: ${{ steps.meta.outputs.labels }}  # Metadata labels
+          no-cache: true  # Dit zal caching uitschakelen
