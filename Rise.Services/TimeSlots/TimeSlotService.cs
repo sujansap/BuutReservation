@@ -21,7 +21,7 @@ namespace Rise.Services.TimeSlots
             /// <summary>
             /// The start time of the time slot
             /// </summary>
-            public TimeSpan Start { get; set; }
+            public TimeOnly Start { get; set; }
             /// <summary>
             /// The amount of boats who already have been reserved
             /// </summary>

@@ -120,9 +120,9 @@ namespace Rise.Server.Tests.Controllers
             response.ShouldNotBeEmpty();
             response.Count.ShouldBe(3);
 
-            response.ShouldContain(ts => ts.Start.Equals(TimeSpan.Parse("10:00:00")) && ts.End.Equals(TimeSpan.Parse("11:30:00")));
-            response.ShouldContain(ts => ts.Start.Equals(TimeSpan.Parse("13:00:00")) && ts.End.Equals(TimeSpan.Parse("14:00:00")));
-            response.ShouldContain(ts => ts.Start.Equals(TimeSpan.Parse("16:30:00")) && ts.End.Equals(TimeSpan.Parse("18:45:00")));
+            response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("10:00:00")) && ts.End.Equals(TimeOnly.Parse("11:30:00")));
+            response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("13:00:00")) && ts.End.Equals(TimeOnly.Parse("14:00:00")));
+            response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("16:30:00")) && ts.End.Equals(TimeOnly.Parse("18:45:00")));
         }
 
 

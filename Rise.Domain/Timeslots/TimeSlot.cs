@@ -7,8 +7,8 @@ namespace Rise.Domain.Timeslots;
 
 public class TimeSlot : Entity, ITimeSlot
 {
-    private TimeSpan _start;
-    private TimeSpan _end;
+    private TimeOnly _start;
+    private TimeOnly _end;
     private DateOnly _date;
 
     public DateOnly Date
@@ -21,23 +21,23 @@ public class TimeSlot : Entity, ITimeSlot
         }
     }
 
-    public TimeSpan Start
+    public TimeOnly Start
     {
         get => _start;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(Start), TimeSpan.Zero, TimeSpan.FromHours(24), "Start time must be within a valid range.");
+            Guard.Against.OutOfRange(value, nameof(Start), TimeOnly.MinValue, TimeOnly.MaxValue, "Start time must be within a valid range.");
 
             _start = value;
         }
     }
 
-    public TimeSpan End
+    public TimeOnly End
     {
         get => _end;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(End), TimeSpan.Zero, TimeSpan.FromHours(24), "End time must be within a valid range.");
+            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, "End time must be within a valid range.");
             if (_start != default && value <= _start)
             {
                 throw new ArgumentOutOfRangeException(nameof(End), "End time must be after Start time.");

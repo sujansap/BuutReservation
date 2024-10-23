@@ -8,8 +8,8 @@ namespace Rise.Domain.Tests.Timeslots
     public class TimeSlotShould
     {
         private static readonly DateOnly ValidDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
-        private static readonly TimeSpan ValidStart = new TimeSpan(10, 0, 0); // 10:00 AM
-        private static readonly TimeSpan ValidEnd = new TimeSpan(13, 0, 0);   // 1:00 PM
+        private static readonly TimeOnly ValidStart = new TimeOnly(10, 0, 0); // 10:00 AM
+        private static readonly TimeOnly ValidEnd = new TimeOnly(13, 0, 0);   // 1:00 PM
 
         [Fact]
         public void BeCreated()
@@ -42,32 +42,45 @@ namespace Rise.Domain.Tests.Timeslots
         }
 
         [Theory]
-        [InlineData("25:00:00")]
-        [InlineData("-01:00:00")]
-        public void NotBeCreatedWithAnInvalidStart(string startString)
+        [InlineData(25, 0)] // Invalid hour
+        [InlineData(-1, 0)] // Invalid hour
+        public void NotBeCreatedWithAnInvalidStart(int hour, int minute)
         {
-            TimeSpan invalidStart = TimeSpan.Parse(startString);
-
+            // Act
             Action act = () =>
             {
-                TimeSlot timeSlot = new() { Date = ValidDate, Start = invalidStart, End = ValidEnd };
+
+                TimeSlot timeSlot = new()
+                {
+                    Date = ValidDate,
+                    Start = new TimeOnly(hour, minute), // Using invalid TimeOnly directly
+                    End = ValidEnd
+                };
             };
 
+            // Assert
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
 
+
         [Theory]
-        [InlineData("25:00:00")]
-        [InlineData("-01:00:00")]
-        public void NotBeCreatedWithAnInvalidEnd(string endString)
+        [InlineData(25, 0)] // Invalid hour
+        [InlineData(-1, 0)] // Invalid hour
+        public void NotBeCreatedWithAnInvalidEnd(int hour, int minute)
         {
-            TimeSpan invalidEnd = TimeSpan.Parse(endString);
 
             Action act = () =>
             {
-                TimeSlot timeSlot = new() { Date = ValidDate, Start = ValidStart, End = invalidEnd };
+
+                TimeSlot timeSlot = new()
+                {
+                    Date = ValidDate,
+                    Start = ValidStart,
+                    End = new TimeOnly(hour, minute) // Using invalid TimeOnly directly
+                };
             };
 
+            // Assert
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
 
@@ -98,36 +111,50 @@ namespace Rise.Domain.Tests.Timeslots
         }
 
         [Theory]
-        [InlineData("25:00:00")]
-        [InlineData("-01:00:00")]
-        public void NotBeChangedToHaveAnInvalidStart(string startString)
+        [InlineData(25, 0)] // Invalid hour
+        [InlineData(-1, 0)] // Invalid hour
+        public void NotBeChangedToHaveAnInvalidStart(int hour, int minute)
         {
-            TimeSpan invalidStart = TimeSpan.Parse(startString);
+            // Arrange
+            TimeSlot timeSlot = new TimeSlot { Date = ValidDate, Start = ValidStart, End = ValidEnd };
 
+            // Act
             Action act = () =>
             {
-                TimeSlot timeSlot = new() { Date = ValidDate, Start = ValidStart, End = ValidEnd };
+
+                TimeOnly invalidStart = new TimeOnly(hour, minute);
+
+
                 timeSlot.Start = invalidStart;
             };
 
+            // Assert
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
 
-        [Theory]
-        [InlineData("25:00:00")]
-        [InlineData("-01:00:00")]
-        public void NotBeChangedToHaveAnInvalidEnd(string endString)
-        {
-            TimeSpan invalidEnd = TimeSpan.Parse(endString);
 
+        [Theory]
+        [InlineData(25, 0)] // Invalid hour
+        [InlineData(-1, 0)] // Invalid hour
+        public void NotBeChangedToHaveAnInvalidEnd(int hour, int minute)
+        {
+            // Arrange
+            TimeSlot timeSlot = new TimeSlot { Date = ValidDate, Start = ValidStart, End = ValidEnd };
+
+            // Act
             Action act = () =>
             {
-                TimeSlot timeSlot = new() { Date = ValidDate, Start = ValidStart, End = ValidEnd };
+                // Create an invalid TimeOnly based on input
+                TimeOnly invalidEnd = new TimeOnly(hour, minute);
+
+                // Attempt to set the invalid end time
                 timeSlot.End = invalidEnd;
             };
 
+            // Assert
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
+
 
         [Fact]
         public void NotBeChangedToHaveEndBeforeStart()
