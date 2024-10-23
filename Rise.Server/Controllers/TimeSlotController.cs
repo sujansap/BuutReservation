@@ -82,10 +82,7 @@ namespace Rise.Server.Controllers
 
             var date = new DateTime(year, month, day);
 
-            if (date <= DateTime.Today.AddDays(Reservation.MinDaysBetweenReservation))
-            {
-                return Ok(new List<TimeSlotDto>());
-            }
+
 
             var timeSlots = await _timeSlotService.GetTimeSlotsByDate(year, month, day);
 

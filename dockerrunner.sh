@@ -5,7 +5,7 @@ set -e
 set -u
 # Print each command before executing it (for debugging purposes)
 set -x
-#export ConnectionStrings__PostgreSQL="user ID=${DB_USERNAME};Password=${DB_PASSWORD};Host=${DB_IP};Port=${DB_PORT};Database=${DB_NAME};Connection Lifetime=0;"
+
 export ConnectionStrings__PostgreSQL="user ID=${DB_USERNAME};Password=${DB_PASSWORD};Host=${DB_IP};Port=${DB_PORT};Database=${DB_NAME};SSL Mode=Require;Trust Server Certificate=True;Connection Lifetime=0;"
 
 ./migrations
