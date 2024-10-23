@@ -16,7 +16,7 @@
     @* NavMenu for desktop *@
     <MudHidden Breakpoint="Breakpoint.SmAndDown">
         <MudStack Row="true">
-            <MudNavLink Href="counter" data-testid="nav-desktop-counter">@Localizer["Home"]</MudNavLink>
+            <MudNavLink Href="home" data-testid="nav-desktop-home">@Localizer["Home"]</MudNavLink>
             <MudNavLink Href="about" data-testid="nav-desktop-about">@Localizer["About"]</MudNavLink>
             <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]</MudNavLink>
         </MudStack>
@@ -54,7 +54,7 @@
     </MudDrawerHeader>
     <MudNavMenu>
         <MudDivider />
-        <MudNavLink Href="counter" data-testid="nav-mobile-counter" Match="NavLinkMatch.All">@Localizer["Home"]
+        <MudNavLink Href="home" data-testid="nav-mobile-home" Match="NavLinkMatch.All">@Localizer["Home"]
         </MudNavLink>
         <MudNavLink Href="about" data-testid="nav-mobile-about">@Localizer["About"]</MudNavLink>
         <MudNavLink Href="book" data-testid="nav-mobile-book">@Localizer["BookNow"]</MudNavLink>

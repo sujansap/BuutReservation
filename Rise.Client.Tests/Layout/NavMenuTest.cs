@@ -87,7 +87,7 @@ namespace Rise.Client.Layout
         /// <param name="english"></param>
         /// <returns></returns>
         [TestMethod]
-        [DataRow("nav-desktop-counter", "HOME", "HOME")]
+        [DataRow("nav-desktop-home", "HOME", "HOME")]
         [DataRow("nav-desktop-about", "OVER", "ABOUT")]
         [DataRow("nav-desktop-reservations", "RESERVEER", "RESERVE")]
         public async Task ChangeLanguageBetweenLanguagesDesktop(string id, string dutch, string english)
@@ -115,7 +115,7 @@ namespace Rise.Client.Layout
         /// <param name="english"></param>
         /// <returns></returns>
         [TestMethod]
-        [DataRow("nav-mobile-counter", "HOME", "HOME")]
+        [DataRow("nav-mobile-home", "HOME", "HOME")]
         [DataRow("nav-mobile-about", "OVER", "ABOUT")]
         [DataRow("nav-mobile-reservations", "RESERVEER", "RESERVE")]
         public async Task ChangeLanguageBetweenLanguagesMobile(string id, string dutch, string english)
