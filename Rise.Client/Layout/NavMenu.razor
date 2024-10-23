@@ -30,7 +30,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
             Href="notifications" data-testid="nav-desktop-notifications" />
 
-        <CultureSelector MenuColor="Color.Secondary" />
+        <CultureSelector IsMobile="false" MenuColor="Color.Secondary" />
     </MudHidden>
 
     @* NavMenu for mobile *@
@@ -72,5 +72,5 @@
 
     </MudNavMenu>
     <MudDivider />
-    <CultureSelector MenuColor="Color.Inherit" />
+    <CultureSelector IsMobile="true" MenuColor="Color.Inherit" />
 </MudDrawer>

@@ -60,7 +60,7 @@ namespace Rise.Client.Layout
             await Page.SetViewportSizeAsync(1080, 1920);
             await Page.GotoAsync("https://localhost:5001");
 
-            await Page.GetByTestId("culture-selector").IsVisibleAsync();
+            await Page.GetByTestId("culture-selector-desktop").IsVisibleAsync();
         }
 
 
@@ -74,7 +74,7 @@ namespace Rise.Client.Layout
             await Page.SetViewportSizeAsync(959, 1920);
             await Page.GotoAsync("https://localhost:5001");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
-            await Page.GetByTestId("culture-selector").IsVisibleAsync();
+            await Page.GetByTestId("culture-selector-mobile").IsVisibleAsync();
         }
 
 
@@ -95,7 +95,7 @@ namespace Rise.Client.Layout
             await Page.SetViewportSizeAsync(1080, 1920);
             await Page.GotoAsync("https://localhost:5001/");
 
-            await Page.GetByTestId("culture-selector").First.ClickAsync();
+            await Page.GetByTestId("culture-selector-desktop").First.ClickAsync();
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
             await Page.GotoAsync("https://localhost:5001/reservations");
@@ -123,7 +123,7 @@ namespace Rise.Client.Layout
             await Page.SetViewportSizeAsync(959, 1920);
             await Page.GotoAsync("https://localhost:5001/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
-            await Page.GetByTestId("culture-selector").First.ClickAsync();
+            await Page.GetByTestId("culture-selector-mobile").First.ClickAsync();
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
 
             await Page.GetByTestId("en (US)").ClickAsync();

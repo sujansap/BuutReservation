@@ -14,6 +14,8 @@ namespace Rise.Client.Layout
         [Parameter]
         public Color MenuColor { get; set; } = Color.Secondary;
 
+        [Parameter]
+        public bool IsMobile { get; set; }
 
         /// <summary>
         /// The cultures that are supported by the application.
