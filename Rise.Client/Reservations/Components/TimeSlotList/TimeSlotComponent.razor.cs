@@ -1,4 +1,5 @@
 using System;
+using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazor.Utilities;
@@ -16,8 +17,9 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
 
         protected override void OnParametersSet()
         {
-            StackStyle = GetStyle(AvailabilityEnum.Available);
-            TextColor = GetColor(AvailabilityEnum.Available);
+            var availability = Timeslot.IsBookedByUser ? AvailabilityEnum.Booked : AvailabilityEnum.Available;
+            StackStyle = GetStyle(availability);
+            TextColor = GetColor(availability);
         }
 
         public static Color GetColor(AvailabilityEnum availability)
