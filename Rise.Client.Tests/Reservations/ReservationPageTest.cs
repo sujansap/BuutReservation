@@ -111,7 +111,7 @@ namespace Rise.Client.Reservations
         }
 
         [TestMethod]
-        public async Task HasAvailableTimeslotsInTimeSlotList()
+        public async Task HasTimeslotsInTimeSlotList()
         {
 
             // Arange
@@ -136,7 +136,7 @@ namespace Rise.Client.Reservations
                 Id = 3,
                 Start = new TimeSpan(15, 0, 0),
                 End = new TimeSpan(18, 0, 0),
-                IsBookedByUser = false
+                IsBookedByUser = true
             },
             ];
 
@@ -164,9 +164,15 @@ namespace Rise.Client.Reservations
 
 
             // Assert
+
             timeSlot1.ShouldNotBeNull();
             timeSlot2.ShouldNotBeNull();
             timeSlot3.ShouldNotBeNull();
+
+            // Assert the styles
+            await Expect(timeSlot1).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
+            await Expect(timeSlot2).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
+            await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
         }
 
         // [TestMethod]
