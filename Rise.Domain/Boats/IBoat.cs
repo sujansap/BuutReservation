@@ -7,7 +7,7 @@ using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Boats
 {
-    public interface IBoat
+    public interface IBoat : IEntity
     {
         public string PersonalName
         {

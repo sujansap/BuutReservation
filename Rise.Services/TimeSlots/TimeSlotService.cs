@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 using Rise.Persistence;
 using Rise.Shared.TimeSlots;
 using System.Data;

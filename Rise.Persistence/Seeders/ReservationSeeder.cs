@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 
 namespace Rise.Persistence.Seeders
 {
@@ -11,35 +11,31 @@ namespace Rise.Persistence.Seeders
         static ReservationSeeder()
         {
             reservations = [
-                new ([UserSeeder.users[0], UserSeeder.users[1]]){ AmountAdults = 6, AmountChildren = 2, AmountPets = 1, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[0], },
-                new ([UserSeeder.users[0]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[1], },
-                new ([UserSeeder.users[2], UserSeeder.users[4]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[0], },
-                new ([UserSeeder.users[3], UserSeeder.users[5]]){ AmountAdults = 3, AmountChildren = 0, AmountPets = 1, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[1], },
-                new ([UserSeeder.users[5]]){ AmountAdults = 2, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[0], },
-                new ([UserSeeder.users[0]]){ AmountAdults = 1, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[2], },
-
-                new ([UserSeeder.users[0], UserSeeder.users[1]]){ AmountAdults = 6, AmountChildren = 2, AmountPets = 1, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[3], },
-                new ([UserSeeder.users[0]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[4], },
-                new ([UserSeeder.users[2], UserSeeder.users[4]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[3], },
-                new ([UserSeeder.users[3], UserSeeder.users[5]]){ AmountAdults = 2, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[3], },
-
-                new ([UserSeeder.users[0], UserSeeder.users[1]]){ AmountAdults = 6, AmountChildren = 2, AmountPets = 1, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[5], },
-                new ([UserSeeder.users[2], UserSeeder.users[4]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[6], },
-                new ([UserSeeder.users[2], UserSeeder.users[5], UserSeeder.users[3]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[7], },
-
-                new ([UserSeeder.users[0]]){ AmountAdults = 1, AmountChildren = 2, AmountPets = 1, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[12], },
-                new ([UserSeeder.users[0]]){ AmountAdults = 1, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[13], },
-                new ([UserSeeder.users[0]]){ AmountAdults = 1, AmountChildren = 0, AmountPets = 1, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[14], },
-
-                new ([UserSeeder.users[0], UserSeeder.users[1]]){ AmountAdults = 6, AmountChildren = 2, AmountPets = 1, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[15], },
-                new ([UserSeeder.users[0]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[16], },
-                new ([UserSeeder.users[0]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[17], },
-                new ([UserSeeder.users[2], UserSeeder.users[4]]){ AmountAdults = 3, AmountChildren = 1, AmountPets = 0, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[15], },
-                new ([UserSeeder.users[3], UserSeeder.users[5]]){ AmountAdults = 3, AmountChildren = 0, AmountPets = 1, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[16], },
-                new ([UserSeeder.users[2]]){ AmountAdults = 3, AmountChildren = 0, AmountPets = 1, Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[17], },
-                new ([UserSeeder.users[5]]){ AmountAdults = 2, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[15], },
-                new ([UserSeeder.users[1]]){ AmountAdults = 1, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[16], },
-                new ([UserSeeder.users[1]]){ AmountAdults = 1, AmountChildren = 0, AmountPets = 0, Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[17], },
+                new () {User = UserSeeder.users[1], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[0] },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[1] },
+                new () {User = UserSeeder.users[2], Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[0] },
+                new () {User = UserSeeder.users[3], Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[1] },
+                new () {User = UserSeeder.users[5], Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[0] },
+                new () {User = UserSeeder.users[4], Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[2] },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[3], },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[4], },
+                new () {User = UserSeeder.users[2], Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[3], },
+                new () {User = UserSeeder.users[3], Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[3], },
+                new () {User = UserSeeder.users[1], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[5], },
+                new () {User = UserSeeder.users[4], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[6], },
+                new () {User = UserSeeder.users[5], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[7], },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[12], },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[13], },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[14], },
+                new () {User = UserSeeder.users[1], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[15], },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[16], },
+                new () {User = UserSeeder.users[0], Boat = BoatSeeder.boats[0], TimeSlot = TimeSlotSeeder.timeSlots[17], },
+                new () {User = UserSeeder.users[2], Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[15], },
+                new () {User = UserSeeder.users[3], Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[16], },
+                new () {User = UserSeeder.users[2], Boat = BoatSeeder.boats[1], TimeSlot = TimeSlotSeeder.timeSlots[17], },
+                new () {User = UserSeeder.users[5], Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[15], },
+                new () {User = UserSeeder.users[1], Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[16], },
+                new () {User = UserSeeder.users[1], Boat = BoatSeeder.boats[2], TimeSlot = TimeSlotSeeder.timeSlots[17], },
             ];
         }
 

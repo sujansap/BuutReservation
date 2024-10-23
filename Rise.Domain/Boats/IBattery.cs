@@ -6,7 +6,7 @@
 
 // namespace Rise.Domain.Boats
 // {
-//     public interface IBattery
+//     public interface IBattery : IEntity
 //     {
 //         public string Type
 //         {

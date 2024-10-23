@@ -3,28 +3,24 @@
 /// <summary>
 /// Entity Base Class
 /// </summary>
-public abstract class Entity
+public abstract class Entity : IEntity
 {
-    /// <summary>
-    /// Primary Key of the <see cref="Entity"/>
-    /// </summary>
-    public int Id { get; protected set; }
-    /// <summary>
-    /// Date of the initial creation.
-    /// </summary>
+    public int Id { get; set; }
     public DateTime CreatedAt { get; set; }
-    /// <summary>
-    /// Date of the last update.
-    /// </summary>
     public DateTime UpdatedAt { get; set; }
-    /// <summary>
-    /// Soft Delete indicator, instead of deleting rows, we flag them as deleted.
-    /// </summary>
     public bool IsDeleted { get; set; }
 
-    protected Entity() {}
+    /// <summary>
+    /// Default initialization
+    /// </summary>
+    protected Entity()
+    {
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+        IsDeleted = false;
+    }
 
-    protected Entity(int id)
+    protected Entity(int id) : this()
     {
         Id = id;
     }

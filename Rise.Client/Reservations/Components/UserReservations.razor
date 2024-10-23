@@ -19,16 +19,16 @@
                     <MudCardContent>
                         <MudGrid>
                             <MudItem xs="4">
-                                <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Style="width: 100%; height: 200px;" />
+                                <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large"
+                                    Style="width: 100%; height: 200px;" />
                             </MudItem>
                             <MudItem xs="8">
-                                <MudText Typo="Typo.h6" Class="mb-4">Reservation for @reservation.Date.ToShortDateString()</MudText>
+                                <MudText Typo="Typo.h6" Class="mb-4">Reservation for @reservation.Date.ToShortDateString()
+                                </MudText>
                                 <MudText><strong>Time:</strong> @reservation.Start - @reservation.End</MudText>
-                                <MudText><strong>Adults:</strong> @reservation.AmountAdults</MudText>
-                                <MudText><strong>Children:</strong> @reservation.AmountChildren</MudText>
-                                <MudText><strong>Pets:</strong> @reservation.AmountPets</MudText>
                                 <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Class="mt-4">
-                                    <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small" Class="mr-2">Cancel</MudButton>
+                                    <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small" Class="mr-2">Cancel
+                                    </MudButton>
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary">View Details</MudButton>
                                 </MudStack>
                             </MudItem>

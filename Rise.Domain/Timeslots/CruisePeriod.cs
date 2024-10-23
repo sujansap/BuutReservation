@@ -1,6 +1,6 @@
 
 
-namespace Rise.Domain.Timeslots;
+namespace Rise.Domain.Reservations;
 public class CruisePeriod : Entity, ICruisePeriod
 {
 

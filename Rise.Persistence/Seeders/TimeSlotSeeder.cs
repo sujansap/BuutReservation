@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 
 namespace Rise.Persistence.Seeders
 {

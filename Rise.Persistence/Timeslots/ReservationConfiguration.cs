@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rise.Domain.Boats;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 using Rise.Domain.Users;
 
 namespace Rise.Persistence.Timeslots
@@ -16,9 +16,6 @@ namespace Rise.Persistence.Timeslots
     public override void Configure(EntityTypeBuilder<Reservation> builder)
     {
       base.Configure(builder);
-      builder.Property(e => e.AmountAdults);
-      builder.Property(e => e.AmountChildren);
-      builder.Property(e => e.AmountPets);
 
       builder
           .HasOne(e => (Boat)e.Boat)
@@ -39,8 +36,10 @@ namespace Rise.Persistence.Timeslots
           .IsRequired(true);
 
       builder
-          .HasMany(e => (ICollection<User>)e.Users)
-          .WithMany(e => (ICollection<Reservation>)e.Reservations);
+          .HasOne(e => (User)e.User)
+          .WithMany(e => (ICollection<Reservation>)e.Reservations)
+          .HasForeignKey(e => e.UserId)
+          .IsRequired(true);
     }
   }
 }

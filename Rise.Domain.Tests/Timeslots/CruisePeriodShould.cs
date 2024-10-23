@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 using Shouldly;
 using Xunit;
 
