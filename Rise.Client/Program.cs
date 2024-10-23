@@ -24,10 +24,6 @@ builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/TimeSlot/");
 });
 
-
-
-
-
 var host = builder.Build();
 
 const string defaultCulture = "nl-BE";
@@ -45,3 +41,4 @@ CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 await host.RunAsync();
+
