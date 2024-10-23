@@ -49,6 +49,6 @@ jobs:
         with:
           context: .
           push: true
-          #tags: ${{ steps.meta.outputs.tags }}:${{ github.run_number }}  # Gebruik job number als tag
+          tags: ${{ steps.meta.outputs.tags }}:${{ github.run_number }}  # Gebruik job number als tag
          # tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} # Gebruik run-nummer als tag      
           labels: ${{ steps.meta.outputs.labels }}
