@@ -111,7 +111,7 @@ namespace Rise.Services.TimeSlots
                 .OrderBy(item => item.Start) // Order by start time
                 .ToListAsync();
 
-            availableTimeSlots.ForEach(ts => Console.WriteLine(ts.IsBookedByUser));
+
             return availableTimeSlots;
         }
 
