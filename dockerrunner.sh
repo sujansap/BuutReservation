@@ -9,7 +9,7 @@ export ConnectionStrings__PostgreSQL="user ID=${DB_USERNAME};Password=${DB_PASSW
 
 ./migrations
 
-exec dotnet /app/Rise.Server.dll --urls "http://0.0.0.0:${http_port};https://0.0.0.0:${https_port}" --environment Production
+exec dotnet /app/Rise.Server.dll --urls "http://0.0.0.0:${HTTP_PORT};https://0.0.0.0:${HTTPS_PORT}" --environment Production
 #docker run -it -e DB_USERNAME=Hogent -e DB_PASSWORD=Hogent2425 -e DB_IP=172.17.0.3 -e DB_PORT=5432 -e DB_NAME="Hogent.Rise" -e http_port=5000 -e https_port=5001  -p 5000:5000 -p 5001:5001 mydotnetapp /bin/bash
 
 
