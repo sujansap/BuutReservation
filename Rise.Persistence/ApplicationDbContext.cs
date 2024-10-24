@@ -4,6 +4,7 @@ using Rise.Domain.Products;
 using Rise.Domain.Users;
 using Rise.Domain.Reservations;
 using Rise.Domain.Boats;
+using Rise.Domain.Timeslots;
 
 namespace Rise.Persistence;
 

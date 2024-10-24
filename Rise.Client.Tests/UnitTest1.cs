@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 
-namespace Rise.Client.Reservations
+namespace Rise.Client
 {
     [TestClass]
     public class ExampleTest : PageTest

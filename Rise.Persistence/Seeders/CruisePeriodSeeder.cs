@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Reservations;
-using Rise.Persistence.Seeders;
+using Rise.Domain.Timeslots;
 
-namespace Rise.Persistence;
+namespace Rise.Persistence.Seeders;
 
 internal class CruisePeriodSeeder(ApplicationDbContext dbContext) : GeneralSeeder<CruisePeriod>(dbContext)
 {

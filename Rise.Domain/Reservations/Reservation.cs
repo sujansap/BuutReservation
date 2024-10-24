@@ -1,6 +1,6 @@
 using System.Collections;
 using Rise.Domain.Boats;
-using Rise.Domain.Reservations;
+using Rise.Domain.Timeslots;
 using Rise.Domain.Users;
 
 namespace Rise.Domain.Reservations

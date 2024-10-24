@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
+using Rise.Domain.Timeslots;
 using Rise.Domain.Users;
 
 namespace Rise.Persistence.Timeslots

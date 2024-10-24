@@ -1,5 +1,5 @@
 using System;
-using Rise.Domain.Reservations;
+using Rise.Domain.Timeslots;
 using Shouldly;
 using Xunit;
 

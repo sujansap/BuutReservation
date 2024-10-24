@@ -5,7 +5,7 @@ using Rise.Domain.Reservations;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NSubstitute;
 using Rise.Domain.Users;
-
+using Rise.Domain.Timeslots;
 
 namespace Rise.Domain.Tests.Timeslots
 {
