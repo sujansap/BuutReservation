@@ -15,13 +15,9 @@ namespace Rise.Persistence.Seeders
             new() {FamilyName = "Helks"},
         ];
 
-        internal override DbSet<User> DbSet => dbContext.Users;
+        protected override DbSet<User> DbSet => _dbContext.Users;
 
-        internal override ICollection<User> Items { get => users; }
+        protected override ICollection<User> Items { get => users; }
 
-        internal override bool HasAlreadyBeenSeeded()
-        {
-            return dbContext.Users.Any();
-        }
     }
 }

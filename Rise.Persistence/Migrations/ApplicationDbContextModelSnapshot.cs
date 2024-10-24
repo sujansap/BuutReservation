@@ -22,21 +22,6 @@ namespace Rise.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.Property<int>("ReservationsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ReservationsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ReservationUser");
-                });
-
             modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
                 {
                     b.Property<int>("Id")
@@ -70,39 +55,6 @@ namespace Rise.Persistence.Migrations
                     b.ToTable("Boat", (string)null);
                 });
 
-            modelBuilder.Entity("Rise.Domain.Products.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Product", (string)null);
-                });
-
             modelBuilder.Entity("Rise.Domain.Timeslots.CruisePeriod", b =>
                 {
                     b.Property<int>("Id")
@@ -131,22 +83,13 @@ namespace Rise.Persistence.Migrations
                     b.ToTable("CruisePeriod", (string)null);
                 });
 
-            modelBuilder.Entity("Rise.Domain.Timeslots.Reservation", b =>
+            modelBuilder.Entity("Rise.Domain.Reservations.Reservation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AmountAdults")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AmountChildren")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AmountPets")
-                        .HasColumnType("integer");
 
                     b.Property<int>("BoatId")
                         .HasColumnType("integer");
@@ -169,16 +112,21 @@ namespace Rise.Persistence.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BoatId");
 
                     b.HasIndex("TimeSlotId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Reservation", (string)null);
                 });
 
-            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
+            modelBuilder.Entity("Rise.Domain.Reservations.TimeSlot", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -195,14 +143,14 @@ namespace Rise.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
-                    b.Property<TimeSpan>("End")
-                        .HasColumnType("interval");
+                    b.Property<TimeOnly>("End")
+                        .HasColumnType("time without time zone");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<TimeSpan>("Start")
-                        .HasColumnType("interval");
+                    b.Property<TimeOnly>("Start")
+                        .HasColumnType("time without time zone");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -249,22 +197,7 @@ namespace Rise.Persistence.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("ReservationUser", b =>
-                {
-                    b.HasOne("Rise.Domain.Timeslots.Reservation", null)
-                        .WithMany()
-                        .HasForeignKey("ReservationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rise.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Rise.Domain.Timeslots.Reservation", b =>
+            modelBuilder.Entity("Rise.Domain.Reservations.Reservation", b =>
                 {
                     b.HasOne("Rise.Domain.Boats.Boat", "Boat")
                         .WithMany("Reservations")
@@ -272,20 +205,28 @@ namespace Rise.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Rise.Domain.Timeslots.TimeSlot", "TimeSlot")
+                    b.HasOne("Rise.Domain.Reservations.TimeSlot", "TimeSlot")
                         .WithMany("Reservations")
                         .HasForeignKey("TimeSlotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Rise.Domain.Users.User", "User")
+                        .WithMany("Reservations")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Boat");
 
                     b.Navigation("TimeSlot");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
+            modelBuilder.Entity("Rise.Domain.Reservations.TimeSlot", b =>
                 {
-                    b.HasOne("Rise.Domain.Timeslots.CruisePeriod", "CruisePeriod")
+                    b.HasOne("Rise.Domain.Reservations.CruisePeriod", "CruisePeriod")
                         .WithMany("TimeSlots")
                         .HasForeignKey("CruisePeriodId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -299,12 +240,17 @@ namespace Rise.Persistence.Migrations
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("Rise.Domain.Timeslots.CruisePeriod", b =>
+            modelBuilder.Entity("Rise.Domain.Reservations.CruisePeriod", b =>
                 {
                     b.Navigation("TimeSlots");
                 });
 
-            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
+            modelBuilder.Entity("Rise.Domain.Reservations.TimeSlot", b =>
+                {
+                    b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("Rise.Domain.Users.User", b =>
                 {
                     b.Navigation("Reservations");
                 });

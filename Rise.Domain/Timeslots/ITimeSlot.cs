@@ -10,12 +10,12 @@ namespace Rise.Domain.Timeslots
     /// <summary>
     /// The time slot in which a possible cruise moment can take place for a boat. 
     /// </summary>
-    public interface ITimeSlot
+    public interface ITimeSlot : IEntity
     {
 
         public DateOnly Date { get; set; }
-        public TimeSpan Start { get; set; }
-        public TimeSpan End { get; set; }
+        public TimeOnly Start { get; set; }
+        public TimeOnly End { get; set; }
 
         public int CruisePeriodId { get; set; }
         public ICruisePeriod CruisePeriod { get; set; }

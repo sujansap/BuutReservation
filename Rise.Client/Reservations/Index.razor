@@ -6,8 +6,6 @@
 @using Rise.Client.Reservations.Components.TimeSlotList
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
-@using Microsoft.Extensions.Localization
-@using Rise.Client.Localization.Reservations
 
 @inject IStringLocalizer<ReservationPageResources> Localizer
 @* @attribute [Authorize] uncomment to require Auth0 authorization*@
@@ -16,7 +14,7 @@
 
 <PageTitle>Reservaties</PageTitle>
 
-<MudTabs Elevation="0" Centered="true" Class="mb-16">
+<MudTabs Elevation="0" Centered="true" Class="mb-16" @bind-ActivePanelIndex="activeTabIndex">
     <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
         <MudGrid>
             @* TODO make mobile first *@
@@ -25,8 +23,8 @@
             @* TODO everything is clickeable (this is hell) *@
             <MudItem xs="12" md="8">
                 <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
-                    Class="mt-8" data-testid="custom-calendar-reserve" Items="AvailableDays"
-                    GreyedOutDates="GreyedOutDates" DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
+                    Class="mt-8" data-testid="custom-calendar-reserve" GreyedOutDates="GreyedOutDates"
+                    DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
                     <MonthTemplate>
                         <CustomDayComponent Context="context" />
                     </MonthTemplate>
@@ -42,9 +40,15 @@
 
     </MudTabPanel>
     <MudTabPanel Text="Uw Reservaties" data-testid="tab-your-reservations">
-        <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
-            data-testid="calendar-your-reservations" />
+        <UserReservations />
     </MudTabPanel>
 </MudTabs>
 
-<ReservationCalendarLegend data-testid="custom-calendar-legend" />
+@if (activeTabIndex == 0)
+{
+    <ReservationCalendarLegend data-testid="custom-calendar-legend" />
+}
+
+@code {
+    private int activeTabIndex = 0;
+}

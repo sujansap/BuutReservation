@@ -1,4 +1,9 @@
 ﻿@using MudBlazor
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Layout
+
+@inject IStringLocalizer<LandingPageResource> Localizer
+
 
 <MudPaper Elevation="0" Square="true" Class="px-4 py-8 mud-theme-primary">
     @* Desktop Footer *@
@@ -13,12 +18,13 @@
                 </MudStack>
             </MudStack>
             <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Class="h-100">
-                <MudLink Href="/algemene-voorwaarden" Color="Color.Inherit" Typo="Typo.body1">Algemene Voorwaarden
+                <MudLink Href="/algemene-voorwaarden" Color="Color.Inherit" Typo="Typo.body1">@Localizer["GeneralTerms"]
                 </MudLink>
-                <MudLink Href="/privacybeleid" Color="Color.Inherit" Typo="Typo.body1">Privacybeleid</MudLink>
+                <MudLink Href="/privacybeleid" Color="Color.Inherit" Typo="Typo.body1">@Localizer["PrivacyPolicy"]
+                </MudLink>
             </MudStack>
             <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Class="h-100">
-                <MudText Class="mb-2">Met dank aan:</MudText>
+                <MudText Class="mb-2">@Localizer["ThanksTo"]</MudText>
                 <MudStack Row="true" Justify="Justify.Center">
                     <MudImage Src="assets/icons/gent_logo.webp" Alt="Gent logo" Height="50" Width="50"
                         ObjectFit="ObjectFit.Contain" Class="mx-2" />
@@ -40,12 +46,13 @@
             </MudStack>
             <MudDivider DividerType="DividerType.Middle" Class="my-4" />
             <MudStack AlignItems="AlignItems.Center" Spacing="2">
-                <MudLink Href="/algemene-voorwaarden" Color="Color.Inherit" Typo="Typo.body2">Algemene Voorwaarden
+                <MudLink Href="/algemene-voorwaarden" Color="Color.Inherit" Typo="Typo.body2">@Localizer["GeneralTerms"]
                 </MudLink>
-                <MudLink Href="/privacybeleid" Color="Color.Inherit" Typo="Typo.body2">Privacybeleid</MudLink>
+                <MudLink Href="/privacybeleid" Color="Color.Inherit" Typo="Typo.body2">@Localizer["PrivacyPolicy"]
+                </MudLink>
             </MudStack>
             <MudDivider DividerType="DividerType.Middle" Class="my-4" />
-            <MudText Typo="Typo.body2" Class="mb-2">Met dank aan:</MudText>
+            <MudText Typo="Typo.body2" Class="mb-2">@Localizer["ThanksTo"]</MudText>
             <MudStack Row="true" Justify="Justify.Center">
                 <MudImage Src="assets/icons/gent_logo.webp" Alt="Gent logo" Height="40" Width="40"
                     ObjectFit="ObjectFit.Contain" Class="mx-2" />

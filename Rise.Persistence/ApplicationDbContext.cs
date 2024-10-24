@@ -1,16 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 // using Rise.Domain.Boats;
-using Rise.Domain.Products;
 using Rise.Domain.Users;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 using Rise.Domain.Boats;
+using Rise.Domain.Timeslots;
 
 namespace Rise.Persistence;
 
 /// <inheritdoc />
 public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 {
-    public DbSet<Product> Products => Set<Product>();
     public DbSet<User> Users => Set<User>();
 
     public DbSet<CruisePeriod> CruisePeriods => Set<CruisePeriod>();

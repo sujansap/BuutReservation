@@ -1,9 +1,10 @@
 using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 using Rise.Persistence;
 using Rise.Shared.TimeSlots;
 using System.Data;
+using Rise.Domain.Users;
 
 namespace Rise.Services.TimeSlots
 {
@@ -20,7 +21,7 @@ namespace Rise.Services.TimeSlots
             /// <summary>
             /// The start time of the time slot
             /// </summary>
-            public TimeSpan Start { get; set; }
+            public TimeOnly Start { get; set; }
             /// <summary>
             /// The amount of boats who already have been reserved
             /// </summary>
@@ -75,40 +76,55 @@ namespace Rise.Services.TimeSlots
 
         }
 
+
         public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
         {
-            //Right now we don't keep the information of whether a boat is available or not
-            var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
+            int userId = 2; // This should be the current user id
 
             var date = new DateOnly(year, month, day);
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var minReservationDate = GetMinReservationDate();
 
-            //we get all the timeslots for a given date and the amount of reservations for that timeslot
-            var timeSlotReservationCounts = await _dbContext.TimeSlots
-            .Where(ts => ts.Date == date)
-            .Select(ts => new
-            {
-                TimeSlot = ts, // The timeslot itself
-                ReservationCount = ts.Reservations.Count() // how many times this timeslot is reserved
-            })
-            .ToListAsync();
+            // Right now we don't keep the information of whether a boat is available or not
+            var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
 
-            //if the timeslot is available we add it to the availableTimeSlots list
-            //we check whether the amount of reservations is less than the amount of boats for a given timeslot
-            var availableTimeSlots = timeSlotReservationCounts
-            .Where(item => item.ReservationCount < amountOfAvailableBoats)
-            .Select(item => new TimeSlotDto
-            {
-                Id = item.TimeSlot.Id,
-                Start = item.TimeSlot.Start,
-                End = item.TimeSlot.End,
-            })
-            .OrderBy(item => item.Start)
-            .ToList();
 
-            //later this needs to change to check whether a timeslot has a reservation that is made by the
-            //curent logged in user 
-            //what we need to do is check if there is a reservation with userid and timeslotid from availableTimeSlots
+            var availableTimeSlots = await _dbContext.TimeSlots
+                .Where(ts => ts.Date == date) // Filter by the given date, we only want the time slots for that day
+                .Select(ts => new
+                {
+                    TimeSlot = ts,
+                    ReservationCount = ts.Reservations.Count(),
+                    IsBookedByUser = ts.Reservations.Any(r => r.UserId == userId)
+                })
+                .Where(item =>
+                    (date >= today && date <= minReservationDate && item.IsBookedByUser) || // Case 1: Date between today and minReservationDate, only booked by user (because you can't book between today and minReservationDate)
+                    (date > minReservationDate && (item.ReservationCount < amountOfAvailableBoats || item.IsBookedByUser)) // Case 2: Date >= minReservationDate, available or booked by user (because you can book from after minReservationDate onwards)
+                )
+                .Select(item => new TimeSlotDto
+                {
+                    Id = item.TimeSlot.Id,
+                    Start = item.TimeSlot.Start,
+                    End = item.TimeSlot.End,
+                    IsBookedByUser = item.IsBookedByUser
+                })
+                .OrderBy(item => item.Start) // Order by start time
+                .ToListAsync();
+
+
             return availableTimeSlots;
+        }
+
+
+
+        /// <summary>
+        /// Calculates the date from which a reservation can be made
+        /// </summary>
+        public static DateOnly GetMinReservationDate()
+        {
+            // Calculate the date based on today's date plus the minimum days
+            return DateOnly.FromDateTime(DateTime.Today.AddDays(Reservation.MinDaysBetweenReservation));
+
         }
 
 

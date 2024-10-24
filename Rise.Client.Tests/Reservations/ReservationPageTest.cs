@@ -110,6 +110,71 @@ namespace Rise.Client.Reservations
             // TODO make beter tests for checking date availability
         }
 
+        [TestMethod]
+        public async Task HasTimeslotsInTimeSlotList()
+        {
+
+            // Arange
+            DateOnly today = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            TimeSlotDto[] timeSlotDtos = [
+                new()
+            {
+                Id = 1,
+                Start = new TimeOnly(9, 0, 0),
+                End = new TimeOnly(12, 0, 0),
+                IsBookedByUser = false
+            },
+            new()
+            {
+                Id = 2,
+                Start = new TimeOnly(12, 0, 0),
+                End = new TimeOnly(15, 0, 0),
+                IsBookedByUser = false
+            },
+            new()
+            {
+                Id = 3,
+                Start = new TimeOnly(15, 0, 0),
+                End = new TimeOnly(18, 0, 0),
+                IsBookedByUser = true
+            },
+            ];
+
+            // Act
+            await Page.RouteAsync("*/**/api/TimeSlot/**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(timeSlotDtos)
+                });
+            });
+            await Page.GotoAsync("https://localhost:5001/reservations");
+
+            var day = Page.GetByText($"{today.Day + 2}");
+            await day.ClickAsync();
+
+
+            var timeSlotList = Page.GetByTestId("time-slot-list");
+
+            var timeSlot1 = timeSlotList.GetByTestId("time-slot-1");
+            var timeSlot2 = timeSlotList.GetByTestId("time-slot-2");
+            var timeSlot3 = timeSlotList.GetByTestId("time-slot-3");
+
+
+            // Assert
+
+            timeSlot1.ShouldNotBeNull();
+            timeSlot2.ShouldNotBeNull();
+            timeSlot3.ShouldNotBeNull();
+
+            // Assert the styles
+            await Expect(timeSlot1).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
+            await Expect(timeSlot2).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
+            await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
+        }
+
         // [TestMethod]
         // public async Task CheckRedirectToThisMonthsRange()
         // {

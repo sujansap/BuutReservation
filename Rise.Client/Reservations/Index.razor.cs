@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Heron.MudCalendar;
 using MudBlazor;
 using Rise.Shared.TimeSlots;
+using System.Globalization;
 
 namespace Rise.Client.Reservations
 {
@@ -15,6 +16,11 @@ namespace Rise.Client.Reservations
         /// The end date if the date range, by default the current's month end date
         /// </summary>
         private readonly DateOnly defaultEndDay = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+
+        ///  <summary>
+        /// The selected culture (language)
+        /// </summary>        
+        private CultureInfo selectedCulture = CultureInfo.CurrentCulture;
 
         [SupplyParameterFromQuery]
         /// <summary>
@@ -31,10 +37,6 @@ namespace Rise.Client.Reservations
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; } = default!;
 
-        /// <summary>
-        /// All available days on the calendar
-        /// </summary>
-        private List<ColoredCalendarItem> AvailableDays = [];
         /// <summary>
         /// All unavailable days on the calendar
         /// </summary>
@@ -113,12 +115,12 @@ namespace Rise.Client.Reservations
             );
 
 
-                AvailableDays = response.Days
-                .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
-                .Select(ConvertToCalendarItems)
-                .ToList();
+                // AvailableDays = response.Days
+                // .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
+                // .Select(ConvertToCalendarItems)
+                // .ToList();
 
-                GreyedOutDates = response.Days.Where(day => day.IsFullyBooked).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
+                GreyedOutDates = response.Days.Where(day => day.IsFullyBooked || !day.IsSlotAvailable).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
             }
 
             catch

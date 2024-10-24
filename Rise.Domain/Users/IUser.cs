@@ -7,7 +7,7 @@ using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Users
 {
-    public interface IUser
+    public interface IUser : IEntity
     {
         public string FamilyName
         {
