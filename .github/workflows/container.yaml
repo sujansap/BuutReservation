@@ -13,6 +13,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 # Ensure concurrency, cancel previous runs for the same branch
+# BEKANGRIJK VOOR DTABASE SYSTEEM NIET TE CRASHEN DOOR 2 CONTAINERS OP ZELFDE MOMENT
 concurrency:
   group: ${{ github.ref }}  # Use the branch as the concurrency group
   cancel-in-progress: true  # Cancel previous runs if a new one is triggered
