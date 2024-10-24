@@ -21,6 +21,21 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddMudPopoverService();
 
+builder.Services.AddHttpClient("BuutAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+       .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
+       .CreateClient("BuutAPI"));
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddOidcAuthentication(options =>
+{
+    builder.Configuration.Bind("Auth0", options.ProviderOptions);
+    options.ProviderOptions.ResponseType = "code";
+    options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress;
+    options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]!);
+});
+
 builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/TimeSlot/");
@@ -49,3 +64,26 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 await host.RunAsync();
 
+
+builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
+});
+
+var host = builder.Build();
+
+const string defaultCulture = "nl-BE";
+
+var js = host.Services.GetRequiredService<IJSRuntime>();
+var result = await js.InvokeAsync<string>("blazorCulture.get");
+var culture = CultureInfo.GetCultureInfo(result ?? defaultCulture);
+
+if (result == null)
+{
+    await js.InvokeVoidAsync("blazorCulture.set", defaultCulture);
+}
+
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+await host.RunAsync();

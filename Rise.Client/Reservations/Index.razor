@@ -1,4 +1,4 @@
-﻿@page "/reservations"
+@page "/reservations"
 @using MudBlazor
 @using Rise.Client.Reservations.Components
 @using Rise.Client.TimeSlots
@@ -7,6 +7,10 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
+@inject IStringLocalizer<ReservationPageResources> Localizer
+@* @attribute [Authorize] uncomment to require Auth0 authorization*@
+
+<MudPopoverProvider />
 
 <PageTitle>Reservaties</PageTitle>
 
@@ -19,8 +23,8 @@
             @* TODO everything is clickeable (this is hell) *@
             <MudItem xs="12" md="8">
                 <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
-                    Class="mt-8" data-testid="custom-calendar-reserve"
-                    GreyedOutDates="GreyedOutDates" DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
+                    Class="mt-8" data-testid="custom-calendar-reserve" GreyedOutDates="GreyedOutDates"
+                    DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
                     <MonthTemplate>
                         <CustomDayComponent Context="context" />
                     </MonthTemplate>
@@ -39,7 +43,6 @@
         <UserReservations />
     </MudTabPanel>
 </MudTabs>
-
 
 @if (activeTabIndex == 0)
 {

@@ -1,4 +1,3 @@
-
 namespace Rise.Shared.Reservations
 {
     public interface IReservationService
@@ -8,6 +7,5 @@ namespace Rise.Shared.Reservations
         /// </summary>
         /// <returns>All the reservations</returns>
         Task<IEnumerable<ReservationListDto>> GetCurrentUserReservations(int userId);
-
     }
 }

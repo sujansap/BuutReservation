@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.Reservations;
@@ -6,6 +7,7 @@ namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ReservationController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger;
