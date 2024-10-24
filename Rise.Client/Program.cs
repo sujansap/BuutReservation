@@ -31,7 +31,6 @@ builder.Services.AddHttpClient<IReservationService, ReservationService>(client =
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
 });
 
-await builder.Build().RunAsync();
 var host = builder.Build();
 
 const string defaultCulture = "nl-BE";
