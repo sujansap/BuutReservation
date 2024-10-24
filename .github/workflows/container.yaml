@@ -12,7 +12,10 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
+# Ensure concurrency, cancel previous runs for the same branch
+concurrency:
+  group: ${{ github.ref }}  # Use the branch as the concurrency group
+  cancel-in-progress: true  # Cancel previous runs if a new one is triggered
 # There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
   build-and-push-image:
