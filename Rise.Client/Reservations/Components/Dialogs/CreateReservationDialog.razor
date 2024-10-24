@@ -1,5 +1,5 @@
 ﻿@using Rise.Shared.TimeSlots;
-@inject ISnackbar Snackbar
+@using Rise.Shared.Reservations;
 
 <MudDialog>
     <TitleContent>
@@ -11,31 +11,32 @@
         <MudText>
             U staat op het punt een reservatie te maken voor de volgende datum en tijdstip:
         </MudText>
-        <MudText>
+        <MudText Class="mb-8">
             @Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End
         </MudText>
+
+        <MudForm Class="mb-8" Spacing="4">
+            <MudNumericField Label="Aantal volwassenen (inclusief jezelf)" @bind-Value="@Reservation.AmountAdults"
+                Required="true" Variant="Variant.Filled" />
+            <MudNumericField Label="Aantal kinderen" @bind-Value="@Reservation.AmountChildren" Required="true"
+                Variant="Variant.Filled" />
+            <MudNumericField Label="Aantal huisdieren" @bind-Value="@Reservation.AmountPets" Required="true"
+                Variant="Variant.Filled" />
+        </MudForm>
+
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Annuleer</MudButton>
-        <MudSpacer />
-        <MudButton Color="Color.Primary" OnClick="CreateReservation" Variant="Variant.Filled">Maak reservatie
-        </MudButton>
+        <MudGrid Justify="Justify.Center" Class="w-100 px-4" Spacing="2">
+            <MudItem xs="12">
+                <MudButton Color="Color.Primary" FullWidth="true" OnClick="CreateReservation" Variant="Variant.Filled">
+                    Maak reservatie
+                </MudButton>
+            </MudItem>
+            <MudItem>
+                <MudButton OnClick="Cancel">
+                    Annuleer
+                </MudButton>
+            </MudItem>
+        </MudGrid>
     </DialogActions>
 </MudDialog>
-
-@code {
-    [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
-    [Parameter]
-    public DateOnly Date { get; set; }
-    [Parameter]
-    public TimeSlotDto? Timeslot { get; set; }
-
-    private void Cancel() => MudDialog.Cancel();
-
-    private void CreateReservation()
-    {
-        Snackbar.Add("Reservatie aangemaakt", Severity.Success);
-        MudDialog.Close();
-    }
-}

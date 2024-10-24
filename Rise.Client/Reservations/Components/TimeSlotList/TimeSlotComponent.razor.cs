@@ -74,8 +74,9 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
             }
 
             var parameters = new DialogParameters<CreateReservationDialog> { { x => x.TimeSlot, TimeSlot }, { x => x.Date, Date } };
+            var options = new DialogOptions { CloseButton = true };
 
-            var dialog = await DialogService.ShowAsync<CreateReservationDialog>("Create reservation", parameters);
+            var dialog = await DialogService.ShowAsync<CreateReservationDialog>("Create reservation", parameters, options);
             var result = await dialog.Result;
         }
 
