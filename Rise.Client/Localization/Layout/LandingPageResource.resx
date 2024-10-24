@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-	<data name="WelcomeMessage">
-		<value>Welkom bij Buut!</value>
-	</data>
 	<!--navmenu-->
 	<data name="Home">
 		<value>HOME</value>
