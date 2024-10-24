@@ -9,6 +9,7 @@ using Rise.Client.Services;
 using MudBlazor;
 using System.Globalization;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -40,30 +41,6 @@ builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/TimeSlot/");
 });
-
-builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
-{
-    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
-});
-
-var host = builder.Build();
-
-const string defaultCulture = "nl-BE";
-
-var js = host.Services.GetRequiredService<IJSRuntime>();
-var result = await js.InvokeAsync<string>("blazorCulture.get");
-var culture = CultureInfo.GetCultureInfo(result ?? defaultCulture);
-
-if (result == null)
-{
-    await js.InvokeVoidAsync("blazorCulture.set", defaultCulture);
-}
-
-CultureInfo.DefaultThreadCurrentCulture = culture;
-CultureInfo.DefaultThreadCurrentUICulture = culture;
-
-await host.RunAsync();
-
 
 builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
 {
