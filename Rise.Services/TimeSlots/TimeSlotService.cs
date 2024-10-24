@@ -95,7 +95,7 @@ namespace Rise.Services.TimeSlots
                 {
                     TimeSlot = ts,
                     ReservationCount = ts.Reservations.Count(),
-                    IsBookedByUser = ts.Reservations.Any(r => r.Users.Any(u => ((User)u).Id == userId))
+                    IsBookedByUser = ts.Reservations.Any(r => r.UserId == userId)
                 })
                 .Where(item =>
                     (date >= today && date <= minReservationDate && item.IsBookedByUser) || // Case 1: Date between today and minReservationDate, only booked by user (because you can't book between today and minReservationDate)
