@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Rise.Domain.Reservations;
 // using Rise.Domain.Reservations;
 
-namespace Rise.Domain.Reservations
+namespace Rise.Domain.Timeslots
 {
     /// <summary>
     /// The time slot in which a possible cruise moment can take place for a boat. 
