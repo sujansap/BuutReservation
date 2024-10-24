@@ -4,8 +4,8 @@
 <MudCard Style="border-radius: 8px; border: 1px solid black;" Class="mud-theme-primary" Border="1px black">
     <MudCardContent>
         <MudText Align="Align.Center" Typo="Typo.h6" Class="mud-text-secondary">
-            @Timeslot?.Start.Hours:@(Timeslot?.Start.Minutes.ToString("00")) -
-            @Timeslot?.End.Hours:@(Timeslot?.End.Minutes.ToString("00"))
+            @Timeslot?.Start.Hour:@(Timeslot?.Start.Minute.ToString("00")) -
+            @Timeslot?.End.Hour:@(Timeslot?.End.Minute.ToString("00"))
         </MudText>
     </MudCardContent>
 </MudCard>

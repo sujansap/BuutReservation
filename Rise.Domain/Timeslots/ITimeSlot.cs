@@ -14,8 +14,8 @@ namespace Rise.Domain.Timeslots
     {
 
         public DateOnly Date { get; set; }
-        public TimeSpan Start { get; set; }
-        public TimeSpan End { get; set; }
+        public TimeOnly Start { get; set; }
+        public TimeOnly End { get; set; }
 
         public int CruisePeriodId { get; set; }
         public ICruisePeriod CruisePeriod { get; set; }
