@@ -1,50 +1,18 @@
 using Shouldly;
 using Xunit;
 using Rise.Domain.Boats;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NSubstitute;
 using Rise.Domain.Users;
-
+using Rise.Domain.Timeslots;
 
 namespace Rise.Domain.Tests.Timeslots
 {
     public class ReservationShould
     {
-        public const int validAmountAdults = 2;
-        public const int validAmountChildren = 1;
-        public const int validAmountPets = 1;
-
         [Fact]
-        public void BeCreatedWithoutUsers()
-        {
-            // Mock boat
-            IBoat mockBoat = Substitute.For<IBoat>();
-
-            // Mock Time slot
-            ITimeSlot mockTimeSlot = Substitute.For<ITimeSlot>();
-
-            Reservation reservation = new()
-            {
-                AmountAdults = validAmountAdults,
-                AmountChildren = validAmountChildren,
-                AmountPets = validAmountPets,
-                Boat = mockBoat,
-                TimeSlot = mockTimeSlot,
-            };
-
-            // Act & Assert
-            reservation.AmountAdults.ShouldBe(validAmountAdults);
-            reservation.AmountChildren.ShouldBe(validAmountChildren);
-            reservation.AmountPets.ShouldBe(validAmountPets);
-
-            reservation.Boat.ShouldBe(mockBoat);
-            reservation.TimeSlot.ShouldBe(mockTimeSlot);
-            reservation.Users.ShouldBeEmpty();
-        }
-
-        [Fact]
-        public void BeCreatedWithUsers()
+        public void BeCreatedWithUser()
         {
             // Mock boat
             IBoat mockBoat = Substitute.For<IBoat>();
@@ -54,23 +22,17 @@ namespace Rise.Domain.Tests.Timeslots
 
             IUser mockUser = Substitute.For<IUser>();
 
-            Reservation reservation = new([mockUser])
+            Reservation reservation = new()
             {
-                AmountAdults = validAmountAdults,
-                AmountChildren = validAmountChildren,
-                AmountPets = validAmountPets,
+                User = mockUser,
                 Boat = mockBoat,
                 TimeSlot = mockTimeSlot,
             };
 
             // Act & Assert
-            reservation.AmountAdults.ShouldBe(validAmountAdults);
-            reservation.AmountChildren.ShouldBe(validAmountChildren);
-            reservation.AmountPets.ShouldBe(validAmountPets);
-
             reservation.Boat.ShouldBe(mockBoat);
             reservation.TimeSlot.ShouldBe(mockTimeSlot);
-            reservation.Users.ShouldContain(mockUser);
+            reservation.User.ShouldBe(mockUser);
         }
     }
 

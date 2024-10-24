@@ -4,7 +4,7 @@ using Rise.Domain.Timeslots;
 using Shouldly;
 using Xunit;
 
-namespace Rise.Domain.Tests.CruisePeriods
+namespace Rise.Domain.Tests.Timeslots
 {
     public class CruisePeriodShould
     {

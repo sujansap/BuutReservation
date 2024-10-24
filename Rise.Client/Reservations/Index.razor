@@ -46,4 +46,13 @@
     </MudTabPanel>
 </MudTabs>
 
-<ReservationCalendarLegend data-testid="custom-calendar-legend" />
+@if (activeTabIndex == 0)
+{
+    <ReservationCalendarLegend data-testid="custom-calendar-legend" />
+}
+
+@code {
+    private int activeTabIndex = 0;
+
+    // ... existing code ...
+}

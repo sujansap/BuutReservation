@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.TimeSlots;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
-using Rise.Domain.Timeslots;
+using Rise.Domain.Reservations;
 
 namespace Rise.Server.Controllers
 {
