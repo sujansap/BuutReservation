@@ -7,12 +7,12 @@ namespace Rise.Persistence.Seeders
     {
 
         internal static readonly IList<User> users = [
-            new() {FamilyName = "Her De Gaver"},
-            new() {FamilyName = "de Clerk"},
-            new() {FamilyName = "Piatti"},
-            new() {FamilyName = "Chin"},
-            new() {FamilyName = "Barabich"},
-            new() {FamilyName = "Helks"},
+            new() { FamilyName = "Her De Gaver" },
+            new() { FamilyName = "de Clerk" },
+            new() { FamilyName = "Piatti" },
+            new() { FamilyName = "Chin" },
+            new() { FamilyName = "Barabich" },
+            new() { FamilyName = "Helks" },
         ];
 
         protected override DbSet<User> DbSet => _dbContext.Users;
