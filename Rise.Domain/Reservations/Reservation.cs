@@ -21,10 +21,5 @@ namespace Rise.Domain.Reservations
     {
     }
 
-    public Reservation(IUser user)
-    {
-      User = user;
-      UserId = user.Id;
-    }
   }
 }
