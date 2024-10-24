@@ -1,12 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Persistence.Triggers;
-using Rise.Server.Controllers;
-using Rise.Services.Products;
 using Rise.Services.Reservations;
 using Rise.Services.TimeSlots;
-using Rise.Shared.Products;
 using Rise.Shared.Reservations;
 using Rise.Shared.TimeSlots;
 
@@ -32,9 +28,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
 });
 
-builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+
+builder.Services.AddLocalization();
 
 var app = builder.Build();
 
@@ -57,13 +54,10 @@ app.MapFallbackToFile("index.html");
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
-    using (var scope = app.Services.CreateScope())
-    { // Require a DbContext from the service provider and seed the database.
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
-        Seeder seeder = new(dbContext);
-        seeder.Seed();
-    }
+    using var scope = app.Services.CreateScope();
+    // Require a DbContext from the service provider and seed the database.
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    new Seeder(dbContext).Seed();
 }
 
 await app.RunAsync();

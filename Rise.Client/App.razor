@@ -3,13 +3,14 @@
 
 @* Required *@
 <MudThemeProvider Theme="MainTheme.CustomTheme" />
-@* <MudPopoverProvider /> *@
 
 @* Needed for dialogs *@
 <MudDialogProvider />
 
 @* Needed for snackbars *@
 <MudSnackbarProvider />
+
+<MudPopoverProvider />
 
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
@@ -19,7 +20,8 @@
     <NotFound>
         <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+            <MudAlert Severity="Severity.Warning" data-testid="page-not-found">Sorry, there's nothing at this address.
+            </MudAlert>
         </LayoutView>
     </NotFound>
 </Router>

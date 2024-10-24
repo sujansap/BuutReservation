@@ -6,14 +6,17 @@
 @using Rise.Client.Reservations.Components.TimeSlotList
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Reservations
+
+@inject IStringLocalizer<ReservationPageResources> Localizer
 
 
-<MudPopoverProvider />
 
 <PageTitle>Reservaties</PageTitle>
 
-<MudTabs Elevation="0" Centered="true" Class="mb-16" @bind-ActivePanelIndex="activeTabIndex">
-    <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
+<MudTabs Elevation="0" Centered="true" Class="mb-16">
+    <MudTabPanel Text="@Localizer["Reserve"]" data-testid="tab-reserve">
         <MudGrid>
             @* TODO make mobile first *@
             @* TODO margin is messing with tabs *@
@@ -21,8 +24,8 @@
             @* TODO everything is clickeable (this is hell) *@
             <MudItem xs="12" md="8">
                 <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
-                    Class="mt-8" data-testid="custom-calendar-reserve" Items="AvailableDays"
-                    GreyedOutDates="GreyedOutDates" DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
+                    Class="mt-8" data-testid="custom-calendar-reserve" GreyedOutDates="GreyedOutDates"
+                    DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked" Culture="@selectedCulture">
                     <MonthTemplate>
                         <CustomDayComponent Context="context" />
                     </MonthTemplate>
@@ -37,11 +40,11 @@
         </MudGrid>
 
     </MudTabPanel>
-    <MudTabPanel Text="Uw Reservaties" data-testid="tab-your-reservations">
-        <UserReservations />
+    <MudTabPanel Text="@Localizer["YourReservations"]" data-testid="tab-your-reservations">
+        <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
+            data-testid="calendar-your-reservations" />
     </MudTabPanel>
 </MudTabs>
-
 
 @if (activeTabIndex == 0)
 {

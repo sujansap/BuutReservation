@@ -9,21 +9,13 @@ internal class CruisePeriodSeeder(ApplicationDbContext dbContext) : GeneralSeede
 
     static CruisePeriodSeeder()
     {
-        cruisePeriods = Enumerable.Range(1, 6)
-                                  .Select(i => new CruisePeriod
-                                  {
-                                      Start = DateTime.Now.AddDays(i),
-                                      End = DateTime.Now.AddDays(i + 7)
-                                  })
-                                  .ToList();
+        cruisePeriods = [
+            new () { Start = DateTime.Now, End = DateTime.Now.AddDays(7) },
+            new () { Start = DateTime.Now.AddDays(9), End = DateTime.Now.AddDays(25) },
+            new () { Start = DateTime.Now.AddMonths(1), End = DateTime.Now.AddMonths(2) }
+        ];
     }
 
-    internal override DbSet<CruisePeriod> DbSet => dbContext.CruisePeriods;
-    internal override ICollection<CruisePeriod> Items { get => cruisePeriods; }
-
-    internal override bool HasAlreadyBeenSeeded()
-    {
-        return dbContext.CruisePeriods.Any();
-    }
-
+    protected override DbSet<CruisePeriod> DbSet => _dbContext.CruisePeriods;
+    protected override ICollection<CruisePeriod> Items { get => cruisePeriods; }
 }
