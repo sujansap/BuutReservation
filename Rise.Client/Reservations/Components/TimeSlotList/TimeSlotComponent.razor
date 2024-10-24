@@ -2,7 +2,8 @@
 @using Rise.Shared.TimeSlots;
 @using MudBlazor.Utilities;
 
-<MudStack Class="rounded" Style="@StackStyle" data-testid="@($"time-slot-{TimeSlot.Id}")">
+<MudStack Class="@($"{StackClassName} rounded {CursorClass}")" data-testid="@($"time-slot-{Timeslot?.Id}")"
+    @onclick="HandleClick">
     <MudText Align="Align.Center" Typo="Typo.subtitle1" Class="mud-text-secondary my-4" Color="@TextColor">
         @TimeSlot.Start.Hour:@(TimeSlot.Start.Minute.ToString("00")) -
         @TimeSlot.End.Hour:@(TimeSlot.End.Minute.ToString("00"))

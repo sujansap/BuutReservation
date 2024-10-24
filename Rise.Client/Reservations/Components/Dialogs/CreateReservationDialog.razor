@@ -1,0 +1,41 @@
+﻿@using Rise.Shared.TimeSlots;
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Reservatie maken
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>
+            U staat op het punt een reservatie te maken voor de volgende datum en tijdstip:
+        </MudText>
+        <MudText>
+            @Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuleer</MudButton>
+        <MudSpacer />
+        <MudButton Color="Color.Primary" OnClick="CreateReservation" Variant="Variant.Filled">Maak reservatie
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public DateOnly Date { get; set; }
+    [Parameter]
+    public TimeSlotDto? Timeslot { get; set; }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void CreateReservation()
+    {
+        Snackbar.Add("Reservatie aangemaakt", Severity.Success);
+        MudDialog.Close();
+    }
+}
