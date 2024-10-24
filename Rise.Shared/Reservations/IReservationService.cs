@@ -1,4 +1,3 @@
-
 namespace Rise.Shared.Reservations
 {
     public interface IReservationService

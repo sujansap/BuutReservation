@@ -6,6 +6,10 @@
 @using Rise.Client.Reservations.Components.TimeSlotList
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Reservations
+
+@inject IStringLocalizer<ReservationPageResources> Localizer
 @* @attribute [Authorize] uncomment to require Auth0 authorization*@
 
 <MudPopoverProvider />

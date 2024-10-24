@@ -33,14 +33,31 @@ builder.Services.AddOidcAuthentication(options =>
     options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]!);
 });
 
-builder.Services.AddHttpClient<IProductService, ProductService>(client =>
-{
-    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/");
-});
-
 builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/TimeSlot/");
 });
 
-await builder.Build().RunAsync();
+
+builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
+});
+
+var host = builder.Build();
+
+const string defaultCulture = "nl-BE";
+
+var js = host.Services.GetRequiredService<IJSRuntime>();
+var result = await js.InvokeAsync<string>("blazorCulture.get");
+var culture = CultureInfo.GetCultureInfo(result ?? defaultCulture);
+
+if (result == null)
+{
+    await js.InvokeVoidAsync("blazorCulture.set", defaultCulture);
+}
+
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+await host.RunAsync();
