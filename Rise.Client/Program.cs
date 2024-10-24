@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Rise.Client;
 using MudBlazor.Services;
 using Rise.Shared.TimeSlots;
-using Rise.Shared.Reservations;
 using Rise.Client.TimeSlots;
-using Rise.Client.Services;
 using MudBlazor;
 using System.Globalization;
 using Microsoft.JSInterop;
@@ -24,11 +22,6 @@ builder.Services.AddMudPopoverService();
 builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/TimeSlot/");
-});
-
-builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
-{
-    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
 });
 
 var host = builder.Build();
