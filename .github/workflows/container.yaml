@@ -33,10 +33,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Generate a timestamp for tagging
+      # Generate a timestamp for tagging in Belgian time
       - name: Generate timestamp tag
         id: timestamp
         run: |
+          # Set timezone to Belgium (CET/CEST)
+          export TZ="Europe/Brussels"
           # Get the current timestamp in YYYYMMDD-HHMMSS format
           TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
           # Set the tag as 'main-TIMESTAMP'
