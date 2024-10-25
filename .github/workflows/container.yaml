@@ -7,7 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  
+
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
@@ -38,9 +38,9 @@ jobs:
         id: version
         run: |
           # Get the commit count as a build number
-          echo "BUILD_NUMBER=$(git rev-list --count HEAD)" >> $GITHUB_ENV
-          # Combine branch name with build number for the tag
-          echo "TAG=${{ github.ref_name }}-${{ env.BUILD_NUMBER }}" >> $GITHUB_ENV
+          BUILD_NUMBER=$(git rev-list --count HEAD)
+          # Combine branch name with build number for the tag without a hyphen
+          echo "TAG=${{ github.ref_name }}${BUILD_NUMBER}" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
