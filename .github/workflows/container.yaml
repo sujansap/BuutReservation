@@ -33,14 +33,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Generate a tag using the branch name and commit count as the build number
-      - name: Generate branch-first tag
+      # Generate a tag using the branch name and commit count as the version
+      - name: Generate version tag
         id: version
         run: |
-          # Get the commit count as a build number
-          BUILD_NUMBER=$(git rev-list --count HEAD)
-          # Combine branch name with build number for the tag without a hyphen
-          echo "TAG=${{ github.ref_name }}${BUILD_NUMBER}" >> $GITHUB_ENV
+          # Get the commit count as a version number
+          VERSION=$(git rev-list --count HEAD)
+          # Set the tag as 'main-VERSIE'
+          echo "TAG=main-${VERSION}" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -48,7 +48,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ env.TAG }}  # Tag with branch name and build number
+            type=raw,value=${{ env.TAG }}  # Tag with main-VERSION format
 
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
