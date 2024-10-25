@@ -44,7 +44,7 @@ namespace Rise.Server.Controllers
             _logger.LogDebug("Getting days between range {startDate} and {endDay} from service layer", [startDate, endDate]);
             TimeSlotRangeInfoDto timeSlotRangeInfoDto = await _timeSlotService.GetAllTimeSlotsInRange(
                 startDate, endDate);
-            _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Start, timeSlotRangeInfoDto.End]);
+            _logger.LogDebug("Returning {days} days", [timeSlotRangeInfoDto.TotalDays]);
 
             return Ok(timeSlotRangeInfoDto);
         }
