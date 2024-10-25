@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Persistence.Triggers;
+using Rise.Services.Reservations;
 using Rise.Services.TimeSlots;
+using Rise.Shared.Reservations;
 using Rise.Shared.TimeSlots;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+builder.Services.AddScoped<IReservationsService, ReservationsService>();
 
 builder.Services.AddLocalization();
 
