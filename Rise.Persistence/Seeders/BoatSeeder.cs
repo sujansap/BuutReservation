@@ -11,7 +11,7 @@ namespace Rise.Persistence.Seeders
         static BoatSeeder()
         {
             boats = [
-            new() { PersonalName = "Limba", },
+                new() { PersonalName = "Limba", },
                 new() { PersonalName = "Leith", },
                 new() { PersonalName = "Lubeck", },
             ];
