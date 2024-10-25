@@ -5,7 +5,7 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
 {
     public partial class TimeSlotsList
     {
-        private IEnumerable<TimeSlotDto> timeslots = [];
+        private IEnumerable<TimeSlotDto> timeSlots = [];
 
         [Inject]
         public required ITimeSlotService TimeSlotService { get; set; }
@@ -21,7 +21,7 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
 
         private async Task UpdateTimeSlots()
         {
-            timeslots = await TimeSlotService.GetTimeSlotsByDate(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day);
+            timeSlots = await TimeSlotService.GetTimeSlotsByDate(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day);
         }
     }
 }

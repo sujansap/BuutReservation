@@ -10,7 +10,7 @@ public class UserShould
     [Fact]
     public void BeCreated()
     {
-        User u = new () { FamilyName = ValidFamilyNameRaw};
+        User u = new() { FamilyName = ValidFamilyNameRaw };
 
         u.FamilyName.ShouldBe(ValidFamilyNameFormatted);
         u.Reservations.ShouldBeEmpty();

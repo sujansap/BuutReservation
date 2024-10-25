@@ -118,26 +118,26 @@ namespace Rise.Client.Reservations
             DateOnly today = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
             TimeSlotDto[] timeSlotDtos = [
                 new()
-            {
-                Id = 1,
-                Start = new TimeOnly(9, 0, 0),
-                End = new TimeOnly(12, 0, 0),
-                IsBookedByUser = false
-            },
-            new()
-            {
-                Id = 2,
-                Start = new TimeOnly(12, 0, 0),
-                End = new TimeOnly(15, 0, 0),
-                IsBookedByUser = false
-            },
-            new()
-            {
-                Id = 3,
-                Start = new TimeOnly(15, 0, 0),
-                End = new TimeOnly(18, 0, 0),
-                IsBookedByUser = true
-            },
+                {
+                    Id = 1,
+                    Start = new TimeOnly(9, 0, 0),
+                    End = new TimeOnly(12, 0, 0),
+                    IsBookedByUser = false
+                },
+                new()
+                {
+                    Id = 2,
+                    Start = new TimeOnly(12, 0, 0),
+                    End = new TimeOnly(15, 0, 0),
+                    IsBookedByUser = false
+                },
+                new()
+                {
+                    Id = 3,
+                    Start = new TimeOnly(15, 0, 0),
+                    End = new TimeOnly(18, 0, 0),
+                    IsBookedByUser = true
+                },
             ];
 
             // Act

@@ -38,14 +38,14 @@ namespace Rise.Server.Tests.Controllers
             response.End.ShouldBe(endDate);
             response.TotalDays.ShouldBe(8);
             response.Days.ShouldBe([
-                new (startDate, false, false),
-                new (startDate.AddDays(1), false, false),
-                new (startDate.AddDays(2), false, false),
-                new (startDate.AddDays(3), false, true),
-                new (startDate.AddDays(4), false, false),
-                new (startDate.AddDays(5), false, true),
-                new (startDate.AddDays(6), true, false),
-                new (startDate.AddDays(7), false, true),
+                new(startDate, false, false),
+                new(startDate.AddDays(1), false, false),
+                new(startDate.AddDays(2), false, false),
+                new(startDate.AddDays(3), false, true),
+                new(startDate.AddDays(4), false, false),
+                new(startDate.AddDays(5), false, true),
+                new(startDate.AddDays(6), true, false),
+                new(startDate.AddDays(7), false, true),
             ]);
         }
 
@@ -62,7 +62,7 @@ namespace Rise.Server.Tests.Controllers
             response.End.ShouldBe(defaultDay);
             response.TotalDays.ShouldBe(1);
             response.Days.ShouldBe([
-                new (defaultDay, false, false),
+                new(defaultDay, false, false),
             ]);
         }
 

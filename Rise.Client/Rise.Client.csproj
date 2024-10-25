@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components/" />
     <Folder Include="Localization/.config/" />
     <Folder Include="wwwroot/assets/icons/" />
   </ItemGroup>
