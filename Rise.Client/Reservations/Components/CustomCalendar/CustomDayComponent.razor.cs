@@ -1,7 +1,7 @@
 using Heron.MudCalendar;
 using Microsoft.AspNetCore.Components;
 
-namespace Rise.Client.Reservations.Components;
+namespace Rise.Client.Reservations.Components.CustomCalendar;
 
 public partial class CustomDayComponent
 {
