@@ -72,7 +72,7 @@ namespace Rise.Services.TimeSlots
                             return daysWithReservation.GetValueOrDefault(date, new TimeSlotDaySurfaceInfoDto(date, false, false));
                         });
 
-            return new TimeSlotRangeInfoDto(startDate, endDate, totalDays, days);
+            return new TimeSlotRangeInfoDto(totalDays, days);
 
         }
 

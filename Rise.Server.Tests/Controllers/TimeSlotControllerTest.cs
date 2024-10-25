@@ -34,8 +34,6 @@ namespace Rise.Server.Tests.Controllers
             DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
             DateOnly endDate = startDate.AddDays(daysDifference);
             TimeSlotRangeInfoDto response = (await _client.GetFromJsonAsync<TimeSlotRangeInfoDto>(MakeTimeSlotRangeUrl(startDate, endDate)))!;
-            response.Start.ShouldBe(startDate);
-            response.End.ShouldBe(endDate);
             response.TotalDays.ShouldBe(8);
             response.Days.ShouldBe([
                 new(startDate, false, false),
@@ -58,8 +56,6 @@ namespace Rise.Server.Tests.Controllers
             DateOnly defaultDay = DateOnly.MinValue;
             string uri = MakeTimeSlotRangeUrl(startDate ? defaultDay : null, endDate ? defaultDay : null);
             TimeSlotRangeInfoDto response = (await _client.GetFromJsonAsync<TimeSlotRangeInfoDto>(uri))!;
-            response.Start.ShouldBe(defaultDay);
-            response.End.ShouldBe(defaultDay);
             response.TotalDays.ShouldBe(1);
             response.Days.ShouldBe([
                 new(defaultDay, false, false),

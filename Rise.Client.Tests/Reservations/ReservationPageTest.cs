@@ -83,8 +83,6 @@ namespace Rise.Client.Reservations
             DateOnly startDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
             DateOnly endDate = startDate.AddDays(totalDays);
             TimeSlotRangeInfoDto dto = new(
-                Start: startDate,
-                End: startDate.AddDays(totalDays),
                 TotalDays: totalDays,
                 Days: [
                     new(startDate, false, false),
