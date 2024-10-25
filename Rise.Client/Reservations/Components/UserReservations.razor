@@ -4,10 +4,10 @@
 @using Rise.Client.Services
 
 <MudGrid Spacing="6" Class="mt-8">
-    @if (reservations == null)
+    @if (reservations is null)
     {
         <MudItem xs="12">
-            <MudProgressCircular Indeterminate="true" />
+            <MudProgressCircular Indeterminate="true" data-testid="loading-progress" />
         </MudItem>
     }
     else if (reservations.Any())
@@ -15,22 +15,28 @@
         @foreach (var reservation in reservations)
         {
             <MudItem xs="12">
-                <MudCard Elevation="3" Class="mb-6">
+                <MudCard Elevation="5" Class="mb-6">
                     <MudCardContent>
                         <MudGrid>
-                            <MudItem xs="4">
-                                <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large"
-                                    Style="width: 100%; height: 200px;" />
+                            <MudItem xs="4" Class="d-flex justify-center align-center" Style="height: 100%;">
+                                <!-- Updated icon styling for better centering -->
+                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large" Style="width: 80px; height: 80px; color: #40e0d0;" />
                             </MudItem>
-                            <MudItem xs="8">
-                                <MudText Typo="Typo.h6" Class="mb-4">Reservation for @reservation.Date.ToShortDateString()
+                            <MudItem xs="8" Class="d-flex flex-column" Style="padding-left: 20px;">
+                                <MudText Typo="Typo.h5" Class="mb-2" data-testid="reservation-date">
+                                    Reservation for <strong>@reservation.Date.ToShortDateString()</strong>
                                 </MudText>
-                                <MudText><strong>Time:</strong> @reservation.Start - @reservation.End</MudText>
-                                <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Class="mt-4">
-                                    <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small" Class="mr-2">Cancel
+                                <MudText data-testid="reservation-boat-name">
+                                    <strong>Boat:</strong> @reservation.BoatPersonalName
+                                </MudText>
+                                <MudText data-testid="reservation-time">
+                                    <strong>Time:</strong> @reservation.Start - @reservation.End
+                                </MudText>
+                                <MudItem Class="ml-auto mt-auto">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="background-color: #40e0d0;">
+                                        View Details
                                     </MudButton>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary">View Details</MudButton>
-                                </MudStack>
+                                </MudItem>
                             </MudItem>
                         </MudGrid>
                     </MudCardContent>
@@ -41,7 +47,7 @@
     else
     {
         <MudItem xs="12">
-            <MudText>No reservations found.</MudText>
+            <MudText data-testid="no-reservations">No reservations found.</MudText>
         </MudItem>
     }
 </MudGrid>
@@ -54,12 +60,11 @@
         await LoadReservations();
     }
 
-    [Inject]
-    private IReservationService ReservationService { get; set; } = default!;
-
     private async Task LoadReservations()
-    {
-    //TODO: Moet nog geedit user id via token
-        @* reservations = await ReservationService.GetCurrentUserReservations(1); *@
+    @* TODO: make new service method work *@
+            reservations = await ReservationService.GetUserReservations(1);
     }
+
+    [Inject]
+    public IReservationService ReservationService { get; set; }
 }
