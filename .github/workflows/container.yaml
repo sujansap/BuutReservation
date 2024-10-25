@@ -33,14 +33,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Generate a tag using the branch name and commit count as the version
-      - name: Generate version tag
-        id: version
+      # Generate a timestamp for tagging
+      - name: Generate timestamp tag
+        id: timestamp
         run: |
-          # Get the commit count as a version number
-          VERSION=$(git rev-list --count HEAD)
-          # Set the tag as 'main-VERSIE'
-          echo "TAG=main-${VERSION}" >> $GITHUB_ENV
+          # Get the current timestamp in YYYYMMDD-HHMMSS format
+          TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+          # Set the tag as 'main-TIMESTAMP'
+          echo "TAG=main-${TIMESTAMP}" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -48,7 +48,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ env.TAG }}  # Tag with main-VERSION format
+            type=raw,value=${{ env.TAG }}  # Tag with main-TIMESTAMP format
 
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
