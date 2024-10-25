@@ -1,7 +1,9 @@
+using System.Linq.Expressions;
 using System.Net.Cache;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Reservations;
 using Rise.Persistence;
+using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
@@ -19,7 +21,7 @@ namespace Rise.Services.Reservations
 
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 3)
         {
-            IOrderedQueryable<IReservation> reservationsQuery = _dbContext.Reservations
+            IQueryable<IReservation> reservationsQuery = _dbContext.Reservations
                 .Where(r => (r.UserId == userId) && (getPast ?
                    r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
                    r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)))
@@ -31,21 +33,16 @@ namespace Rise.Services.Reservations
             {
                 if (isNextPage == true)
                 {
-                    reservationsQuery = reservationsQuery.Where(r => r.Id > cursor).OrderBy(r => r.TimeSlot.Date).ThenBy(r => r.Id);
+                    reservationsQuery = reservationsQuery.Where(r => r.Id > cursor);
                 }
                 else
                 {
-                    reservationsQuery = reservationsQuery.Where(r => r.Id < cursor).OrderByDescending(r => r.TimeSlot.Date).ThenBy(r => r.Id);
+                    reservationsQuery = reservationsQuery.Where(r => r.Id < cursor);
                     takeAmount = pageSize;
                 }
             }
 
-            reservationsQuery = reservationsQuery.Take(takeAmount).OrderBy(r => r.TimeSlot.Date).ThenBy(r => r.Id);
-
-            if (isNextPage == false && cursor is not null)
-            {
-                reservationsQuery = reservationsQuery.Reverse().OrderByDescending(r => r.TimeSlot.Date).ThenBy(r => r.Id);
-            }
+            reservationsQuery = reservationsQuery.Take(takeAmount);
 
             var reservations = await reservationsQuery
                 .Select(r => new ReservationDto
@@ -71,7 +68,12 @@ namespace Rise.Services.Reservations
             }
 
             bool isFirstPage = !cursor.HasValue ||
-                                (cursor.HasValue && reservations.OrderBy(r => r.Date).ThenBy(r => r.Id).FirstOrDefault()?.Id == _dbContext.Reservations.OrderBy(r => r.TimeSlot.Date).ThenBy(r => r.Id).FirstOrDefault()?.Id);
+                                 (cursor.HasValue && reservations.FirstOrDefault()?.Id ==
+                                 _dbContext.Reservations
+                                 .Where(r => (r.UserId == userId) && (getPast ?
+                                    r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
+                                    r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)))
+                                .OrderBy(r => r.TimeSlot.Date).ThenBy(r => r.Id).FirstOrDefault()?.Id);
 
             bool hasNextPage = reservations.Count > pageSize ||
                                 (cursor is not null && isNextPage == false);
@@ -82,11 +84,11 @@ namespace Rise.Services.Reservations
             }
 
             int? nextId = hasNextPage
-                    ? reservations.OrderBy(r => r.Date).ThenBy(r => r.Id).LastOrDefault()?.Id
+                    ? reservations.LastOrDefault()?.Id
                     : null;
 
             int? previousId = reservations.Count > 0 && !isFirstPage
-                    ? reservations.OrderBy(r => r.Date).ThenBy(r => r.Id).FirstOrDefault()?.Id
+                    ? reservations.FirstOrDefault()?.Id
                     : null;
 
             return new ItemsPageDto<ReservationDto>

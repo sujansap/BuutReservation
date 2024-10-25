@@ -21,15 +21,15 @@ namespace Rise.Server.Controllers
         /// Gets all reservations for a user.
         /// </summary>
         /// <remarks>
-        /// <para>Cursur and isNextPage arguments are null in the first page request call.</para> 
-        /// <para>How it works, assuming the frontend request with the following parameters:
+        /// <para>Cursor and isNextPage arguments are null in the first page request call.</para> 
+        /// <para>How it works, assuming the frontend sends a request with the following parameters:
         /// <br/>
         /// <para>NextId and isNextPage equals true: get the next page </para>
         /// <br/>
         /// <para>PreviousId and isNextPage equals false: get the previous page</para></para>
         /// </remarks>
         /// 
-        /// <param name="cursor">The Id of a entity to fetch relative to. </param>
+        /// <param name="cursor">The Id of a entity to fetch relative to, i.e. cursor can be the Id of NextId or PreviousId (see above).</param>
         /// <param name="isNextPage">If avaiable, true to get next page or false: to get last page.</param>   
         /// <param name="getPast">Get all reservations in the past.</param>
         /// <param name="pageSize">Number of items to get in a page.</param>
