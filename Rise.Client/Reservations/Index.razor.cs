@@ -41,8 +41,10 @@ namespace Rise.Client.Reservations
         /// All unavailable days on the calendar
         /// </summary>
         private List<DateTime> GreyedOutDates = [];
+        private List<ColoredCalendarItem> ReservationsOfCurrentUser = new List<ColoredCalendarItem>();
 
         private DateOnly? SelectedDate { get; set; }
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -121,6 +123,7 @@ namespace Rise.Client.Reservations
                 // .ToList();
 
                 GreyedOutDates = response.Days.Where(day => day.IsFullyBooked || !day.IsSlotAvailable).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
+                ReservationsOfCurrentUser = response.Days.Where(day => day.IsBookedByUser).Select(ConvertToCalendarItems).ToList();
             }
 
             catch
@@ -142,8 +145,8 @@ namespace Rise.Client.Reservations
             {
                 Start = day.Date.ToDateTime(TimeOnly.MinValue),
                 End = day.Date.ToDateTime(TimeOnly.MaxValue),
-                Text = day.IsFullyBooked ? "Volzet" : day.IsSlotAvailable ? "" : "Niet beschikbaar",
-                Color = day.IsFullyBooked ? Color.Error : day.IsSlotAvailable ? Color.Primary : Color.Warning,
+                Text = "",
+                Color = Color.Primary,
             };
         }
 

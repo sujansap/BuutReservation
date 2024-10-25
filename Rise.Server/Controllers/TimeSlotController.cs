@@ -47,9 +47,7 @@ namespace Rise.Server.Controllers
                 startDate, endDate);
             _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, startDate, endDate]);
 
-            var userId = 1;
-
-            ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate, userId);
+            ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate);
 
             TimeSlotRangeInfoDto timeSlotRangeInfoDtoWithReservations = new(timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Days.Select(day => new TimeSlotDaySurfaceInfoDto(day.Date, day.IsFullyBooked, day.IsSlotAvailable, reservationsRangeDto.Reservations.Contains(day.Date))));
 

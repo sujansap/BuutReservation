@@ -1,6 +1,6 @@
 namespace Rise.Shared.Reservations
 {
-    public record ReservationsRangeDto(ISet<DateOnly> Reservations)
+    public record ReservationsRangeDto(IEnumerable<DateOnly> Reservations)
     {
 
     }

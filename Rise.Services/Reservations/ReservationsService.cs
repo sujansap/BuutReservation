@@ -9,24 +9,33 @@ namespace Rise.Services.Reservations
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
 
+        /// <summary>
+        /// Gets all reservations in the given date range by the current user
+        /// </summary>
         internal class Reservation
         {
             public DateOnly Date { get; set; }
         }
-        public async Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
+        public async Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate)
         {
             ISet<DateOnly> reservations = new HashSet<DateOnly>();
 
+            int userId = 2; // This should be the current user id
+
             List<Reservation> allReservationsDuringRange = await _dbContext.Reservations.Where(
-                reservation => startDate <= reservation.TimeSlot.Date && reservation.TimeSlot.Date <= endDate
-                && reservation.UserId == userId)
+                reservation =>
+               reservation.TimeSlot.Date >= startDate &&
+                reservation.TimeSlot.Date <= endDate &&
+                reservation.UserId == userId
+                )
                 .Select(reservation => new Reservation()
                 {
                     Date = reservation.TimeSlot.Date,
-                })
+                }
+                )
                 .ToListAsync();
 
-            return new ReservationsRangeDto(reservations);
+            return new ReservationsRangeDto(allReservationsDuringRange.Select(reservation => reservation.Date));
         }
     }
 
