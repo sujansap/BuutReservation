@@ -47,7 +47,7 @@
 </MudGrid>
 
 @code {
-    private IEnumerable<ReservationListDto> reservations;
+    private IEnumerable<ReservationDto> reservations;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,7 +59,7 @@
 
     private async Task LoadReservations()
     {
-        //TODO: Moet nog geedit user id via token
-        reservations = await ReservationService.GetCurrentUserReservations(1);
+    //TODO: Moet nog geedit user id via token
+        @* reservations = await ReservationService.GetCurrentUserReservations(1); *@
     }
 }

@@ -18,15 +18,27 @@ namespace Rise.Server.Controllers
         }
 
         /// <summary>
-        /// Gets all reservations for a user
-        /// </summary>   
+        /// Gets all reservations for a user.
+        /// </summary>
+        /// <remarks>
+        /// <para>Cursur and isNextPage arguments are null in the first page request call.</para> 
+        /// <para>How it works, assuming the frontend request with the following parameters:
+        /// <br/>
+        /// <para>NextId and isNextPage equals true: get the next page </para>
+        /// <br/>
+        /// <para>PreviousId and isNextPage equals false: get the previous page</para></para>
+        /// </remarks>
+        /// 
+        /// <param name="cursor">The Id of a entity to fetch relative to. </param>
+        /// <param name="isNextPage">If avaiable, true to get next page or false: to get last page.</param>   
+        /// <param name="getPast">Get all reservations in the past.</param>
+        /// <param name="pageSize">Number of items to get in a page.</param>
         /// <returns>List of reservations</returns>
-        [HttpGet("user/{userId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationListDto>))]
-        public async Task<IActionResult> GetCurrentUserReservations()
+        [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationDto>))]
+        public async Task<IActionResult> GetCurrentUserReservations([FromQuery] int? cursor, [FromQuery] bool? isNextPage, [FromQuery] bool getPast = false, int pageSize = 3)
         {
-            int userId = 1; // Get the user ID from the token
-            var reservations = await _reservationService.GetCurrentUserReservations(userId);
+            var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);
             return Ok(reservations);
         }
     }
