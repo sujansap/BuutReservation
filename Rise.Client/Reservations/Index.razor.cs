@@ -157,7 +157,10 @@ namespace Rise.Client.Reservations
         /// <returns></returns>
         private void OnCellClicked(DateTime date)
         {
-            SelectedDate = DateOnly.FromDateTime(date);
+            if (!GreyedOutDates.Contains(date))
+            {
+                SelectedDate = DateOnly.FromDateTime(date);
+            }
         }
     }
 
