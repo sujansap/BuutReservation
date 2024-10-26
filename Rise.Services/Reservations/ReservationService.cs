@@ -3,7 +3,6 @@ using System.Net.Cache;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Reservations;
 using Rise.Persistence;
-using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
