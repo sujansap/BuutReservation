@@ -37,7 +37,7 @@ namespace Rise.Client.Reservations
             var days = await Page.Locator(".mud-cal-month-cell").AllAsync();
 
             // Assert the correct number of days
-            Assert.AreEqual(35, days.Count, "The calendar should have 35 day elements (5 weeks * 7 days)");
+            Assert.That(days.Count, Is.EqualTo(35), "The calendar should have 35 day elements (5 weeks * 7 days)");
         }
 
         [Test]
