@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Rise.Persistence;
 
 namespace Rise.Server.Tests.Fixtures
@@ -15,10 +16,10 @@ namespace Rise.Server.Tests.Fixtures
             builder.ConfigureAppConfiguration(config =>
             {
                 Configuration = new ConfigurationBuilder()
-                  .AddUserSecrets("d8435739-e257-4e40-b03f-9b9a66bbc18c")
-                  .AddEnvironmentVariables("ASPNETCORE_ENVIRONMENT:Testing")
-                  .AddEnvironmentVariables()
-                  .Build();
+                    .AddUserSecrets("d8435739-e257-4e40-b03f-9b9a66bbc18c")
+                    .AddEnvironmentVariables("ASPNETCORE_ENVIRONMENT:Testing")
+                    .AddEnvironmentVariables()
+                    .Build();
 
                 config.AddConfiguration(Configuration);
             });
