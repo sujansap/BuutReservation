@@ -158,7 +158,23 @@ XUnit test runner will go through all of the tests.
 
 #### Test database setup
 
-This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction. It is important that the database is different from the application database is this will be ***dropped*** and re-created automatically during tests to ensure the correct state!!
+> !!!! It is important that the database is different from the application database is this will be ***dropped*** and re-created automatically during tests to ensure the correct state !!!!
+
+There are two ways to specify the database connection:
+
+1) .NET secrets:
+
+This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction.
+
+2) Environment variable:
+
+> Powershell
+
+`env:ConnectionStrings__PostgreSQL="connection here"`
+
+> Bash
+
+`ConnectionStrings__PostgreSQL="connection here"`
 
 #### Running integration tests
 
@@ -166,6 +182,21 @@ In the `Rise.Domain.Tests` project run the following:
 
 ```bash
 dotnet test
+```
+
+Or when the database connection needs be specified using the CLI:
+
+> Bash
+
+```bash
+ConnectionStrings__PostgreSQL="connection here" dotnet run
+```
+
+> Powershell
+
+```ps1
+$env:ConnectionStrings__PostgreSQL="connection here"
+dotnet run
 ```
 
 ### E2E Tests
