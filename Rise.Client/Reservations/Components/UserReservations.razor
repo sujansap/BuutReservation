@@ -2,24 +2,26 @@
 @using Rise.Shared.Reservations
 @using MudBlazor
 @using Rise.Client.Services
+@using System.Threading.Tasks
+@using Rise.Shared.Pagination
+@using System.Linq
 
 <MudGrid Spacing="6" Class="mt-8">
-    @if (reservations is null)
+    @if (isLoading)
     {
         <MudItem xs="12">
             <MudProgressCircular Indeterminate="true" data-testid="loading-progress" />
         </MudItem>
     }
-    else if (reservations.Any())
+    else if (reservationPage?.Data?.Any() ?? false)
     {
-        @foreach (var reservation in reservations)
+        @foreach (var reservation in reservationPage.Data)
         {
             <MudItem xs="12">
                 <MudCard Elevation="5" Class="mb-6">
                     <MudCardContent>
                         <MudGrid>
                             <MudItem xs="4" Class="d-flex justify-center align-center" Style="height: 100%;">
-                                <!-- Updated icon styling for better centering -->
                                 <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large" Style="width: 80px; height: 80px; color: #40e0d0;" />
                             </MudItem>
                             <MudItem xs="8" Class="d-flex flex-column" Style="padding-left: 20px;">
@@ -43,6 +45,23 @@
                 </MudCard>
             </MudItem>
         }
+
+        <MudItem xs="12" Class="d-flex justify-center">
+            <MudButtonGroup Variant="Variant.Filled" OverrideStyles="false">
+                <MudButton 
+                    OnClick="@LoadPreviousPage"
+                    Disabled="!reservationPage?.CanGoBack ?? true"
+                    data-testid="previous-page">
+                    Previous
+                </MudButton>
+                <MudButton 
+                    OnClick="@LoadNextPage"
+                    Disabled="!reservationPage?.CanGoForward ?? true"
+                    data-testid="next-page">
+                    Next
+                </MudButton>
+            </MudButtonGroup>
+        </MudItem>
     }
     else
     {
@@ -53,18 +72,47 @@
 </MudGrid>
 
 @code {
-    private IEnumerable<ReservationDto> reservations;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadReservations();
-    }
-
-    private async Task LoadReservations()
-    @* TODO: make new service method work *@
-            reservations = await ReservationService.GetUserReservations(1);
-    }
+    private ItemsPageDto<ReservationDto>? reservationPage = new();
+    private bool isLoading = false;
+    private int? nextCursor = null;
+    private int? previousCursor = null;
 
     [Inject]
-    public IReservationService ReservationService { get; set; }
+    public required IReservationService ReservationService { get; set; }
+
+    protected override async Task OnInitializedAsync() => await LoadReservations();
+
+    private async Task LoadReservations(bool isNextPage = true)
+    {
+        try
+        {
+            isLoading = true;
+            var result = await ReservationService.GetUserReservations(
+                1, 
+                isNextPage ? nextCursor : previousCursor, 
+                isNextPage
+            ) ?? new ItemsPageDto<ReservationDto> 
+            { 
+                Data = new List<ReservationDto>(),
+                ForwardCursor = null,
+                BackwardCursor = null
+            };
+            
+            reservationPage = result;
+            nextCursor = result.ForwardCursor;
+            previousCursor = result.BackwardCursor;
+        }
+        catch
+        {
+            reservationPage = new() { Data = new List<ReservationDto>() };
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private Task LoadNextPage() => LoadReservations(true);
+    private Task LoadPreviousPage() => LoadReservations(false);
 }
