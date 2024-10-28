@@ -17,7 +17,7 @@ namespace Rise.Persistence.Seeders
 
         protected override DbSet<User> DbSet => _dbContext.Users;
 
-        protected override ICollection<User> Items { get => users; }
+        protected override IEnumerable<User> Items { get => users; }
 
     }
 }

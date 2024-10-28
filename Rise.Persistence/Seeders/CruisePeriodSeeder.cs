@@ -17,5 +17,5 @@ internal class CruisePeriodSeeder(ApplicationDbContext dbContext) : GeneralSeede
     }
 
     protected override DbSet<CruisePeriod> DbSet => _dbContext.CruisePeriods;
-    protected override ICollection<CruisePeriod> Items { get => cruisePeriods; }
+    protected override IEnumerable<CruisePeriod> Items { get => cruisePeriods; }
 }

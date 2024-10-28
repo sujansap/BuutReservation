@@ -193,7 +193,7 @@ namespace Rise.Persistence.Seeders
 
         protected override DbSet<TimeSlot> DbSet => _dbContext.TimeSlots;
 
-        protected override ICollection<TimeSlot> Items { get => timeSlots; }
+        protected override IEnumerable<TimeSlot> Items { get => timeSlots; }
 
     }
 }

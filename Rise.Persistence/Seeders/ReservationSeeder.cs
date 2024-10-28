@@ -123,6 +123,6 @@ namespace Rise.Persistence.Seeders
 
         protected override DbSet<Reservation> DbSet => _dbContext.Reservations;
 
-        protected override ICollection<Reservation> Items { get => reservations; }
+        protected override IEnumerable<Reservation> Items { get => reservations; }
     }
 }
