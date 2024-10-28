@@ -1,11 +1,8 @@
 using System;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DiffEngine;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
-using MudBlazor.Extensions;
 using Rise.Shared.TimeSlots;
 using Shouldly;
 
@@ -257,13 +254,51 @@ namespace Rise.Client.Reservations
             currentMonthText.ShouldBe(startMonthText);
         }
 
-        // [TestMethod]
-        // public async Task CheckRedirectToThisMonthsRange()
-        // {
-        //     DateTime startDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1).ToDateTime(TimeOnly.MinValue).StartOfWeek(DayOfWeek.Sunday);
-        //     DateTime endDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).ToDateTime(TimeOnly.MinValue).StartOfWeek(DayOfWeek.Saturday);
-        //     await Page.GotoAsync("https://localhost:5001/reservations", new PageGotoOptions() {});
-        //     Page.Url.ShouldEndWith($"?StartDate={startDate.ToString(universalDateFormat)}&EndDate={endDate.ToString(universalDateFormat)}");
-        // }
+        [TestMethod]
+        public async Task ShouldRedirectToThisMonthsCurrentDateWhenNoCurrentDate()
+        {
+            string currentDate = DateTime.Today.ToString(universalDateFormat);
+            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={currentDate}");
+        }
+
+        [TestMethod]
+        public async Task ShouldRedirectToThisMonthsCurrentDateWhenToEarlyDate()
+        {
+            string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
+            string currentDate = DateTime.Today.ToString(universalDateFormat);
+            await Page.GotoAsync($"https://localhost:5001/reservations?CurrentDate={toEarlyDate}");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={currentDate}");
+        }
+
+        [TestMethod]
+        public async Task ShouldRedirectToGivenCurrentDate()
+        {
+
+            DateTime plusOneMonthDate = DateTime.Today.AddMonths(1);
+            string plusOneMonthDateFormatted = plusOneMonthDate.ToString(universalDateFormat);
+            await Page.GotoAsync($"https://localhost:5001/reservations?CurrentDate={plusOneMonthDateFormatted}");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={plusOneMonthDateFormatted}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={plusOneMonthDateFormatted}");
+
+            ILocator date = Page.Locator($"[identifier={DateOnly.FromDateTime(plusOneMonthDate)}]");
+            date.ShouldNotBeNull();
+        }
+
+        [TestMethod]
+        public async Task ShouldChangeCurrentDateWhenGoingToNextMonth()
+        {
+            string currentDate = DateTime.Today.ToString(universalDateFormat);
+            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+
+            ILocator next = Page.GetByTestId("calendar-next");
+            await next.ClickAsync();
+            string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
+        }
     }
 }
