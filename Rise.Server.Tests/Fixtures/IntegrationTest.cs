@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
-using Respawn;
-
+﻿
 namespace Rise.Server.Tests.Fixtures
 {
     [Trait("Category", "Integration")]
@@ -26,11 +22,11 @@ namespace Rise.Server.Tests.Fixtures
         protected readonly ApiWebApplicationFactory _factory;
         protected readonly HttpClient _client;
 
-        public IntegrationTest(ApiWebApplicationFactory fixture)
+        public IntegrationTest(ApiWebApplicationFactory fixture, string routeBase)
         {
             _factory = fixture;
-            // TODO base address for HTTPclient in integrations tests is hardcoded
-            _client = _factory.CreateClient(new WebApplicationFactoryClientOptions() { BaseAddress = new Uri("https://localhost:5001/api/") });
+            _client = _factory.CreateClient();
+            _client.BaseAddress = new Uri(_client.BaseAddress ?? new Uri("https://localhost"), "api/" + routeBase + "/");
             // TODO set up respawn for avoiding changes during tests https://github.com/jbogard/respawn
         }
     }

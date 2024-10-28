@@ -125,32 +125,119 @@ dotnet ef migrations remove --startup-project Rise.Server --project Rise.Persist
 
 ## Testing
 
-| Type of test  | Project  | Reason        | Framework        | Additional setup        |
-| ------------- | ------------- | ------------- | ------------- | ------------- |
-| Unit          | `Rise.Domain.Tests`          | Testing the domain | [xUnit](https://xunit.net) | None |
-| Integration   | `Rise.Server.Tests`   | Testing the back-end | [AspNetCore MVC testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) | [Test Postgres database set-up](#test-database-setup) |
-| E2E  | `Rise.Client.Tests`  | Testing the front-end | [Playwright](https://playwright.dev/dotnet/) | [Playwright must be installed](https://playwright.dev/dotnet/docs/intro) and that application must be [fully up and running](#installation-instructions) |
+| Type of test  | Project  | Reason        | Framework        |  Runner        | Additional setup        |
+| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
+| [Unit](#unit-tests)          | `Rise.Domain.Tests`          | Testing the domain | Built in | [xUnit](https://xunit.net) | None |
+| [Integration](#integration-tests)   | `Rise.Server.Tests`   | Testing the back-end | [AspNetCore MVC testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) | [xUnit](https://xunit.net) | Test Postgres database set-up |
+| [E2E](#e2e-tests)  | `Rise.Client.Tests`  | Testing the front-end | [Playwright](https://playwright.dev/dotnet/) | [NUnit](https://nunit.org/) | Playwright must be installed and client must be running |
 
 Additional tools used to help write tests:
 
 - [nSubstitute](https://nsubstitute.github.io) - Mocking for testing
 - [Shouldly](https://docs.shouldly.org) - Helper for testing (asserts)
 
-To test globally with everything correctly setup use the following command in the project root:
+In general to start testing use the following command:
 
 ```bash
 dotnet test
 ```
 
-!! Be sure that !!
+> Some testing projects require more setup, please read further if this is your first time testing.
 
-1) [Application is fully running](#running-the-application)
-2) [Test database is setup](#test-database-setup)
-3) [Playwright is fully installed](https://playwright.dev/dotnet/docs/intro)
-4) The Test database is ***NOT*** the production database is it will be dropped!!!
+### Unit Tests
 
-If you want to test only a specific part of type, change the working directory to the preferred project and run the aforementioned test command earlier.
+In the `Rise.Domain.Tests` project run the following:
 
-### Test database setup
+```bash
+dotnet test
+```
 
-This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction. It is important that the database is different from the application database is this will be ***dropped*** and re-created automatically during tests to ensure the correct state!!
+XUnit test runner will go through all of the tests.
+
+### Integration Tests
+
+#### Test database setup
+
+> !!!! It is important that the database is different from the application database is this will be ***dropped*** and re-created automatically during tests to ensure the correct state !!!!
+
+There are two ways to specify the database connection:
+
+1) .NET secrets:
+
+This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction.
+
+2) Environment variable:
+
+> Powershell
+
+`env:ConnectionStrings__PostgreSQL="connection here"`
+
+> Bash
+
+`ConnectionStrings__PostgreSQL="connection here"`
+
+#### Running integration tests
+
+In the `Rise.Domain.Tests` project run the following:
+
+```bash
+dotnet test
+```
+
+Or when the database connection needs be specified using the CLI:
+
+> Bash
+
+```bash
+ConnectionStrings__PostgreSQL="connection here" dotnet run
+```
+
+> Powershell
+
+```ps1
+$env:ConnectionStrings__PostgreSQL="connection here"
+dotnet run
+```
+
+### E2E Tests
+
+#### Installation of Playwright
+
+Make sure that [Playwright is fully installed](https://playwright.dev/dotnet/docs/intro). In short via `dotnet build` in the `Rise.Client` you can run initialise the setup:
+
+```ps1
+pwsh bin/Debug/net8.0/playwright.ps1 install
+```
+
+> Note: NUnit will be used as test runner, not MSTest.
+
+#### Running of Playwright
+
+An important note is that the Client project has to be running.
+
+This can be done by starting the project from the root via:
+
+```bash
+dotnet run --project Rise.Client
+```
+> Optionally you can use the `Rise.Server` project but you will need to specify the base url for tests, see further.
+
+Running the tests can be done via
+
+```ps1
+dotnet test
+```
+
+If the url of the client is different from the default URL, be sure to specify it in the test parameters like sthe following:
+
+> Powershell (a string literal is needed here to avoid interpretation of the shell)
+
+```ps1
+dotnet test -- --% TestRunParameters.Parameter(name="BASE_URL",value="url here")
+```
+
+> Bash
+
+```bash
+dotnet test -- TestRunParameters.Parameter(name="BASE_URL",value="url here")
+```
