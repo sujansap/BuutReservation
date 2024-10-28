@@ -171,7 +171,7 @@ namespace Rise.Client.Reservations
         public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingButtons()
         {
 
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             ILocator prev = Page.GetByTestId("calendar-previous");
             (await prev.IsDisabledAsync()).ShouldBeTrue();
         }
@@ -180,7 +180,7 @@ namespace Rise.Client.Reservations
         public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingPicker()
         {
 
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
 
             ILocator monthPicker = Page.Locator(".mud-picker-input-button");
             await monthPicker.ClickAsync();
@@ -201,7 +201,7 @@ namespace Rise.Client.Reservations
         [Test]
         public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingButtons()
         {
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
 
             ILocator monthPicker = Page.Locator(".mud-picker-input-button");
             string startMonthText = await monthPicker.InnerTextAsync();
@@ -222,7 +222,7 @@ namespace Rise.Client.Reservations
         [Test]
         public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingDatePicker()
         {
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
 
             ILocator monthPicker = Page.Locator(".mud-picker-input-button");
             string startMonthText = await monthPicker.InnerTextAsync();
@@ -255,7 +255,7 @@ namespace Rise.Client.Reservations
         public async Task ShouldRedirectToThisMonthsCurrentDateWhenNoCurrentDate()
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
@@ -265,7 +265,7 @@ namespace Rise.Client.Reservations
         {
             string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
             string currentDate = DateTime.Today.ToString(universalDateFormat);
-            await Page.GotoAsync($"https://localhost:5001/reservations?CurrentDate={toEarlyDate}");
+            await Page.GotoAsync($"/reservations?CurrentDate={toEarlyDate}");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
@@ -276,7 +276,7 @@ namespace Rise.Client.Reservations
 
             DateTime plusOneMonthDate = DateTime.Today.AddMonths(1);
             string plusOneMonthDateFormatted = plusOneMonthDate.ToString(universalDateFormat);
-            await Page.GotoAsync($"https://localhost:5001/reservations?CurrentDate={plusOneMonthDateFormatted}");
+            await Page.GotoAsync($"/reservations?CurrentDate={plusOneMonthDateFormatted}");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={plusOneMonthDateFormatted}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={plusOneMonthDateFormatted}");
 
@@ -288,7 +288,7 @@ namespace Rise.Client.Reservations
         public async Task ShouldChangeCurrentDateWhenGoingToNextMonth()
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
 
             ILocator next = Page.GetByTestId("calendar-next");
