@@ -22,7 +22,8 @@
                     <MudCardContent>
                         <MudGrid>
                             <MudItem xs="4" Class="d-flex justify-center align-center" Style="height: 100%;">
-                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large" Style="width: 80px; height: 80px; color: #40e0d0;" />
+                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
+                                    Style="width: 80px; height: 80px; color: #40e0d0;" />
                             </MudItem>
                             <MudItem xs="8" Class="d-flex flex-column" Style="padding-left: 20px;">
                                 <MudText Typo="Typo.h5" Class="mb-2" data-testid="reservation-date">
@@ -35,7 +36,8 @@
                                     <strong>Time:</strong> @reservation.Start - @reservation.End
                                 </MudText>
                                 <MudItem Class="ml-auto mt-auto">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="background-color: #40e0d0;">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                        Style="background-color: #40e0d0;">
                                         View Details
                                     </MudButton>
                                 </MudItem>
@@ -48,16 +50,11 @@
 
         <MudItem xs="12" Class="d-flex justify-center">
             <MudButtonGroup Variant="Variant.Filled" OverrideStyles="false">
-                <MudButton 
-                    OnClick="@LoadPreviousPage"
-                    Disabled="!reservationPage?.CanGoBack ?? true"
+                <MudButton OnClick="@LoadPreviousPage" Disabled="@(reservationPage?.PreviousId == null)"
                     data-testid="previous-page">
                     Previous
                 </MudButton>
-                <MudButton 
-                    OnClick="@LoadNextPage"
-                    Disabled="!reservationPage?.CanGoForward ?? true"
-                    data-testid="next-page">
+                <MudButton OnClick="@LoadNextPage" Disabled="@(reservationPage?.NextId == null)" data-testid="next-page">
                     Next
                 </MudButton>
             </MudButtonGroup>
@@ -69,13 +66,11 @@
             <MudText data-testid="no-reservations">No reservations found.</MudText>
         </MudItem>
     }
-</MudGrid>
+    </MudGrid>
 
-@code {
-    private ItemsPageDto<ReservationDto>? reservationPage = new();
+    @code {
+    private ItemsPageDto<ReservationDto>? reservationPage;
     private bool isLoading = false;
-    private int? nextCursor = null;
-    private int? previousCursor = null;
 
     [Inject]
     public required IReservationService ReservationService { get; set; }
@@ -86,25 +81,29 @@
     {
         try
         {
+
             isLoading = true;
+            var cursor = isNextPage ? reservationPage?.NextId : reservationPage?.PreviousId;
+
+            Console.WriteLine("try to fetch");
+
             var result = await ReservationService.GetUserReservations(
-                1, 
-                isNextPage ? nextCursor : previousCursor, 
-                isNextPage
-            ) ?? new ItemsPageDto<ReservationDto> 
-            { 
-                Data = new List<ReservationDto>(),
-                ForwardCursor = null,
-                BackwardCursor = null
-            };
-            
+            1,
+            cursor,
+            isNextPage,
+            getPast: false
+            );
+            Console.WriteLine("fetched");
+
             reservationPage = result;
-            nextCursor = result.ForwardCursor;
-            previousCursor = result.BackwardCursor;
         }
-        catch
+        catch (Exception ex)
         {
-            reservationPage = new() { Data = new List<ReservationDto>() };
+            // proper error handling/logging needed here
+            reservationPage = new()
+                {
+                    Data = new List<ReservationDto>()
+                };
         }
         finally
         {
