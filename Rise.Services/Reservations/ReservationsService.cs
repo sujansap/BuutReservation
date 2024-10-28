@@ -24,7 +24,7 @@ namespace Rise.Services.Reservations
 
             List<Reservation> allReservationsDuringRange = await _dbContext.Reservations.Where(
                 reservation =>
-               reservation.TimeSlot.Date >= startDate &&
+                reservation.TimeSlot.Date >= startDate &&
                 reservation.TimeSlot.Date <= endDate &&
                 reservation.UserId == userId
                 )
