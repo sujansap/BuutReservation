@@ -151,7 +151,7 @@ namespace Rise.Client.Reservations
             await Page.GotoAsync("https://localhost:5001/reservations");
 
             var dateToFind = today.AddDays(2);
-            var day = Page.Locator($"[identifier='{dateToFind.Day}/{dateToFind.Month}/{dateToFind.Year}']");
+            var day = Page.Locator($"[identifier='{dateToFind}']");
             await day.ClickAsync();
 
 
@@ -182,7 +182,7 @@ namespace Rise.Client.Reservations
 
             // Act
             await Page.GotoAsync("https://localhost:5001/reservations");
-            var calendarCellToday = Page.GetByText($"{today.Day}");
+            var calendarCellToday = Page.Locator($"[identifier='{today}']");
             await calendarCellToday.ClickAsync();
 
             // Assert
