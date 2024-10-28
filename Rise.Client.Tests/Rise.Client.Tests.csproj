@@ -2,14 +2,12 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-		<RootNamespace>Rise.Client</RootNamespace>
-	</PropertyGroup>
 
-	<ItemGroup>
-		<Using Include="Microsoft.Extensions.DependencyInjection" />
-	</ItemGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
@@ -17,15 +15,11 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Playwright.MSTest" Version="1.48.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
-		<PackageReference Include="Serilog" Version="4.0.1" />
-		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-		<PackageReference Include="Serilog.Expressions" Version="5.0.0" />
-		<PackageReference Include="Serilog.Sinks.XUnit" Version="3.0.5" />
+		<PackageReference Include="NUnit" Version="3.14.0" />
+		<PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageReference Include="Microsoft.Playwright.NUnit" Version="1.48.0" />
 		<PackageReference Include="Shouldly" Version="4.2.1" />
-		<PackageReference Include="NSubstitute" Version="5.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -33,6 +27,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+		<Using Include="NUnit.Framework" />
 	</ItemGroup>
 </Project>

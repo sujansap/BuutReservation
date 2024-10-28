@@ -1,37 +1,34 @@
-using System;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.Playwright;
-using Microsoft.Playwright.MSTest;
 using Rise.Shared.TimeSlots;
 using Shouldly;
 
 namespace Rise.Client.Reservations
 {
-    [TestClass]
-    public class ReservationPageTest : PageTest
+    [TestFixture]
+    public class ReservationPageTest : CustomPageTest
     {
         private const string universalDateFormat = "yyyy-MM-dd";
 
-        [TestMethod]
+        [Test]
         public async Task HasTabs()
         {
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
         }
 
-        [TestMethod]
+        [Test]
         public async Task HasCustomCalendarReserveComponent()
         {
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.GetByTestId("custom-calendar-reserve").IsVisibleAsync();
         }
 
-        [TestMethod]
+        [Test]
         public async Task HasCorrectAmountOfDaysInCalendar()
         {
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
 
             // Wait for the page to load
             await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
@@ -40,24 +37,24 @@ namespace Rise.Client.Reservations
             var days = await Page.Locator(".mud-cal-month-cell").AllAsync();
 
             // Assert the correct number of days
-            Assert.AreEqual(35, days.Count, "The calendar should have 35 day elements (5 weeks * 7 days)");
+            Assert.That(days.Count, Is.EqualTo(35), "The calendar should have 35 day elements (5 weeks * 7 days)");
         }
 
-        [TestMethod]
+        [Test]
         public async Task HasLegendComponent()
         {
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.GetByTestId("custom-calendar-legend").IsVisibleAsync();
         }
 
-        [TestMethod]
+        [Test]
         public async Task HasYourReservationsCalendarComponent()
         {
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.GetByTestId("calendar-your-reservations").IsVisibleAsync();
         }
 
-        [TestMethod]
+        [Test]
         public async Task HasUnexpectedError()
         {
             await Page.RouteAsync("*/**/api/TimeSlot/range/**", async route =>
@@ -69,11 +66,11 @@ namespace Rise.Client.Reservations
                     Body = "Bad argument!"
                 });
             });
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.GetByTestId("error-message").IsVisibleAsync();
         }
 
-        [TestMethod]
+        [Test]
         public async Task CheckDateTypes()
         {
             int totalDays = 4;
@@ -97,7 +94,7 @@ namespace Rise.Client.Reservations
                     Body = JsonSerializer.Serialize(dto)
                 });
             });
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             var locator = Page.Locator($"[identifier={startDate}]");
             var child = locator.GetByTestId("custom-calendar-day");
             child.ShouldNotBeNull();
@@ -105,7 +102,7 @@ namespace Rise.Client.Reservations
             // TODO make beter tests for checking date availability
         }
 
-        [TestMethod]
+        [Test]
         public async Task HasTimeslotsInTimeSlotList()
         {
 
@@ -145,7 +142,7 @@ namespace Rise.Client.Reservations
                     Body = JsonSerializer.Serialize(timeSlotDtos)
                 });
             });
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
 
             var day = Page.GetByText($"{today.Day + 2}");
             await day.ClickAsync();
