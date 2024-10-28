@@ -150,7 +150,8 @@ namespace Rise.Client.Reservations
             });
             await Page.GotoAsync("https://localhost:5001/reservations");
 
-            var day = Page.GetByText($"{today.Day + 2}");
+            var dateToFind = today.AddDays(2);
+            var day = Page.Locator($"[identifier='{dateToFind.Day}/{dateToFind.Month}/{dateToFind.Year}']");
             await day.ClickAsync();
 
 
