@@ -167,7 +167,7 @@ namespace Rise.Client.Reservations
             await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingButtons()
         {
 
@@ -176,7 +176,7 @@ namespace Rise.Client.Reservations
             (await prev.IsDisabledAsync()).ShouldBeTrue();
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingPicker()
         {
 
@@ -198,7 +198,7 @@ namespace Rise.Client.Reservations
             (await previousMonth.IsDisabledAsync()).ShouldBeTrue();
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingButtons()
         {
             await Page.GotoAsync("https://localhost:5001/reservations");
@@ -219,7 +219,7 @@ namespace Rise.Client.Reservations
             currentMonthText.ShouldBe(startMonthText);
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingDatePicker()
         {
             await Page.GotoAsync("https://localhost:5001/reservations");
@@ -251,7 +251,7 @@ namespace Rise.Client.Reservations
             currentMonthText.ShouldBe(startMonthText);
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldRedirectToThisMonthsCurrentDateWhenNoCurrentDate()
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
@@ -260,7 +260,7 @@ namespace Rise.Client.Reservations
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldRedirectToThisMonthsCurrentDateWhenToEarlyDate()
         {
             string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
@@ -270,7 +270,7 @@ namespace Rise.Client.Reservations
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldRedirectToGivenCurrentDate()
         {
 
@@ -284,7 +284,7 @@ namespace Rise.Client.Reservations
             date.ShouldNotBeNull();
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldChangeCurrentDateWhenGoingToNextMonth()
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
