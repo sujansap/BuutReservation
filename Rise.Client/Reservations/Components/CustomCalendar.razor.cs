@@ -63,7 +63,7 @@ namespace Rise.Client.Reservations.Components
         /// <returns></returns>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnAfterRenderAsync(true);
+            await base.OnAfterRenderAsync(false);
 
             if (firstRender)
             {
