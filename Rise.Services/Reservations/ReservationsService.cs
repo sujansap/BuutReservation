@@ -16,11 +16,9 @@ namespace Rise.Services.Reservations
         {
             public DateOnly Date { get; set; }
         }
-        public async Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate)
+        public async Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
         {
             ISet<DateOnly> reservations = new HashSet<DateOnly>();
-
-            int userId = 2; // This should be the current user id
 
             List<Reservation> allReservationsDuringRange = await _dbContext.Reservations.Where(
                 reservation =>
