@@ -14,9 +14,10 @@
             @if (ShowPrevNextButtons)
         {
             <MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronLeft" aria-label="@PrevAriaLabel"
-                Disabled="!CanGoToPreviousRange()" Color="@Color" OnClick="OnPreviousClicked" Class="mx-1" />
+                Disabled="!CanGoToPreviousRange()" Color="@Color" OnClick="OnPreviousClicked" Class="mx-1"
+                data-testId="calendar-previous" />
             <MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronRight" aria-label="@NextAriaLabel"
-                Color="@Color" OnClick="OnNextClicked" Class="mr-1" />
+                Color="@Color" OnClick="OnNextClicked" Class="mr-1" data-testId="calendar-next" />
         }
             @if (ShowDatePicker)
         {
@@ -25,11 +26,13 @@
                 FixDay="@(View == CalendarView.Month ? PickerDate?.Day : null)" Date="PickerDate"
                 DateChanged="DatePickerDateChanged" View="View" Variant="ButtonVariant" Color="Color" Class="mx-1"
                 PickerOpened="OnDatePickerOpened"
-                MinDate="AllowPast ? null : DateTime.Today.StartOfMonth(CultureInfo.CurrentCulture)" />
+                MinDate="AllowPast ? null : DateTime.Today.StartOfMonth(CultureInfo.CurrentCulture)"
+                data-testId="calendar-datepicker" />
         }
             @if (ShowTodayButton)
         {
-            <MudButton Variant="@ButtonVariant" Color="@Color" OnClick="OnTodayClicked" Class="mx-1">@DrawTodayText()
+            <MudButton Variant="@ButtonVariant" Color="@Color" OnClick="OnTodayClicked" Class="mx-1"
+                data-testId="calendar-today">@DrawTodayText()
             </MudButton>
         }
             @if (ToolbarContent != null)

@@ -173,6 +173,90 @@ namespace Rise.Client.Reservations
             await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
         }
 
+        [TestMethod]
+        public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingButtons()
+        {
+
+            await Page.GotoAsync("https://localhost:5001/reservations");
+            ILocator prev = Page.GetByTestId("calendar-previous");
+            (await prev.IsDisabledAsync()).ShouldBeTrue();
+        }
+
+        [TestMethod]
+        public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingPicker()
+        {
+
+            await Page.GotoAsync("https://localhost:5001/reservations");
+
+            ILocator monthPicker = Page.Locator(".mud-picker-input-button");
+            await monthPicker.ClickAsync();
+
+            int currentMonth = DateTime.Now.Month;
+            ILocator monthPickerCollapsed = Page.GetByTestId("calendar-datepicker");
+
+            if (currentMonth == 1)
+            {
+                await monthPickerCollapsed.GetByLabel($"Previous year ({DateTime.Today.AddYears(-1).Year})").ClickAsync();
+                currentMonth = 13;
+            }
+
+            ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(currentMonth - 2);
+            (await previousMonth.IsDisabledAsync()).ShouldBeTrue();
+        }
+
+        [TestMethod]
+        public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingButtons()
+        {
+            await Page.GotoAsync("https://localhost:5001/reservations");
+
+            ILocator monthPicker = Page.Locator(".mud-picker-input-button");
+            string startMonthText = await monthPicker.InnerTextAsync();
+
+            ILocator next = Page.GetByTestId("calendar-next");
+            await next.ClickAsync();
+            string nextMonthText = await monthPicker.InnerTextAsync();
+            nextMonthText.ShouldNotBe(startMonthText);
+
+            ILocator prev = Page.GetByTestId("calendar-previous");
+            (await prev.IsDisabledAsync()).ShouldBeFalse();
+            await prev.ClickAsync();
+
+            string currentMonthText = await monthPicker.InnerTextAsync();
+            currentMonthText.ShouldBe(startMonthText);
+        }
+
+        [TestMethod]
+        public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingDatePicker()
+        {
+            await Page.GotoAsync("https://localhost:5001/reservations");
+
+            ILocator monthPicker = Page.Locator(".mud-picker-input-button");
+            string startMonthText = await monthPicker.InnerTextAsync();
+
+            ILocator next = Page.GetByTestId("calendar-next");
+            await next.ClickAsync();
+            string nextMonthText = await monthPicker.InnerTextAsync();
+            nextMonthText.ShouldNotBe(startMonthText);
+
+            await monthPicker.ClickAsync();
+
+            int nextMonth = (DateTime.Now.Month + 1) % 12;
+            ILocator monthPickerCollapsed = Page.GetByTestId("calendar-datepicker");
+
+            if (nextMonth == 1)
+            {
+                await monthPickerCollapsed.GetByLabel($"Previous year ({DateTime.Today.Year})").ClickAsync();
+                nextMonth = 13;
+            }
+
+            ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(nextMonth - 2);
+            (await previousMonth.IsDisabledAsync()).ShouldBeFalse();
+            await previousMonth.ClickAsync();
+
+            string currentMonthText = await monthPicker.InnerTextAsync();
+            currentMonthText.ShouldBe(startMonthText);
+        }
+
         // [TestMethod]
         // public async Task CheckRedirectToThisMonthsRange()
         // {
