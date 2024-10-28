@@ -45,9 +45,13 @@ namespace Rise.Server.Controllers
             _logger.LogDebug("Getting days between range {startDate} and {endDay} from service layer", [startDate, endDate]);
             TimeSlotRangeInfoDto timeSlotRangeInfoDto = await _timeSlotService.GetAllTimeSlotsInRange(
                 startDate, endDate);
-            _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, startDate, endDate]);
+            _logger.LogDebug("Returning {days} days from {startDate} to {endDay}", [timeSlotRangeInfoDto.TotalDays, startDate, endDate]);
 
+
+            _logger.LogDebug("Getting reservations between range {startDate} and {endDay} from service layer", [startDate, endDate]);
             ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate);
+            _logger.LogDebug("Returning {reservationCount} reservations from {startDate} to {endDay}", [reservationsRangeDto.Reservations.Count(), startDate, endDate]);
+
 
             TimeSlotRangeInfoDto timeSlotRangeInfoDtoWithReservations = new(timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Days.Select(day => new TimeSlotDaySurfaceInfoDto(day.Date, day.IsFullyBooked, day.IsSlotAvailable, reservationsRangeDto.Reservations.Contains(day.Date))));
 
