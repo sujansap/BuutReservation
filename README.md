@@ -60,6 +60,55 @@ dotnet run --project Rise.Server --environment Production --urls "https://0.0.0.
 
 For more info on running the application in a specifying environment, check out the ASP.NET docs on [Using multiple environments in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-8.0) and the general [`dotnet run`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) commando.
 
+## Contribution
+
+### Branching flow
+
+This project uses feature branches to introduce new features into `main`.
+On top of this the following is used to keep up the CI/CD pipeline:
+
+| Name              | Base Branch         | Protected | Description         |
+| ----------------- | ------------------- | --------- | ------------------- |
+| `feature/**`      | `main`              | `false`   | Feature branch(s) where a new feature/requests developed on for the application. |
+| `fix/**`      | `main`              | `false`   | Fix branch(s) that solve problems in the application. |
+| `refactor/**`      | `main`              | `false`   | Refactor branch(s) that solve structural problems. |
+| `docs/**`      | `main`              | `false`   | Documentation branch(s) that expand/clarify documentation. |
+| `main`            | NONE                | `true`    | General development. Here all of the features, (hot) fixes and documentation get merged into via pull requests. |
+| `staging`         | `main`              | `true`    | Environment where the lasts checks and manual tests get applied on before it moves on to production. Main reason for existing is allowing the Android application to use actual integrations. Only updates when automatic testing succeeds and with enough tests for all current/new features.                  |
+| `production`      | `staging`           | `true`    | Environment where the current latest stable version. Gets used in the CI/CD pipeline to host the newest version. Only updates when succeeds lasts checks and approved by majority                      |
+
+For example the development flow of an abstract feature A to production:
+
+```mermaid
+gitGraph
+    commit
+    commit
+    branch feature/a order: 1
+    checkout feature/a
+    commit
+    commit
+    commit
+    checkout main
+    merge feature/a id: "merge feature A"
+    branch staging order: 3
+    checkout staging
+    commit id: "introduction feature A"
+    checkout main
+    branch fix/a-logic order: 2
+    checkout fix/a-logic
+    commit
+    commit
+    checkout main
+    merge fix/a-logic id: "fix feature A logic"
+    checkout staging
+    merge main id: "fix feature for A"
+    branch production order: 4
+    checkout production
+    commit id: "in production feature A"
+```
+
+Feature *A* gets developed in it's respective feature branch `feature/a`. When it is done that feature ends up into `main` after approval. Which after goes to `staging` since its test succeeds. However during its lasts (manual) check ups, a mistake is noticed. This gets solved in the `fix/a` branch, which then goes back through the flow of going by `main` to `staging`. Now the feature is truly done finished and can end up on the `production` branch.
+
 ## Database
 
 ### Database connection
