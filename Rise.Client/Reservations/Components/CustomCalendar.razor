@@ -1,11 +1,45 @@
-﻿@inherits MudCalendar
+﻿@using MudBlazor.Extensions
+@inherits MudCalendar
 
 @Render
 
 @code {
-    [Parameter]
-    public List<DateTime> GreyedOutDates { get; set; } = new List<DateTime>();
 
-    protected override RenderFragment RenderMonthView =>
-@<CustomMonthView GreyedOutDates="@GreyedOutDates" />;
+    protected override RenderFragment RenderMonthView => @<CustomMonthView GreyedOutDates="@GreyedOutDates" />;
+
+    @* ! Copy paste from original component since the individual parts are not extensible, boo *@
+    protected override RenderFragment RenderToolbar =>
+    @<div class="mud-cal-toolbar pa-4">
+        <div class="d-flex align-center">
+            @if (ShowPrevNextButtons)
+        {
+            <MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronLeft" aria-label="@PrevAriaLabel"
+                Disabled="!CanGoToPreviousRange()" Color="@Color" OnClick="OnPreviousClicked" Class="mx-1" />
+            <MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronRight" aria-label="@NextAriaLabel"
+                Color="@Color" OnClick="OnNextClicked" Class="mr-1" />
+        }
+            @if (ShowDatePicker)
+        {
+            <CalendarDatePicker cker @ref="_datePicker" OpenTo="@(View == CalendarView.Month ? OpenTo.Month : OpenTo.Date)"
+                FirstDayOfWeek="@GetFirstDayOfWeekByCalendarView(View)"
+                FixDay="@(View == CalendarView.Month ? PickerDate?.Day : null)" Date="PickerDate"
+                DateChanged="DatePickerDateChanged" View="View" Variant="ButtonVariant" Color="Color" Class="mx-1"
+                PickerOpened="OnDatePickerOpened"
+                MinDate="AllowPast ? null : DateTime.Today.StartOfMonth(CultureInfo.CurrentCulture)" />
+        }
+            @if (ShowTodayButton)
+        {
+            <MudButton Variant="@ButtonVariant" Color="@Color" OnClick="OnTodayClicked" Class="mx-1">@DrawTodayText()
+            </MudButton>
+        }
+            @if (ToolbarContent != null)
+        {
+            @ToolbarContent
+        }
+        </div>
+        <div>
+            <EnumSwitch Value="@View" T="CalendarView" Color="@Color" AllowedValues="AllowedViews()"
+                ValueChanged="OnViewChanging" />
+        </div>
+    </div>;
 }
