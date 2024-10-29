@@ -1,4 +1,4 @@
-name: dotnet acceptatie test voor push/pull-request
+name: dotnet acceptatie test
 
 on: 
   pull_request:
