@@ -60,6 +60,55 @@ dotnet run --project Rise.Server --environment Production --urls "https://0.0.0.
 
 For more info on running the application in a specifying environment, check out the ASP.NET docs on [Using multiple environments in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-8.0) and the general [`dotnet run`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) commando.
 
+## Contribution
+
+### Branching flow
+
+This project uses feature branches to introduce new features into `main`.
+On top of this the following is used to keep up the CI/CD pipeline:
+
+| Name              | Base Branch         | Protected | Description         |
+| ----------------- | ------------------- | --------- | ------------------- |
+| `feature/**`      | `main`              | `false`   | Feature branch(s) where a new feature/requests developed on for the application. |
+| `fix/**`      | `main`              | `false`   | Fix branch(s) that solve problems in the application. |
+| `refactor/**`      | `main`              | `false`   | Refactor branch(s) that solve structural problems. |
+| `docs/**`      | `main`              | `false`   | Documentation branch(s) that expand/clarify documentation. |
+| `main`            | NONE                | `true`    | General development. Here all of the features, (hot) fixes and documentation get merged into via pull requests. |
+| `staging`         | `main`              | `true`    | Environment where the lasts checks and manual tests get applied on before it moves on to production. Main reason for existing is allowing the Android application to use actual integrations. Only updates when automatic testing succeeds and with enough tests for all current/new features.                  |
+| `production`      | `staging`           | `true`    | Environment where the current latest stable version. Gets used in the CI/CD pipeline to host the newest version. Only updates when succeeds lasts checks and approved by majority                      |
+
+For example the development flow of an abstract feature A to production:
+
+```mermaid
+gitGraph
+    commit
+    commit
+    branch feature/a order: 1
+    checkout feature/a
+    commit
+    commit
+    commit
+    checkout main
+    merge feature/a id: "merge feature A"
+    branch staging order: 3
+    checkout staging
+    commit id: "introduction feature A"
+    checkout main
+    branch fix/a-logic order: 2
+    checkout fix/a-logic
+    commit
+    commit
+    checkout main
+    merge fix/a-logic id: "fix feature A logic"
+    checkout staging
+    merge main id: "fix feature for A"
+    branch production order: 4
+    checkout production
+    commit id: "in production feature A"
+```
+
+Feature *A* gets developed in it's respective feature branch `feature/a`. When it is done that feature ends up into `main` after approval. Which after goes to `staging` since its test succeeds. However during its lasts (manual) check ups, a mistake is noticed. This gets solved in the `fix/a` branch, which then goes back through the flow of going by `main` to `staging`. Now the feature is truly done finished and can end up on the `production` branch.
+
 ## Database
 
 ### Database connection
@@ -125,32 +174,119 @@ dotnet ef migrations remove --startup-project Rise.Server --project Rise.Persist
 
 ## Testing
 
-| Type of test  | Project  | Reason        | Framework        | Additional setup        |
-| ------------- | ------------- | ------------- | ------------- | ------------- |
-| Unit          | `Rise.Domain.Tests`          | Testing the domain | [xUnit](https://xunit.net) | None |
-| Integration   | `Rise.Server.Tests`   | Testing the back-end | [AspNetCore MVC testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) | [Test Postgres database set-up](#test-database-setup) |
-| E2E  | `Rise.Client.Tests`  | Testing the front-end | [Playwright](https://playwright.dev/dotnet/) | [Playwright must be installed](https://playwright.dev/dotnet/docs/intro) and that application must be [fully up and running](#installation-instructions) |
+| Type of test  | Project  | Reason        | Framework        |  Runner        | Additional setup        |
+| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
+| [Unit](#unit-tests)          | `Rise.Domain.Tests`          | Testing the domain | Built in | [xUnit](https://xunit.net) | None |
+| [Integration](#integration-tests)   | `Rise.Server.Tests`   | Testing the back-end | [AspNetCore MVC testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing) | [xUnit](https://xunit.net) | Test Postgres database set-up |
+| [E2E](#e2e-tests)  | `Rise.Client.Tests`  | Testing the front-end | [Playwright](https://playwright.dev/dotnet/) | [NUnit](https://nunit.org/) | Playwright must be installed and client must be running |
 
 Additional tools used to help write tests:
 
 - [nSubstitute](https://nsubstitute.github.io) - Mocking for testing
 - [Shouldly](https://docs.shouldly.org) - Helper for testing (asserts)
 
-To test globally with everything correctly setup use the following command in the project root:
+In general to start testing use the following command:
 
 ```bash
 dotnet test
 ```
 
-!! Be sure that !!
+> Some testing projects require more setup, please read further if this is your first time testing.
 
-1) [Application is fully running](#running-the-application)
-2) [Test database is setup](#test-database-setup)
-3) [Playwright is fully installed](https://playwright.dev/dotnet/docs/intro)
-4) The Test database is ***NOT*** the production database is it will be dropped!!!
+### Unit Tests
 
-If you want to test only a specific part of type, change the working directory to the preferred project and run the aforementioned test command earlier.
+In the `Rise.Domain.Tests` project run the following:
 
-### Test database setup
+```bash
+dotnet test
+```
 
-This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction. It is important that the database is different from the application database is this will be ***dropped*** and re-created automatically during tests to ensure the correct state!!
+XUnit test runner will go through all of the tests.
+
+### Integration Tests
+
+#### Test database setup
+
+> !!!! It is important that the database is different from the application database is this will be ***dropped*** and re-created automatically during tests to ensure the correct state !!!!
+
+There are two ways to specify the database connection:
+
+1) .NET secrets:
+
+This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Server.Tests` project. Preferably with the database being `Hogent.Rise.Test` to make a distinction.
+
+2) Environment variable:
+
+> Powershell
+
+`env:ConnectionStrings__PostgreSQL="connection here"`
+
+> Bash
+
+`ConnectionStrings__PostgreSQL="connection here"`
+
+#### Running integration tests
+
+In the `Rise.Server.Tests` project run the following:
+
+```bash
+dotnet test
+```
+
+Or when the database connection needs be specified using the CLI:
+
+> Bash
+
+```bash
+ConnectionStrings__PostgreSQL="connection here" dotnet run
+```
+
+> Powershell
+
+```ps1
+$env:ConnectionStrings__PostgreSQL="connection here"
+dotnet run
+```
+
+### E2E Tests
+
+#### Installation of Playwright
+
+Make sure that [Playwright is fully installed](https://playwright.dev/dotnet/docs/intro). In short via `dotnet build` in the `Rise.Client` you can run initialise the setup:
+
+```ps1
+pwsh bin/Debug/net8.0/playwright.ps1 install
+```
+
+> Note: NUnit will be used as test runner, not MSTest.
+
+#### Running of Playwright
+
+An important note is that the Client project has to be running.
+
+This can be done by starting the project from the root via:
+
+```bash
+dotnet run --project Rise.Client
+```
+> Optionally you can use the `Rise.Server` project but you will need to specify the base url for tests, see further.
+
+Running the tests can be done executing following command in the `Rise.Client.Tests` project:
+
+```ps1
+dotnet test
+```
+
+If the url of the client is different from the default URL, be sure to specify it in the test parameters like sthe following:
+
+> Powershell (a string literal is needed here to avoid interpretation of the shell)
+
+```ps1
+dotnet test -- --% TestRunParameters.Parameter(name="BASE_URL",value="url here")
+```
+
+> Bash
+
+```bash
+dotnet test -- TestRunParameters.Parameter(name="BASE_URL",value="url here")
+```
