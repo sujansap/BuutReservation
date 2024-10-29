@@ -54,7 +54,7 @@ jobs:
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
         run: |
-          dotnet run --project Rise.Server --configuration Release &  
+          dotnet run --project Rise.Server --configuration Release 
 
       - name: Run Unit Tests
         run: dotnet test Rise.Domain.Tests
