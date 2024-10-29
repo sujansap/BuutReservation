@@ -27,7 +27,7 @@ jobs:
 
     steps:
     
-      - name: Check out repository code
+      - name: copy commit files into the runner
         uses: actions/checkout@v4
 
       - name: Install .NET SDK and Runtime
@@ -43,12 +43,6 @@ jobs:
           export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
           dotnet tool install --global dotnet-ef
 
-      # - name: Install dependencies
-      #   run: dotnet restore
-
-      # - name: Build the application
-      #   run: dotnet build --configuration Release --no-restore
-
       - name: Run database migrations
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
@@ -61,15 +55,14 @@ jobs:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
         run: |
           dotnet run --project Rise.Server --configuration Release &  
-          sleep 10  
 
       - name: Run Unit Tests
-        run: dotnet test Rise.Domain.Tests --verbosity normal
+        run: dotnet test Rise.Domain.Tests
 
       - name: Run Integration Tests
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: dotnet test Rise.Server.Tests --verbosity normal
+        run: dotnet test Rise.Server.Tests
 
       - name: Check test result
         if: ${{ failure() }}
