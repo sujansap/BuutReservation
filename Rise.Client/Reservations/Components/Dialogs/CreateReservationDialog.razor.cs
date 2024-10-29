@@ -16,8 +16,11 @@ namespace Rise.Client.Reservations.Components.Dialogs
         public DateOnly Date { get; set; }
         [Parameter]
         public TimeSlotDto? Timeslot { get; set; }
+
+        private bool IsLoading { get; set; } = false;
         public ReservationDto.Create Reservation { get; set; } = new ReservationDto.Create();
         private DialogState State { get; set; } = DialogState.Overview;
+        private UserDto User { get; set; } = new UserDto("John Doe", "john.doe@email.com");
 
         protected override void OnParametersSet()
         {
@@ -25,22 +28,12 @@ namespace Rise.Client.Reservations.Components.Dialogs
         }
         private void Cancel() => MudDialog.Cancel();
 
-        private void CreateReservation()
+        private async void CreateReservation()
         {
-            Snackbar.Add("Reservatie aangemaakt", Severity.Success);
-            MudDialog.Close();
-        }
-
-        private void NextState()
-        {
-            if (State == DialogState.Overview)
-            {
-                State = DialogState.Pay;
-            }
-            else if (State == DialogState.Pay)
-            {
-                State = DialogState.Success;
-            }
+            State = DialogState.Pay;
+            await Task.Delay(2000);
+            State = DialogState.Success;
+            StateHasChanged();
         }
 
         private enum DialogState
@@ -49,5 +42,12 @@ namespace Rise.Client.Reservations.Components.Dialogs
             Pay,
             Success
         }
+
+
+    }
+    public class UserDto(string name, string email)
+    {
+        public string Name { get; set; } = name;
+        public string Email { get; set; } = email;
     }
 }

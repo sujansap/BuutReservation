@@ -1,13 +1,19 @@
 ﻿@using Rise.Shared.TimeSlots;
+@using Rise.Client.Reservations.Components.Dialogs;
 
 <MudText>
-    U staat op het punt een reservatie te maken voor de volgende datum en tijdstip:
+    Datum en Tijdstip: @Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End
+</MudText>
+<MudText>
+    Naam: @User.Name
 </MudText>
 <MudText Class="mb-8">
-    @Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End
+    Email: @User.Email
 </MudText>
 
+
 @code {
+    [Parameter] public UserDto User { get; set; }
     [Parameter] public DateOnly Date { get; set; }
     [Parameter] public TimeSlotDto? Timeslot { get; set; }
 }

@@ -1,29 +1,19 @@
 ﻿@using Rise.Shared.TimeSlots;
-@using MudBlazor;
+@using Rise.Client.Reservations.Components.Dialogs;
 
-@if (IsLoading)
-{
-    <MudStack Justify="Justify.Center">
-    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-</MudStack>
-}
-else
-{
-    <MudText>Uw reservatie is succesvol aangemaakt</MudText>
-}
+<MudText Class="mb-2">Uw reservatie is succesvol aangemaakt</MudText>
+<MudText>
+    Datum en Tijdstip: @Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End
+</MudText>
+<MudText>
+    Naam: @User.Name
+</MudText>
+<MudText Class="mb-8">
+    Email: @User.Email
+</MudText>
 
 @code {
+    [Parameter] public UserDto User { get; set; }
     [Parameter] public DateOnly Date { get; set; }
     [Parameter] public TimeSlotDto? Timeslot { get; set; }
-    private bool IsLoading { get; set; } = true;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await Task.Delay(2000);
-            IsLoading = false;
-            StateHasChanged();
-        }
-    }
 }

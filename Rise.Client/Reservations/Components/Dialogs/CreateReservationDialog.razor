@@ -12,45 +12,35 @@
         @switch (State)
         {
             case DialogState.Overview:
-                        <CreateReservationOverviewContent Date="@Date" Timeslot="@Timeslot" />
+                <CreateReservationOverviewContent User="@User" Date="@Date" Timeslot="@Timeslot" />
                 break;
             case DialogState.Pay:
                         <CreateReservationPaymentContent />
                 break;
             case DialogState.Success:
-                        <CreatereservationSuccessConent />
+                <CreatereservationSuccessConent User="@User" Date="@Date" Timeslot="@Timeslot" />
                 break;
 
         }
     </DialogContent>
     <DialogActions>
         <MudGrid Justify="Justify.Center" Class="w-100 px-4" Spacing="2">
-            @switch (State)
+            @if (State == DialogState.Overview)
             {
-                case DialogState.Overview:
-                            <MudItem xs="12">
-                                <MudButton Color="Color.Primary" FullWidth="true" OnClick="NextState" Variant="Variant.Filled">
-                                    Maak reservatie
-                                </MudButton>
-                            </MudItem>
-                    break;
-                case DialogState.Pay:
-                            <MudItem xs="12">
-                                <MudButton Color="Color.Primary" FullWidth="true" OnClick="NextState" Variant="Variant.Filled">
-                                    Bevestig betaling
-                                </MudButton>
-                            </MudItem>
-                    break;
+                <MudItem xs="12">
+                    <MudButton Color="Color.Primary" FullWidth="true" OnClick="CreateReservation" Variant="Variant.Filled">
+                        Maak reservatie
+                    </MudButton>
+                </MudItem>
             }
             <MudItem>
                 @switch (State)
                 {
 
                     case DialogState.Overview:
-                    case DialogState.Pay:
-                                <MudButton OnClick="Cancel">
-                                    Annuleer
-                                </MudButton>
+                        <MudButton OnClick="Cancel">
+                            Annuleer
+                        </MudButton>
                         break;
                     case DialogState.Success:
                                 <MudButton OnClick="Close">

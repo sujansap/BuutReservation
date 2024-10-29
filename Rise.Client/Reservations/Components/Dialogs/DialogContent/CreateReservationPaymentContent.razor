@@ -1,10 +1,6 @@
 ﻿@using Rise.Shared.TimeSlots;
 
-<MudTextField T="string" Label="Card number" Mask="@(new PatternMask("0000 0000 0000 0000"))" />
-<MudStack Row="true">
-    <MudTextField T="string" Label="Expires" Mask="@(new DateMask("MM/YY", 'Y', 'M'))" />
-    <MudTextField T="string" Label="CVC" Mask="@(new PatternMask("000"))" />
+<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="my-4">
+    <MudText>Betaling verwerken...</MudText>
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
 </MudStack>
-
-@code {
-}
