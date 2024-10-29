@@ -19,7 +19,7 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_DB: Hogent.Rise
+          POSTGRES_DB: Hogent.Rise  # Zorg ervoor dat dit overeenkomt met je connection string
           POSTGRES_USER: user
           POSTGRES_PASSWORD: password
         ports:
@@ -29,42 +29,30 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Install .NET SDK
+      - name: Install .NET SDK and Runtime
         run: |
           wget https://dot.net/v1/dotnet-install.sh
           chmod +x dotnet-install.sh
-          ./dotnet-install.sh --version 8.0.403
+          # Installeer zowel de SDK als de runtime
+          ./dotnet-install.sh --version 8.0.403 --install-dir $HOME/.dotnet --include-runtime
           echo "$HOME/.dotnet" >> $GITHUB_PATH
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH  # Add tools to PATH
+          echo "export PATH=\"$HOME/.dotnet:$PATH\"" >> $GITHUB_ENV  # Persistent PATH
 
       - name: Verify .NET installation
-        run: |
-          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
-          dotnet --info
+        run: dotnet --info
 
       - name: Install dotnet-ef tool
-        run: |
-          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
-          dotnet tool install --global dotnet-ef
-
-      - name: Verify dotnet-ef installation
-        run: |
-          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
-          dotnet ef --version
+        run: dotnet tool install --global dotnet-ef
 
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Install dependencies
-        run: |
-          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
-          dotnet restore
+        run: dotnet restore
 
       - name: Build the application
-        run: |
-          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
-          dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore
 
       - name: Wait for PostgreSQL to be ready
         run: |
@@ -81,29 +69,22 @@ jobs:
       - name: Run database migrations
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: |
-          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
-          dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
+        run: dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
 
       - name: Run the application
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
         run: |
-          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
           dotnet run --project Rise.Server --configuration Release &  
           sleep 10  
 
       - name: Run Unit Tests
-        run: |
-          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
-          dotnet test Rise.Domain.Tests --verbosity normal
+        run: dotnet test Rise.Domain.Tests --verbosity normal
 
       - name: Run Integration Tests
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: |
-          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
-          dotnet test Rise.Server.Tests --verbosity normal
+        run: dotnet test Rise.Server.Tests --verbosity normal
 
       - name: Check test result
         if: ${{ failure() }}
