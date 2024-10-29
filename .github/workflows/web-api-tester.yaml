@@ -45,6 +45,11 @@ jobs:
           export PATH="$PATH:/root/.dotnet/tools"  # Zorg ervoor dat dotnet-tools in de PATH staat
           dotnet tool install --global dotnet-ef
 
+      - name: Test dotnet-ef tool
+        run: |
+          export PATH="$PATH:/root/.dotnet/tools"  # Zorg ervoor dat dotnet-tools in de PATH staat
+          dotnet ef --version  # Voer een test uit om de versie van dotnet-ef op te vragen
+    
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
