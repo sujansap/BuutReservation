@@ -29,17 +29,16 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Install .NET
+      - name: Install .NET SDK
         run: |
           wget https://dot.net/v1/dotnet-install.sh
           chmod +x dotnet-install.sh
           ./dotnet-install.sh --version 8.0.403
           echo "$HOME/.dotnet" >> $GITHUB_PATH
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH  # Add tools to PATH
 
       - name: Install dotnet-ef tool
-        run: |
-          dotnet tool install --global dotnet-ef
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+        run: dotnet tool install --global dotnet-ef
 
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
@@ -65,12 +64,15 @@ jobs:
       - name: Run database migrations
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
+        run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
+          dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
 
       - name: Run the application
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
         run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
           dotnet run --project Rise.Server --configuration Release &  
           sleep 10  
 
