@@ -13,27 +13,20 @@
         <div class="d-flex align-center">
             @if (ShowPrevNextButtons)
         {
-            <MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronLeft" aria-label="@PrevAriaLabel"
-                Disabled="!CanGoToPreviousRange()" Color="@Color" OnClick="OnPreviousClicked" Class="mx-1"
-                data-testId="calendar-previous" />
-            <MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronRight" aria-label="@NextAriaLabel"
-                Color="@Color" OnClick="OnNextClicked" Class="mr-1" data-testId="calendar-next" />
+            @if (RenderPreviousButton is not null)
+            @RenderPreviousButton
+
+            @if (RenderNextButton is not null)
+            @RenderNextButton
+
         }
-            @if (ShowDatePicker)
+            @if (ShowDatePicker && RenderDatePicker is not null)
         {
-            <CalendarDatePicker cker @ref="_datePicker" OpenTo="@(View == CalendarView.Month ? OpenTo.Month : OpenTo.Date)"
-                FirstDayOfWeek="@GetFirstDayOfWeekByCalendarView(View)"
-                FixDay="@(View == CalendarView.Month ? PickerDate?.Day : null)" Date="PickerDate"
-                DateChanged="DatePickerDateChanged" View="View" Variant="ButtonVariant" Color="Color" Class="mx-1"
-                PickerOpened="OnDatePickerOpened"
-                MinDate="AllowPast ? null : DateTime.Today.StartOfMonth(CultureInfo.CurrentCulture)"
-                data-testId="calendar-datepicker" />
+            @RenderDatePicker
         }
-            @if (ShowTodayButton)
+            @if (ShowTodayButton && RenderTodayButton is not null)
         {
-            <MudButton Variant="@ButtonVariant" Color="@Color" OnClick="OnTodayClicked" Class="mx-1"
-                data-testId="calendar-today">@DrawTodayText()
-            </MudButton>
+            @RenderTodayButton
         }
             @if (ToolbarContent != null)
         {
@@ -45,4 +38,23 @@
                 ValueChanged="OnViewChanging" />
         </div>
     </div>;
+
+    protected virtual RenderFragment RenderPreviousButton => @<MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronLeft" aria-label="@PrevAriaLabel"
+    Disabled="!CanGoToPreviousRange()" Color="@Color" OnClick="OnPreviousClicked" Class="mx-1"
+    data-testId="calendar-previous" />;
+
+    protected virtual RenderFragment RenderNextButton => @<MudIconButton Variant="@ButtonVariant" Icon="@Icons.Material.Outlined.ChevronRight" aria-label="@NextAriaLabel"
+    Color="@Color" OnClick="OnNextClicked" Class="mr-1" data-testId="calendar-next" />;
+
+    protected virtual RenderFragment RenderDatePicker => @<CalendarDatePicker cker @ref="_datePicker" OpenTo="@(View == CalendarView.Month ? OpenTo.Month : OpenTo.Date)"
+    FirstDayOfWeek="@GetFirstDayOfWeekByCalendarView(View)"
+    FixDay="@(View == CalendarView.Month ? PickerDate?.Day : null)" Date="PickerDate"
+    DateChanged="DatePickerDateChanged" View="View" Variant="ButtonVariant" Color="Color" Class="mx-1"
+    PickerOpened="OnDatePickerOpened"
+    MinDate="AllowPast ? null : DateTime.Today.StartOfMonth(CultureInfo.CurrentCulture)"
+    data-testId="calendar-datepicker" />;
+
+    protected virtual RenderFragment RenderTodayButton => @<MudButton Variant="@ButtonVariant" Color="@Color"
+        OnClick="OnTodayClicked" Class="mx-1" data-testId="calendar-today">@DrawTodayText()
+    </MudButton>;
 }

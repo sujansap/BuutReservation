@@ -105,7 +105,6 @@ namespace Rise.Client.Reservations.Components
             return IsBeforeCurrentMonth(newDate);
         }
 
-        // TODO docs
         /// <summary>
         /// If the given date is before today's month
         /// </summary>
