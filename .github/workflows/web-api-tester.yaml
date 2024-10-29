@@ -8,6 +8,7 @@ on:
       - production
 jobs:
   build:
+    name: dotnet-acceptatie-test
     runs-on: self-hosted
 
     services:
