@@ -36,13 +36,13 @@ jobs:
           rm packages-microsoft-prod.deb
           sudo apt-get update && \
           sudo apt-get install -y dotnet-sdk-8.0
-          
+
       - name: Verify .NET installation
         run: dotnet --info
 
       - name: Install dotnet-ef tool
         run: |
-          dotnet tool install --global dotnet-ef --version 8.0.403
+          dotnet tool install --global dotnet-ef 
 
 
       - name: Install PostgreSQL client
