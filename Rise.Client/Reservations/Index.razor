@@ -5,18 +5,16 @@
 @using Rise.Client.TimeSlots
 @using Heron.MudCalendar
 @using Rise.Client.Reservations.Components.TimeSlotList
+@using Rise.Client.Localization.Reservations
+@using Rise.Shared.Reservations
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<PageTitle>Reservaties</PageTitle>
+<PageTitle>@ReservationPageResources.YourReservations</PageTitle>
 
 <MudTabs Elevation="0" Centered="true" Class="mb-16" @bind-ActivePanelIndex="ActiveTabIndex">
-    <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
+    <MudTabPanel Text="@ReservationPageResources.Reserve" data-testid="tab-reserve">
         <MudGrid>
-            @* TODO make mobile first *@
-            @* TODO margin is messing with tabs *@
-            @* TODO calendar is clickable and navigeable to the past *@
-            @* TODO everything is clickable (this is hell) *@
             <MudItem xs="12" md="8">
                 <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
                                 Class="mt-8" data-testid="custom-calendar-reserve"
@@ -34,7 +32,7 @@
             </MudItem>
         </MudGrid>
     </MudTabPanel>
-    <MudTabPanel Text="Uw Reservaties" data-testid="tab-your-reservations">
+    <MudTabPanel Text="@ReservationPageResources.YourReservations" data-testid="tab-your-reservations">
         <UserReservations />
     </MudTabPanel>
 </MudTabs>
@@ -42,27 +40,4 @@
 @if (ActiveTabIndex == 0)
 {
     <ReservationCalendarLegend data-testid="custom-calendar-legend" />
-}
-
-@code {
-    private int activeTabIndex = 0;
-
-    private int ActiveTabIndex
-    {
-        get => activeTabIndex;
-        set
-        {
-            if (activeTabIndex != value)
-            {
-                activeTabIndex = value;
-                OnActivePanelIndexChanged(value);
-            }
-        }
-    }
-
-    private void OnActivePanelIndexChanged(int index)
-    {
-        var url = index == 0 ? "/reservations" : "/reservations/your-reservations";
-        Navigation.NavigateTo(url);
-    }
 }

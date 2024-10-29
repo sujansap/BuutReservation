@@ -1,46 +1,51 @@
 @page "/user-reservations"
 @using Rise.Shared.Reservations
 @using MudBlazor
-@using Rise.Client.Services
-@using System.Threading.Tasks
-@using Rise.Shared.Pagination
-@using System.Linq
+@using Rise.Client.Localization.Reservations
+@inherits UserReservationsBase
 
 <MudGrid Spacing="6" Class="mt-8">
-    @if (isLoading)
+    @if (IsLoading)
     {
-        <MudItem xs="12">
+        <MudItem xs="12" Class="d-flex justify-center">
             <MudProgressCircular Indeterminate="true" data-testid="loading-progress" />
         </MudItem>
     }
-    else if (reservationPage?.Data?.Any() ?? false)
+    else if (ReservationPage?.Data?.Any() ?? false)
     {
-        @foreach (var reservation in reservationPage.Data)
+        @foreach (var reservation in ReservationPage.Data)
         {
             <MudItem xs="12">
-                <MudCard Elevation="5" Class="mb-6">
+                <MudCard Elevation="6" Class="mb-6" Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
                     <MudCardContent>
                         <MudGrid>
-                            <MudItem xs="4" Class="d-flex justify-center align-center" Style="height: 100%;">
+                            <!-- Icon Section -->
+                            <MudItem xs="2" Class="d-flex justify-center align-center" Style="height: 100%;">
                                 <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
-                                    Style="width: 80px; height: 80px; color: #40e0d0;" />
+                                    Style="width: 70px; height: 70px; color: #40e0d0;" />
                             </MudItem>
-                            <MudItem xs="8" Class="d-flex flex-column" Style="padding-left: 20px;">
-                                <MudText Typo="Typo.h5" Class="mb-2" data-testid="reservation-date">
-                                    Reservation for <strong>@reservation.Date.ToShortDateString()</strong>
+                            
+                            <!-- Text Content Section -->
+                            <MudItem xs="7" Class="d-flex flex-column" Style="padding-left: 20px;">
+                                <MudText Typo="Typo.h5" Class="mb-2" Style="color: #333;" data-testid="reservation-date">
+                                    @ReservationPageResources.ReservationFor <strong>@reservation.Date.ToShortDateString()</strong>
                                 </MudText>
-                                <MudText data-testid="reservation-boat-name">
-                                    <strong>Boat:</strong> @reservation.BoatPersonalName
+                                <MudText data-testid="reservation-boat-name" Style="color: #777;">
+                                    <strong>@ReservationPageResources.Boat:</strong> @reservation.BoatPersonalName
                                 </MudText>
-                                <MudText data-testid="reservation-time">
-                                    <strong>Time:</strong> @reservation.Start - @reservation.End
+                                <MudText data-testid="reservation-time" Style="color: #777;">
+                                    <strong>@ReservationPageResources.Time:</strong> @reservation.Start - @reservation.End
                                 </MudText>
-                                <MudItem Class="ml-auto mt-auto">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                        Style="background-color: #40e0d0;">
-                                        View Details
-                                    </MudButton>
-                                </MudItem>
+                            </MudItem>
+                            
+                            <!-- View Details Button -->
+                            <MudItem xs="3" Class="d-flex justify-end align-center">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                    Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
+                                    OnMouseOver="e => e.Target.Style.BackgroundColor = '#009688';"
+                                    OnMouseOut="e => e.Target.Style.BackgroundColor = '#40e0d0';">
+                                    @ReservationPageResources.ViewDetails
+                                </MudButton>
                             </MudItem>
                         </MudGrid>
                     </MudCardContent>
@@ -48,70 +53,37 @@
             </MudItem>
         }
 
-        <MudItem xs="12" Class="d-flex justify-center">
-            <MudButtonGroup Variant="Variant.Filled" OverrideStyles="false">
-                <MudButton OnClick="@LoadPreviousPage" Disabled="@(reservationPage?.PreviousId == null)"
-                    data-testid="previous-page">
-                    Previous
+        <!-- Pagination Controls -->
+        <MudItem xs="12" Class="d-flex justify-center mt-4">
+            <MudStack Row="true" Spacing="2" Justify="Justify.Center">
+                <MudButton OnClick="@LoadPreviousPage" 
+                    Disabled="@(ReservationPage?.PreviousId == null)"
+                    StartIcon="@Icons.Material.Filled.ArrowBack" 
+                    Color="Color.Primary"
+                    Variant="Variant.Filled"
+                    data-testid="previous-page" 
+                    Style="border-radius: 20px;">
+                    @ReservationPageResources.Previous
                 </MudButton>
-                <MudButton OnClick="@LoadNextPage" Disabled="@(reservationPage?.NextId == null)" data-testid="next-page">
-                    Next
+                <MudButton OnClick="@LoadNextPage" 
+                    Disabled="@(ReservationPage?.NextId == null)"
+                    EndIcon="@Icons.Material.Filled.ArrowForward" 
+                    Color="Color.Primary"
+                    Variant="Variant.Filled"
+                    data-testid="next-page" 
+                    Style="border-radius: 20px;">
+                    @ReservationPageResources.Next
                 </MudButton>
-            </MudButtonGroup>
+            </MudStack>
         </MudItem>
     }
     else
     {
-        <MudItem xs="12">
-            <MudText data-testid="no-reservations">No reservations found.</MudText>
+        <!-- No Reservations Message -->
+        <MudItem xs="12" Class="d-flex justify-center">
+            <MudText Typo="Typo.h6" Style="color: #888;" data-testid="no-reservations">
+                @ReservationPageResources.NoReservationsFound
+            </MudText>
         </MudItem>
     }
-    </MudGrid>
-
-    @code {
-    private ItemsPageDto<ReservationDto>? reservationPage;
-    private bool isLoading = false;
-
-    [Inject]
-    public required IReservationService ReservationService { get; set; }
-
-    protected override async Task OnInitializedAsync() => await LoadReservations();
-
-    private async Task LoadReservations(bool isNextPage = true)
-    {
-        try
-        {
-
-            isLoading = true;
-            var cursor = isNextPage ? reservationPage?.NextId : reservationPage?.PreviousId;
-
-            Console.WriteLine("try to fetch");
-
-            var result = await ReservationService.GetUserReservations(
-            1,
-            cursor,
-            isNextPage,
-            getPast: false
-            );
-            Console.WriteLine("fetched");
-
-            reservationPage = result;
-        }
-        catch (Exception ex)
-        {
-            // proper error handling/logging needed here
-            reservationPage = new()
-                {
-                    Data = new List<ReservationDto>()
-                };
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-        }
-    }
-
-    private Task LoadNextPage() => LoadReservations(true);
-    private Task LoadPreviousPage() => LoadReservations(false);
-}
+</MudGrid>

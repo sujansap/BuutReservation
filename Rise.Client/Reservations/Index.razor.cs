@@ -21,6 +21,8 @@ namespace Rise.Client.Reservations
         /// The selected culture (language)
         /// </summary>        
         private CultureInfo selectedCulture = CultureInfo.CurrentCulture;
+        private List<DateTime> GreyedOutDates = [];
+        private int activeTabIndex;
 
         [SupplyParameterFromQuery]
         /// <summary>
@@ -44,6 +46,19 @@ namespace Rise.Client.Reservations
 
         private DateOnly? SelectedDate { get; set; }
 
+        private int ActiveTabIndex
+        {
+            get => activeTabIndex;
+            set
+            {
+                if (activeTabIndex != value)
+                {
+                    activeTabIndex = value;
+                    OnActivePanelIndexChanged(value);
+                }
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             if (!StartDate.HasValue || !EndDate.HasValue)
@@ -63,7 +78,9 @@ namespace Rise.Client.Reservations
         /// <param name="dateRange">The new date range</param>
         private async Task OnDateRangeChanged(DateRange dateRange)
         {
-            if (dateRange.Start.HasValue && dateRange.End.HasValue && (DateOnly.FromDateTime(dateRange.Start.Value.Date) != StartDate || DateOnly.FromDateTime(dateRange.End.Value.Date) != EndDate))
+            if (dateRange.Start.HasValue && dateRange.End.HasValue && 
+                (DateOnly.FromDateTime(dateRange.Start.Value.Date) != StartDate || 
+                 DateOnly.FromDateTime(dateRange.End.Value.Date) != EndDate))
             {
                 StartDate = DateOnly.FromDateTime(dateRange.Start.Value);
                 EndDate = DateOnly.FromDateTime(dateRange.End.Value);
@@ -87,14 +104,14 @@ namespace Rise.Client.Reservations
         /// </summary>
         private void NavigateToDateRange()
         {
-#pragma warning disable CS8629 // Nullable value type may be null.
+#pragma warning disable CS8629
             Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(
-                            new Dictionary<string, object?>
-                            {
-                                ["StartDate"] = StartDate.Value.ToString("yyyy-MM-dd"),
-                                ["EndDate"] = EndDate.Value.ToString("yyyy-MM-dd")
-                            }), forceLoad: false);
-#pragma warning restore CS8629 // Nullable value type may be null.
+                new Dictionary<string, object?>
+                {
+                    ["StartDate"] = StartDate.Value.ToString("yyyy-MM-dd"),
+                    ["EndDate"] = EndDate.Value.ToString("yyyy-MM-dd")
+                }), forceLoad: false);
+#pragma warning restore CS8629
         }
 
         /// <summary>
@@ -103,16 +120,15 @@ namespace Rise.Client.Reservations
         /// <returns></returns>
         private async Task UpdateDates()
         {
-
             if (!StartDate.HasValue || !EndDate.HasValue)
                 return;
 
             try
             {
                 TimeSlotRangeInfoDto response = await TimeSlotService.GetAllTimeSlotsInRange(
-                StartDate.Value,
-                EndDate.Value
-            );
+                    StartDate.Value,
+                    EndDate.Value
+                );
 
 
                 // AvailableDays = response.Days
@@ -155,6 +171,12 @@ namespace Rise.Client.Reservations
         private void OnCellClicked(DateTime date)
         {
             SelectedDate = DateOnly.FromDateTime(date);
+        }
+
+        private void OnActivePanelIndexChanged(int index)
+        {
+            var url = index == 0 ? "/reservations" : "/reservations/your-reservations";
+            Navigation.NavigateTo(url, false);
         }
     }
 
