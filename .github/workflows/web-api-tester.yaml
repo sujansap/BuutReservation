@@ -59,15 +59,24 @@ jobs:
       - name: Wait for the application to be ready
         run: |
           for i in {1..30}; do
-            response=$(curl -s -k -L --head --request GET https://localhost:5001 > /dev/null)
-            if echo "$response" | grep "HTTP/1.1 200"; then
-              echo "Application is ready!"
+            # Controleer de HTTP-poort
+            response_http=$(curl -s --head --request GET http://localhost:5000)
+            if echo "$response_http" | grep "HTTP/1.1 200"; then
+              echo "HTTP application is ready!"
               break
-            else
-              echo "Waiting for the application to be ready..."
-              echo "$response"  # Toont de respons van de server voor debugging
-              sleep 4
             fi
+
+            # Controleer de HTTPS-poort
+            response_https=$(curl -s -k --head --request GET https://localhost:5001)
+            if echo "$response_https" | grep "HTTP/1.1 200"; then
+              echo "HTTPS application is ready!"
+              break
+            fi
+
+            echo "Waiting for the application to be ready..."
+            echo "HTTP response: $response_http"
+            echo "HTTPS response: $response_https"
+            sleep 4
           done
 
       - name: Run Unit Tests
