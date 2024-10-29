@@ -19,7 +19,7 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_DB: Hogent.Rise  # Zorg ervoor dat dit overeenkomt met je connection string
+          POSTGRES_DB: Hogent.Rise
           POSTGRES_USER: user
           POSTGRES_PASSWORD: password
         ports:
@@ -35,7 +35,7 @@ jobs:
           chmod +x dotnet-install.sh
           ./dotnet-install.sh --version 8.0.403
           echo "$HOME/.dotnet" >> $GITHUB_PATH
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH  # Add tools to PATH
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
           export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
 
       - name: Verify .NET installation
@@ -57,10 +57,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Install dependencies
-        run: dotnet restore
+        run: |
+          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
+          dotnet restore
 
       - name: Build the application
-        run: dotnet build --configuration Release --no-restore
+        run: |
+          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
+          dotnet build --configuration Release --no-restore
 
       - name: Wait for PostgreSQL to be ready
         run: |
@@ -90,12 +94,16 @@ jobs:
           sleep 10  
 
       - name: Run Unit Tests
-        run: dotnet test Rise.Domain.Tests --verbosity normal
+        run: |
+          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
+          dotnet test Rise.Domain.Tests --verbosity normal
 
       - name: Run Integration Tests
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: dotnet test Rise.Server.Tests --verbosity normal
+        run: |
+          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
+          dotnet test Rise.Server.Tests --verbosity normal
 
       - name: Check test result
         if: ${{ failure() }}
