@@ -8,6 +8,7 @@ namespace Rise.Client.Reservations
     [TestFixture]
     public class ReservationPageTest : CustomPageTest
     {
+        private const string universalDateFormat = "yyyy-MM-dd";
 
         [Test]
         public async Task HasTabs()
