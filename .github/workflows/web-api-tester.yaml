@@ -37,8 +37,18 @@ jobs:
           echo "$HOME/.dotnet" >> $GITHUB_PATH
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH  # Add tools to PATH
 
+      - name: Verify .NET installation
+        run: dotnet --info
+
       - name: Install dotnet-ef tool
-        run: dotnet tool install --global dotnet-ef
+        run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
+          dotnet tool install --global dotnet-ef
+
+      - name: Verify dotnet-ef installation
+        run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"  # Ensure dotnet tools are in the path
+          dotnet ef --version
 
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
