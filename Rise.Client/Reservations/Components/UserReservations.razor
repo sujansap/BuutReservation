@@ -1,7 +1,9 @@
 @page "/user-reservations"
-@using Rise.Shared.Reservations
 @using MudBlazor
+@using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Reservations
+@using Rise.Shared.Reservations
+@inject IStringLocalizer<ReservationPageResources> Localizer
 @inherits UserReservationsBase
 
 <MudGrid Spacing="6" Class="mt-8">
@@ -28,13 +30,13 @@
                             <!-- Text Content Section -->
                             <MudItem xs="7" Class="d-flex flex-column" Style="padding-left: 20px;">
                                 <MudText Typo="Typo.h5" Class="mb-2" Style="color: #333;" data-testid="reservation-date">
-                                    @ReservationPageResources.ReservationFor <strong>@reservation.Date.ToShortDateString()</strong>
+                                    @Localizer["ReservationFor"] <strong>@reservation.Date.ToShortDateString()</strong>
                                 </MudText>
                                 <MudText data-testid="reservation-boat-name" Style="color: #777;">
-                                    <strong>@ReservationPageResources.Boat:</strong> @reservation.BoatPersonalName
+                                    <strong>@Localizer["Boat"]:</strong> @reservation.BoatPersonalName
                                 </MudText>
                                 <MudText data-testid="reservation-time" Style="color: #777;">
-                                    <strong>@ReservationPageResources.Time:</strong> @reservation.Start - @reservation.End
+                                    <strong>@Localizer["Time"]:</strong> @reservation.Start - @reservation.End
                                 </MudText>
                             </MudItem>
                             
@@ -44,7 +46,7 @@
                                     Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
                                     OnMouseOver="e => e.Target.Style.BackgroundColor = '#009688';"
                                     OnMouseOut="e => e.Target.Style.BackgroundColor = '#40e0d0';">
-                                    @ReservationPageResources.ViewDetails
+                                    @Localizer["ViewDetails"]
                                 </MudButton>
                             </MudItem>
                         </MudGrid>
@@ -63,7 +65,7 @@
                     Variant="Variant.Filled"
                     data-testid="previous-page" 
                     Style="border-radius: 20px;">
-                    @ReservationPageResources.Previous
+                    @Localizer["Previous"]
                 </MudButton>
                 <MudButton OnClick="@LoadNextPage" 
                     Disabled="@(ReservationPage?.NextId == null)"
@@ -72,7 +74,7 @@
                     Variant="Variant.Filled"
                     data-testid="next-page" 
                     Style="border-radius: 20px;">
-                    @ReservationPageResources.Next
+                    @Localizer["Next"]
                 </MudButton>
             </MudStack>
         </MudItem>
@@ -82,7 +84,7 @@
         <!-- No Reservations Message -->
         <MudItem xs="12" Class="d-flex justify-center">
             <MudText Typo="Typo.h6" Style="color: #888;" data-testid="no-reservations">
-                @ReservationPageResources.NoReservationsFound
+                @Localizer["NoReservationsFound"]
             </MudText>
         </MudItem>
     }
