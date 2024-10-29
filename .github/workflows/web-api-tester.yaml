@@ -63,6 +63,7 @@ jobs:
               break
             else
               echo "Waiting for the application to be ready..."
+              curl -s -k -L --head --request GET https://localhost:5001 
               sleep 4
             fi
           done
