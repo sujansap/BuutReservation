@@ -55,29 +55,7 @@ jobs:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
         run: |
           dotnet run --project Rise.Server --configuration Release &  
-     
-      - name: Wait for the application to be ready
-        run: |
-          for i in {1..30}; do
-            # Controleer de HTTP-poort
-            response_http=$(curl -s --head --request GET http://localhost:5000)
-            if echo "$response_http" | grep "HTTP/1.1 200"; then
-              echo "HTTP application is ready!"
-              break
-            fi
 
-            # Controleer de HTTPS-poort
-            response_https=$(curl -s -k --head --request GET https://localhost:5001)
-            if echo "$response_https" | grep "HTTP/1.1 200"; then
-              echo "HTTPS application is ready!"
-              break
-            fi
-
-            echo "Waiting for the application to be ready..."
-            echo "HTTP response: $response_http"
-            echo "HTTPS response: $response_https"
-            sleep 4
-          done
 
       - name: Run Unit Tests
         run: dotnet test Rise.Domain.Tests
