@@ -40,7 +40,7 @@ namespace Rise.Client.Reservations
         /// <summary>
         /// All unavailable days on the calendar
         /// </summary>
-        private List<DateTime> GreyedOutDates = [];
+        private Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
 
         private DateOnly? SelectedDate { get; set; }
 
@@ -115,12 +115,10 @@ namespace Rise.Client.Reservations
             );
 
 
-                // AvailableDays = response.Days
-                // .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
-                // .Select(ConvertToCalendarItems)
-                // .ToList();
+                AvailableDays = response.Days
+                .Where(day => day.IsSlotAvailable)
+                .ToDictionary(day => day.Date, day => day);
 
-                GreyedOutDates = response.Days.Where(day => day.IsFullyBooked || !day.IsSlotAvailable).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
             }
 
             catch

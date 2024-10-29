@@ -3,9 +3,6 @@
 @Render
 
 @code {
-    [Parameter]
-    public List<DateTime> GreyedOutDates { get; set; } = new List<DateTime>();
-
     protected override RenderFragment RenderMonthView =>
-@<CustomMonthView GreyedOutDates="@GreyedOutDates" />;
+@<CustomMonthView AvailableDays="@AvailableDays" />;
 }
