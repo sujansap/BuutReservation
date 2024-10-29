@@ -40,7 +40,7 @@ jobs:
           wget https://dot.net/v1/dotnet-install.sh
           chmod +x dotnet-install.sh
           ./dotnet-install.sh --version 8.0.403
-          echo "$(pwd)/dotnet" >> $GITHUB_PATH  
+          echo "$HOME/.dotnet" >> $GITHUB_PATH  # Voeg de .NET directory aan de PATH toe
         # Voeg .NET toe aan de PATH
       - name: Install dependencies
         run: dotnet restore  # Herstel afhankelijkheden
