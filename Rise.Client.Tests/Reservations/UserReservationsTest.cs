@@ -13,7 +13,7 @@ namespace Rise.Client.Tests.Reservations {
     {
         private const string UserReservationsUrl = "https://localhost:5001/reservations/your-reservations";
 
-        private ReservationListDto ValidReservation = new (){
+        private ReservationDto ValidReservation = new (){
             Id = 1,
             Date = DateOnly.Parse("2024-03-15"),
             Start = TimeOnly.Parse("09:00"),

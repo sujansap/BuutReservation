@@ -2,25 +2,28 @@
 @using Rise.Shared.Reservations
 @using MudBlazor
 @using Rise.Client.Services
+@using System.Threading.Tasks
+@using Rise.Shared.Pagination
+@using System.Linq
 
 <MudGrid Spacing="6" Class="mt-8">
-    @if (reservations is null)
+    @if (isLoading)
     {
         <MudItem xs="12">
             <MudProgressCircular Indeterminate="true" data-testid="loading-progress" />
         </MudItem>
     }
-    else if (reservations.Any())
+    else if (reservationPage?.Data?.Any() ?? false)
     {
-        @foreach (var reservation in reservations)
+        @foreach (var reservation in reservationPage.Data)
         {
             <MudItem xs="12">
                 <MudCard Elevation="5" Class="mb-6">
                     <MudCardContent>
                         <MudGrid>
                             <MudItem xs="4" Class="d-flex justify-center align-center" Style="height: 100%;">
-                                <!-- Updated icon styling for better centering -->
-                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large" Style="width: 80px; height: 80px; color: #40e0d0;" />
+                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
+                                    Style="width: 80px; height: 80px; color: #40e0d0;" />
                             </MudItem>
                             <MudItem xs="8" Class="d-flex flex-column" Style="padding-left: 20px;">
                                 <MudText Typo="Typo.h5" Class="mb-2" data-testid="reservation-date">
@@ -33,7 +36,8 @@
                                     <strong>Time:</strong> @reservation.Start - @reservation.End
                                 </MudText>
                                 <MudItem Class="ml-auto mt-auto">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="background-color: #40e0d0;">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                        Style="background-color: #40e0d0;">
                                         View Details
                                     </MudButton>
                                 </MudItem>
@@ -43,6 +47,18 @@
                 </MudCard>
             </MudItem>
         }
+
+        <MudItem xs="12" Class="d-flex justify-center">
+            <MudButtonGroup Variant="Variant.Filled" OverrideStyles="false">
+                <MudButton OnClick="@LoadPreviousPage" Disabled="@(reservationPage?.PreviousId == null)"
+                    data-testid="previous-page">
+                    Previous
+                </MudButton>
+                <MudButton OnClick="@LoadNextPage" Disabled="@(reservationPage?.NextId == null)" data-testid="next-page">
+                    Next
+                </MudButton>
+            </MudButtonGroup>
+        </MudItem>
     }
     else
     {
@@ -50,21 +66,52 @@
             <MudText data-testid="no-reservations">No reservations found.</MudText>
         </MudItem>
     }
-</MudGrid>
+    </MudGrid>
 
-@code {
-    private IEnumerable<ReservationDto> reservations;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadReservations();
-    }
-
-    private async Task LoadReservations()
-    @* TODO: make new service method work *@
-            reservations = await ReservationService.GetUserReservations(1);
-    }
+    @code {
+    private ItemsPageDto<ReservationDto>? reservationPage;
+    private bool isLoading = false;
 
     [Inject]
-    public IReservationService ReservationService { get; set; }
+    public required IReservationService ReservationService { get; set; }
+
+    protected override async Task OnInitializedAsync() => await LoadReservations();
+
+    private async Task LoadReservations(bool isNextPage = true)
+    {
+        try
+        {
+
+            isLoading = true;
+            var cursor = isNextPage ? reservationPage?.NextId : reservationPage?.PreviousId;
+
+            Console.WriteLine("try to fetch");
+
+            var result = await ReservationService.GetUserReservations(
+            1,
+            cursor,
+            isNextPage,
+            getPast: false
+            );
+            Console.WriteLine("fetched");
+
+            reservationPage = result;
+        }
+        catch (Exception ex)
+        {
+            // proper error handling/logging needed here
+            reservationPage = new()
+                {
+                    Data = new List<ReservationDto>()
+                };
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private Task LoadNextPage() => LoadReservations(true);
+    private Task LoadPreviousPage() => LoadReservations(false);
 }

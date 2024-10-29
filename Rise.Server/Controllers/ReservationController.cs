@@ -36,10 +36,17 @@ namespace Rise.Server.Controllers
         /// <param name="pageSize">Number of items to get in a page.</param>
         /// <returns>List of reservations</returns>
         [HttpGet("me")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<IEnumerable<ReservationDto>>))]
-        public async Task<IActionResult> GetCurrentUserReservations([FromQuery] int? cursor, [FromQuery] bool? isNextPage, [FromQuery] bool getPast = false, int pageSize = 3)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
+        public async Task<IActionResult> GetCurrentUserReservations(
+            [FromQuery] int? cursor,
+            [FromQuery] bool? isNextPage,
+            [FromQuery] bool getPast = true,
+            [FromQuery] int pageSize = 3)
         {
+            Console.WriteLine("HERE 22: GetCurrentUserReservations");
             var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);
+            Console.WriteLine("HERE 23: GetCurrentUserReservations" + reservations.Data.Count());
+
             return Ok(reservations);
         }
     }
