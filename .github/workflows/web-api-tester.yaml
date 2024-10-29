@@ -57,6 +57,11 @@ jobs:
             fi
           done
 
+      - name: Run database migrations
+        env:
+          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
+        run: dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
+
       - name: Run the application
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
