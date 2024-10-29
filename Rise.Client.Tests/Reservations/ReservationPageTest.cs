@@ -97,6 +97,25 @@ namespace Rise.Client.Reservations
         }
 
         [Test]
+        public async Task ContainNoAvailableDateDates()
+        {
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(new List<object>())
+                });
+            });
+            await Page.GotoAsync("/reservations");
+
+            ILocator booked = Page.Locator("[data-celtype=fully-booked]");
+            await Expect(booked).ToHaveCountAsync(35);
+
+        }
+
+        [Test]
         public async Task HasTimeslotsInTimeSlotList()
         {
 
