@@ -4,6 +4,7 @@ using Heron.MudCalendar.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
+using Rise.Shared.TimeSlots;
 
 namespace Rise.Client.Reservations.Components
 {
@@ -35,7 +36,7 @@ namespace Rise.Client.Reservations.Components
         private CalendarDatePicker? _datePicker;
 
         [Parameter]
-        public List<DateTime> GreyedOutDates { get; set; } = [];
+        public Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
 
         [Parameter]
         public bool AllowPast { get; set; } = false;
