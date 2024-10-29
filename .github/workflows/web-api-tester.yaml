@@ -1,12 +1,10 @@
 name: dotnet acceptatie test voor push/pull-request
 
 on: 
-  push:
-    branches:
-      - staging
   pull_request:
     branches:
       - staging
+      - main
 jobs:
   build:
     runs-on: self-hosted
