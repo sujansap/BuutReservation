@@ -227,7 +227,7 @@ This setup is very similar to the setup of the [application's database](#databas
 
 #### Running integration tests
 
-In the `Rise.Domain.Tests` project run the following:
+In the `Rise.Server.Tests` project run the following:
 
 ```bash
 dotnet test
@@ -271,7 +271,7 @@ dotnet run --project Rise.Client
 ```
 > Optionally you can use the `Rise.Server` project but you will need to specify the base url for tests, see further.
 
-Running the tests can be done via
+Running the tests can be done executing following command in the `Rise.Client.Tests` project:
 
 ```ps1
 dotnet test
