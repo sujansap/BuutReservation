@@ -74,7 +74,9 @@ jobs:
       - name: Run database migrations
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
+        run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
+          dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
 
       - name: Run the application
         env:
