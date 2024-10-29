@@ -37,39 +37,16 @@ jobs:
           sudo apt-get update && \
           sudo apt-get install -y dotnet-sdk-8.0
 
-      - name: Verify .NET installation
-        run: dotnet --info
-
       - name: Install dotnet-ef tool
         run: |
           export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
           dotnet tool install --global dotnet-ef
 
-      - name: Test dotnet-ef tool
-        run: |
-          export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
-          dotnet ef --version  # Voer een test uit om de versie van dotnet-ef op te vragen
-    
-      - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      # - name: Install dependencies
+      #   run: dotnet restore
 
-      - name: Install dependencies
-        run: dotnet restore
-
-      - name: Build the application
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          for i in {1..30}; do
-            if PGPASSWORD=password psql -h localhost -U user -d Hogent.Rise -c 'SELECT 1'; then
-              echo "PostgreSQL is ready!"
-              break
-            else
-              echo "Waiting for PostgreSQL to be ready..."
-              sleep 5
-            fi
-          done
+      # - name: Build the application
+      #   run: dotnet build --configuration Release --no-restore
 
       - name: Run database migrations
         env:
