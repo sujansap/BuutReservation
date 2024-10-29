@@ -36,9 +36,12 @@ jobs:
           ./dotnet-install.sh --version 8.0.403
           echo "$HOME/.dotnet" >> $GITHUB_PATH
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH  # Add tools to PATH
+          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
 
       - name: Verify .NET installation
-        run: dotnet --info
+        run: |
+          export PATH="$HOME/.dotnet:$PATH"  # Ensure dotnet is in the path
+          dotnet --info
 
       - name: Install dotnet-ef tool
         run: |
