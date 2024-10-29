@@ -34,7 +34,7 @@ jobs:
           wget https://dot.net/v1/dotnet-install.sh
           chmod +x dotnet-install.sh
           # Installeer zowel de SDK als de runtime
-          ./dotnet-install.sh --version 8.0.403 --install-dir $HOME/.dotnet --include-runtime
+          ./dotnet-install.sh --version latest --install-dir $HOME/.dotnet
           echo "$HOME/.dotnet" >> $GITHUB_PATH
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH  # Add tools to PATH
           echo "export PATH=\"$HOME/.dotnet:$PATH\"" >> $GITHUB_ENV  # Persistent PATH
