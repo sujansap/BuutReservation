@@ -36,6 +36,11 @@ jobs:
           ./dotnet-install.sh --version 8.0.403
           echo "$HOME/.dotnet" >> $GITHUB_PATH
 
+      - name: Install dotnet-ef tool
+        run: |
+          dotnet tool install --global dotnet-ef
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
