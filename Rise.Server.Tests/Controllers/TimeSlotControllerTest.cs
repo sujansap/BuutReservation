@@ -4,10 +4,11 @@ using Rise.Shared.TimeSlots;
 using System.Net.Http.Json;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Xunit.Abstractions;
 
 namespace Rise.Server.Tests.Controllers
 {
-    public class TimeSlotControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture)
+    public class TimeSlotControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture, "TimeSlot")
     {
         private const string universalDateFormat = "yyyy-MM-dd";
         private const string defaultValidationErrorTitle = "One or more validation errors occurred.";
@@ -24,7 +25,7 @@ namespace Rise.Server.Tests.Controllers
 
             string joinedQueries = queries.Count == 0 ? "" : ("?" + string.Join("&", queries));
 
-            return $"TimeSlot/range{joinedQueries}";
+            return $"range{joinedQueries}";
         }
 
         [Fact]
@@ -65,7 +66,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_InvalidStartDate_Expects404()
         {
-            var response = await _client.GetAsync($"TimeSlot/range?startDate=&endDate={DateOnlyToUniversalDate(DateOnly.MaxValue)}");
+            var response = await _client.GetAsync($"range?startDate=&endDate={DateOnlyToUniversalDate(DateOnly.MaxValue)}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var result = (await response.Content.ReadFromJsonAsync<ValidationProblemDetails>())!;
@@ -78,7 +79,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_InvalidEndDate_Expects404()
         {
-            var response = await _client.GetAsync($"TimeSlot/range?startDate={DateOnlyToUniversalDate(DateOnly.MinValue)}&endDate=");
+            var response = await _client.GetAsync($"range?startDate={DateOnlyToUniversalDate(DateOnly.MinValue)}&endDate=");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var result = (await response.Content.ReadFromJsonAsync<ValidationProblemDetails>())!;
@@ -105,12 +106,13 @@ namespace Rise.Server.Tests.Controllers
         public async Task GET_TimeSlotsByDate_GivesTimeSlots()
         {
 
-            int year = DateTime.Now.Year;
-            int month = DateTime.Now.Month;
-            int day = DateTime.Now.Day + 3;
+            DateTime threeDaysInAdvance = DateTime.Now.AddDays(3);
+            int year = threeDaysInAdvance.Year;
+            int month = threeDaysInAdvance.Month;
+            int day = threeDaysInAdvance.Day;
 
 
-            List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"TimeSlot/{year}/{month}/{day}"))!;
+            List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"{year}/{month}/{day}"))!;
 
             // Assert
             response.ShouldNotBeEmpty();
@@ -128,12 +130,13 @@ namespace Rise.Server.Tests.Controllers
         public async Task GET_TimeSlotsByDate_GivesNoTimeSlots(int daysFromNow)
         {
 
-            int year = DateTime.Now.Year;
-            int month = DateTime.Now.Month;
-            int day = (DateTime.Now.Day + daysFromNow) % 30;
+            DateTime daysInAdvance = DateTime.Now.AddDays(daysFromNow);
+            int year = daysInAdvance.Year;
+            int month = daysInAdvance.Month;
+            int day = daysInAdvance.Day;
 
 
-            List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"TimeSlot/{year}/{month}/{day}"))!;
+            List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"{year}/{month}/{day}"))!;
 
             // Assert
             response.ShouldBeEmpty();
@@ -144,13 +147,14 @@ namespace Rise.Server.Tests.Controllers
         public async Task GET_TimeSlotsByDate_InvalidDate_ReturnsBadRequest()
         {
 
-            int year = DateTime.Now.Year;
-            int month = 13; // month is invalid, doesn't exist
-            int day = DateTime.Now.Day + 1;
+            DateTime tomorrow = DateTime.Now.AddDays(1);
+            int year = tomorrow.Year;
+            int month = 13;
+            int day = tomorrow.Day;
 
 
-            var response = await _client.GetAsync($"TimeSlot/{year}/{month}/{day}");
-            response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+            var response = await _client.GetAsync($"{year}/{month}/{day}");
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
     }
 }
