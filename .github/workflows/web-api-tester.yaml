@@ -25,11 +25,6 @@ jobs:
           POSTGRES_PASSWORD: password  # Wachtwoord voor de gebruiker
         ports:
           - 5432:5432  # Map de PostgreSQL-poort
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Check out repository code
@@ -42,6 +37,9 @@ jobs:
           ./dotnet-install.sh --version 8.0.403
           echo "$HOME/.dotnet" >> $GITHUB_PATH  # Voeg de .NET directory aan de PATH toe
 
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
       - name: Install dependencies
         run: dotnet restore  # Herstel afhankelijkheden
 
@@ -50,9 +48,14 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h localhost -p 5432 -U user; do
-            echo "Waiting for PostgreSQL to be ready..."
-            sleep 5
+          for i in {1..30}; do
+            if PGPASSWORD=password psql -h localhost -U user -d Hogent.Rise.Test -c 'SELECT 1'; then
+              echo "PostgreSQL is ready!"
+              break
+            else
+              echo "Waiting for PostgreSQL to be ready..."
+              sleep 5
+            fi
           done
 
       - name: Run the application
