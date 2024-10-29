@@ -63,7 +63,7 @@ jobs:
               break
             else
               echo "Waiting for the application to be ready..."
-              sleep 1
+              sleep 4
             fi
           done
 
