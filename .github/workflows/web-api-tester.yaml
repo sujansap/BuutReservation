@@ -5,6 +5,7 @@ on:
     branches:
       - staging
       - main
+      - production
 jobs:
   build:
     runs-on: self-hosted
