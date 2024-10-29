@@ -52,7 +52,7 @@ namespace Rise.Client.Reservations
         [Test]
         public async Task HasUnexpectedError()
         {
-            await Page.RouteAsync("*/**/api/TimeSlot/range/**", async route =>
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
             {
                 await route.FulfillAsync(new()
                 {
@@ -66,7 +66,7 @@ namespace Rise.Client.Reservations
         }
 
         [Test]
-        public async Task CheckDateTypes()
+        public async Task ContainCalendarDataDates()
         {
             int totalDays = 4;
             DateOnly startDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
@@ -80,7 +80,7 @@ namespace Rise.Client.Reservations
                     new(startDate.AddDays(3), true, true),
                 ]
             );
-            await Page.RouteAsync("*/**/api/TimeSlot/range/**", async route =>
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
             {
                 await route.FulfillAsync(new()
                 {
@@ -90,11 +90,10 @@ namespace Rise.Client.Reservations
                 });
             });
             await Page.GotoAsync("/reservations");
-            var locator = Page.Locator($"[identifier={startDate}]");
-            var child = locator.GetByTestId("custom-calendar-day");
-            child.ShouldNotBeNull();
 
-            // TODO make beter tests for checking date availability
+            ILocator available = Page.Locator("[data-celtype=available]");
+            await Expect(available).ToHaveCountAsync(2);
+
         }
 
         [Test]
