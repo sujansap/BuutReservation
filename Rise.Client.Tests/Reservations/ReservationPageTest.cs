@@ -167,13 +167,135 @@ namespace Rise.Client.Reservations
             await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
         }
 
-        // [Test]
-        // public async Task CheckRedirectToThisMonthsRange()
-        // {
-        //     DateTime startDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1).ToDateTime(TimeOnly.MinValue).StartOfWeek(DayOfWeek.Sunday);
-        //     DateTime endDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).ToDateTime(TimeOnly.MinValue).StartOfWeek(DayOfWeek.Saturday);
-        //     await Page.GotoAsync("/reservations", new PageGotoOptions() {});
-        //     Page.Url.ShouldEndWith($"?StartDate={startDate.ToString(universalDateFormat)}&EndDate={endDate.ToString(universalDateFormat)}");
-        // }
+        [Test]
+        public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingButtons()
+        {
+
+            await Page.GotoAsync("/reservations");
+            ILocator prev = Page.GetByTestId("calendar-previous");
+            (await prev.IsDisabledAsync()).ShouldBeTrue();
+        }
+
+        [Test]
+        public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingPicker()
+        {
+
+            await Page.GotoAsync("/reservations");
+
+            ILocator monthPicker = Page.Locator(".mud-picker-input-button");
+            await monthPicker.ClickAsync();
+
+            int currentMonth = DateTime.Now.Month;
+            ILocator monthPickerCollapsed = Page.GetByTestId("calendar-datepicker");
+
+            if (currentMonth == 1)
+            {
+                await monthPickerCollapsed.GetByLabel($"Previous year ({DateTime.Today.AddYears(-1).Year})").ClickAsync();
+                currentMonth = 13;
+            }
+
+            ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(currentMonth - 2);
+            (await previousMonth.IsDisabledAsync()).ShouldBeTrue();
+        }
+
+        [Test]
+        public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingButtons()
+        {
+            await Page.GotoAsync("/reservations");
+
+            ILocator monthPicker = Page.Locator(".mud-picker-input-button");
+            string startMonthText = await monthPicker.InnerTextAsync();
+
+            ILocator next = Page.GetByTestId("calendar-next");
+            await next.ClickAsync();
+            string nextMonthText = await monthPicker.InnerTextAsync();
+            nextMonthText.ShouldNotBe(startMonthText);
+
+            ILocator prev = Page.GetByTestId("calendar-previous");
+            (await prev.IsDisabledAsync()).ShouldBeFalse();
+            await prev.ClickAsync();
+
+            string currentMonthText = await monthPicker.InnerTextAsync();
+            currentMonthText.ShouldBe(startMonthText);
+        }
+
+        [Test]
+        public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingDatePicker()
+        {
+            await Page.GotoAsync("/reservations");
+
+            ILocator monthPicker = Page.Locator(".mud-picker-input-button");
+            string startMonthText = await monthPicker.InnerTextAsync();
+
+            ILocator next = Page.GetByTestId("calendar-next");
+            await next.ClickAsync();
+            string nextMonthText = await monthPicker.InnerTextAsync();
+            nextMonthText.ShouldNotBe(startMonthText);
+
+            await monthPicker.ClickAsync();
+
+            int nextMonth = (DateTime.Now.Month + 1) % 12;
+            ILocator monthPickerCollapsed = Page.GetByTestId("calendar-datepicker");
+
+            if (nextMonth == 1)
+            {
+                await monthPickerCollapsed.GetByLabel($"Previous year ({DateTime.Today.Year})").ClickAsync();
+                nextMonth = 13;
+            }
+
+            ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(nextMonth - 2);
+            (await previousMonth.IsDisabledAsync()).ShouldBeFalse();
+            await previousMonth.ClickAsync();
+
+            string currentMonthText = await monthPicker.InnerTextAsync();
+            currentMonthText.ShouldBe(startMonthText);
+        }
+
+        [Test]
+        public async Task ShouldRedirectToThisMonthsCurrentDateWhenNoCurrentDate()
+        {
+            string currentDate = DateTime.Today.ToString(universalDateFormat);
+            await Page.GotoAsync("/reservations");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={currentDate}");
+        }
+
+        [Test]
+        public async Task ShouldRedirectToThisMonthsCurrentDateWhenToEarlyDate()
+        {
+            string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
+            string currentDate = DateTime.Today.ToString(universalDateFormat);
+            await Page.GotoAsync($"/reservations?CurrentDate={toEarlyDate}");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={currentDate}");
+        }
+
+        [Test]
+        public async Task ShouldRedirectToGivenCurrentDate()
+        {
+
+            DateTime plusOneMonthDate = DateTime.Today.AddMonths(1);
+            string plusOneMonthDateFormatted = plusOneMonthDate.ToString(universalDateFormat);
+            await Page.GotoAsync($"/reservations?CurrentDate={plusOneMonthDateFormatted}");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={plusOneMonthDateFormatted}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={plusOneMonthDateFormatted}");
+
+            ILocator date = Page.Locator($"[identifier={DateOnly.FromDateTime(plusOneMonthDate)}]");
+            date.ShouldNotBeNull();
+        }
+
+        [Test]
+        public async Task ShouldChangeCurrentDateWhenGoingToNextMonth()
+        {
+            string currentDate = DateTime.Today.ToString(universalDateFormat);
+            await Page.GotoAsync("/reservations");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+
+            ILocator next = Page.GetByTestId("calendar-next");
+            await next.ClickAsync();
+            string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
+        }
     }
 }
