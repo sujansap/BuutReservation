@@ -1,11 +1,11 @@
 name: dotnet acceptatie test
 
-# on: 
-#   pull_request:
-#     branches:
-#       - staging
-#       - main
-#       - production
+on: 
+  pull_request:
+    branches:
+      - staging
+      - main
+      - production
 jobs:
   build:
     name: dotnet-acceptatie-test
