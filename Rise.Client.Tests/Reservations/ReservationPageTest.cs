@@ -168,25 +168,7 @@ namespace Rise.Client.Reservations
             await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
         }
 
-        [TestMethod]
-        public async Task GreyedOutCalendarCellsAreUnclickable()
-        {
-            // Arrange
-            var today = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-
-            // Act
-            await Page.GotoAsync("https://localhost:5001/reservations");
-            var calendarCellToday = Page.Locator($"[identifier='{today}']");
-            await calendarCellToday.ClickAsync();
-
-            // Assert
-            var timeSlotList = Page.GetByTestId("time-slot-list");
-
-            var hasContent = await timeSlotList.Locator(":scope > *").CountAsync() > 0;
-            Assert.IsFalse(hasContent, "Time slot list should be empty");
-        }
-
-        [TestMethod]
+        [Test]
         public async Task GreyedOutCalendarCellsAreUnclickable()
         {
             // Arrange
