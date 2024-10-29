@@ -4,7 +4,6 @@
 @using Rise.Client.TimeSlots
 @using Heron.MudCalendar
 @using Rise.Client.Reservations.Components.TimeSlotList
-@inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Reservations
@@ -23,9 +22,8 @@
             @* TODO calendar is clickable and navigeable to the past *@
             @* TODO everything is clickeable (this is hell) *@
             <MudItem xs="12" md="8">
-                <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
-                    Class="mt-8" data-testid="custom-calendar-reserve" AvailableDays="AvailableDays"
-                    DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
+                <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8" data-testid="custom-calendar-reserve"
+                    AvailableDays="AvailableDays" DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
                     <MonthTemplate>
                         <CustomDayComponent Context="context" />
                     </MonthTemplate>
@@ -37,22 +35,13 @@
                     <TimeSlotsList SelectedDate="SelectedDate.Value" />
                 }
             </MudItem>
+            <MudItem xs="12">
+                <ReservationCalendarLegend data-testid="custom-calendar-legend" />
+            </MudItem>
         </MudGrid>
-
     </MudTabPanel>
     <MudTabPanel Text="@Localizer["YourReservations"]" data-testid="tab-your-reservations">
         <MudCalendar ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
             data-testid="calendar-your-reservations" />
     </MudTabPanel>
 </MudTabs>
-
-@if (activeTabIndex == 0)
-{
-    <ReservationCalendarLegend data-testid="custom-calendar-legend" />
-}
-
-@code {
-    private int activeTabIndex = 0;
-
-    // ... existing code ...
-}

@@ -106,9 +106,10 @@ namespace Rise.Server.Tests.Controllers
         public async Task GET_TimeSlotsByDate_GivesTimeSlots()
         {
 
-            int year = DateTime.Now.Year;
-            int month = DateTime.Now.Month;
-            int day = DateTime.Now.Day + 3;
+            DateTime threeDaysInAdvance = DateTime.Now.AddDays(3);
+            int year = threeDaysInAdvance.Year;
+            int month = threeDaysInAdvance.Month;
+            int day = threeDaysInAdvance.Day;
 
 
             List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"{year}/{month}/{day}"))!;
@@ -129,9 +130,10 @@ namespace Rise.Server.Tests.Controllers
         public async Task GET_TimeSlotsByDate_GivesNoTimeSlots(int daysFromNow)
         {
 
-            int year = DateTime.Now.Year;
-            int month = DateTime.Now.Month;
-            int day = (DateTime.Now.Day + daysFromNow) % 30;
+            DateTime daysInAdvance = DateTime.Now.AddDays(daysFromNow);
+            int year = daysInAdvance.Year;
+            int month = daysInAdvance.Month;
+            int day = daysInAdvance.Day;
 
 
             List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"{year}/{month}/{day}"))!;
@@ -145,13 +147,14 @@ namespace Rise.Server.Tests.Controllers
         public async Task GET_TimeSlotsByDate_InvalidDate_ReturnsBadRequest()
         {
 
-            int year = DateTime.Now.Year;
-            int month = 13; // month is invalid, doesn't exist
-            int day = DateTime.Now.Day + 1;
+            DateTime tomorrow = DateTime.Now.AddDays(1);
+            int year = tomorrow.Year;
+            int month = 13;
+            int day = tomorrow.Day;
 
 
             var response = await _client.GetAsync($"{year}/{month}/{day}");
-            response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
     }
 }
