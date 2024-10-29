@@ -10,14 +10,12 @@ namespace Rise.Client.Reservations.Components
     [Parameter]
     public Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
     public DateTime Today { get; set; } = DateTime.Today;
-
     protected override string DayClassname(CalendarCell calendarCell)
     {
       return new CssBuilder(base.DayClassname(calendarCell))
       .AddClass("greyed-out-text", IsGreyedOut(calendarCell))
       .Build();
     }
-
     protected override string DayStyle(CalendarCell calendarCell, int index)
     {
       bool isToday = calendarCell.Date.Date.Equals(Today);

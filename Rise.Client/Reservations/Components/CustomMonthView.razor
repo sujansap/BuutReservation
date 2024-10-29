@@ -3,3 +3,17 @@
 @inherits Heron.MudCalendar.MonthView
 
 @Render
+
+@code {
+    /// <summary>
+    /// Renders the container for an individual cell.
+    /// </summary>
+    protected override RenderFragment RenderCellContainer(CalendarCell cell, int index) =>
+    @<div class="@CellClassname" style="@DayStyle(cell, index)" @onclick="() => OnCellLinkClicked(cell)"
+        data-testid="calendar-cel">
+        <MudDropZone T="CalendarItem" Identifier="@cell.Date.Date.ToString("d")" Class="mud-cal-month-dropzone"
+            Style="@CellStyle">
+            @RenderCell(cell)
+        </MudDropZone>
+    </div>;
+}
