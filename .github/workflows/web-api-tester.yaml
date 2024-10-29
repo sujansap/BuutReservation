@@ -7,10 +7,6 @@ on:
   pull_request:
     branches:
       - staging
-
-concurrency:
-  group: ${{ github.ref }}
-
 jobs:
   build:
     runs-on: self-hosted
@@ -69,8 +65,7 @@ jobs:
             else
               echo "Received HTTP status code: $response. Waiting for the application to be ready..."
             fi
-            
-            sleep 4
+            sleep 2
           done
 
       - name: Run Unit Tests
