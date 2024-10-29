@@ -41,18 +41,25 @@ jobs:
           chmod +x dotnet-install.sh
           ./dotnet-install.sh --version 8.0.403
           echo "$HOME/.dotnet" >> $GITHUB_PATH  # Voeg de .NET directory aan de PATH toe
-        # Voeg .NET toe aan de PATH
+
       - name: Install dependencies
         run: dotnet restore  # Herstel afhankelijkheden
 
       - name: Build the application
         run: dotnet build --configuration Release --no-restore  # Bouw de applicatie
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432 -U user; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+          done
+
       - name: Run the application
         env:
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=Hogent.Rise.Test;Username=user;Password=password"
         run: |
-          dotnet run --project Rise.Server # Start de applicatie in de achtergrond
+          dotnet run --project Rise.Server --configuration Release &  # Start de applicatie in de achtergrond
           sleep 10  # Wacht even om te zorgen dat de applicatie goed is opgestart
 
       - name: Run Unit Tests
