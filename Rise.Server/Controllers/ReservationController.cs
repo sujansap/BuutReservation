@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
 namespace Rise.Server.Controllers
@@ -35,7 +36,7 @@ namespace Rise.Server.Controllers
         /// <param name="pageSize">Number of items to get in a page.</param>
         /// <returns>List of reservations</returns>
         [HttpGet("me")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<IEnumerable<ReservationDto>>))]
         public async Task<IActionResult> GetCurrentUserReservations([FromQuery] int? cursor, [FromQuery] bool? isNextPage, [FromQuery] bool getPast = false, int pageSize = 3)
         {
             var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);

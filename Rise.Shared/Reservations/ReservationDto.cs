@@ -3,9 +3,8 @@ using Rise.Shared.Pagination;
 
 namespace Rise.Shared.Reservations;
 
-public class ReservationDto
+public class ReservationDto : BaseDto
 {
-    public int Id { get; set; }
     public TimeOnly Start { get; set; }
     public TimeOnly End { get; set; }
     public DateOnly Date { get; set; }
