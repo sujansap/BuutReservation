@@ -1,0 +1,66 @@
+name: dotnet acceptatie test voor push/pull-request
+
+on: 
+  push:
+    branches:
+      - staging  # Voer deze workflow uit bij een push naar de staging branch
+  pull_request:  # Voer ook uit bij pull requests
+    branches:
+      - staging  # Voer uit bij pull requests naar de staging branch
+
+concurrency:
+  group: ${{ github.ref }}
+#   cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: self-hosted  # Gebruik een zelfgehoste runner
+
+    services:
+      postgres:
+        image: postgres:17  # Gebruik PostgreSQL versie 17
+        env:
+          POSTGRES_DB: Hogent.Rise.Test  # Specificeer een testdatabase
+          POSTGRES_USER: user  # Gebruikersnaam
+          POSTGRES_PASSWORD: password  # Wachtwoord voor de gebruiker
+        ports:
+          - 5432:5432  # Map de PostgreSQL-poort
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.0'  # Specificeer de gewenste .NET versie 8.0
+
+      - name: Install dependencies
+        run: dotnet restore  # Herstel afhankelijkheden
+
+      - name: Build the application
+        run: dotnet build --configuration Release --no-restore  # Bouw de applicatie
+
+      - name: Run the application
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=Hogent.Rise.Test;Username=user;Password=password"
+        run: |
+          dotnet run --configuration Release &  # Start de applicatie in de achtergrond
+          sleep 10  # Wacht even om te zorgen dat de applicatie goed is opgestart
+
+      - name: Run Unit Tests
+        run: dotnet test Rise.Domain.Tests --verbosity normal  # Voer de eenheidstests uit
+
+      - name: Run Integration Tests
+        env:
+          ConnectionStrings__PostgreSQL: "Host=localhost;Port=5432;Database=Hogent.Rise.Test;Username=user;Password=password"
+        run: dotnet test Rise.Server.Tests --verbosity normal  # Voer integratietests uit
+
+      - name: Check test result
+        if: ${{ failure() }}  # Controleer of de tests zijn mislukt
+        run: echo "Tests failed, please check the logs."  # Print foutmelding
