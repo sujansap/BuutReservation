@@ -21,7 +21,6 @@ namespace Rise.Client.Reservations
         /// The selected culture (language)
         /// </summary>        
         private CultureInfo selectedCulture = CultureInfo.CurrentCulture;
-        private List<DateTime> GreyedOutDates = [];
         private int activeTabIndex;
 
         [SupplyParameterFromQuery]
