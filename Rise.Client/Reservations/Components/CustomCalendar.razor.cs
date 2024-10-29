@@ -6,6 +6,6 @@ namespace Rise.Client.Reservations.Components;
 
 public partial class CustomCalendar
 {
-  [Parameter]
-  public Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
+    [Parameter]
+    public Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
 }
