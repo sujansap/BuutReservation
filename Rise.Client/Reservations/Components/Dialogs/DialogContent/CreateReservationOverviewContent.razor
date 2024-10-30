@@ -1,15 +1,28 @@
 ﻿@using Rise.Shared.TimeSlots;
 @using Rise.Client.Reservations.Components.Dialogs;
 
-<MudText>
-    Datum en Tijdstip: @Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End
-</MudText>
-<MudText>
-    Naam: @User.Name
-</MudText>
-<MudText Class="mb-8">
-    Email: @User.Email
-</MudText>
+<MudContainer Class="pa-4">
+    <MudStack Spacing="2">
+        <MudStack>
+            <MudText Typo="Typo.subtitle2">Datum en Tijdstip:</MudText>
+            <MudText>@Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End</MudText>
+        </MudStack>
+
+        <MudDivider Class="my-3" />
+
+        <MudStack>
+            <MudText Typo="Typo.subtitle2">Naam:</MudText>
+            <MudText>@User.Name</MudText>
+        </MudStack>
+
+        <MudDivider Class="my-3" />
+
+        <MudStack>
+            <MudText Typo="Typo.subtitle2">Email:</MudText>
+            <MudText>@User.Email</MudText>
+        </MudStack>
+    </MudStack>
+</MudContainer>
 
 
 @code {

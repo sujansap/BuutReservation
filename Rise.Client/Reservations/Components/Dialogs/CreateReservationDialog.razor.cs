@@ -31,7 +31,7 @@ namespace Rise.Client.Reservations.Components.Dialogs
         private async void CreateReservation()
         {
             State = DialogState.Pay;
-            await Task.Delay(2000);
+            await Task.Delay(3500);
             State = DialogState.Success;
             StateHasChanged();
         }

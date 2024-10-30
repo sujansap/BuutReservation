@@ -1,6 +1,32 @@
 ﻿@using Rise.Shared.TimeSlots;
 
-<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="my-4">
-    <MudText>Betaling verwerken...</MudText>
+<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mt-4 mb-12">
+    <MudText Typo="Typo.subtitle2">
+        Betaling verwerken<span>@LoadingDots</span>
+    </MudText>
     <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
 </MudStack>
+
+@code {
+    private string LoadingDots = ".";
+    private System.Threading.Timer? timer;
+
+    protected override void OnInitialized()
+    {
+        timer = new System.Threading.Timer(
+        _ =>
+        {
+            LoadingDots = LoadingDots.Length >= 3 ? "." : LoadingDots + ".";
+            InvokeAsync(StateHasChanged);
+        },
+        null,
+        0,
+        500
+        );
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
