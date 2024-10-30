@@ -174,8 +174,29 @@ namespace Rise.Client.Reservations
 
         private void OnActivePanelIndexChanged(int index)
         {
-            var url = index == 0 ? "/reservations" : "/reservations/your-reservations";
-            Navigation.NavigateTo(url, false);
+            if (index == 0 && Navigation.Uri.EndsWith("/your-reservations"))
+            {
+                Navigation.NavigateTo("/reservations", false);
+            }
+            else if (index == 1 && !Navigation.Uri.EndsWith("/your-reservations"))
+            {
+                Navigation.NavigateTo("/reservations/your-reservations", false);
+            }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            
+            // Set active tab based on current URL
+            if (Navigation.Uri.EndsWith("/your-reservations"))
+            {
+                activeTabIndex = 1;
+            }
+            else
+            {
+                activeTabIndex = 0;
+            }
         }
     }
 
