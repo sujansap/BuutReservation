@@ -8,6 +8,12 @@ namespace Rise.Client.Services
     {
         private readonly HttpClient _httpClient = httpClient;
 
+        public Task<ReservationDto> CreateReservation(int userId, int timeSlotId, int boatId)
+        {
+            // TODO
+            throw new NotImplementedException();
+        }
+
         public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
         {
             throw new NotImplementedException();
