@@ -7,12 +7,13 @@ namespace Rise.Domain.Users
     /// <summary>
     /// User base class
     /// </summary>
-    public class User: Entity, IUser
+    public class User : Entity, IUser
     {
         private string _familyName = default!;
 
 
-        public required string FamilyName {
+        public required string FamilyName
+        {
             get => _familyName;
             set => _familyName = Guard.Against.NullOrWhiteSpace(value);
         }

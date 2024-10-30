@@ -10,7 +10,7 @@ namespace Rise.Persistence.Users
     /// <summary>
     /// Specific configuration for <see cref="User"/>.
     /// </summary>
-    internal class UserConfiguration: EntityConfiguration<User>
+    internal class UserConfiguration : EntityConfiguration<User>
     {
         public override void Configure(EntityTypeBuilder<User> builder)
         {

@@ -22,8 +22,8 @@ namespace Rise.Server.Controllers
         /// Gets all reservations for a user.
         /// </summary>
         /// <remarks>
-        /// <para>Cursor and isNextPage arguments are null in the first page request call.</para> 
-        /// <para>How it works, assuming the frontend sends a request with the following parameters:
+        /// <para>To get the first page, set cursor to null. For ther other pages, use the following logic:</para> 
+        /// <para>How it works, set the cursor to an Id you get from a request with the following valid parameters (not null):
         /// <br/>
         /// <para>NextId and isNextPage equals true: get the next page </para>
         /// <br/>
@@ -40,7 +40,7 @@ namespace Rise.Server.Controllers
         public async Task<IActionResult> GetCurrentUserReservations(
             [FromQuery] int? cursor,
             [FromQuery] bool? isNextPage,
-            [FromQuery] bool getPast = true,
+            [FromQuery] bool getPast,
             [FromQuery] int pageSize = 3)
         {
             Console.WriteLine("HERE 22: GetCurrentUserReservations");

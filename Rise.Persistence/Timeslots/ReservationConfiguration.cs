@@ -13,29 +13,29 @@ namespace Rise.Persistence.Timeslots
 {/// <summary>
  /// Specific configuration for <see cref="Reservation"/>.
  /// </summary>
-  internal class ReservationConfiguration : EntityConfiguration<Reservation>
-  {
-    public override void Configure(EntityTypeBuilder<Reservation> builder)
+    internal class ReservationConfiguration : EntityConfiguration<Reservation>
     {
-      base.Configure(builder);
+        public override void Configure(EntityTypeBuilder<Reservation> builder)
+        {
+            base.Configure(builder);
 
-      builder
-          .HasOne(e => (Boat)e.Boat)
-          .WithMany(e => (ICollection<Reservation>)e.Reservations)
-          .HasForeignKey(e => e.BoatId)
-          .IsRequired(true);
+            builder
+                .HasOne(e => (Boat)e.Boat)
+                .WithMany(e => (ICollection<Reservation>)e.Reservations)
+                .HasForeignKey(e => e.BoatId)
+                .IsRequired(true);
 
-      // builder
-      //     .HasOne(e => (Battery)e.Battery)
-      //     .WithMany(e => (ICollection<Reservation>)e.Reservations)
-      //     .HasForeignKey(e => e.BatteryId)
-      //     .IsRequired(true);
+            // builder
+            //     .HasOne(e => (Battery)e.Battery)
+            //     .WithMany(e => (ICollection<Reservation>)e.Reservations)
+            //     .HasForeignKey(e => e.BatteryId)
+            //     .IsRequired(true);
 
-      builder
-          .HasOne(e => (TimeSlot)e.TimeSlot)
-          .WithMany(e => (ICollection<Reservation>)e.Reservations)
-          .HasForeignKey(e => e.TimeSlotId)
-          .IsRequired(true);
+            builder
+                .HasOne(e => (TimeSlot)e.TimeSlot)
+                .WithMany(e => (ICollection<Reservation>)e.Reservations)
+                .HasForeignKey(e => e.TimeSlotId)
+                .IsRequired(true);
 
       builder
           .HasOne(e => (User)e.User)

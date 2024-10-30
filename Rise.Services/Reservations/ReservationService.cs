@@ -11,13 +11,35 @@ using Rise.Shared.Reservations;
 namespace Rise.Services.Reservations
 {
 
-    public class ReservationService : IReservationService
+    public class ReservationService(ApplicationDbContext dbContext) : IReservationService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext = dbContext;
 
-        public ReservationService(ApplicationDbContext dbContext)
+        /// <summary>
+        /// Gets all reservations in the given date range by the current user
+        /// </summary>
+        internal class Reservation
         {
-            this._dbContext = dbContext;
+            public DateOnly Date { get; set; }
+        }
+        public async Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
+        {
+            ISet<DateOnly> reservations = new HashSet<DateOnly>();
+
+            List<Reservation> allReservationsDuringRange = await _dbContext.Reservations.Where(
+                reservation =>
+                reservation.TimeSlot.Date >= startDate &&
+                reservation.TimeSlot.Date <= endDate &&
+                reservation.UserId == userId
+                )
+                .Select(reservation => new Reservation()
+                {
+                    Date = reservation.TimeSlot.Date,
+                }
+                )
+                .ToListAsync();
+
+            return new ReservationsRangeDto(allReservationsDuringRange.Select(reservation => reservation.Date));
         }
 
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 3)
@@ -178,5 +200,7 @@ namespace Rise.Services.Reservations
 
         }
     }
+
+
 
 }

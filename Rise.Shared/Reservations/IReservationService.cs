@@ -4,6 +4,8 @@ namespace Rise.Shared.Reservations
 {
     public interface IReservationService
     {
+        Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId);
+
         /// <summary>
         /// Gets all the upcoming reservations for the current user
         /// </summary>

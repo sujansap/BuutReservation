@@ -11,14 +11,14 @@ namespace Rise.Persistence.Seeders
         static BoatSeeder()
         {
             boats = [
-            new() {PersonalName = "Limba", },
-            new() {PersonalName = "Leith", },
-            new() {PersonalName = "Lubeck",},
-        ];
+                new() { PersonalName = "Limba", },
+                new() { PersonalName = "Leith", },
+                new() { PersonalName = "Lubeck", },
+            ];
         }
 
         protected override DbSet<Boat> DbSet => _dbContext.Boats;
 
-        protected override ICollection<Boat> Items { get => boats; }
+        protected override IEnumerable<Boat> Items { get => boats; }
     }
 }

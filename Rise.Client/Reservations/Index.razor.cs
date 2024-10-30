@@ -1,75 +1,22 @@
-using Microsoft.AspNetCore.Components;
 using Heron.MudCalendar;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.TimeSlots;
-using System.Globalization;
 
 namespace Rise.Client.Reservations
 {
     public partial class Index : ComponentBase
     {
-        /// <summary>
-        /// The start date if the date range, by default the current's month start date
-        /// </summary>
-        private readonly DateOnly defaultStartDay = new(DateTime.Now.Year, DateTime.Now.Month, 1);
-        /// <summary>
-        /// The end date if the date range, by default the current's month end date
-        /// </summary>
-        private readonly DateOnly defaultEndDay = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
-
-        ///  <summary>
-        /// The selected culture (language)
-        /// </summary>        
-        private CultureInfo selectedCulture = CultureInfo.CurrentCulture;
-        private int activeTabIndex;
-
-        [SupplyParameterFromQuery]
-        /// <summary>
-        /// The actual start date for the date range
-        /// </summary>
-        private DateOnly? StartDate { get; set; }
-
-        [SupplyParameterFromQuery]
-        /// <summary>
-        /// The actual start date for the date range
-        /// </summary>
-        private DateOnly? EndDate { get; set; }
-
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; } = default!;
 
         /// <summary>
         /// All unavailable days on the calendar
         /// </summary>
-        private List<DateTime> GreyedOutDates = [];
+        private Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
+        private List<ColoredCalendarItem> ReservationsOfCurrentUser = new List<ColoredCalendarItem>();
 
         private DateOnly? SelectedDate { get; set; }
-
-        private int ActiveTabIndex
-        {
-            get => activeTabIndex;
-            set
-            {
-                if (activeTabIndex != value)
-                {
-                    activeTabIndex = value;
-                    OnActivePanelIndexChanged(value);
-                }
-            }
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            if (!StartDate.HasValue || !EndDate.HasValue)
-            {
-                NavigateToDefaultDateRange();
-            }
-            else
-            {
-                // TODO fix that current day gets loaded in
-                await UpdateDates();
-            }
-        }
 
         /// <summary>
         /// Handle when calendar date range changes
@@ -77,69 +24,39 @@ namespace Rise.Client.Reservations
         /// <param name="dateRange">The new date range</param>
         private async Task OnDateRangeChanged(DateRange dateRange)
         {
-            if (dateRange.Start.HasValue && dateRange.End.HasValue && 
-                (DateOnly.FromDateTime(dateRange.Start.Value.Date) != StartDate || 
-                 DateOnly.FromDateTime(dateRange.End.Value.Date) != EndDate))
+            if (dateRange.Start.HasValue && dateRange.End.HasValue)
             {
-                StartDate = DateOnly.FromDateTime(dateRange.Start.Value);
-                EndDate = DateOnly.FromDateTime(dateRange.End.Value);
-                NavigateToDateRange();
-                await UpdateDates();
+                DateOnly startDate = DateOnly.FromDateTime(dateRange.Start.Value);
+                DateOnly endDate = DateOnly.FromDateTime(dateRange.End.Value);
+                await UpdateDates(startDate, endDate);
             }
-        }
-
-        /// <summary>
-        /// Navigate to the default date range
-        /// </summary>
-        private void NavigateToDefaultDateRange()
-        {
-            StartDate = defaultStartDay;
-            EndDate = defaultEndDay;
-            NavigateToDateRange();
-        }
-
-        /// <summary>
-        /// Navigate to the current date range
-        /// </summary>
-        private void NavigateToDateRange()
-        {
-#pragma warning disable CS8629
-            Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(
-                new Dictionary<string, object?>
-                {
-                    ["StartDate"] = StartDate.Value.ToString("yyyy-MM-dd"),
-                    ["EndDate"] = EndDate.Value.ToString("yyyy-MM-dd")
-                }), forceLoad: false);
-#pragma warning restore CS8629
         }
 
         /// <summary>
         /// Update known dates via the api
         /// </summary>
         /// <returns></returns>
-        private async Task UpdateDates()
+        private async Task UpdateDates(DateOnly startDate, DateOnly endDate)
         {
-            if (!StartDate.HasValue || !EndDate.HasValue)
-                return;
 
             try
             {
                 TimeSlotRangeInfoDto response = await TimeSlotService.GetAllTimeSlotsInRange(
-                    StartDate.Value,
-                    EndDate.Value
-                );
+                startDate,
+                endDate
+            );
 
 
-                // AvailableDays = response.Days
-                // .Where(day => day.IsSlotAvailable && !day.IsFullyBooked)
-                // .Select(ConvertToCalendarItems)
-                // .ToList();
+                AvailableDays = response.Days
+                .Where(day => day.IsSlotAvailable)
+                .ToDictionary(day => day.Date, day => day);
 
-                GreyedOutDates = response.Days.Where(day => day.IsFullyBooked || !day.IsSlotAvailable).Select(day => day.Date.ToDateTime(TimeOnly.MinValue)).ToList();
+                ReservationsOfCurrentUser = response.Days.Where(day => day.IsBookedByUser).Select(ConvertToCalendarItems).ToList();
             }
 
             catch
             {
+                // TODO this error message is not localized
                 var errorMessage = "Er is iets mis gegaan bij het ophalen van de beschikbare dagen";
                 Snackbar.Add(new MarkupString($"<span data-testid='error-message'>{errorMessage}</span>"), Severity.Error);
                 return;
@@ -157,8 +74,8 @@ namespace Rise.Client.Reservations
             {
                 Start = day.Date.ToDateTime(TimeOnly.MinValue),
                 End = day.Date.ToDateTime(TimeOnly.MaxValue),
-                Text = day.IsFullyBooked ? "Volzet" : day.IsSlotAvailable ? "" : "Niet beschikbaar",
-                Color = day.IsFullyBooked ? Color.Error : day.IsSlotAvailable ? Color.Primary : Color.Warning,
+                Text = "",
+                Color = Color.Primary,
             };
         }
 
@@ -169,14 +86,12 @@ namespace Rise.Client.Reservations
         /// <returns></returns>
         private void OnCellClicked(DateTime date)
         {
-            SelectedDate = DateOnly.FromDateTime(date);
+            if (AvailableDays.ContainsKey(DateOnly.FromDateTime(date)))
+            {
+                SelectedDate = DateOnly.FromDateTime(date);
+            }
         }
 
-        private void OnActivePanelIndexChanged(int index)
-        {
-            var url = index == 0 ? "/reservations" : "/reservations/your-reservations";
-            Navigation.NavigateTo(url, false);
-        }
     }
 
     public partial class ColoredCalendarItem : CalendarItem
