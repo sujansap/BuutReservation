@@ -106,23 +106,23 @@ jobs:
 
       - name: Run Playwright E2E
         run: |
-          dotnet run --project Rise.Client 
+          dotnet run --project Rise.Client &
  
-      # - name: Wait for the application to be ready
-      #   run: |
-      #     for i in {1..30}; do
-      #       response=$(curl -s -k -o /dev/null -w "%{http_code}" https://localhost:5003 || echo "connection_error")
+      - name: Wait for the application to be ready
+        run: |
+          for i in {1..30}; do
+            response=$(curl -s -k -o /dev/null -w "%{http_code}" https://localhost:5003 || echo "connection_error")
             
-      #       if [ "$response" -eq 200 ]; then
-      #         echo "Application is ready! HTTP status code: $response"
-      #         break
-      #       elif [ "$response" == "connection_error" ]; then
-      #         echo "Connection failed. Application might not be running yet."
-      #       else
-      #         echo "Received HTTP status code: $response. Waiting for the application to be ready..."
-      #       fi
-      #       sleep 2
-      #     done          
+            if [ "$response" -eq 200 ]; then
+              echo "Application is ready! HTTP status code: $response"
+              break
+            elif [ "$response" == "connection_error" ]; then
+              echo "Connection failed. Application might not be running yet."
+            else
+              echo "Received HTTP status code: $response. Waiting for the application to be ready..."
+            fi
+            sleep 2
+          done          
       # - name: Run E2E Tests
       #   run: dotnet test Rise.Client.Tests
 
