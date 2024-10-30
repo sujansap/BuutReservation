@@ -31,7 +31,7 @@ public class UserReservationsBase : ComponentBase
 
             ReservationPage = result;
         }
-        catch (Exception ex)
+        catch
         {
             // proper error handling/logging needed here
             ReservationPage = new()
@@ -48,4 +48,4 @@ public class UserReservationsBase : ComponentBase
 
     protected Task LoadNextPage() => LoadReservations(true);
     protected Task LoadPreviousPage() => LoadReservations(false);
-} 
+}

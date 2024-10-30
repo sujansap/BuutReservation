@@ -8,6 +8,11 @@ namespace Rise.Client.Services
     {
         private readonly HttpClient _httpClient = httpClient;
 
+        public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 3)
         {
             Console.WriteLine("HERE: GetUserReservations");

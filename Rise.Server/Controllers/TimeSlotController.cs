@@ -2,16 +2,17 @@ using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.TimeSlots;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
-using Rise.Domain.Reservations;
+using Rise.Shared.Reservations;
 
 namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TimeSlotController(ITimeSlotService timeSlotService, ILogger<TimeSlotController> logger) : ControllerBase
+    public class TimeSlotController(ITimeSlotService timeSlotService, IReservationService reservationsService, ILogger<TimeSlotController> logger) : ControllerBase
     {
         private readonly ILogger _logger = logger;
         private readonly ITimeSlotService _timeSlotService = timeSlotService;
+        private readonly IReservationService _reservationsService = reservationsService;
 
 
         /// <summary>
@@ -30,6 +31,9 @@ namespace Rise.Server.Controllers
             DateOnly endDate
             )
         {
+
+            var fakeUserId = 2;
+
             _logger.LogInformation("GET range?startDate={startDate}&endDay={endDay}", [startDate, endDate]);
             _logger.LogDebug("Checking if {startDate} becomes before {endDay} ", [startDate, endDate]);
             if (startDate > endDate)
@@ -44,9 +48,17 @@ namespace Rise.Server.Controllers
             _logger.LogDebug("Getting days between range {startDate} and {endDay} from service layer", [startDate, endDate]);
             TimeSlotRangeInfoDto timeSlotRangeInfoDto = await _timeSlotService.GetAllTimeSlotsInRange(
                 startDate, endDate);
-            _logger.LogDebug("Returning {days} days from {Start} to {End}", [timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Start, timeSlotRangeInfoDto.End]);
+            _logger.LogDebug("Returning {days} days from {startDate} to {endDay}", [timeSlotRangeInfoDto.TotalDays, startDate, endDate]);
 
-            return Ok(timeSlotRangeInfoDto);
+
+            _logger.LogDebug("Getting reservations between range {startDate} and {endDay} from service layer", [startDate, endDate]);
+            ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate, fakeUserId);
+            _logger.LogDebug("Returning {reservationCount} reservations from {startDate} to {endDay}", [reservationsRangeDto.Reservations.Count(), startDate, endDate]);
+
+
+            TimeSlotRangeInfoDto timeSlotRangeInfoDtoWithReservations = new(timeSlotRangeInfoDto.TotalDays, timeSlotRangeInfoDto.Days.Select(day => new TimeSlotDaySurfaceInfoDto(day.Date, day.IsFullyBooked, day.IsSlotAvailable, reservationsRangeDto.Reservations.Contains(day.Date))));
+
+            return Ok(timeSlotRangeInfoDtoWithReservations);
         }
 
 

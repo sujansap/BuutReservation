@@ -10,14 +10,14 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
     public partial class TimeSlotComponent
     {
         [Parameter]
-        public TimeSlotDto? Timeslot { get; set; }
+        public required TimeSlotDto TimeSlot { get; set; }
 
         private string StackStyle { get; set; } = GetStyle(AvailabilityEnum.Unavailable);
         private Color TextColor { get; set; } = GetColor(AvailabilityEnum.Unavailable);
 
         protected override void OnParametersSet()
         {
-            var availability = Timeslot.IsBookedByUser ? AvailabilityEnum.Booked : AvailabilityEnum.Available;
+            AvailabilityEnum availability = TimeSlot.IsBookedByUser ? AvailabilityEnum.Booked : AvailabilityEnum.Available;
             StackStyle = GetStyle(availability);
             TextColor = GetColor(availability);
         }

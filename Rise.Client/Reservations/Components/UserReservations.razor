@@ -1,4 +1,3 @@
-@page "/reservations/your-reservations"
 @using MudBlazor
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Reservations
@@ -43,9 +42,7 @@
                             <!-- View Details Button -->
                             <MudItem xs="3" Class="d-flex justify-end align-center">
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                    Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
-                                    OnMouseOver="e => e.Target.Style.BackgroundColor = '#009688';"
-                                    OnMouseOut="e => e.Target.Style.BackgroundColor = '#40e0d0';">
+                                    Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
                                     @Localizer["ViewDetails"]
                                 </MudButton>
                             </MudItem>

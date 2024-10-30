@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-	<data name="NoTimeSlotAvailable" xml:space="preserve">
+	<data name="NoTimeSlotAvailable">
 		<value>Geen tijdsloten beschikbaar.</value>
 	</data>
-	<data name="Reserve" xml:space="preserve">
+	<data name="Reserve">
 		<value>Reserveer</value>
 	</data>
-	<data name="YourReservations" xml:space="preserve">
+	<data name="YourReservations">
 		<value>Uw Reservaties</value>
 	</data>
 	<data name="NoReservationsFound">
@@ -29,9 +29,6 @@
 	</data>
 	<data name="Next">
 		<value>Volgende</value>
-	</data>
-	<data name="Reserve">
-		<value>Reserveer</value>
 	</data>
 	<data name="LoadingReservations">
 		<value>Reserveringen laden...</value>
