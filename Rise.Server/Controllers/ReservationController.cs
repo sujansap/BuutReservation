@@ -22,7 +22,7 @@ namespace Rise.Server.Controllers
         /// Gets all reservations for a user.
         /// </summary>
         /// <remarks>
-        /// <para>To get the first page, set cursor to null. For ther other pages, use the following logic:</para> 
+        /// <para>To get the first page, set cursor and isNextPage to null. For ther other pages, use the following logic:</para> 
         /// <para>How it works, set the cursor to an Id you get from a request with the following valid parameters (not null):
         /// <br/>
         /// <para>NextId and isNextPage equals true: get the next page </para>
@@ -37,16 +37,42 @@ namespace Rise.Server.Controllers
         /// <returns>List of reservations</returns>
         [HttpGet("me")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCurrentUserReservations(
             [FromQuery] int? cursor,
             [FromQuery] bool? isNextPage,
-            [FromQuery] bool getPast,
-            [FromQuery] int pageSize = 3)
+            [FromQuery] bool getPast = false,
+            [FromQuery] int pageSize = 5)
         {
-            Console.WriteLine("HERE 22: GetCurrentUserReservations");
-            var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);
-            Console.WriteLine("HERE 23: GetCurrentUserReservations" + reservations.Data.Count());
+            if (cursor < 0)
+            {
+                _logger.LogWarning("Invalid cursor id: {cursor} is negative.", [cursor]);
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "Cursor", [$"The cursor cannot contain negative ids ({cursor})."] }
+                }));
+            }
 
+            if (pageSize < 1)
+            {
+                _logger.LogWarning("Invalid page size: {pageSize} is negative.", [pageSize]);
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "PageSize", [$"Page size must be a whole positive number; {pageSize}."] }
+                }));
+            }
+
+            if (cursor is not null && isNextPage is null)
+            {
+                _logger.LogWarning("Invalid paging direction {isNextPage}, but cursor was correct.", [isNextPage]);
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "Cursor", [$"Correctly given cursor; {cursor}."] },
+                    {"IsNextPage", [$"Paging direction is null, specify forward (true) or backwards (false) direction."]}
+                }));
+            }
+
+            var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);
             return Ok(reservations);
         }
     }

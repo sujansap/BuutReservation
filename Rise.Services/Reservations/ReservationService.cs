@@ -41,7 +41,7 @@ namespace Rise.Services.Reservations
             return new ReservationsRangeDto(allReservationsDuringRange.Select(reservation => reservation.Date));
         }
 
-        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 3)
+        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
             //     IQueryable<IReservation> reservationsQuery = _dbContext.Reservations
             //         .Where(r => (r.UserId == userId) && (getPast ?
@@ -123,6 +123,9 @@ namespace Rise.Services.Reservations
 
             return await PaginationService.GetPaginatedResultsAsync<IReservation, ReservationDto>(
                 queryableDbSet: _dbContext.Reservations.AsQueryable(),
+                filterLambda: r => (r.UserId == userId) && (getPast ?
+                   r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
+                   r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
                 orderingExpressions: [
                 new OrderingExpression<IReservation, object> {
                     OrderLambda = r => r.TimeSlot.Date
@@ -142,10 +145,7 @@ namespace Rise.Services.Reservations
                 },
                 cursor: cursor,
                 isNextPage: isNextPage,
-                pageSize: pageSize,
-                filterLambda: r => (r.UserId == userId) && (getPast ?
-                   r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
-                   r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now))
+                pageSize: pageSize
             );
         }
     }
