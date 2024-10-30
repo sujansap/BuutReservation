@@ -1,5 +1,6 @@
 using Heron.MudCalendar;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace Rise.Client.Reservations.Components.CustomCalendar;
 

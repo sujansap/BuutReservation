@@ -1,8 +1,10 @@
-name: Create and publish a Docker image
+name: container-creator
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - staging
+      - production
 
 env:
   REGISTRY: ghcr.io
@@ -14,6 +16,7 @@ concurrency:
 
 jobs:
   build-and-push-image:
+    name: publish-web-api-container
     runs-on: [self-hosted]
     permissions:
       contents: read
