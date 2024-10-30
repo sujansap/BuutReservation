@@ -37,13 +37,13 @@ public static class PaginationService
             }
         }
 
-        var items = entitiesQuery.Take(takeAmount);
+        entitiesQuery = entitiesQuery.Take(takeAmount);
         if (isNextPage == false && cursor is not null)
         {
-            items = items.Reverse();
+            entitiesQuery = entitiesQuery.Reverse();
         }
 
-        var queriedEntities = await items.Select(projection).ToListAsync();
+        var queriedEntities = await entitiesQuery.Select(projection).ToListAsync();
 
         if (queriedEntities.Count == 0)
         {
