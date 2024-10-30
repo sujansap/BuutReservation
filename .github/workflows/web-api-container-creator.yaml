@@ -5,7 +5,6 @@ on:
     branches:
       - staging
       - production
-      - opst-testing
 
 env:
   REGISTRY: ghcr.io
@@ -37,7 +36,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Generate a timestamp for tagging based on the repository name and current time in Belgium
+      # Generate a timestamped tag based on the branch name and timestamp
       - name: Generate timestamp tag
         id: timestamp
         run: |
@@ -45,8 +44,10 @@ jobs:
           export TZ="Europe/Brussels"
           # Get the current timestamp in YYYYMMDD-HHMMSS format
           TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
-          # Set the tag as '<repo_name>-TIMESTAMP'
-          TAG="${{ github.event.repository.name }}-${TIMESTAMP}"
+          # Get the branch name and use it in the tag
+          BRANCH_NAME="${{ github.ref_name }}"
+          # Set the tag as '<branch_name>-TIMESTAMP'
+          TAG="${BRANCH_NAME}-${TIMESTAMP}"
           echo "TAG=${TAG}" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker
@@ -55,7 +56,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ env.TAG }}  # Dynamic tag with repo name and timestamp
+            type=raw,value=${{ env.TAG }}  # Dynamic tag with branch name and timestamp
 
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
