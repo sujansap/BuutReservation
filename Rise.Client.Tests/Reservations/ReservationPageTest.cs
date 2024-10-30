@@ -286,7 +286,7 @@ namespace Rise.Client.Reservations
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync("/reservations");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
@@ -295,8 +295,8 @@ namespace Rise.Client.Reservations
         {
             string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
             string currentDate = DateTime.Today.ToString(universalDateFormat);
-            await Page.GotoAsync($"/reservations?CurrentDate={toEarlyDate}");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.GotoAsync($"/reservationsCurrentDate={toEarlyDate}");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
@@ -306,8 +306,8 @@ namespace Rise.Client.Reservations
 
             DateTime plusOneMonthDate = DateTime.Today.AddMonths(1);
             string plusOneMonthDateFormatted = plusOneMonthDate.ToString(universalDateFormat);
-            await Page.GotoAsync($"/reservations?CurrentDate={plusOneMonthDateFormatted}");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={plusOneMonthDateFormatted}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.GotoAsync($"/reservationsCurrentDate={plusOneMonthDateFormatted}");
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={plusOneMonthDateFormatted}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={plusOneMonthDateFormatted}");
 
             ILocator date = Page.Locator($"[identifier={DateOnly.FromDateTime(plusOneMonthDate)}]");
@@ -319,12 +319,12 @@ namespace Rise.Client.Reservations
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync("/reservations");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
 
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
             string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
         }
 
