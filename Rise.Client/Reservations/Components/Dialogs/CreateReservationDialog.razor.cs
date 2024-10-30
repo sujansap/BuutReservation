@@ -17,6 +17,7 @@ namespace Rise.Client.Reservations.Components.Dialogs
         [Parameter]
         public TimeSlotDto? Timeslot { get; set; }
         public ReservationDto.Create Reservation { get; set; } = new ReservationDto.Create();
+        private DialogState State { get; set; } = DialogState.Overview;
 
         protected override void OnParametersSet()
         {
@@ -28,6 +29,25 @@ namespace Rise.Client.Reservations.Components.Dialogs
         {
             Snackbar.Add("Reservatie aangemaakt", Severity.Success);
             MudDialog.Close();
+        }
+
+        private void NextState()
+        {
+            if (State == DialogState.Overview)
+            {
+                State = DialogState.Pay;
+            }
+            else if (State == DialogState.Pay)
+            {
+                State = DialogState.Success;
+            }
+        }
+
+        private enum DialogState
+        {
+            Overview,
+            Pay,
+            Success
         }
     }
 }

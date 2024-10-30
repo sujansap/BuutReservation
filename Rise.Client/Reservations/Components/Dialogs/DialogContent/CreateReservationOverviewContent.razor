@@ -1,0 +1,13 @@
+﻿@using Rise.Shared.TimeSlots;
+
+<MudText>
+    U staat op het punt een reservatie te maken voor de volgende datum en tijdstip:
+</MudText>
+<MudText Class="mb-8">
+    @Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End
+</MudText>
+
+@code {
+    [Parameter] public DateOnly Date { get; set; }
+    [Parameter] public TimeSlotDto? Timeslot { get; set; }
+}

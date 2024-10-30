@@ -1,0 +1,29 @@
+﻿@using Rise.Shared.TimeSlots;
+@using MudBlazor;
+
+@if (IsLoading)
+{
+    <MudStack Justify="Justify.Center">
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+</MudStack>
+}
+else
+{
+    <MudText>Uw reservatie is succesvol aangemaakt</MudText>
+}
+
+@code {
+    [Parameter] public DateOnly Date { get; set; }
+    [Parameter] public TimeSlotDto? Timeslot { get; set; }
+    private bool IsLoading { get; set; } = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(2000);
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+}
