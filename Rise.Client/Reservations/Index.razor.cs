@@ -1,3 +1,4 @@
+using Heron.MudCalendar;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.TimeSlots;
@@ -14,6 +15,7 @@ namespace Rise.Client.Reservations
         /// All unavailable days on the calendar
         /// </summary>
         private Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
+        private List<ColoredCalendarItem> ReservationsOfCurrentUser = new List<ColoredCalendarItem>();
 
         private DateOnly? SelectedDate { get; set; }
 
@@ -50,6 +52,7 @@ namespace Rise.Client.Reservations
                 .Where(day => day.IsSlotAvailable)
                 .ToDictionary(day => day.Date, day => day);
 
+                ReservationsOfCurrentUser = response.Days.Where(day => day.IsBookedByUser).Select(ConvertToCalendarItems).ToList();
             }
 
             catch
@@ -62,13 +65,37 @@ namespace Rise.Client.Reservations
         }
 
         /// <summary>
+        /// Converts calendar item to highlight on calendar using day info
+        /// </summary>
+        /// <param name="day">day info about the events</param>
+        /// <returns>calendar item</returns>
+        private static ColoredCalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
+        {
+            return new ColoredCalendarItem()
+            {
+                Start = day.Date.ToDateTime(TimeOnly.MinValue),
+                End = day.Date.ToDateTime(TimeOnly.MaxValue),
+                Text = "",
+                Color = Color.Primary,
+            };
+        }
+
+        /// <summary>
         /// When a day is being selected
         /// </summary>
         /// <param name="date">The clicked date</param>
         /// <returns></returns>
         private void OnCellClicked(DateTime date)
         {
-            SelectedDate = DateOnly.FromDateTime(date);
+            if (AvailableDays.ContainsKey(DateOnly.FromDateTime(date)))
+            {
+                SelectedDate = DateOnly.FromDateTime(date);
+            }
         }
+    }
+
+    public partial class ColoredCalendarItem : CalendarItem
+    {
+        public Color Color { get; set; } = Color.Primary;
     }
 }

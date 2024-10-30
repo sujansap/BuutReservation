@@ -94,7 +94,6 @@ namespace Rise.Client.Reservations
 
             ILocator available = Page.Locator("[data-celtype=available]");
             await Expect(available).ToHaveCountAsync(2);
-
         }
 
         [Test]
@@ -116,12 +115,21 @@ namespace Rise.Client.Reservations
 
         }
 
+        //  TODO make tests for no timeslots found and loading
+
         [Test]
         public async Task HasTimeslotsInTimeSlotList()
         {
-
             // Arange
-            DateOnly today = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            TimeSlotRangeInfoDto timeRange = new(
+                TotalDays: 1,
+                Days: [
+                    new(today, false, true),
+                ]
+            );
+
+
             TimeSlotDto[] timeSlotDtos = [
                 new()
                 {
@@ -147,7 +155,16 @@ namespace Rise.Client.Reservations
             ];
 
             // Act
-            await Page.RouteAsync("*/**/api/TimeSlot/**", async route =>
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(timeRange)
+                });
+            });
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
             {
                 await route.FulfillAsync(new()
                 {
@@ -158,15 +175,14 @@ namespace Rise.Client.Reservations
             });
             await Page.GotoAsync("/reservations");
 
-            var day = Page.GetByText($"{today.Day + 2}");
+            ILocator day = Page.Locator($"[identifier='{today}']");
             await day.ClickAsync();
 
+            ILocator timeSlotList = Page.GetByTestId("time-slot-list");
 
-            var timeSlotList = Page.GetByTestId("time-slot-list");
-
-            var timeSlot1 = timeSlotList.GetByTestId("time-slot-1");
-            var timeSlot2 = timeSlotList.GetByTestId("time-slot-2");
-            var timeSlot3 = timeSlotList.GetByTestId("time-slot-3");
+            ILocator timeSlot1 = timeSlotList.GetByTestId("time-slot-1");
+            ILocator timeSlot2 = timeSlotList.GetByTestId("time-slot-2");
+            ILocator timeSlot3 = timeSlotList.GetByTestId("time-slot-3");
 
 
             // Assert
@@ -310,6 +326,24 @@ namespace Rise.Client.Reservations
             string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
+        }
+
+
+        [Test]
+        public async Task GreyedOutCalendarCellsAreUnclickable()
+        {
+            // Arrange
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            // Act
+            await Page.GotoAsync("/reservations");
+            var calendarCellToday = Page.Locator($"[identifier='{today}']");
+            await calendarCellToday.ClickAsync();
+
+            // Assert
+            ILocator timeSlotList = Page.GetByTestId("time-slot-list");
+
+            await Expect(timeSlotList).ToHaveCountAsync(0);
         }
     }
 }
