@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Net.Cache;
 using Microsoft.EntityFrameworkCore;
+using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
 using Rise.Persistence;
 using Rise.Services.Pagination;
@@ -125,6 +126,56 @@ namespace Rise.Services.Reservations
                    r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
                    r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now))
             );
+        }
+
+
+        public async Task<ReservationDto> CreateReservation(int userId, int timeSlotId, int boatId)
+        {
+            var boat = await _dbContext.Boats.FindAsync(boatId);
+
+            if (boat is null)
+            {
+                throw new ArgumentException("Boat not found");
+            }
+
+            var timeSlot = await _dbContext.TimeSlots.FindAsync(timeSlotId);
+            if (timeSlot is null)
+            {
+                throw new ArgumentException("Time slot not found");
+            }
+
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user is null)
+            {
+                throw new ArgumentException("User not found");
+            }
+
+            var reservation = new Reservation
+            {
+                UserId = userId,
+                User = user,
+                TimeSlot = timeSlot,
+                TimeSlotId = timeSlotId,
+                BoatId = boatId,
+                Boat = boat
+            };
+
+
+            await _dbContext.Reservations.AddAsync(reservation);
+            await _dbContext.SaveChangesAsync();
+
+
+            return new ReservationDto
+            {
+                Id = reservation.Id,
+                Start = timeSlot.Start,
+                End = timeSlot.End,
+                Date = timeSlot.Date,
+                BoatId = boatId,
+                BoatPersonalName = boat.PersonalName
+            };
+
+
         }
     }
 
