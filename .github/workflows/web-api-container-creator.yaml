@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   build-and-push-image:
+    name: Create-and-publish-a-Docker-image
     runs-on: [self-hosted]
     permissions:
       contents: read
