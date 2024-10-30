@@ -5,6 +5,7 @@ on:
     branches:
       - staging
       - production
+      - opst-testing
 
 env:
   REGISTRY: ghcr.io
@@ -21,7 +22,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-      
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,7 +37,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Generate a timestamp for tagging in Belgian time
+      # Generate a timestamp for tagging based on the repository name and current time in Belgium
       - name: Generate timestamp tag
         id: timestamp
         run: |
@@ -44,8 +45,9 @@ jobs:
           export TZ="Europe/Brussels"
           # Get the current timestamp in YYYYMMDD-HHMMSS format
           TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
-          # Set the tag as 'main-TIMESTAMP'
-          echo "TAG=main-${TIMESTAMP}" >> $GITHUB_ENV
+          # Set the tag as '<repo_name>-TIMESTAMP'
+          TAG="${{ github.event.repository.name }}-${TIMESTAMP}"
+          echo "TAG=${TAG}" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -53,7 +55,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ env.TAG }}  # Tag with main-TIMESTAMP format
+            type=raw,value=${{ env.TAG }}  # Dynamic tag with repo name and timestamp
 
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
