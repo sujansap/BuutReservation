@@ -9,7 +9,7 @@
         <MudStack>
             <MudText Typo="Typo.subtitle2">@Localizer["DateAndTime"]:</MudText>
             <MudText Typo="Typo.h5">@Date.ToString("D")</MudText>
-            <MudText Typo="Typo.h5">@Timeslot?.Start - @Timeslot?.End</MudText>
+            <MudText Typo="Typo.h5">@TimeSlot?.Start - @TimeSlot?.End</MudText>
         </MudStack>
 
         <MudDivider Class="my-3" />
@@ -27,10 +27,3 @@
         </MudStack>
     </MudStack>
 </MudContainer>
-
-
-@code {
-    [Parameter] public UserDto User { get; set; }
-    [Parameter] public DateOnly Date { get; set; }
-    [Parameter] public TimeSlotDto? Timeslot { get; set; }
-}

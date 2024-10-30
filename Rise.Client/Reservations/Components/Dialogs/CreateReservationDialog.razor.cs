@@ -8,24 +8,22 @@ namespace Rise.Client.Reservations.Components.Dialogs
 {
     public partial class CreateReservationDialog
     {
-        [Inject]
-        private ISnackbar Snackbar { get; set; }
         [CascadingParameter]
-        private MudDialogInstance MudDialog { get; set; }
+        private MudDialogInstance MudDialog { get; set; } = default!;
         [Parameter]
         public DateOnly Date { get; set; }
         [Parameter]
-        public TimeSlotDto? Timeslot { get; set; }
+        public required TimeSlotDto TimeSlot { get; set; }
 
-        private bool IsLoading { get; set; } = false;
-        public ReservationDto.Create Reservation { get; set; } = new ReservationDto.Create();
+        public required ReservationCreateDto Reservation { get; set; }
         private DialogState State { get; set; } = DialogState.Overview;
         private UserDto User { get; set; } = new UserDto("John Doe", "john.doe@email.com");
 
         protected override void OnParametersSet()
         {
-            Reservation.TimeSlot = Timeslot;
+            Reservation = new ReservationCreateDto() { TimeSlot = TimeSlot };
         }
+        private void Close() => MudDialog.Close();
         private void Cancel() => MudDialog.Cancel();
 
         private async void CreateReservation()
@@ -45,6 +43,7 @@ namespace Rise.Client.Reservations.Components.Dialogs
 
 
     }
+    // TODO move to shared
     public class UserDto(string name, string email)
     {
         public string Name { get; set; } = name;

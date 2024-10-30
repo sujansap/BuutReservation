@@ -9,27 +9,3 @@
     </MudText>
     <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
 </MudStack>
-
-@code {
-    private string LoadingDots = ".";
-    private System.Threading.Timer? timer;
-
-    protected override void OnInitialized()
-    {
-        timer = new System.Threading.Timer(
-        _ =>
-        {
-            LoadingDots = LoadingDots.Length >= 3 ? "." : LoadingDots + ".";
-            InvokeAsync(StateHasChanged);
-        },
-        null,
-        0,
-        500
-        );
-    }
-
-    public void Dispose()
-    {
-        timer?.Dispose();
-    }
-}
