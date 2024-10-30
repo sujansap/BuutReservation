@@ -6,6 +6,7 @@ on:
       - staging
       - main
       - production
+      - opst-testing
 jobs:
   build:
     name: dotnet-run-all-tests
