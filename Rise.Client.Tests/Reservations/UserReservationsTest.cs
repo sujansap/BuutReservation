@@ -1,43 +1,13 @@
-// TODO: Add tests for UserReservations.razor
-using System;
 using Microsoft.Playwright;
-using Microsoft.Playwright.MSTest;
 using Shouldly;
-using System.Threading.Tasks;
 using Rise.Shared.Reservations;
-using System.IO;
 
 namespace Rise.Client.Reservations {
 
-    [TestClass]
-    public class UserReservationsTest : PageTest
+    [TestFixture]
+    public class UserReservationsTest : CustomPageTest
     {
 
-            [TestInitialize]
-    public async Task TestInitialize()
-    {
-         await Context.Tracing.StartAsync(new()
-        {
-            Title = $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}",
-            Screenshots = true,
-            Snapshots = true,
-            Sources = true
-        });
-    }
-
-    [TestCleanup]
-    public async Task TestCleanup()
-    {
-        await Context.Tracing.StopAsync(new()
-        {
-            Path = Path.Combine(
-                Environment.CurrentDirectory,
-                "playwright-traces",
-                $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}.zip"
-            )
-        });
-    }
-    
         private const string UserReservationsUrl = "https://localhost:5001/reservations/your-reservations";
 
         private ReservationDto ValidReservation = new (){
@@ -85,7 +55,7 @@ namespace Rise.Client.Reservations {
             });
         }
 
-        [TestMethod]
+        [Test]
         public async Task HasTabs()
         {
             await Page.GotoAsync(UserReservationsUrl);
@@ -93,8 +63,8 @@ namespace Rise.Client.Reservations {
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
         }
 
-        
-        [TestMethod]
+
+        [Test]
         public async Task DoesNotHaveLegendComponent()
         {
             await Page.GotoAsync(UserReservationsUrl);
@@ -103,7 +73,7 @@ namespace Rise.Client.Reservations {
         }
 
 
-        [TestMethod]
+        [Test]
         public async Task HasCorrectAmountOfReservations()
         {
             await MockReservationsApi();
@@ -116,7 +86,7 @@ namespace Rise.Client.Reservations {
             await Expect(locator).ToHaveCountAsync(3);
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShowsReservations()
         {
             await MockReservationsApi();
@@ -129,9 +99,9 @@ namespace Rise.Client.Reservations {
             (await firstReservation.GetByTestId("reservation-time").InnerTextAsync()).ShouldContain($"{ValidReservation.Start.ToString("HH:mm")} - {ValidReservation.End.ToString("HH:mm")}");
             
         }
-     
-        
-        [TestMethod]
+
+
+        [Test]
         public async Task ShowsLoadingStateWhileFetchingReservations()
         {
             var mockTask = MockReservationsApi();
@@ -143,7 +113,7 @@ namespace Rise.Client.Reservations {
             await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShowsEmptyStateWhenNoReservations()
         {
             await MockEmptyReservationsApi();
@@ -159,7 +129,7 @@ namespace Rise.Client.Reservations {
             reservations.Count.ShouldBe(0);
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShowsErrorStateWhenApiReturns400()
         {
             await MockReservationsApiError();
@@ -177,9 +147,5 @@ namespace Rise.Client.Reservations {
     }
 }
 
-
-// todo: test loading state DONE
-// todo: test data that comes in DONE
-// todo: test for empty list of data DONE
 // todo: test for error state 400
 
