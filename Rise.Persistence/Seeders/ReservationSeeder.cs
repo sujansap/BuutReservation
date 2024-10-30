@@ -108,7 +108,7 @@ namespace Rise.Persistence.Seeders
                 new (){ User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[60], Boat = BoatSeeder.boats[0],  },
 
                 new (){ User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[65], Boat = BoatSeeder.boats[0],  },
-                new (){ User = UserSeeder.users[2], TimeSlot = TimeSlotSeeder.timeSlots[65], Boat = BoatSeeder.boats[0],  },
+                //new (){ User = UserSeeder.users[2], TimeSlot = TimeSlotSeeder.timeSlots[65], Boat = BoatSeeder.boats[0],  },
                 new (){ User = UserSeeder.users[2], TimeSlot = TimeSlotSeeder.timeSlots[66], Boat = BoatSeeder.boats[0],  },
 
                 new (){ User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[91], Boat = BoatSeeder.boats[0],  },
