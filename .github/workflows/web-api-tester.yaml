@@ -7,6 +7,10 @@ on:
       - main
       - production
       - opst-testing
+  push:
+    branches:
+      - opst-testing
+
 jobs:
   build:
     name: dotnet-run-all-tests
@@ -76,6 +80,18 @@ jobs:
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
         run: dotnet test Rise.Server.Tests
+
+      # New steps for setting up and running Playwright tests
+      - name: Create Playwright test project
+        run: |
+          dotnet new nunit -n PlaywrightTests
+          cd PlaywrightTests
+          dotnet add package Microsoft.Playwright.NUnit
+
+      - name: Build Playwright test project
+        run: |
+          cd PlaywrightTests
+          dotnet build
 
       - name: Check test result
         if: ${{ failure() }}
