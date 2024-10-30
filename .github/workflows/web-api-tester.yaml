@@ -33,7 +33,7 @@ jobs:
 
       - name: Install .NET SDK and Runtime
         run: |
-          wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+          wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
           sudo dpkg -i packages-microsoft-prod.deb
           rm packages-microsoft-prod.deb
           sudo apt-get update && \
@@ -57,7 +57,7 @@ jobs:
         run: |
           dotnet run --project Rise.Server --configuration Release &  
  
-      - name: Wait for the application to be ready
+      - name: Wait for the web-api-application to be ready on port https 5001
         run: |
           for i in {1..30}; do
             response=$(curl -s -k -o /dev/null -w "%{http_code}" https://localhost:5001 || echo "connection_error")
@@ -96,8 +96,7 @@ jobs:
           dotnet build
       - name: Install PowerShell
         run: |
-          wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.6/powershell_7.4.6-1.deb_amd64.deb -O powershell_7.4.6-1.deb_amd64.deb
-          sudo dpkg -i powershell_7.4.6-1.deb_amd64.deb
+          wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.4.6/powershell_7.4.6-1.deb_amd64.deb -O powershell_7.4.6-1.deb_amd64.deb          sudo dpkg -i powershell_7.4.6-1.deb_amd64.deb
           sudo apt-get install -f -y  # Fix any dependency issues
 
       - name: Install Playwright browsers
@@ -108,7 +107,7 @@ jobs:
         run: |
           dotnet run --project Rise.Client &
  
-      - name: Wait for the application to be ready
+      - name: Wait for the client  application to be ready on port https 5003
         run: |
           for i in {1..30}; do
             response=$(curl -s -k -o /dev/null -w "%{http_code}" https://localhost:5003 || echo "connection_error")
