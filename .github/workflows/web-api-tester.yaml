@@ -81,7 +81,9 @@ jobs:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
         run: dotnet test Rise.Server.Tests
 
-      # New steps for setting up and running Playwright tests
+
+
+      # New steps for setting up and running Playwright tests------------------------------------------------------
       - name: Create Playwright test project
         run: |
           dotnet new nunit -n PlaywrightTests
@@ -92,6 +94,32 @@ jobs:
         run: |
           cd PlaywrightTests
           dotnet build
+
+      - name: Install Playwright browsers
+        run: |
+          pwsh PlaywrightTests/bin/Debug/net8.0/playwright.ps1 install
+
+      - name: Run Playwright E2E
+        run: |
+          dotnet run --project Rise.Client 
+ 
+      # - name: Wait for the application to be ready
+      #   run: |
+      #     for i in {1..30}; do
+      #       response=$(curl -s -k -o /dev/null -w "%{http_code}" https://localhost:5003 || echo "connection_error")
+            
+      #       if [ "$response" -eq 200 ]; then
+      #         echo "Application is ready! HTTP status code: $response"
+      #         break
+      #       elif [ "$response" == "connection_error" ]; then
+      #         echo "Connection failed. Application might not be running yet."
+      #       else
+      #         echo "Received HTTP status code: $response. Waiting for the application to be ready..."
+      #       fi
+      #       sleep 2
+      #     done          
+      # - name: Run E2E Tests
+      #   run: dotnet test Rise.Client.Tests
 
       - name: Check test result
         if: ${{ failure() }}
