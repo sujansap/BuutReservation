@@ -8,11 +8,11 @@ namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TimeSlotController(ITimeSlotService timeSlotService, IReservationsService reservationsService, ILogger<TimeSlotController> logger) : ControllerBase
+    public class TimeSlotController(ITimeSlotService timeSlotService, IReservationService reservationsService, ILogger<TimeSlotController> logger) : ControllerBase
     {
         private readonly ILogger _logger = logger;
         private readonly ITimeSlotService _timeSlotService = timeSlotService;
-        private readonly IReservationsService _reservationsService = reservationsService;
+        private readonly IReservationService _reservationsService = reservationsService;
 
 
         /// <summary>

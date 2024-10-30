@@ -9,4 +9,43 @@
 	<data name="YourReservations">
 		<value>Uw Reservaties</value>
 	</data>
+	<data name="NoReservationsFound">
+		<value>Geen reservaties gevonden.</value>
+	</data>
+	<data name="ReservationFor">
+		<value>Reservatie voor</value>
+	</data>
+	<data name="Boat">
+		<value>Boot</value>
+	</data>
+	<data name="Time">
+		<value>Tijd</value>
+	</data>
+	<data name="ViewDetails">
+		<value>Zie details</value>
+	</data>
+	<data name="Previous">
+		<value>Vorige</value>
+	</data>
+	<data name="Next">
+		<value>Volgende</value>
+	</data>
+	<data name="LoadingReservations">
+		<value>Reserveringen laden...</value>
+	</data>
+	<data name="ErrorLoadingReservations">
+		<value>Er is iets mis gegaan bij het ophalen van de reserveringen.</value>
+	</data>
+	<data name="Date">
+		<value>Datum</value>
+	</data>
+	<data name="FullyBooked">
+		<value>Volzet</value>
+	</data>
+	<data name="NotAvailable">
+		<value>Niet beschikbaar</value>
+	</data>
+	<data name="SelectDate">
+		<value>Selecteer datum</value>
+	</data>
 </root>

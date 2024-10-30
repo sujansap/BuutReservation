@@ -29,7 +29,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
-builder.Services.AddScoped<IReservationsService, ReservationsService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 builder.Services.AddLocalization();
 
@@ -42,8 +42,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-if (!app.Environment.IsProduction())
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();

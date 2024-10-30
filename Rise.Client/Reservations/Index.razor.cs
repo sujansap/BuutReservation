@@ -7,7 +7,6 @@ namespace Rise.Client.Reservations
 {
     public partial class Index : ComponentBase
     {
-
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; } = default!;
 
@@ -92,6 +91,7 @@ namespace Rise.Client.Reservations
                 SelectedDate = DateOnly.FromDateTime(date);
             }
         }
+
     }
 
     public partial class ColoredCalendarItem : CalendarItem
