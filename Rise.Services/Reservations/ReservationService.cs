@@ -18,7 +18,7 @@ namespace Rise.Services.Reservations
         /// <summary>
         /// Gets all reservations in the given date range by the current user
         /// </summary>
-        internal class Reservation
+        internal class ReservationTemp
         {
             public DateOnly Date { get; set; }
         }
@@ -26,13 +26,13 @@ namespace Rise.Services.Reservations
         {
             ISet<DateOnly> reservations = new HashSet<DateOnly>();
 
-            List<Reservation> allReservationsDuringRange = await _dbContext.Reservations.Where(
+            List<ReservationTemp> allReservationsDuringRange = await _dbContext.Reservations.Where(
                 reservation =>
                 reservation.TimeSlot.Date >= startDate &&
                 reservation.TimeSlot.Date <= endDate &&
                 reservation.UserId == userId
                 )
-                .Select(reservation => new Reservation()
+                .Select(reservation => new ReservationTemp()
                 {
                     Date = reservation.TimeSlot.Date,
                 }
