@@ -8,10 +8,12 @@ namespace Rise.Client.Services
     {
         private readonly HttpClient _httpClient = httpClient;
 
-        public Task<ReservationDto> CreateReservation(int userId, int timeSlotId, int boatId)
+        public async Task<ReservationDto> CreateReservation(int userId, int timeSlotId, int boatId)
         {
-            // TODO
-            throw new NotImplementedException();
+            Console.WriteLine("HERE: CreateReservation");
+            var result = await _httpClient.PostAsJsonAsync("", new { userId, timeSlotId, boatId });
+            Console.WriteLine("Result: " + result);
+            return await result.Content.ReadFromJsonAsync<ReservationDto>() ?? new ReservationDto();
         }
 
         public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
