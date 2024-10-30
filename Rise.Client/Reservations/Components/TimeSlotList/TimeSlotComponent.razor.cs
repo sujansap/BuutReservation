@@ -12,7 +12,7 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
     public partial class TimeSlotComponent
     {
         [Inject]
-        public IDialogService DialogService { get; set; }
+        public required IDialogService DialogService { get; set; }
         [Parameter]
         public required TimeSlotDto TimeSlot { get; set; }
         [Parameter]
@@ -80,9 +80,9 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
             var result = await dialog.Result;
         }
 
-        private static string GetCursorClass(TimeSlotDto TimeSlot)
+        private static string GetCursorClass(TimeSlotDto? TimeSlot)
         {
-            if (TimeSlot == null)
+            if (TimeSlot is null)
             {
                 return "cursor-default";
             }
