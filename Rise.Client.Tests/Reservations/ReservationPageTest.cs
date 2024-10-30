@@ -30,14 +30,10 @@ namespace Rise.Client.Reservations
         {
             await Page.GotoAsync("/reservations");
 
-            // Wait for the page to load
-            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-            // Use a simple class selector to find all calendar day cells
-            var days = await Page.Locator(".mud-cal-month-cell").AllAsync();
+            ILocator daysLocator = Page.GetByTestId("calendar-cel");
 
             // Assert the correct number of days
-            Assert.That(days.Count, Is.EqualTo(35), "The calendar should have 35 day elements (5 weeks * 7 days)");
+            await Expect(daysLocator).ToHaveCountAsync(35);
         }
 
         [Test]
@@ -57,7 +53,7 @@ namespace Rise.Client.Reservations
         [Test]
         public async Task HasUnexpectedError()
         {
-            await Page.RouteAsync("*/**/api/TimeSlot/range/**", async route =>
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
             {
                 await route.FulfillAsync(new()
                 {
@@ -71,7 +67,7 @@ namespace Rise.Client.Reservations
         }
 
         [Test]
-        public async Task CheckDateTypes()
+        public async Task ContainCalendarDataDates()
         {
             int totalDays = 4;
             DateOnly startDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
@@ -85,7 +81,7 @@ namespace Rise.Client.Reservations
                     new(startDate.AddDays(3), true, true),
                 ]
             );
-            await Page.RouteAsync("*/**/api/TimeSlot/range/**", async route =>
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
             {
                 await route.FulfillAsync(new()
                 {
@@ -95,11 +91,29 @@ namespace Rise.Client.Reservations
                 });
             });
             await Page.GotoAsync("/reservations");
-            var locator = Page.Locator($"[identifier={startDate}]");
-            var child = locator.GetByTestId("custom-calendar-day");
-            child.ShouldNotBeNull();
 
-            // TODO make beter tests for checking date availability
+            ILocator available = Page.Locator("[data-celtype=available]");
+            await Expect(available).ToHaveCountAsync(2);
+
+        }
+
+        [Test]
+        public async Task ContainNoAvailableDateDates()
+        {
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(new List<object>())
+                });
+            });
+            await Page.GotoAsync("/reservations");
+
+            ILocator booked = Page.Locator("[data-celtype=fully-booked]");
+            await Expect(booked).ToHaveCountAsync(35);
+
         }
 
         [Test]

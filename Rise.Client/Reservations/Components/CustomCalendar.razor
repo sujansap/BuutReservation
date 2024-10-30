@@ -5,7 +5,7 @@
 
 @code {
 
-    protected override RenderFragment RenderMonthView => @<CustomMonthView GreyedOutDates="@GreyedOutDates" />;
+    protected override RenderFragment RenderMonthView => @<CustomMonthView AvailableDays="@AvailableDays" />;
 
     @* ! Copy paste from original component since the individual parts are not extensible, boo *@
     protected override RenderFragment RenderToolbar =>
