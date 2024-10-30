@@ -8,7 +8,7 @@ namespace Rise.Client.Reservations {
     public class UserReservationsTest : CustomPageTest
     {
 
-        private const string UserReservationsUrl = "/reservations/user-reservation";
+        private const string UserReservationsUrl = "/reservations?CurrentTab=reservations";
 
         private ReservationDto ValidReservation = new (){
             Id = 1,
