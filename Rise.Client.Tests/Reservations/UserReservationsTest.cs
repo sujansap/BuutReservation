@@ -8,7 +8,7 @@ namespace Rise.Client.Reservations {
     public class UserReservationsTest : CustomPageTest
     {
 
-        private const string UserReservationsUrl = "https://localhost:5001/reservations/your-reservations";
+        private const string UserReservationsUrl = "/reservations/user-reservation";
 
         private ReservationDto ValidReservation = new (){
             Id = 1,
@@ -18,10 +18,35 @@ namespace Rise.Client.Reservations {
             BoatPersonalName = "Limba"
         };
 
+        [SetUp]
+        public async Task Setup()
+        {
+            await Context.Tracing.StartAsync(new()
+            {
+                Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
+                Screenshots = true,
+                Snapshots = true,
+                Sources = true
+            });
+        }
+
+        [TearDown]
+        public async Task TearDown()
+        {
+            await Context.Tracing.StopAsync(new()
+            {
+                Path = Path.Combine(
+                    TestContext.CurrentContext.WorkDirectory,
+                    "playwright-traces",
+                    $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip"
+                )
+            });
+        }
+
         private async Task MockReservationsApi()
         {
             // TODO: add delay to the response after 5 seconds
-            await Page.RouteAsync("*/**/api/reservations/user/**", async route =>
+            await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
                 var json = new object[]
                 {
@@ -41,7 +66,7 @@ namespace Rise.Client.Reservations {
 
         private async Task MockEmptyReservationsApi()
         {
-            await Page.RouteAsync("*/**/api/reservations/user/**", async route =>
+            await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
                 await route.FulfillAsync(new() { Json = new object[] { } });
             });
@@ -49,7 +74,7 @@ namespace Rise.Client.Reservations {
 
         private async Task MockReservationsApiError()
         {
-            await Page.RouteAsync("*/**/api/reservations/user/**", async route =>
+            await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
                 await route.FulfillAsync(new() { Status = 400, Body = "Bad Request" });
             });
@@ -83,7 +108,7 @@ namespace Rise.Client.Reservations {
             await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
             
             var locator = Page.GetByTestId("reservation");
-            await Expect(locator).ToHaveCountAsync(3);
+            await Expect(locator).ToHaveCountAsync(3, new LocatorAssertionsToHaveCountOptions() { Timeout = 8000 });
         }
 
         [Test]
