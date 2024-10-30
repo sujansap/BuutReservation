@@ -1,3 +1,4 @@
+using Heron.MudCalendar;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.TimeSlots;
@@ -86,7 +87,10 @@ namespace Rise.Client.Reservations
         /// <returns></returns>
         private void OnCellClicked(DateTime date)
         {
-            SelectedDate = DateOnly.FromDateTime(date);
+            if (AvailableDays.ContainsKey(DateOnly.FromDateTime(date)))
+            {
+                SelectedDate = DateOnly.FromDateTime(date);
+            }
         }
     }
 

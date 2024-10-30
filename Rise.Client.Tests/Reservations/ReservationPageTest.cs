@@ -312,5 +312,24 @@ namespace Rise.Client.Reservations
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
             Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
         }
+
+
+        [Test]
+        public async Task GreyedOutCalendarCellsAreUnclickable()
+        {
+            // Arrange
+            var today = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+            // Act
+            await Page.GotoAsync("/reservations");
+            var calendarCellToday = Page.Locator($"[identifier='{today}']");
+            await calendarCellToday.ClickAsync();
+
+            // Assert
+            ILocator timeSlotList = Page.GetByTestId("time-slot-list");
+
+            bool hasContent = await timeSlotList.Locator(":scope > *").CountAsync() > 0;
+            hasContent.ShouldBeFalse("Time slot list should be empty");
+        }
     }
 }
