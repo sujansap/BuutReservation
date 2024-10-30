@@ -12,8 +12,9 @@
         <MudPaper Class="pa-4 mt-4" Width="100%">
             <MudStack>
                 <MudStack>
-                    <MudText Typo="Typo.subtitle2">Datum en Tijdstip</MudText>
-                    <MudText>@Date.ToString("D") om @Timeslot?.Start tot @Timeslot?.End</MudText>
+                    <MudText Typo="Typo.subtitle2">Datum en Tijdstip:</MudText>
+                    <MudText>@Date.ToString("D")</MudText>
+                    <MudText>@Timeslot?.Start - @Timeslot?.End</MudText>
                 </MudStack>
 
                 <MudDivider Class="my-3" />
