@@ -94,6 +94,11 @@ jobs:
         run: |
           cd PlaywrightTests
           dotnet build
+      - name: Install PowerShell
+        run: |
+          wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.6/powershell_7.4.6-1.deb_amd64.deb
+          sudo dpkg -i powershell_7.4.6-1.deb_amd64.deb
+          sudo apt-get install -f -y  # Fix any dependency issues
 
       - name: Install Playwright browsers
         run: |
