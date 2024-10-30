@@ -1,11 +1,14 @@
 ﻿@using Rise.Shared.TimeSlots;
 @using Rise.Shared.Reservations;
 @using Rise.Client.Reservations.Components.Dialogs.DialogContent;
+@using Microsoft.Extensions.Localization;
+@using Rise.Client.Localization.Reservations
+@inject IStringLocalizer<ReservationPageResources> Localizer
 
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
-            Reservatie maken
+            @Localizer["CreateReservation"]
         </MudText>
     </TitleContent>
     <DialogContent>
@@ -29,7 +32,7 @@
             {
                 <MudItem xs="12">
                     <MudButton Color="Color.Primary" FullWidth="true" OnClick="CreateReservation" Variant="Variant.Filled">
-                        Maak reservatie
+                        @Localizer["CreateReservation"]
                     </MudButton>
                 </MudItem>
             }
@@ -39,13 +42,13 @@
 
                     case DialogState.Overview:
                         <MudButton OnClick="Cancel">
-                            Annuleer
+                            @Localizer["Cancel"]
                         </MudButton>
                         break;
                     case DialogState.Success:
-                                <MudButton OnClick="Close">
-                                    Sluit
-                                </MudButton>
+                        <MudButton OnClick="Close">
+                            @Localizer["Close"]
+                        </MudButton>
                         break;
                 }
             </MudItem>
