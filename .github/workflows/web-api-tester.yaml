@@ -133,6 +133,8 @@ jobs:
             sleep 2
           done          
       - name: Run E2E Tests
+        env:
+          PLAYWRIGHT_SKIP_HTTPS_ERRORS: '1'  # Voeg deze regel toe om SSL-fouten te negeren      
         run: dotnet test Rise.Client.Tests
 
       - name: Check test result
