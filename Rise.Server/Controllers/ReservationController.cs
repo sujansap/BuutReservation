@@ -56,12 +56,12 @@ namespace Rise.Server.Controllers
         /// <param name="boatId">The ID of the boat being reserved</param>
         /// <returns>The details of the created reservation</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateReservation(int timeSlotId, int boatId)
+        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request)
         {
-            var userId = 1; //get this from session or token later
+            var userId = 2; //get this from session or token later
             try
             {
-                var reservation = await _reservationService.CreateReservation(userId, timeSlotId, boatId);
+                var reservation = await _reservationService.CreateReservation(userId, request.TimeSlotId, request.BoatId);
                 return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
             }
             catch (ArgumentException ex)
