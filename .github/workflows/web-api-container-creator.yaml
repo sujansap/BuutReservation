@@ -1,10 +1,9 @@
-name: Create and publish a Docker image
+name: container-creator
 
 on:
   push:
     branches:
       - staging
-      - main
       - production
 
 env:
@@ -17,7 +16,7 @@ concurrency:
 
 jobs:
   build-and-push-image:
-    name: Create-and-publish-a-Docker-image
+    name: publish-web-api-container
     runs-on: [self-hosted]
     permissions:
       contents: read
