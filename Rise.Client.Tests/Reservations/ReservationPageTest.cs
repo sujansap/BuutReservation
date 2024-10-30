@@ -345,5 +345,113 @@ namespace Rise.Client.Reservations
 
             await Expect(timeSlotList).ToHaveCountAsync(0);
         }
+        [Test]
+        public async Task ReservationDialogShouldCloseWhenCloseButtonIsClicked()
+        {
+            //Arrange
+            await OpenCreateReservationDialog();
+
+            // Act
+            var dialog = Page.GetByTestId("reservation-dialog");
+            var closeButton = Page.GetByTestId("dialog-cancel-button");
+            closeButton.ShouldNotBeNull();
+            await closeButton.ClickAsync();
+
+            // Assert
+            var visability = await dialog.IsVisibleAsync();
+            visability.ShouldBeFalse();
+        }
+
+        [Test]
+        public async Task ReservationDialogShouldProceedWhenCreateButtonIsClicked()
+        {
+            //Arrange
+            await OpenCreateReservationDialog();
+
+            // Act
+            var dialog = Page.GetByTestId("reservation-dialog");
+            var closeButton = Page.GetByTestId("dialog-create-button");
+            closeButton.ShouldNotBeNull();
+            await closeButton.ClickAsync();
+
+            // Assert
+            var dialogPaymentContent = Page.GetByTestId("dialog-payment-content");
+            dialogPaymentContent.ShouldNotBeNull();
+            var isVisable = await dialogPaymentContent.IsVisibleAsync();
+            isVisable.ShouldBeTrue();
+
+            // wait for the payment to go trough
+            await Task.Delay(4000);
+
+            var dialogSuccessContent = Page.GetByTestId("dialog-success-content");
+            dialogSuccessContent.ShouldNotBeNull();
+            isVisable = await dialogSuccessContent.IsVisibleAsync();
+            isVisable.ShouldBeTrue();
+        }
+
+        private async Task OpenCreateReservationDialog()
+        {
+            // Arange
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            TimeSlotRangeInfoDto timeRange = new(
+                TotalDays: 1,
+                Days: [
+                    new(today, false, true),
+                ]
+            );
+
+
+            TimeSlotDto[] timeSlotDtos = [
+                new()
+                {
+                    Id = 1,
+                    Start = new TimeOnly(9, 0, 0),
+                    End = new TimeOnly(12, 0, 0),
+                    IsBookedByUser = false
+                },
+                new()
+                {
+                    Id = 2,
+                    Start = new TimeOnly(12, 0, 0),
+                    End = new TimeOnly(15, 0, 0),
+                    IsBookedByUser = false
+                },
+                new()
+                {
+                    Id = 3,
+                    Start = new TimeOnly(15, 0, 0),
+                    End = new TimeOnly(18, 0, 0),
+                    IsBookedByUser = true
+                },
+            ];
+
+            // Act
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(timeRange)
+                });
+            });
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(timeSlotDtos)
+                });
+            });
+            await Page.GotoAsync("/reservations");
+
+            ILocator day = Page.Locator($"[identifier='{today}']");
+            await day.ClickAsync();
+
+            ILocator timeSlot1 = Page.GetByTestId("time-slot-1");
+            await timeSlot1.ClickAsync();
+            await Page.WaitForSelectorAsync("[data-testid='reservation-dialog']", new() { State = WaitForSelectorState.Visible });
+        }
     }
 }

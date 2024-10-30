@@ -3,7 +3,8 @@
 @using Rise.Client.Localization.Reservations;
 @inject IStringLocalizer<ReservationPageResources> Localizer;
 
-<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mt-4 mb-12">
+<MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mt-4 mb-12"
+    data-testid="dialog-payment-content">
     <MudText Typo="Typo.subtitle2">
         @Localizer["ProcessingPayment"]<span>@LoadingDots</span>
     </MudText>

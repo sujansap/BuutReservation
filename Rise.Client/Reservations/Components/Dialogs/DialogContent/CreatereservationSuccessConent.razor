@@ -4,7 +4,7 @@
 @using Rise.Client.Localization.Reservations;
 @inject IStringLocalizer<ReservationPageResources> Localizer;
 
-<MudContainer Class="pa-4">
+<MudContainer Class="pa-4" data-testid="dialog-success-content">
     <MudStack Spacing="4" AlignItems="AlignItems.Center">
         <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Primary" Size="Size.Large" />
 
@@ -37,4 +37,3 @@
         </MudPaper>
     </MudStack>
 </MudContainer>
-
