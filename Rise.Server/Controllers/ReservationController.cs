@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rise.Server.Common.Filters;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
-
+using FluentValidation;
 namespace Rise.Server.Controllers
 {
     [ApiController]
@@ -54,11 +54,24 @@ namespace Rise.Server.Controllers
         /// Creates a reservation for a specific user, timeslot, and boat
         /// </summary>
         /// <param name="request">The details of the reservation to create</param>
+        /// <param name="validator">The validator for the request</param>
         /// <returns>The details of the created reservation</returns>
         [HttpPost]
         [NoQueryParameters]
-        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request)
+        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request, [FromServices] IValidator<CreateReservationDto> validator)
         {
+
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                var problemDetails = new ValidationProblemDetails();
+                foreach (var error in validationResult.Errors)
+                {
+                    problemDetails.Errors.Add(error.PropertyName, new[] { error.ErrorMessage });
+                }
+                return ValidationProblem(problemDetails);
+            }
+
             try
             {
                 var reservation = await _reservationService.CreateReservation(request.TimeSlotId);

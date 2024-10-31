@@ -33,7 +33,7 @@ namespace Rise.Client.Reservations.Components.Dialogs
             State = DialogState.Pay;
             await Task.Delay(3500);
             State = DialogState.Success;
-            await ReservationService.CreateReservation(1, Reservation.TimeSlot.Id, 2);
+            await ReservationService.CreateReservation(Reservation.TimeSlot.Id);
             StateHasChanged();
         }
 
