@@ -30,6 +30,8 @@ public class UserReservationsBase : ComponentBase
             );
 
             ReservationPage = result;
+            Console.WriteLine("Data received: " + result.Data.Count());
+            Console.WriteLine("Data check: " + (ReservationPage?.Data?.Any() ?? false));
         }
         catch
         {
