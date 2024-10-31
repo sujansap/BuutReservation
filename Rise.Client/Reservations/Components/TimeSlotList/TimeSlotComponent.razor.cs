@@ -17,8 +17,8 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
         public required TimeSlotDto TimeSlot { get; set; }
         [Parameter]
         public DateOnly Date { get; set; }
-        [Parameter]
-        public Func<Task> RefetchData { get; set; } = default!;
+        [Parameter, EditorRequired]
+        public required Func<Task> RefetchData { get; set; }
 
         private string StackStyle { get; set; } = GetStyle(AvailabilityEnum.Unavailable).style;
         private Color TextColor { get; set; } = GetColor(AvailabilityEnum.Unavailable);

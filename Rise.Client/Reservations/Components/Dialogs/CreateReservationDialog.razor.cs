@@ -16,8 +16,8 @@ namespace Rise.Client.Reservations.Components.Dialogs
         public required TimeSlotDto TimeSlot { get; set; }
         [Inject]
         private IReservationService ReservationService { get; set; } = default!;
-        [Parameter]
-        public Func<Task> RefetchData { get; set; } = default!;
+        [Parameter, EditorRequired]
+        public required Func<Task> RefetchData { get; set; }
 
         public required ReservationCreateDto Reservation { get; set; }
         private DialogState State { get; set; } = DialogState.Overview;
