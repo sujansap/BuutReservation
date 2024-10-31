@@ -37,9 +37,7 @@ namespace Rise.Client.Reservations.Components.Dialogs
             State = DialogState.Success;
             await ReservationService.CreateReservation(Reservation.TimeSlot.Id);
             StateHasChanged();
-            Console.WriteLine("Reservation created");
             await RefetchData();
-            Console.WriteLine("Data refetched");
         }
 
         private enum DialogState

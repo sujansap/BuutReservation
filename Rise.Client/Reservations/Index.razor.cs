@@ -36,12 +36,10 @@ namespace Rise.Client.Reservations
 
         private async Task UpdateDates()
         {
-            Console.WriteLine("Updating dates start");
             if (DateRange.Start.HasValue && DateRange.End.HasValue)
             {
                 DateOnly startDate = DateOnly.FromDateTime(DateRange.Start.Value);
                 DateOnly endDate = DateOnly.FromDateTime(DateRange.End.Value);
-                Console.WriteLine("Updating dates");
                 await UpdateDates(startDate, endDate);
             }
         }
