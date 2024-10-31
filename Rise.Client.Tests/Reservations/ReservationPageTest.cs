@@ -377,31 +377,54 @@ namespace Rise.Client.Reservations
             // Assert
             var dialogPaymentContent = Page.GetByTestId("dialog-payment-content");
             dialogPaymentContent.ShouldNotBeNull();
-            var isVisable = await dialogPaymentContent.IsVisibleAsync();
-            isVisable.ShouldBeTrue();
+            var isPaymentVisable = await dialogPaymentContent.IsVisibleAsync();
+            isPaymentVisable.ShouldBeTrue();
 
-            // wait for the payment to go trough
-            await Task.Delay(4000);
+            ILocator dialogSuccessContent = Page.GetByTestId("dialog-success-content");
+            await Expect(dialogSuccessContent).ToBeVisibleAsync(new() { Timeout = 15000 });
+        }
 
-            var dialogSuccessContent = Page.GetByTestId("dialog-success-content");
-            dialogSuccessContent.ShouldNotBeNull();
-            isVisable = await dialogSuccessContent.IsVisibleAsync();
-            isVisable.ShouldBeTrue();
+        [Test]
+        public async Task CreatingReservationShouldDisplayReservationOnCalendar()
+        {
+            await OpenCreateReservationDialog();
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            // Create the reservation
+            ILocator createButton = Page.GetByTestId("dialog-create-button");
+            await createButton.ClickAsync();
+
+            // Wait for payment and success states
+            await Page.WaitForSelectorAsync("[data-testid='dialog-payment-content']", new() { State = WaitForSelectorState.Visible });
+
+
+            ILocator dialogSuccessContent = Page.GetByTestId("dialog-success-content");
+            await Expect(dialogSuccessContent).ToBeVisibleAsync(new() { Timeout = 15000 });
+
+            // Close the dialog
+            ILocator closeButton = Page.GetByTestId("dialog-close-button");
+            await closeButton.ClickAsync();
+
+            // Assert
+            // Check if the calendar shows the updated state
+            ILocator calendarCell = Page.Locator($"[identifier='{today.ToString("d/M/yyyy")}']");
+            await Expect(calendarCell).ToBeVisibleAsync();
+
+            ILocator svgElement = calendarCell.Locator("svg");
+            await Expect(svgElement).ToBeVisibleAsync();
         }
 
         private async Task OpenCreateReservationDialog()
         {
-            // Arange
+            // Arrange
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-            TimeSlotRangeInfoDto timeRange = new(
+            TimeSlotRangeInfoDto initialTimeRange = new(
                 TotalDays: 1,
                 Days: [
                     new(today, false, true),
                 ]
             );
 
-
-            TimeSlotDto[] timeSlotDtos = [
+            TimeSlotDto[] initialTimeSlots = [
                 new()
                 {
                     Id = 1,
@@ -425,32 +448,89 @@ namespace Rise.Client.Reservations
                 },
             ];
 
-            // Act
+            // Updated data that will be returned after creating reservation
+            TimeSlotRangeInfoDto updatedTimeRange = new(
+                TotalDays: 1,
+                Days: [
+                    new(today, true, true, true), // Updated to show user has a booking
+                ]
+            );
+
+            TimeSlotDto[] updatedTimeSlots = [
+                new()
+                {
+                    Id = 1,
+                    Start = new TimeOnly(9, 0, 0),
+                    End = new TimeOnly(12, 0, 0),
+                    IsBookedByUser = true  // This slot is now booked by the user
+                },
+                new()
+                {
+                    Id = 2,
+                    Start = new TimeOnly(12, 0, 0),
+                    End = new TimeOnly(15, 0, 0),
+                    IsBookedByUser = false
+                },
+                new()
+                {
+                    Id = 3,
+                    Start = new TimeOnly(15, 0, 0),
+                    End = new TimeOnly(18, 0, 0),
+                    IsBookedByUser = true
+                },
+            ];
+
+            bool hasCreatedReservation = false;
+
+            // Mock initial GET requests
             await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
             {
+                var response = hasCreatedReservation ? updatedTimeRange : initialTimeRange;
                 await route.FulfillAsync(new()
                 {
                     Status = 200,
                     ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(timeRange)
+                    Body = JsonSerializer.Serialize(response)
                 });
             });
+
             await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
             {
+                var response = hasCreatedReservation ? updatedTimeSlots : initialTimeSlots;
                 await route.FulfillAsync(new()
                 {
                     Status = 200,
                     ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(timeSlotDtos)
+                    Body = JsonSerializer.Serialize(response)
                 });
             });
+
+            // Mock POST request for creating reservation
+            await Page.RouteAsync("*/**/api/Reservation/", async route =>
+            {
+                if (route.Request.Method == "POST")
+                {
+                    hasCreatedReservation = true;
+                    await route.FulfillAsync(new()
+                    {
+                        Status = 200,
+                        ContentType = "application/json",
+                        Body = JsonSerializer.Serialize(new { id = 1 })
+                    });
+                }
+            });
+
+            // Act
             await Page.GotoAsync("/reservations");
 
+            // Select the day and time slot
             ILocator day = Page.Locator($"[identifier='{today}']");
             await day.ClickAsync();
 
             ILocator timeSlot1 = Page.GetByTestId("time-slot-1");
             await timeSlot1.ClickAsync();
+
+            // Wait for dialog to appear
             await Page.WaitForSelectorAsync("[data-testid='reservation-dialog']", new() { State = WaitForSelectorState.Visible });
         }
     }
