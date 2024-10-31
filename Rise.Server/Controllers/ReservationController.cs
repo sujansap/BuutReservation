@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rise.Server.Common.Filters;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
@@ -55,12 +56,12 @@ namespace Rise.Server.Controllers
         /// <param name="request">The details of the reservation to create</param>
         /// <returns>The details of the created reservation</returns>
         [HttpPost]
+        [NoQueryParameters]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request)
         {
-            var userId = 2; //get this from session or token later
             try
             {
-                var reservation = await _reservationService.CreateReservation(userId, request.TimeSlotId, request.BoatId);
+                var reservation = await _reservationService.CreateReservation(request.TimeSlotId);
                 return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
             }
             catch (ArgumentException ex)

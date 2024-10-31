@@ -151,9 +151,23 @@ namespace Rise.Services.Reservations
         }
 
 
-        public async Task<ReservationDto> CreateReservation(int userId, int timeSlotId, int boatId)
+        public async Task<ReservationDto> CreateReservation(int timeSlotId)
         {
-            var boat = await _dbContext.Boats.FindAsync(boatId);
+            var userId = 2; //get this from session or token later
+
+            //get a boat that is available for that timeslot
+            //we just assign the first boat that is available
+            //user can't choose a boat
+            var boat = await _dbContext.Boats.Where(b => b.Reservations.All(r => r.TimeSlotId != timeSlotId)).FirstOrDefaultAsync();
+
+            if (boat is null)
+            {
+                throw new ArgumentException("No boat available for that time slot");
+            }
+            var boatId = boat.Id;
+
+
+
 
             if (boat is null)
             {
