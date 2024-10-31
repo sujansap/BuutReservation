@@ -11,7 +11,7 @@ namespace Rise.Client.Services
         public async Task<ReservationDto> CreateReservation(int userId, int timeSlotId, int boatId)
         {
             Console.WriteLine("HERE: CreateReservation");
-            var result = await _httpClient.PostAsJsonAsync("", new { userId, timeSlotId, boatId });
+            var result = await _httpClient.PostAsJsonAsync("", new { timeSlotId, boatId });
             Console.WriteLine("Result: " + result);
             return await result.Content.ReadFromJsonAsync<ReservationDto>() ?? new ReservationDto();
         }
