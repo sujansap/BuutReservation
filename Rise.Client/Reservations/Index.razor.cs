@@ -9,6 +9,7 @@ namespace Rise.Client.Reservations
     {
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; } = default!;
+        private DateRange DateRange { get; set; } = new DateRange();
 
         /// <summary>
         /// All unavailable days on the calendar
@@ -29,9 +30,21 @@ namespace Rise.Client.Reservations
                 DateOnly startDate = DateOnly.FromDateTime(dateRange.Start.Value);
                 DateOnly endDate = DateOnly.FromDateTime(dateRange.End.Value);
                 await UpdateDates(startDate, endDate);
+                DateRange = dateRange;
             }
         }
 
+        private async Task UpdateDates()
+        {
+            Console.WriteLine("Updating dates start");
+            if (DateRange.Start.HasValue && DateRange.End.HasValue)
+            {
+                DateOnly startDate = DateOnly.FromDateTime(DateRange.Start.Value);
+                DateOnly endDate = DateOnly.FromDateTime(DateRange.End.Value);
+                Console.WriteLine("Updating dates");
+                await UpdateDates(startDate, endDate);
+            }
+        }
         /// <summary>
         /// Update known dates via the api
         /// </summary>
@@ -52,6 +65,7 @@ namespace Rise.Client.Reservations
                 .ToDictionary(day => day.Date, day => day);
 
                 ReservationsOfCurrentUser = response.Days.Where(day => day.IsBookedByUser).Select(ConvertToCalendarItems).ToList();
+                StateHasChanged();
             }
 
             catch

@@ -16,6 +16,8 @@ namespace Rise.Client.Reservations.Components.Dialogs
         public required TimeSlotDto TimeSlot { get; set; }
         [Inject]
         private IReservationService ReservationService { get; set; } = default!;
+        [Parameter]
+        public Func<Task> RefetchData { get; set; } = default!;
 
         public required ReservationCreateDto Reservation { get; set; }
         private DialogState State { get; set; } = DialogState.Overview;
@@ -35,6 +37,9 @@ namespace Rise.Client.Reservations.Components.Dialogs
             State = DialogState.Success;
             await ReservationService.CreateReservation(Reservation.TimeSlot.Id);
             StateHasChanged();
+            Console.WriteLine("Reservation created");
+            await RefetchData();
+            Console.WriteLine("Data refetched");
         }
 
         private enum DialogState

@@ -9,6 +9,8 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
 
         [Inject]
         public required ITimeSlotService TimeSlotService { get; set; }
+        [Parameter]
+        public Func<Task> RefetchData { get; set; } = default!;
 
         [Parameter]
         public DateOnly SelectedDate { get; set; }

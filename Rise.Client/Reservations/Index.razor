@@ -18,8 +18,9 @@
     <MudTabPanel Text="@Localizer["Reserve"]" data-testid="tab-reserve">
         <MudGrid>
             <MudItem xs="12" md="8">
-                <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8" data-testid="custom-calendar-reserve"
-                    AvailableDays="AvailableDays" DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked" Items="ReservationsOfCurrentUser">
+                <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
+                    Class="mt-8" data-testid="custom-calendar-reserve" AvailableDays="AvailableDays"
+                    DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked" Items="ReservationsOfCurrentUser">
                     <MonthTemplate>
                         <CustomDayComponent Context="context" />
                     </MonthTemplate>
@@ -28,7 +29,7 @@
             <MudItem xs="12" md="4" Class="mt-8">
                 @if (SelectedDate.HasValue)
                 {
-                    <TimeSlotsList SelectedDate="SelectedDate.Value" />
+                    <TimeSlotsList SelectedDate="SelectedDate.Value" RefetchData="UpdateDates" />
                 }
             </MudItem>
             <MudItem xs="12">
