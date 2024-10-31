@@ -52,8 +52,7 @@ namespace Rise.Server.Controllers
         /// <summary>
         /// Creates a reservation for a specific user, timeslot, and boat
         /// </summary>
-        /// <param name="timeSlotId">The ID of the timeslot to reserve</param>
-        /// <param name="boatId">The ID of the boat being reserved</param>
+        /// <param name="request">The details of the reservation to create</param>
         /// <returns>The details of the created reservation</returns>
         [HttpPost]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request)
