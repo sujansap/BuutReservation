@@ -9,6 +9,8 @@ public class UserReservationsBase : ComponentBase
 {
     protected ItemsPageDto<ReservationDto>? ReservationPage { get; private set; }
     protected bool IsLoading { get; private set; }
+    public bool HasError { get; private set; }
+    protected string? ErrorMessage { get; private set; }
 
     [Inject]
     public required IReservationService ReservationService { get; set; }
@@ -20,6 +22,9 @@ public class UserReservationsBase : ComponentBase
         try
         {
             IsLoading = true;
+            HasError = false;
+            ErrorMessage = null;
+
             var cursor = isNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
 
             var result = await ReservationService.GetUserReservations(
@@ -33,10 +38,11 @@ public class UserReservationsBase : ComponentBase
             Console.WriteLine("Data received: " + result.Data.Count());
             Console.WriteLine("Data check: " + (ReservationPage?.Data?.Any() ?? false));
         }
-        catch
+        catch (Exception ex)
         {
-            // proper error handling/logging needed here
-            ReservationPage = new()
+            HasError = true;
+            ErrorMessage = "Failed to load reservations: " + ex.Message;
+            ReservationPage = new ItemsPageDto<ReservationDto>()
             {
                 Data = new List<ReservationDto>()
             };

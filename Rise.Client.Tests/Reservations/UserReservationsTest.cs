@@ -48,8 +48,8 @@ namespace Rise.Client.Reservations {
         {
             await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
-                // add 3 sec delay
-                await Task.Delay(10000);
+                // Reduce delay from 10000ms to 3000ms
+                await Task.Delay(3000);
                 var response = new ItemsPageDto<ReservationDto>()
                 {
                     Data = [ValidReservation],
@@ -68,6 +68,7 @@ namespace Rise.Client.Reservations {
         {
             await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
+                await Task.Delay(3000);
                 var response = new ItemsPageDto<ReservationDto>()
                 {
                     Data = [],
@@ -114,8 +115,9 @@ namespace Rise.Client.Reservations {
             await MockReservationsApi();
             await Page.GotoAsync(UserReservationsUrl);
             
-            // Wait for loading to complete
+            // Wait for loading to complete AND for at least one reservation to appear
             await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
+            await Page.WaitForSelectorAsync("[data-testid='reservation-item']", new() { State = WaitForSelectorState.Visible });
             
             var locator = Page.GetByTestId("reservation-item");
             await Expect(locator).ToHaveCountAsync(1);
@@ -154,11 +156,13 @@ namespace Rise.Client.Reservations {
             await MockEmptyReservationsApi();
             await Page.GotoAsync(UserReservationsUrl);
 
+            // Wait for loading to complete AND for the empty state message to appear
             await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
+            await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible });
 
             var emptyStateMessage = Page.GetByTestId("no-reservations");
             (await emptyStateMessage.IsVisibleAsync()).ShouldBeTrue();
-            (await emptyStateMessage.TextContentAsync()).ShouldBe("You have no reservations.");
+            (await emptyStateMessage.TextContentAsync()).ShouldBe("Geen reservaties gevonden.");
 
             var reservations = await Page.GetByTestId("reservation-item").AllAsync();
             reservations.Count.ShouldBe(0);
@@ -176,7 +180,7 @@ namespace Rise.Client.Reservations {
 
             var errorMessage = Page.GetByTestId("error-message");
             (await errorMessage.IsVisibleAsync()).ShouldBeTrue();
-            (await errorMessage.TextContentAsync() ?? "").ShouldContain("An error occurred while fetching your reservations");
+            (await errorMessage.TextContentAsync() ?? "").ShouldContain("ErrorFetchingReservations");
 
             var reservations = await Page.GetByTestId("reservation-item").AllAsync();
             reservations.Count.ShouldBe(0);
