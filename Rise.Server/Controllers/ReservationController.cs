@@ -79,13 +79,13 @@ namespace Rise.Server.Controllers
         /// <summary>
         /// Creates a reservation for a specific timeslot for the current user
         /// </summary>
-        /// <param name="request">The details of the reservation to create</param>
+        /// <param name="reservationDto">The details of the reservation to create</param>
         /// <returns>The deatils of the created reservation</returns>
         [HttpPost]
         [NoQueryParameters]
-        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request)
+        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto reservationDto)
         {
-            var reservation = await _reservationService.CreateReservation(request.TimeSlotId);
+            var reservation = await _reservationService.CreateReservation(reservationDto);
             return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
         }
 

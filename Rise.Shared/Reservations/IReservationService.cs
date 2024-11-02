@@ -15,10 +15,10 @@ namespace Rise.Shared.Reservations
 
 
         /// <summary>
-        /// Creates a reservation for the given timeslot ID
+        /// Creates a reservation with given details
         /// </summary>
-        /// <param name="timeslotId">The ID of the timeslot to reserve</param>
+        /// <param name="reservationDto">Dto with details of to be created reservation</param>
         /// <returns>The created reservation details</returns>
-        Task<ReservationDto> CreateReservation(int timeSlotId);
+        Task<ReservationDto> CreateReservation(CreateReservationDto reservationDto);
     }
 }

@@ -84,7 +84,7 @@ namespace Rise.Services.Reservations
         /// <exception cref="NoEntityAvailableException"></exception>
         /// <exception cref="EntityAlreadyExistsException"></exception>
         /// <exception cref="ReservationCreationFailedException"></exception>
-        public async Task<ReservationDto> CreateReservation(int timeSlotId)
+        public async Task<ReservationDto> CreateReservation(CreateReservationDto reservationDto)
         {
             var userId = 2; //get this from session or token later
 
@@ -95,11 +95,11 @@ namespace Rise.Services.Reservations
                 throw new EntityNotFoundException(nameof(User), userId);
             }
 
-            var timeSlot = await _dbContext.TimeSlots.FindAsync(timeSlotId);
+            var timeSlot = await _dbContext.TimeSlots.FindAsync(reservationDto.TimeSlotId);
 
             if (timeSlot is null)
             {
-                throw new EntityNotFoundException(nameof(TimeSlot), timeSlotId);
+                throw new EntityNotFoundException(nameof(TimeSlot), reservationDto.TimeSlotId);
             }
 
             //get a boat that is available for that timeslot
