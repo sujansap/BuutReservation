@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Persistence.Triggers;
-using Rise.Server.FluentValidators;
+
 using Rise.Services.Reservations;
 using Rise.Services.TimeSlots;
 using Rise.Shared.Reservations;
 using Rise.Shared.TimeSlots;
 using FluentValidation;
+using FluentValidation.AspNetCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +36,8 @@ builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 
 //validation using fluent validation
-builder.Services.AddScoped<IValidator<CreateReservationDto>, CreateReservationDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
+builder.Services.AddFluentValidationAutoValidation();
 
 
 builder.Services.AddLocalization();
