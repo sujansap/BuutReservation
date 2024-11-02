@@ -77,27 +77,16 @@ namespace Rise.Server.Controllers
             return Ok(reservations);
         }
         /// <summary>
-        /// Creates a reservation for a specific user, timeslot, and boat
+        /// Creates a reservation for a specific timeslot for the current user
         /// </summary>
         /// <param name="request">The details of the reservation to create</param>
-        /// <returns>The details of the created reservation</returns>
+        /// <returns>The deatils of the created reservation</returns>
         [HttpPost]
         [NoQueryParameters]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request)
         {
-            try
-            {
-                var reservation = await _reservationService.CreateReservation(request.TimeSlotId);
-                return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while creating the reservation.", details = ex.Message });
-            }
+            var reservation = await _reservationService.CreateReservation(request.TimeSlotId);
+            return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
         }
 
 

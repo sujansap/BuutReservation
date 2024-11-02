@@ -2,7 +2,11 @@ using System.Linq.Expressions;
 using System.Net.Cache;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Boats;
+using Rise.Domain.Common;
+using Rise.Domain.Exceptions;
 using Rise.Domain.Reservations;
+using Rise.Domain.Timeslots;
+using Rise.Domain.Users;
 using Rise.Persistence;
 using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
@@ -71,56 +75,63 @@ namespace Rise.Services.Reservations
             );
         }
 
-
+        /// <summary>
+        /// Creates a reservation for the current user
+        /// </summary>
+        /// <param name="timeSlotId"></param>
+        /// <returns></returns>
+        /// <exception cref="EntityNotFoundException"></exception>
+        /// <exception cref="NoEntityAvailableException"></exception>
+        /// <exception cref="EntityAlreadyExistsException"></exception>
+        /// <exception cref="ReservationCreationFailedException"></exception>
         public async Task<ReservationDto> CreateReservation(int timeSlotId)
         {
             var userId = 2; //get this from session or token later
 
-            //get a boat that is available for that timeslot
-            //we just assign the first boat that is available
-            //user can't choose a boat
-            var boat = await _dbContext.Boats.Where(b => b.Reservations.All(r => r.TimeSlotId != timeSlotId)).FirstOrDefaultAsync();
+            var user = await _dbContext.Users.FindAsync(userId);
 
-            if (boat is null)
+            if (user is null)
             {
-                throw new ArgumentException("No boat available for that time slot");
-            }
-            var boatId = boat.Id;
-
-
-
-
-            if (boat is null)
-            {
-                throw new ArgumentException("Boat not found");
+                throw new EntityNotFoundException(nameof(User), userId);
             }
 
             var timeSlot = await _dbContext.TimeSlots.FindAsync(timeSlotId);
+
             if (timeSlot is null)
             {
-                throw new ArgumentException("Time slot not found");
+                throw new EntityNotFoundException(nameof(TimeSlot), timeSlotId);
             }
 
-            var user = await _dbContext.Users.FindAsync(userId);
-            if (user is null)
+            //get a boat that is available for that timeslot
+            //we just assign the first boat that is available
+            //user can't choose a boat
+            var boat = await _dbContext.Boats.Where(b => b.Reservations.All(r => r.TimeSlotId != timeSlot.Id)).FirstOrDefaultAsync();
+
+            if (boat is null)
             {
-                throw new ArgumentException("User not found");
+                throw new NoBoatAvailableException(timeSlot.Id);
             }
+            var boatId = boat.Id;
 
             var reservation = new Reservation
             {
                 UserId = userId,
                 User = user,
                 TimeSlot = timeSlot,
-                TimeSlotId = timeSlotId,
+                TimeSlotId = timeSlot.Id,
                 BoatId = boatId,
                 Boat = boat
             };
 
-
-            await _dbContext.Reservations.AddAsync(reservation);
-            await _dbContext.SaveChangesAsync();
-
+            try
+            {
+                _dbContext.Reservations.Add(reservation);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new ReservationCreationFailedException("Failed to create reservation.");
+            }
 
             return new ReservationDto
             {
@@ -131,8 +142,6 @@ namespace Rise.Services.Reservations
                 BoatId = boatId,
                 BoatPersonalName = boat.PersonalName
             };
-
-
         }
     }
 }

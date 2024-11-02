@@ -8,6 +8,7 @@ using Rise.Shared.Reservations;
 using Rise.Shared.TimeSlots;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Rise.Server.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +56,8 @@ app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseRouting();
 
