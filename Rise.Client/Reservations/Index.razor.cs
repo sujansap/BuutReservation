@@ -90,6 +90,10 @@ namespace Rise.Client.Reservations
             {
                 SelectedDate = DateOnly.FromDateTime(date);
             }
+            else
+            {
+                SelectedDate = null;
+            }
         }
 
     }
