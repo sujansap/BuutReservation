@@ -86,7 +86,7 @@ namespace Rise.Server.Controllers
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto reservationDto)
         {
             var reservation = await _reservationService.CreateReservation(reservationDto);
-            return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
+            return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id });
         }
 
 
