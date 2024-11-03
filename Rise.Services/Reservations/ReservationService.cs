@@ -84,7 +84,7 @@ namespace Rise.Services.Reservations
         /// <exception cref="NoEntityAvailableException"></exception>
         /// <exception cref="EntityAlreadyExistsException"></exception>
         /// <exception cref="ReservationCreationFailedException"></exception>
-        public async Task<ReservationDto> CreateReservation(CreateReservationDto reservationDto)
+        public async Task<int> CreateReservation(CreateReservationDto reservationDto)
         {
             var userId = 2; //get this from session or token later
 
@@ -133,15 +133,7 @@ namespace Rise.Services.Reservations
                 throw new ReservationCreationFailedException("Failed to create reservation.");
             }
 
-            return new ReservationDto
-            {
-                Id = reservation.Id,
-                Start = timeSlot.Start,
-                End = timeSlot.End,
-                Date = timeSlot.Date,
-                BoatId = boatId,
-                BoatPersonalName = boat.PersonalName
-            };
+            return reservation.Id;
         }
     }
 }

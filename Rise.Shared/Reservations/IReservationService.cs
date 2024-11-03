@@ -19,6 +19,6 @@ namespace Rise.Shared.Reservations
         /// </summary>
         /// <param name="reservationDto">Dto with details of to be created reservation</param>
         /// <returns>The created reservation details</returns>
-        Task<ReservationDto> CreateReservation(CreateReservationDto reservationDto);
+        Task<int> CreateReservation(CreateReservationDto reservationDto);
     }
 }

@@ -85,8 +85,8 @@ namespace Rise.Server.Controllers
         [NoQueryParameters]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto reservationDto)
         {
-            var reservation = await _reservationService.CreateReservation(reservationDto);
-            return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id });
+            var reservationId = await _reservationService.CreateReservation(reservationDto);
+            return CreatedAtAction(nameof(CreateReservation), reservationId);
         }
 
 

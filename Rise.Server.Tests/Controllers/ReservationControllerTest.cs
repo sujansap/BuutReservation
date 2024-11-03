@@ -113,11 +113,8 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.PostAsJsonAsync("", request);
 
             response.StatusCode.ShouldBe(HttpStatusCode.Created);
-            var reservation = await response.Content.ReadFromJsonAsync<ReservationDto>();
-            reservation.ShouldNotBeNull();
-            reservation.Id.ShouldBeGreaterThan(0);
-            reservation.BoatId.ShouldBeGreaterThan(0);
-            reservation.BoatPersonalName.ShouldNotBeNullOrEmpty();
+            var reservationId = await response.Content.ReadFromJsonAsync<int>();
+            reservationId.ShouldBeGreaterThan(0);
         }
 
         [Fact]
