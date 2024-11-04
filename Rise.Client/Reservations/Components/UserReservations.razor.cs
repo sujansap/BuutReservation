@@ -7,7 +7,7 @@ namespace Rise.Client.Reservations.Components;
 
 public class UserReservationsBase : ComponentBase
 {
-    public AsyncData<ItemsPageDto<ReservationDto>> asyncDataRef = default!;
+    public required AsyncData<ItemsPageDto<ReservationDto>> AsyncDataRef { get; set; }
     protected ItemsPageDto<ReservationDto>? ReservationPage { get; set; }
     protected bool IsLoading { get; private set; }
 
@@ -33,11 +33,11 @@ public class UserReservationsBase : ComponentBase
     protected async Task LoadNextPage()
     {
         IsNextPage = true;
-        await asyncDataRef.FetchData();
+        await AsyncDataRef.FetchData();
     }
     protected async Task LoadPreviousPage()
     {
         IsNextPage = false;
-        await asyncDataRef.FetchData();
+        await AsyncDataRef.FetchData();
     }
 }

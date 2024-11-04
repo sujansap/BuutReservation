@@ -10,7 +10,7 @@
 
 <MudGrid Spacing="6" Class="mt-8">
     <AsyncData DataFetcher="@LoadReservations" @bind-Data="@ReservationPage" T="ItemsPageDto<ReservationDto>"
-        @ref="asyncDataRef">
+        @ref="@AsyncDataRef">
         @if (ReservationPage?.Data?.Any() ?? false)
         {
             @foreach (var reservation in ReservationPage.Data)
