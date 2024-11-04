@@ -1,8 +1,7 @@
 using System.Net.Http.Json;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
-using Microsoft.AspNetCore.WebUtilities;
-
+// FIXME
 namespace Rise.Client.Services
 {
     public class ReservationService(HttpClient httpClient) : IReservationService
@@ -22,19 +21,22 @@ namespace Rise.Client.Services
 
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
-            Dictionary<string, string?> queries = new()
-            {
-                ["cursor"] = cursor.ToString(),
-                ["isNextPage"] = isNextPage.ToString(),
-                ["getPast"] = getPast.ToString(),
-                ["pageSize"] = pageSize.ToString(),
-            };
+            Console.WriteLine("HERE: GetUserReservations");
+            //cursor=1&isNextPage=false&getPast=false&pageSize=1' \
+            var query = new List<string>();
+            query.Add($"cursor={cursor}");
+            query.Add($"isNextPage={isNextPage}");
+            query.Add($"getPast={getPast}");
+            query.Add($"pageSize={pageSize}");
 
-            string queryString = QueryHelpers.AddQueryString("me", queries);
+            var queryString = string.Join("&", query);
+            Console.WriteLine("Query: " + queryString);
 
-            ItemsPageDto<ReservationDto> result = await _httpClient.GetFromJsonAsync<ItemsPageDto<ReservationDto>>(queryString)
-                ?? new ItemsPageDto<ReservationDto> { Data = [] };
+            var result = await _httpClient.GetFromJsonAsync<ItemsPageDto<ReservationDto>>($"me?{queryString}")
+                ?? new ItemsPageDto<ReservationDto> { Data = Enumerable.Empty<ReservationDto>() };
 
+
+            Console.WriteLine("Result: " + result.Data.Count());
             return result;
 
         }
