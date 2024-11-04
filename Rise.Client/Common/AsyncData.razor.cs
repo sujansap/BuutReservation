@@ -41,7 +41,7 @@ namespace Rise.Client.Common
 
         protected bool IsLoading { get; private set; } = false;
         [Parameter]
-        public bool DisabledRenderLoading { get; set; } = false;
+        public bool DisableLoader { get; set; } = false;
 
         protected Exception? Exception { get; set; }
         [Parameter]
