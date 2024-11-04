@@ -4,12 +4,6 @@ namespace Rise.Client.Common
 {
     public partial class AsyncData<T> : ComponentBase
     {
-        // TODO add test 
-        // TODO add localisation
-        // TODO fix positioning of alert
-        // TODO fix attribute splatting for alert
-        // TODO add caching on a higher level
-
         private bool shouldRender;
 
         private Func<Task<T>> _previousDataFetcher = default!;
@@ -89,6 +83,7 @@ namespace Rise.Client.Common
                 catch (Exception ex)
                 {
                     HasError = true;
+                    // TODO fix localisation of error message
                     ErrorMessage = ex.Message ?? "Oops something went wrong";
                 }
                 finally
