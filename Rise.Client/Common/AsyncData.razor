@@ -8,7 +8,7 @@
 }
 else
 {
-    @if (Exception is not null)
+    @if (HasError)
     {
         @if (!UseSnackbarForException)
         {
@@ -33,7 +33,7 @@ else
     protected virtual RenderFragment RenderLoading => RenderInfoContainer(@<MudProgressCircular Indeterminate="true" data-testid="loading-progress" />);
 
     protected virtual RenderFragment RenderErrorMessage => @<MudText Typo="Typo.body1" data-testid="fetch-error">
-        @Exception?.Message</MudText>;
+        @ErrorMessage</MudText>;
 
     protected virtual RenderFragment RenderError => RenderInfoContainer(@<MudAlert Severity="Severity.Error">
         @RenderErrorMessage</MudAlert>);

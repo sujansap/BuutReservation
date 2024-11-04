@@ -43,7 +43,9 @@ namespace Rise.Client.Common
         [Parameter]
         public bool DisableLoader { get; set; } = false;
 
-        protected Exception? Exception { get; set; }
+        protected bool HasError { get; private set; } = false;
+        protected string? ErrorMessage { get; set; }
+
         [Parameter]
         public bool UseSnackbarForException { get; set; } = false;
 
@@ -58,25 +60,21 @@ namespace Rise.Client.Common
         protected override async Task OnParametersSetAsync()
         {
             bool isDifferentFetcher = _previousDataFetcher != DataFetcher;
-            shouldRender = isDifferentFetcher || !IsCachedDataEqual();
+            bool isCachedDataEqual = IsCachedDataEqual();
+            shouldRender = isDifferentFetcher || !isCachedDataEqual;
 
             _previousDataFetcher = DataFetcher;
-            if (isDifferentFetcher)
+            if (isDifferentFetcher || !isCachedDataEqual)
             {
                 await FetchData();
             }
-            else
-            {
-                _cachedData = Data;
-            }
-
         }
         public async Task FetchData()
         {
             if (!IsLoading)
             {
                 IsLoading = true;
-                Exception = null;
+                HasError = false;
 
                 try
                 {
@@ -87,7 +85,8 @@ namespace Rise.Client.Common
                 }
                 catch (Exception ex)
                 {
-                    Exception = ex;
+                    HasError = true;
+                    ErrorMessage = ex.Message ?? "Oops something went wrong";
                 }
                 finally
                 {
