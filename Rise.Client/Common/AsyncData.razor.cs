@@ -1,0 +1,103 @@
+using Microsoft.AspNetCore.Components;
+
+namespace Rise.Client.Common
+{
+    public partial class AsyncData<T> : ComponentBase
+    {
+        // TODO add test 
+        // TODO add localisation
+        // TODO fix positioning of alert
+        // TODO fix attribute splatting for alert
+        // TODO add caching on a higher level
+
+        private bool shouldRender;
+
+        private Func<Task<T>> _previousDataFetcher = default!;
+
+        [Parameter, EditorRequired]
+        public required Func<Task<T>> DataFetcher
+        {
+            get; set;
+        }
+
+        private T? _cachedData;
+
+        /// <summary>
+        /// The fetched data
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Raises the <see cref="DataChanged"/> event upon change.  When bound via <c>@bind-Data</c>, this property is updated when the data is changed.
+        /// </remarks>
+        [Parameter]
+        public T? Data
+        {
+            get; set;
+        }
+        /// <summary>
+        /// Occurs when the <see cref="Data"/> value has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<T?> DataChanged { get; set; }
+
+        protected bool IsLoading { get; private set; } = false;
+        [Parameter]
+        public bool DisabledRenderLoading { get; set; } = false;
+
+        protected Exception? Exception { get; set; }
+        [Parameter]
+        public bool UseSnackbarForException { get; set; } = false;
+
+        [Parameter, EditorRequired]
+        public required RenderFragment ChildContent { get; set; }
+
+        private bool IsCachedDataEqual()
+        {
+            return _cachedData?.Equals(Data) ?? false;
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            bool isDifferentFetcher = _previousDataFetcher != DataFetcher;
+            shouldRender = isDifferentFetcher || !IsCachedDataEqual();
+
+            _previousDataFetcher = DataFetcher;
+            if (isDifferentFetcher)
+            {
+                await FetchData();
+            }
+            else
+            {
+                _cachedData = Data;
+            }
+
+        }
+        public async Task FetchData()
+        {
+            if (!IsLoading)
+            {
+                IsLoading = true;
+                Exception = null;
+
+                try
+                {
+                    T? newData = await DataFetcher();
+                    _cachedData = Data;
+                    Data = newData;
+                    await DataChanged.InvokeAsync(Data);
+                }
+                catch (Exception ex)
+                {
+                    Exception = ex;
+                }
+                finally
+                {
+                    IsLoading = false;
+                }
+            }
+        }
+
+        protected override bool ShouldRender() => shouldRender;
+    }
+
+}
+

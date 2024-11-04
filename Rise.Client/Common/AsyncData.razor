@@ -1,0 +1,45 @@
+﻿@using Rise.Client.Common
+@typeparam T
+@inject ISnackbar SnackbarService
+
+@if (!DisabledRenderLoading && IsLoading)
+{
+    @RenderLoading
+}
+else
+{
+    @if (Exception is not null)
+    {
+        @if (!UseSnackbarForException)
+        {
+            @RenderError
+        }
+        else
+        {
+            ShowErrorOnSnackbar();
+        }
+    }
+
+    @ChildContent
+}
+
+
+@code {
+    protected virtual RenderFragment RenderInfoContainer(RenderFragment content) => @<MudContainer
+        Class="d-flex justify-center">
+        @content
+    </MudContainer>;
+
+    protected virtual RenderFragment RenderLoading => RenderInfoContainer(@<MudProgressCircular Indeterminate="true" data-testid="loading-progress" />);
+
+    protected virtual RenderFragment RenderErrorMessage => @<MudText Typo="Typo.body1" data-testid="fetch-error">
+        @Exception?.Message</MudText>;
+
+    protected virtual RenderFragment RenderError => RenderInfoContainer(@<MudAlert Severity="Severity.Error">
+        @RenderErrorMessage</MudAlert>);
+
+    private void ShowErrorOnSnackbar()
+    {
+        SnackbarService.Add(@RenderErrorMessage, Severity.Error);
+    }
+}
