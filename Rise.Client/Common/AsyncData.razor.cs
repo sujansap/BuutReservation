@@ -49,6 +49,9 @@ namespace Rise.Client.Common
         [Parameter]
         public bool UseSnackbarForException { get; set; } = false;
 
+        [Parameter]
+        public bool ShowContentWhenError { get; set; } = true;
+
         [Parameter, EditorRequired]
         public required RenderFragment ChildContent { get; set; }
 

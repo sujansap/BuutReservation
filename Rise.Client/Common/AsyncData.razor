@@ -20,9 +20,13 @@ else
         }
     }
 
-    @ChildContent
-}
+    @* TODO fix spacing between content and error *@
+    @if (ShowContentWhenError || !HasError)
+    {
+        @ChildContent
+    }
 
+}
 
 @code {
     protected virtual RenderFragment RenderInfoContainer(RenderFragment content) => @<MudContainer
