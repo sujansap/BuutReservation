@@ -10,11 +10,11 @@ else
 {
     @if (HasError)
     {
-        @if (!UseSnackbarForException)
+        @if (ShowStaticAlert())
         {
             @RenderError
         }
-        else
+        @if (ShowSnackBarAlert())
         {
             ShowErrorOnSnackbar();
         }

@@ -47,7 +47,7 @@ namespace Rise.Client.Common
         protected string? ErrorMessage { get; set; }
 
         [Parameter]
-        public bool UseSnackbarForException { get; set; } = false;
+        public AsyncErrorDisplayMethod ErrorDisplayMethod { get; set; } = AsyncErrorDisplayMethod.StaticAlert;
 
         [Parameter]
         public bool ShowContentWhenError { get; set; } = true;
@@ -99,6 +99,23 @@ namespace Rise.Client.Common
         }
 
         protected override bool ShouldRender() => shouldRender;
+
+        private bool ShowStaticAlert()
+        {
+            return ErrorDisplayMethod == AsyncErrorDisplayMethod.StaticAlert || ErrorDisplayMethod == AsyncErrorDisplayMethod.Both;
+        }
+
+        private bool ShowSnackBarAlert()
+        {
+            return ErrorDisplayMethod == AsyncErrorDisplayMethod.SnackBarAlert || ErrorDisplayMethod == AsyncErrorDisplayMethod.Both;
+        }
+    }
+
+    public enum AsyncErrorDisplayMethod
+    {
+        StaticAlert,
+        SnackBarAlert,
+        Both,
     }
 
 }
