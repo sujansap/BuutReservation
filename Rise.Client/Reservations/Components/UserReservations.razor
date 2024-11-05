@@ -13,9 +13,9 @@
         @ref="@AsyncDataRef" TestIdPrefix="user-reservations">
         @if (ReservationPage?.Data?.Any() ?? false)
         {
-            @foreach (var reservation in ReservationPage.Data)
+            @foreach (ReservationDto? reservation in ReservationPage.Data)
             {
-                <MudItem xs="12">
+                <MudItem xs="12" data-testid="reservation-item">
                     <MudCard Elevation="6" Class="mb-6"
                         Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
                         <MudCardContent>
