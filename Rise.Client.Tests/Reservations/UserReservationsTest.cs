@@ -188,5 +188,3 @@ namespace Rise.Client.Reservations {
     }
 }
 
-// todo: test for error state 400
-
