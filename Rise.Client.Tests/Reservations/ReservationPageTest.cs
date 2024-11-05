@@ -186,6 +186,8 @@ namespace Rise.Client.Reservations
             });
             await Page.GotoAsync("/reservations");
 
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/TimeSlot/range"));
+
             ILocator booked = Page.Locator("[data-celtype=fully-booked]");
             await Expect(booked).ToHaveCountAsync(35, new LocatorAssertionsToHaveCountOptions()
             {
