@@ -10,6 +10,8 @@ public class UserReservationsBase : ComponentBase
     public required AsyncData<ItemsPageDto<ReservationDto>> AsyncDataRef { get; set; }
     protected ItemsPageDto<ReservationDto>? ReservationPage { get; set; }
     protected bool IsLoading { get; private set; }
+    public bool HasError { get; private set; }
+    protected string? ErrorMessage { get; private set; }
 
     [Inject]
     public required IReservationService ReservationService { get; set; }

@@ -17,14 +17,11 @@ namespace Rise.Client.Reservations.Components.Dialogs
         [Inject]
         private IReservationService ReservationService { get; set; } = default!;
 
-        public required ReservationCreateDto Reservation { get; set; }
+
         private DialogState State { get; set; } = DialogState.Overview;
         private UserDto User { get; set; } = new UserDto("John Doe", "john.doe@email.com");
 
-        protected override void OnParametersSet()
-        {
-            Reservation = new ReservationCreateDto() { TimeSlot = TimeSlot };
-        }
+
         private void Close() => MudDialog.Close();
         private void Cancel() => MudDialog.Cancel();
 
@@ -33,7 +30,10 @@ namespace Rise.Client.Reservations.Components.Dialogs
             State = DialogState.Pay;
             await Task.Delay(3500);
             State = DialogState.Success;
-            await ReservationService.CreateReservation(Reservation.TimeSlot.Id);
+            await ReservationService.CreateReservation(new CreateReservationDto
+            {
+                TimeSlotId = TimeSlot.Id
+            });
             StateHasChanged();
         }
 
