@@ -1,9 +1,13 @@
+using System.Text;
 using Microsoft.AspNetCore.Components;
 
 namespace Rise.Client.Common
 {
     public partial class AsyncData<T> : ComponentBase
     {
+        [Parameter, EditorRequired]
+        public required string TestIdPrefix { get; set; }
+
         private bool shouldRender;
 
         private Func<Task<T>> _previousDataFetcher = default!;
@@ -103,6 +107,31 @@ namespace Rise.Client.Common
         private bool ShowSnackBarAlert()
         {
             return ErrorDisplayMethod == AsyncErrorDisplayMethod.SnackBarAlert || ErrorDisplayMethod == AsyncErrorDisplayMethod.Both;
+        }
+
+        private string PrefixTestId(string testId)
+        {
+            StringBuilder sb = new(TestIdPrefix);
+            if (sb.Length > 0)
+            {
+                char lastChar = sb[^1];
+                char joinChar = '-';
+                if (lastChar != joinChar)
+                    sb.Append(joinChar);
+            }
+            sb.Append(testId);
+
+            return sb.ToString();
+        }
+
+        private string TestIdLoading()
+        {
+            return PrefixTestId("loading-progress");
+        }
+
+        private string TestIdError()
+        {
+            return PrefixTestId("fetch-error");
         }
     }
 

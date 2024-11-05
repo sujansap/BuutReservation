@@ -11,7 +11,7 @@
 <MudPaper Class="pa-2 h-fill" data-testid="time-slot-list">
     <MudText Typo="Typo.h5" Class="mud-text-secondary mb-4">@SelectedDate.ToString("dd MMMM yyyy")</MudText>
     <AsyncData DataFetcher="@FetchTimeSlots" @bind-Data="@TimeSlots" T="IEnumerable<TimeSlotDto>" @ref="AsyncDataRef"
-        ShowContentWhenError="@false">
+        ShowContentWhenError="@false" TestIdPrefix="time-slot-list">
         @* TODO make loader use skeleton *@
         @if (TimeSlots.Count() == 0)
         {

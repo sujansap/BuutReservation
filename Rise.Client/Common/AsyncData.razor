@@ -2,6 +2,8 @@
 @typeparam T
 @inject ISnackbar SnackbarService
 
+@* TODO check mobile view *@
+@* TODO limit loader to show up only after 1 second *@
 @if (!DisableLoader && IsLoading)
 {
     @RenderLoading
@@ -34,9 +36,9 @@ else
         @content
     </MudContainer>;
 
-    protected virtual RenderFragment RenderLoading => RenderInfoContainer(@<MudProgressCircular Indeterminate="true" data-testid="loading-progress" />);
+    protected virtual RenderFragment RenderLoading => RenderInfoContainer(@<MudProgressCircular Indeterminate="true" data-testid="@TestIdLoading()" />);
 
-    protected virtual RenderFragment RenderErrorMessage => @<MudText Typo="Typo.body1" data-testid="fetch-error">
+    protected virtual RenderFragment RenderErrorMessage => @<MudText Typo="Typo.body1" data-testid="@TestIdError()">
         @ErrorMessage</MudText>;
 
     protected virtual RenderFragment RenderError => RenderInfoContainer(@<MudAlert Severity="Severity.Error">

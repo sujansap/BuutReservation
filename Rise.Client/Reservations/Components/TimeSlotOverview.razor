@@ -16,7 +16,8 @@
     <MudItem xs="12" md="8">
         @* ! DO NOT enable the loader here as it will cause infinitive loading (IDK why) *@
         <AsyncData DataFetcher="@FetchDateRange" @bind-Data="@TimeSlotRangeInfo" T="TimeSlotRangeInfoDto"
-            @ref="AsyncDateRangeRef" DisableLoader ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert">
+            @ref="AsyncDateRangeRef" DisableLoader ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert"
+            TestIdPrefix="custom-calendar-reserve">
             <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false" Class="mt-8"
                 data-testid="custom-calendar-reserve" AvailableDays="@AvailableDays"
                 DateRangeChanged="@OnDateRangeChanged" CellClicked="@OnCellClicked" Items="@ReservationsOfCurrentUser">
