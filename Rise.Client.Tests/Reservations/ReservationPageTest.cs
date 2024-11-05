@@ -3,12 +3,12 @@ using Microsoft.Playwright;
 using Rise.Shared.TimeSlots;
 using Shouldly;
 
-namespace Rise.Client.Reservations
+namespace Rise.Client.Tests.Reservations
 {
     [TestFixture]
     public class ReservationPageTest : CustomPageTest
     {
-
+        // TODO remove trace view in ReservationPage
         [SetUp]
         public async Task Setup()
         {

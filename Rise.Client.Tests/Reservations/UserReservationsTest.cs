@@ -2,7 +2,8 @@ using Microsoft.Playwright;
 using Shouldly;
 using Rise.Shared.Reservations;
 
-namespace Rise.Client.Reservations {
+namespace Rise.Client.Tests.Reservations
+{
 
     [TestFixture]
     public class UserReservationsTest : CustomPageTest

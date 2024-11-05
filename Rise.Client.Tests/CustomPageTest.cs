@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 
-namespace Rise.Client
+namespace Rise.Client.Tests
 {
     [TestFixture]
     public class CustomPageTest : PageTest
