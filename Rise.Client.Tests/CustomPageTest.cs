@@ -3,6 +3,7 @@ using Microsoft.Playwright.NUnit;
 
 namespace Rise.Client
 {
+    [Parallelizable(ParallelScope.Self)]
     [TestFixture]
     public class CustomPageTest : PageTest
     {
