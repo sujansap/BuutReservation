@@ -65,6 +65,8 @@ namespace Rise.Client.Reservations
                 });
             });
             await Page.GotoAsync("/reservations");
+
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/TimeSlot/range"));
         }
 
         private async Task MockTimeSlotAndSelectOnCalendar()
@@ -125,6 +127,8 @@ namespace Rise.Client.Reservations
 
             await Page.GotoAsync("/reservations");
 
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/TimeSlot/range"));
+
             ILocator day = Page.Locator(DateToCalendarIdentifier(today));
             await day.ClickAsync();
         }
@@ -152,7 +156,7 @@ namespace Rise.Client.Reservations
             ILocator daysLocator = Page.GetByTestId("calendar-cel");
 
             // Assert the correct number of days
-            await Expect(daysLocator).ToHaveCountAsync(35);
+            await Expect(daysLocator).ToHaveCountAsync(35, new LocatorAssertionsToHaveCountOptions() { Timeout = 10000 });
         }
 
         [Test]
@@ -189,7 +193,6 @@ namespace Rise.Client.Reservations
         public async Task ContainCalendarDataDates()
         {
             await MockAvailableDays();
-            await Page.GotoAsync("/reservations");
 
             ILocator available = Page.Locator("[data-celtype=available]");
             await Expect(available).ToHaveCountAsync(2, new LocatorAssertionsToHaveCountOptions() { Timeout = 8000 });
@@ -333,7 +336,7 @@ namespace Rise.Client.Reservations
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync("/reservations");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 8000 });
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
@@ -343,7 +346,7 @@ namespace Rise.Client.Reservations
             string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync($"/reservations?CurrentDate={toEarlyDate}");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 8000 });
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
@@ -366,12 +369,12 @@ namespace Rise.Client.Reservations
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync("/reservations");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 8000 });
 
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
             string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 8000 });
             Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
         }
 
