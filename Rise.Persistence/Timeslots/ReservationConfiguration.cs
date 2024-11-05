@@ -37,19 +37,19 @@ namespace Rise.Persistence.Timeslots
                 .HasForeignKey(e => e.TimeSlotId)
                 .IsRequired(true);
 
-      builder
-          .HasOne(e => (User)e.User)
-          .WithMany(e => (ICollection<Reservation>)e.Reservations)
-          .HasForeignKey(e => e.UserId)
-          .IsRequired(true);
+            builder
+                .HasOne(e => (User)e.User)
+                .WithMany(e => (ICollection<Reservation>)e.Reservations)
+                .HasForeignKey(e => e.UserId)
+                .IsRequired(true);
 
-      builder
-        .HasIndex(e => new { e.BoatId, e.TimeSlotId })
-        .IsUnique()
-        .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+            builder
+              .HasIndex(e => new { e.BoatId, e.TimeSlotId })
+              .IsUnique()
+              .HasDatabaseName("IX_Unique_Boat_TimeSlot");
 
 
-      // .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+            // .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+        }
     }
-  }
 }

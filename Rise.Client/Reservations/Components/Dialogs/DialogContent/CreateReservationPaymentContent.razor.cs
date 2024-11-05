@@ -1,27 +1,27 @@
 namespace Rise.Client.Reservations.Components.Dialogs.DialogContent
 {
-  public partial class CreateReservationPaymentContent
-  {
-    private string LoadingDots = ".";
-    private Timer? timer;
-
-    protected override void OnInitialized()
+    public partial class CreateReservationPaymentContent
     {
-      timer = new Timer(
-      _ =>
-      {
-        LoadingDots = LoadingDots.Length >= 3 ? "." : LoadingDots + ".";
-        InvokeAsync(StateHasChanged);
-      },
-      null,
-      0,
-      500
-      );
-    }
+        private string LoadingDots = ".";
+        private Timer? timer;
 
-    public void Dispose()
-    {
-      timer?.Dispose();
+        protected override void OnInitialized()
+        {
+            timer = new Timer(
+            _ =>
+            {
+                LoadingDots = LoadingDots.Length >= 3 ? "." : LoadingDots + ".";
+                InvokeAsync(StateHasChanged);
+            },
+            null,
+            0,
+            500
+            );
+        }
+
+        public void Dispose()
+        {
+            timer?.Dispose();
+        }
     }
-  }
 }

@@ -3,7 +3,8 @@ using Shouldly;
 using Rise.Shared.Reservations;
 using Rise.Shared.Pagination;
 
-namespace Rise.Client.Reservations {
+namespace Rise.Client.Reservations
+{
 
     [TestFixture]
     public class UserReservationsTest : CustomPageTest
@@ -33,9 +34,10 @@ namespace Rise.Client.Reservations {
                     PreviousId = 1,
                     IsFirstPage = true
                 };
-                await route.FulfillAsync(new() { 
+                await route.FulfillAsync(new()
+                {
                     ContentType = "application/json",
-                    Body = System.Text.Json.JsonSerializer.Serialize(response) 
+                    Body = System.Text.Json.JsonSerializer.Serialize(response)
                 });
             });
         }
@@ -52,9 +54,10 @@ namespace Rise.Client.Reservations {
                     PreviousId = null,
                     IsFirstPage = true
                 };
-                await route.FulfillAsync(new() { 
+                await route.FulfillAsync(new()
+                {
                     ContentType = "application/json",
-                    Body = System.Text.Json.JsonSerializer.Serialize(response) 
+                    Body = System.Text.Json.JsonSerializer.Serialize(response)
                 });
             });
         }
@@ -90,11 +93,11 @@ namespace Rise.Client.Reservations {
         {
             await MockReservationsApi();
             await Page.GotoAsync(UserReservationsUrl);
-            
+
             // Wait for loading to complete AND for at least one reservation to appear
             await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
             await Page.WaitForSelectorAsync("[data-testid='reservation-item']", new() { State = WaitForSelectorState.Visible });
-            
+
             var locator = Page.GetByTestId("reservation-item");
             await Expect(locator).ToHaveCountAsync(1);
         }
@@ -110,7 +113,7 @@ namespace Rise.Client.Reservations {
             (await firstReservation.GetByTestId("reservation-date").InnerTextAsync()).ShouldContain(ValidReservation.Date.ToString("dd/MM/yyyy"));
             (await firstReservation.GetByTestId("reservation-boat-name").InnerTextAsync()).ShouldContain(ValidReservation.BoatPersonalName);
             (await firstReservation.GetByTestId("reservation-time").InnerTextAsync()).ShouldContain($"{ValidReservation.Start.ToString("HH:mm")} - {ValidReservation.End.ToString("HH:mm")}");
-            
+
         }
 
 
