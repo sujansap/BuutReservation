@@ -36,4 +36,23 @@
 		<value>Your reservation is successfully created</value>
 	</data>
 
+	<!-- New translations -->
+	<data name="UpcomingReservations" xml:space="preserve">
+		<value>Upcoming Reservations</value>
+	</data>
+	<data name="PastReservations" xml:space="preserve">
+		<value>Past Reservations</value>
+	</data>
+	<data name="NoUpcomingReservations" xml:space="preserve">
+		<value>You have no upcoming reservations.</value>
+	</data>
+	<data name="NoPastReservations" xml:space="preserve">
+		<value>You have no past reservations.</value>
+	</data>
+	<data name="Past" xml:space="preserve">
+		<value>Past</value>
+	</data>
+	<data name="Upcoming" xml:space="preserve">
+		<value>Present</value>
+	</data>
 </root>

@@ -9,6 +9,18 @@ public class UserReservationsBase : ComponentBase
 {
     protected ItemsPageDto<ReservationDto>? ReservationPage { get; private set; }
     protected bool IsLoading { get; private set; }
+    protected bool ShowPastReservations
+    {
+        get => _showPastReservations;
+        set
+        {
+            if (_showPastReservations == value) return;
+            _showPastReservations = value;
+            LoadReservations().ConfigureAwait(false);
+        }
+    }
+
+    private bool _showPastReservations;
 
     [Inject]
     public required IReservationService ReservationService { get; set; }
@@ -21,19 +33,22 @@ public class UserReservationsBase : ComponentBase
         {
             IsLoading = true;
             var cursor = isNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
-
+            
+            Console.WriteLine($"Loading reservations with ShowPastReservations={ShowPastReservations}");
+            
             var result = await ReservationService.GetUserReservations(
                 1,
                 cursor,
                 isNextPage,
-                getPast: false
+                getPast: ShowPastReservations
             );
 
+            Console.WriteLine($"Received {result.Data.Count()} reservations");
             ReservationPage = result;
         }
-        catch
+        catch (Exception ex)
         {
-            // proper error handling/logging needed here
+            Console.WriteLine($"Error loading reservations: {ex.Message}");
             ReservationPage = new()
             {
                 Data = new List<ReservationDto>()
