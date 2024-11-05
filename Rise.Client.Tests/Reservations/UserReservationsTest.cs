@@ -11,38 +11,14 @@ namespace Rise.Client.Reservations {
 
         private const string UserReservationsUrl = "/reservations?CurrentTab=reservations";
 
-        private ReservationDto ValidReservation = new (){
+        private readonly ReservationDto ValidReservation = new()
+        {
             BoatId = 1,
             Date = DateOnly.Parse("2024-10-30"),
             Start = TimeOnly.Parse("10:00"),
             End = TimeOnly.Parse("13:00"),
             BoatPersonalName = "Limba"
         };
-
-        [SetUp]
-        public async Task Setup()
-        {
-            await Context.Tracing.StartAsync(new()
-            {
-                Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
-                Screenshots = true,
-                Snapshots = true,
-                Sources = true
-            });
-        }
-
-        [TearDown]
-        public async Task TearDown()
-        {
-            await Context.Tracing.StopAsync(new()
-            {
-                Path = Path.Combine(
-                    TestContext.CurrentContext.WorkDirectory,
-                    "playwright-traces",
-                    $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip"
-                )
-            });
-        }
 
         private async Task MockReservationsApi()
         {
@@ -141,12 +117,11 @@ namespace Rise.Client.Reservations {
         [Test]
         public async Task ShowsLoadingStateWhileFetchingReservations()
         {
-            var mockTask = MockReservationsApi();
-            
+            await MockReservationsApi();
+
             await Page.GotoAsync(UserReservationsUrl);
             await Expect(Page.GetByTestId("loading-progress")).ToBeVisibleAsync();
-            
-            await mockTask;
+
             await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
         }
 
