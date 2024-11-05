@@ -9,8 +9,17 @@ using Rise.Client.Services;
 using MudBlazor;
 using System.Globalization;
 using Microsoft.JSInterop;
+using Serilog.Core;
+using Serilog;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+var levelSwitch = new LoggingLevelSwitch();
+Log.Logger = new LoggerConfiguration().MinimumLevel.ControlledBy(levelSwitch)
+                .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
+                .WriteTo.BrowserConsole()
+                .WriteTo.BrowserHttp($"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
+                .CreateLogger();
 
 builder.Services.AddLocalization();
 builder.RootComponents.Add<App>("#app");
@@ -52,5 +61,7 @@ if (result == null)
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-await host.RunAsync();
+Log.Information("Starting up Client in Environment: {Environment}",
+                builder.HostEnvironment.Environment);
 
+await host.RunAsync();
