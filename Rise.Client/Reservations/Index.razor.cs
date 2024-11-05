@@ -7,6 +7,7 @@ namespace Rise.Client.Reservations
 {
     public partial class Index : ComponentBase
     {
+
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; } = default!;
 
@@ -17,6 +18,12 @@ namespace Rise.Client.Reservations
         private List<ColoredCalendarItem> ReservationsOfCurrentUser = new List<ColoredCalendarItem>();
 
         private DateOnly? SelectedDate { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            ChangeTabViaName();
+        }
 
         /// <summary>
         /// Handle when calendar date range changes
@@ -93,6 +100,54 @@ namespace Rise.Client.Reservations
             else
             {
                 SelectedDate = null;
+            }
+        }
+
+        // TODO refactor tab tracer to tabs components
+        private static readonly List<string> tabNames = ["calendar", "reservations"];
+
+        private int _tabIndex = 0;
+        private int TabIndex
+        {
+            get => _tabIndex; set
+            {
+                UpdateSelectedTabInQuery(value);
+                _tabIndex = value;
+            }
+        }
+
+        [SupplyParameterFromQuery]
+        /// <summary>
+        /// Which tab is open on the page
+        /// </summary>
+        private string? CurrentTab { get; set; }
+
+        private void UpdateSelectedTabInQuery(int index)
+        {
+            string tabName = tabNames[index];
+            bool noCurrentTabName = CurrentTab is null;
+            if (noCurrentTabName || (CurrentTab is not null && !CurrentTab.Equals(tabName)))
+            {
+                Dictionary<string, object?> queries = new()
+                {
+                    ["CurrentTab"] = tabName,
+                };
+                Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(queries), forceLoad: false, replace: true);
+            }
+
+        }
+
+        private void ChangeTabViaName()
+        {
+            if (CurrentTab is not null)
+            {
+                CurrentTab = CurrentTab.ToLower();
+                int index = tabNames.IndexOf(CurrentTab);
+                TabIndex = index < 0 ? 0 : index;
+            }
+            else
+            {
+                UpdateSelectedTabInQuery(TabIndex);
             }
         }
 
