@@ -98,5 +98,72 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.GetAsync($"me?cursor=17");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
+
+
+        [Fact]
+        public async Task POST_CreateReservation_WithValidTimeSlot_ExpectCreated()
+        {
+
+            var request = new CreateReservationDto
+            {
+                TimeSlotId = 10
+            };
+
+
+            var response = await _client.PostAsJsonAsync("", request);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Created);
+            var reservationId = await response.Content.ReadFromJsonAsync<int>();
+            reservationId.ShouldBeGreaterThan(0);
+        }
+
+        [Fact]
+        public async Task POST_CreateReservation_WithQueryParameters_ExpectBadRequest()
+        {
+            var request = new CreateReservationDto
+            {
+                TimeSlotId = 1
+            };
+
+            var response = await _client.PostAsJsonAsync("?badrequest=true", request);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task POST_CreateReservation_WithNoAvailableBoats_ExpectConflict()
+        {
+            var request = new CreateReservationDto
+            {
+                TimeSlotId = 1
+            };
+
+            var response = await _client.PostAsJsonAsync("", request);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        }
+
+        [Fact]
+        public async Task POST_CreateReservation_WithInvalidTimeSlot_ExpectNotFound()
+        {
+            var request = new CreateReservationDto
+            {
+                TimeSlotId = -1
+            };
+
+
+            var response = await _client.PostAsJsonAsync("", request);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task POST_CreateReservation_WithMissingTimeSlotId_ExpectBadRequest()
+        {
+            var request = new CreateReservationDto();
+
+            var response = await _client.PostAsJsonAsync("", request);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
     }
 }

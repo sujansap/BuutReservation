@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rise.Server.Common.Filters;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
-
+using FluentValidation;
 namespace Rise.Server.Controllers
 {
     [ApiController]
@@ -75,5 +76,19 @@ namespace Rise.Server.Controllers
             var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);
             return Ok(reservations);
         }
+        /// <summary>
+        /// Creates a reservation for a specific timeslot for the current user
+        /// </summary>
+        /// <param name="reservationDto">The details of the reservation to create</param>
+        /// <returns>The deatils of the created reservation</returns>
+        [HttpPost]
+        [NoQueryParameters]
+        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto reservationDto)
+        {
+            var reservationId = await _reservationService.CreateReservation(reservationDto);
+            return CreatedAtAction(nameof(CreateReservation), reservationId);
+        }
+
+
     }
 }

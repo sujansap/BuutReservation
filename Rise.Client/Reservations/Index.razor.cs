@@ -97,6 +97,10 @@ namespace Rise.Client.Reservations
             {
                 SelectedDate = DateOnly.FromDateTime(date);
             }
+            else
+            {
+                SelectedDate = null;
+            }
         }
 
         // TODO refactor tab tracer to tabs components
