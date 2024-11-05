@@ -26,6 +26,24 @@ namespace Rise.Domain.Tests.Timeslots
         }
 
         [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void BeCreatedWithStartBeforeToday(int days)
+        {
+            DateTime anotherStart = DateTime.Today.AddDays(days);
+
+            CruisePeriod cruisePeriod = new()
+            {
+                Start = anotherStart,
+                End = ValidEnd
+            };
+
+            cruisePeriod.Start.ShouldBe(anotherStart);
+            cruisePeriod.End.ShouldBe(ValidEnd);
+            cruisePeriod.TimeSlots.ShouldNotBeNull();
+        }
+
+        [Theory]
         [InlineData("0001-01-01")]
         public void NotBeCreatedWithAnInvalidEnd(string endString)
         {

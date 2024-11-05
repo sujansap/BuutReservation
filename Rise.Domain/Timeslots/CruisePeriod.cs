@@ -15,7 +15,7 @@ public class CruisePeriod : Entity, ICruisePeriod
         get => _start;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(Start), DateTime.Today, DateTime.MaxValue, "Start date must be today or in the future.");
+            Guard.Against.OutOfSQLDateRange(value, nameof(Start));
             _start = value;
         }
     }
