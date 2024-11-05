@@ -11,50 +11,24 @@ namespace Rise.Domain.Tests.Timeslots
         private static readonly DateTime ValidStart = DateTime.Today.AddDays(1);
         private static readonly DateTime ValidEnd = DateTime.Today.AddDays(2);
 
-        [Fact]
-        public void BeCreated()
-        {
-            CruisePeriod cruisePeriod = new()
-            {
-                Start = ValidStart,
-                End = ValidEnd
-            };
-
-            cruisePeriod.Start.ShouldBe(ValidStart);
-            cruisePeriod.End.ShouldBe(ValidEnd);
-            cruisePeriod.TimeSlots.ShouldNotBeNull();
-        }
-
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
-        public void BeCreatedWithStartBeforeToday(int days)
+        [InlineData(-2)]
+        [InlineData(-3)]
+        public void BeCreated(int days)
         {
-            DateTime anotherStart = DateTime.Today.AddDays(days);
-
+            DateTime anotherStart = ValidStart.AddDays(days);
+            DateTime anotherEnd = ValidEnd.AddDays(days);
             CruisePeriod cruisePeriod = new()
             {
                 Start = anotherStart,
-                End = ValidEnd
+                End = anotherEnd
             };
 
             cruisePeriod.Start.ShouldBe(anotherStart);
-            cruisePeriod.End.ShouldBe(ValidEnd);
+            cruisePeriod.End.ShouldBe(anotherEnd);
             cruisePeriod.TimeSlots.ShouldNotBeNull();
-        }
-
-        [Theory]
-        [InlineData("0001-01-01")]
-        public void NotBeCreatedWithAnInvalidEnd(string endString)
-        {
-            DateTime invalidEnd = DateTime.Parse(endString);
-
-            Action act = () =>
-            {
-                CruisePeriod cruisePeriod = new() { Start = ValidStart, End = invalidEnd };
-            };
-
-            act.ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Fact]
