@@ -56,8 +56,7 @@ namespace Rise.Client.Reservations
 
             catch
             {
-                // TODO this error message is not localized
-                var errorMessage = "Er is iets mis gegaan bij het ophalen van de beschikbare dagen";
+                var errorMessage = Localizer["ErrorLoadingReservations"];
                 Snackbar.Add(new MarkupString($"<span data-testid='error-message'>{errorMessage}</span>"), Severity.Error);
                 return;
             }

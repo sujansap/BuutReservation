@@ -35,7 +35,9 @@
 	<data name="ReservationSuccessfulyCreated" xml:space="preserve">
 		<value>Your reservation is successfully created</value>
 	</data>
-
+	<data name="ErrorLoadingReservations">
+		<value>Something went wrong while fetching the reservations.</value>
+	</data>
 	<!-- New translations -->
 	<data name="UpcomingReservations" xml:space="preserve">
 		<value>Upcoming Reservations</value>
