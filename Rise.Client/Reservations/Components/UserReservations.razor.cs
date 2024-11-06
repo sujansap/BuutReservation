@@ -24,8 +24,11 @@ public class UserReservationsBase : ComponentBase
             LoadReservations().ConfigureAwait(false);
         }
     }
+    protected bool IsFirstPage { get; private set; } = true;
 
     private bool _showPastReservations;
+
+    private Stack<int?> _previousCursors = new();
 
     [Inject]
     public required IStringLocalizer<ReservationPageResources> Localizer { get; set; } = default!;
@@ -43,10 +46,21 @@ public class UserReservationsBase : ComponentBase
             IsLoading = true;
             var cursor = isNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
             
+            if (isNextPage && cursor != null)
+            {
+                _previousCursors.Push(ReservationPage?.PreviousId);
+            }
+            else if (!isNextPage && _previousCursors.Count > 0)
+            {
+                cursor = _previousCursors.Pop();
+            }
+
+            IsFirstPage = cursor == null;
+            
             var result = await ReservationService.GetUserReservations(
                 1,
                 cursor,
-                cursor != null ? isNextPage : null, // Only send isNextPage if we have a cursor
+                cursor != null ? isNextPage : null,
                 getPast: ShowPastReservations
             );
 
@@ -83,4 +97,6 @@ public class UserReservationsBase : ComponentBase
     {
         await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
+
+    protected bool CanGoBack => !IsFirstPage && _previousCursors.Count > 0;
 }
