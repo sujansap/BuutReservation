@@ -1,0 +1,81 @@
+@using MudBlazor
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Reservations
+@using Rise.Shared.Pagination
+@using Rise.Shared.Reservations
+@using Rise.Client.Common
+
+@inject IStringLocalizer<ReservationPageResources> Localizer
+@inherits UserReservationsBase
+
+<MudGrid Spacing="6" Class="mt-8">
+    <AsyncData DataFetcher="@LoadReservations" @bind-Data="@ReservationPage" T="ItemsPageDto<ReservationDto>"
+        @ref="@AsyncDataRef" TestIdPrefix="user-reservations">
+        @if (ReservationPage?.Data?.Any() ?? false)
+        {
+            @foreach (ReservationDto? reservation in ReservationPage.Data)
+            {
+                <MudItem xs="12" data-testid="reservation-item">
+                    <MudCard Elevation="6" Class="mb-6"
+                        Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+                        <MudCardContent>
+                            <MudGrid>
+                                <!-- Icon Section -->
+                                <MudItem xs="2" Class="d-flex justify-center align-center" Style="height: 100%;">
+                                    <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
+                                        Style="width: 70px; height: 70px; color: #40e0d0;" />
+                                </MudItem>
+
+                                <!-- Text Content Section -->
+                                <MudItem xs="7" Class="d-flex flex-column" Style="padding-left: 20px;">
+                                    <MudText Typo="Typo.h5" Class="mb-2" Style="color: #333;" data-testid="reservation-date">
+                                        @Localizer["ReservationFor"] <strong>@reservation.Date.ToShortDateString()</strong>
+                                    </MudText>
+                                    <MudText data-testid="reservation-boat-name" Style="color: #777;">
+                                        <strong>@Localizer["Boat"]:</strong> @reservation.BoatPersonalName
+                                    </MudText>
+                                    <MudText data-testid="reservation-time" Style="color: #777;">
+                                        <strong>@Localizer["Time"]:</strong> @reservation.Start - @reservation.End
+                                    </MudText>
+                                </MudItem>
+
+                                <!-- View Details Button -->
+                                <MudItem xs="3" Class="d-flex justify-end align-center">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                        Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
+                                        @Localizer["ViewDetails"]
+                                    </MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+
+            <!-- Pagination Controls -->
+            <MudItem xs="12" Class="d-flex justify-center mt-4">
+                <MudStack Row="true" Spacing="2" Justify="Justify.Center">
+                    <MudButton OnClick="@LoadPreviousPage" Disabled="@(ReservationPage?.PreviousId == null)"
+                        StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" Variant="Variant.Filled"
+                        data-testid="previous-page" Style="border-radius: 20px;">
+                        @Localizer["Previous"]
+                    </MudButton>
+                    <MudButton OnClick="@LoadNextPage" Disabled="@(ReservationPage?.NextId == null)"
+                        EndIcon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary" Variant="Variant.Filled"
+                        data-testid="next-page" Style="border-radius: 20px;">
+                        @Localizer["Next"]
+                    </MudButton>
+                </MudStack>
+            </MudItem>
+        }
+        else
+        {
+            <!-- No Reservations Message -->
+            <MudItem xs="12" Class="d-flex justify-center">
+                <MudText Typo="Typo.h6" Style="color: #888;" data-testid="no-reservations">
+                    @Localizer["NoReservationsFound"]
+                </MudText>
+            </MudItem>
+        }
+    </AsyncData>
+</MudGrid>

@@ -1,9 +1,12 @@
 ﻿@page "/"
 @page "/home"
 @using MudBlazor
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Layout
 @inject NavigationManager navigation
+@inject IStringLocalizer<LandingPageResource> Localizer
 
 <PageTitle>Home</PageTitle>
 
-<MudText Typo="Typo.h1">Home</MudText>
-<MudText Typo="Typo.body1">Welcome to Buut!</MudText>
+<MudText Typo="Typo.h1">@Localizer["Home"]</MudText>
+<MudText Typo="Typo.body1">@Localizer["WelcomeMessage"]</MudText>

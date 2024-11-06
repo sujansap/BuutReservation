@@ -7,6 +7,5 @@ namespace Rise.Shared.TimeSlots
     /// <param name="Days">Reservation states of every day in the range</param>
     public record class TimeSlotRangeInfoDto(int TotalDays, IEnumerable<TimeSlotDaySurfaceInfoDto> Days)
     {
-
     }
 }

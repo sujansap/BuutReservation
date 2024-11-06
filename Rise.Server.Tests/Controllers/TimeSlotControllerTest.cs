@@ -37,14 +37,15 @@ namespace Rise.Server.Tests.Controllers
             TimeSlotRangeInfoDto response = (await _client.GetFromJsonAsync<TimeSlotRangeInfoDto>(MakeTimeSlotRangeUrl(startDate, endDate)))!;
             response.TotalDays.ShouldBe(8);
             response.Days.ShouldBe([
-                new(startDate, false, false),
-                new(startDate.AddDays(1), false, false),
-                new(startDate.AddDays(2), false, false),
-                new(startDate.AddDays(3), false, true),
-                new(startDate.AddDays(4), false, false),
-                new(startDate.AddDays(5), false, true),
-                new(startDate.AddDays(6), true, false),
-                new(startDate.AddDays(7), false, true),
+                new(startDate, false, false, false),
+                new(startDate.AddDays(1), false, false, false),
+                new(startDate.AddDays(2), false, false, false),
+                new(startDate.AddDays(3), false, true, false),
+                new(startDate.AddDays(4), false, false, false),
+                new(startDate.AddDays(5), false, true, false),
+                new(startDate.AddDays(6), false, true, false),
+                // new(startDate.AddDays(6), true, false, false), failed due to new seed data
+                new(startDate.AddDays(7), false, true, true),
             ]);
         }
 

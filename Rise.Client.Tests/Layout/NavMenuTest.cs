@@ -1,6 +1,6 @@
 using Shouldly;
 
-namespace Rise.Client.Layout
+namespace Rise.Client.Tests.Layout
 {
     [TestFixture]
     public class NavMenuTest : CustomPageTest

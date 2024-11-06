@@ -1,3 +1,4 @@
+using Heron.MudCalendar;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.TimeSlots;
@@ -7,68 +8,63 @@ namespace Rise.Client.Reservations
     public partial class Index : ComponentBase
     {
 
-        [Inject]
-        private ITimeSlotService TimeSlotService { get; set; } = default!;
-
-        /// <summary>
-        /// All unavailable days on the calendar
-        /// </summary>
-        private Dictionary<DateOnly, TimeSlotDaySurfaceInfoDto> AvailableDays { get; set; } = [];
-
-        private DateOnly? SelectedDate { get; set; }
-
-        /// <summary>
-        /// Handle when calendar date range changes
-        /// </summary>
-        /// <param name="dateRange">The new date range</param>
-        private async Task OnDateRangeChanged(DateRange dateRange)
+        // TODO refactor tab tracer to tabs components
+        protected override void OnParametersSet()
         {
-            if (dateRange.Start.HasValue && dateRange.End.HasValue)
+            base.OnParametersSet();
+            ChangeTabViaName();
+        }
+        private static readonly List<string> tabNames = ["calendar", "reservations"];
+
+        private int _tabIndex = 0;
+        private int TabIndex
+        {
+            get => _tabIndex; set
             {
-                DateOnly startDate = DateOnly.FromDateTime(dateRange.Start.Value);
-                DateOnly endDate = DateOnly.FromDateTime(dateRange.End.Value);
-                await UpdateDates(startDate, endDate);
+                UpdateSelectedTabInQuery(value);
+                _tabIndex = value;
             }
         }
 
+        [SupplyParameterFromQuery]
         /// <summary>
-        /// Update known dates via the api
+        /// Which tab is open on the page
         /// </summary>
-        /// <returns></returns>
-        private async Task UpdateDates(DateOnly startDate, DateOnly endDate)
+        private string? CurrentTab { get; set; }
+
+        private void UpdateSelectedTabInQuery(int index)
         {
-
-            try
+            string tabName = tabNames[index];
+            bool noCurrentTabName = CurrentTab is null;
+            if (noCurrentTabName || (CurrentTab is not null && !CurrentTab.Equals(tabName)))
             {
-                TimeSlotRangeInfoDto response = await TimeSlotService.GetAllTimeSlotsInRange(
-                startDate,
-                endDate
-            );
-
-
-                AvailableDays = response.Days
-                .Where(day => day.IsSlotAvailable)
-                .ToDictionary(day => day.Date, day => day);
-
+                Dictionary<string, object?> queries = new()
+                {
+                    ["CurrentTab"] = tabName,
+                };
+                Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(queries), forceLoad: false, replace: true);
             }
 
-            catch
+        }
+
+        private void ChangeTabViaName()
+        {
+            if (CurrentTab is not null)
             {
-                // TODO this error message is not localized
-                var errorMessage = "Er is iets mis gegaan bij het ophalen van de beschikbare dagen";
-                Snackbar.Add(new MarkupString($"<span data-testid='error-message'>{errorMessage}</span>"), Severity.Error);
-                return;
+                CurrentTab = CurrentTab.ToLower();
+                int index = tabNames.IndexOf(CurrentTab);
+                TabIndex = index < 0 ? 0 : index;
+            }
+            else
+            {
+                UpdateSelectedTabInQuery(TabIndex);
             }
         }
 
-        /// <summary>
-        /// When a day is being selected
-        /// </summary>
-        /// <param name="date">The clicked date</param>
-        /// <returns></returns>
-        private void OnCellClicked(DateTime date)
-        {
-            SelectedDate = DateOnly.FromDateTime(date);
-        }
+    }
+
+    public partial class ColoredCalendarItem : CalendarItem
+    {
+        public Color Color { get; set; } = Color.Primary;
     }
 }

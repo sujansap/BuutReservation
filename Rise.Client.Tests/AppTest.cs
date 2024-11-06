@@ -1,5 +1,5 @@
 
-namespace Rise.Client
+namespace Rise.Client.Tests
 {
 
     [TestFixture]

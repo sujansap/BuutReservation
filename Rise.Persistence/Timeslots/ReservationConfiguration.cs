@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
@@ -41,6 +42,14 @@ namespace Rise.Persistence.Timeslots
                 .WithMany(e => (ICollection<Reservation>)e.Reservations)
                 .HasForeignKey(e => e.UserId)
                 .IsRequired(true);
+
+            builder
+              .HasIndex(e => new { e.BoatId, e.TimeSlotId })
+              .IsUnique()
+              .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+
+
+            // .HasDatabaseName("IX_Unique_Boat_TimeSlot");
         }
     }
 }

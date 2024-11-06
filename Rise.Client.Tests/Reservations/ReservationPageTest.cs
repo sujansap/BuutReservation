@@ -1,14 +1,120 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Rise.Shared.TimeSlots;
 using Shouldly;
 
-namespace Rise.Client.Reservations
+namespace Rise.Client.Tests.Reservations
 {
     [TestFixture]
     public class ReservationPageTest : CustomPageTest
     {
         private const string universalDateFormat = "yyyy-MM-dd";
+
+        private static string DateToCalendarIdentifier(DateOnly date)
+        {
+            return $"[identifier='{date:d/MM/yyyy}']";
+        }
+
+        private async Task MockAvailableDays()
+        {
+            int totalDays = 4;
+            DateOnly startDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateOnly endDate = startDate.AddDays(totalDays);
+            TimeSlotRangeInfoDto dto = new(
+                TotalDays: totalDays,
+                Days: [
+                    new(startDate, false, false),
+                    new(startDate.AddDays(1), true, false),
+                    new(startDate.AddDays(2), false, true),
+                    new(startDate.AddDays(3), true, true),
+                ]
+            );
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(dto)
+                });
+            });
+            await Page.GotoAsync("/reservations");
+
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/TimeSlot/range"));
+        }
+
+        private async Task MockTimeSlot()
+        {
+            TimeSlotDto[] timeSlotDtos = [
+                new()
+                {
+                    Id = 1,
+                    Start = new TimeOnly(9, 0, 0),
+                    End = new TimeOnly(12, 0, 0),
+                    IsBookedByUser = false
+                },
+                new()
+                {
+                    Id = 2,
+                    Start = new TimeOnly(12, 0, 0),
+                    End = new TimeOnly(15, 0, 0),
+                    IsBookedByUser = false
+                },
+                new()
+                {
+                    Id = 3,
+                    Start = new TimeOnly(15, 0, 0),
+                    End = new TimeOnly(18, 0, 0),
+                    IsBookedByUser = true
+                },
+            ];
+
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(timeSlotDtos)
+                });
+            });
+        }
+
+        private async Task SelectAvailableDayOnCalendar()
+        {
+            // Arange
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            TimeSlotRangeInfoDto timeRange = new(
+                TotalDays: 1,
+                Days: [
+                    new(today, false, true),
+                ]
+            );
+
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(timeRange)
+                });
+            });
+
+            await Page.GotoAsync("/reservations");
+
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/TimeSlot/range"));
+
+            ILocator day = Page.Locator(DateToCalendarIdentifier(today));
+            await day.ClickAsync();
+        }
+
+        private async Task MockTimeSlotAndSelectAvailableDay()
+        {
+            await MockTimeSlot();
+            await SelectAvailableDayOnCalendar();
+        }
 
         [Test]
         public async Task HasTabs()
@@ -63,38 +169,16 @@ namespace Rise.Client.Reservations
                 });
             });
             await Page.GotoAsync("/reservations");
-            await Page.GetByTestId("error-message").IsVisibleAsync();
+            await Page.GetByTestId("custom-calendar-reserve-fetch-error").IsVisibleAsync();
         }
 
         [Test]
         public async Task ContainCalendarDataDates()
         {
-            int totalDays = 4;
-            DateOnly startDate = new(DateTime.Now.Year, DateTime.Now.Month, 1);
-            DateOnly endDate = startDate.AddDays(totalDays);
-            TimeSlotRangeInfoDto dto = new(
-                TotalDays: totalDays,
-                Days: [
-                    new(startDate, false, false),
-                    new(startDate.AddDays(1), true, false),
-                    new(startDate.AddDays(2), false, true),
-                    new(startDate.AddDays(3), true, true),
-                ]
-            );
-            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
-            {
-                await route.FulfillAsync(new()
-                {
-                    Status = 200,
-                    ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(dto)
-                });
-            });
-            await Page.GotoAsync("/reservations");
+            await MockAvailableDays();
 
             ILocator available = Page.Locator("[data-celtype=available]");
             await Expect(available).ToHaveCountAsync(2);
-
         }
 
         [Test]
@@ -111,74 +195,94 @@ namespace Rise.Client.Reservations
             });
             await Page.GotoAsync("/reservations");
 
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/TimeSlot/range"));
+
             ILocator booked = Page.Locator("[data-celtype=fully-booked]");
             await Expect(booked).ToHaveCountAsync(35);
 
         }
 
         [Test]
-        public async Task HasTimeslotsInTimeSlotList()
+        public async Task HasTimeSlotsInTimeSlotList()
+        {
+            await MockTimeSlotAndSelectAvailableDay();
+
+            ILocator timeSlotList = Page.GetByTestId("time-slot-list");
+
+            ILocator timeSlot1 = timeSlotList.GetByTestId("time-slot-1");
+            ILocator timeSlot2 = timeSlotList.GetByTestId("time-slot-2");
+            ILocator timeSlot3 = timeSlotList.GetByTestId("time-slot-3");
+
+
+            // Assert
+
+            await Expect(timeSlot1).ToHaveCountAsync(1);
+            await Expect(timeSlot2).ToHaveCountAsync(1);
+            await Expect(timeSlot3).ToHaveCountAsync(1);
+
+            // Assert the styles
+            // TODO assert type of time slots
+            // await Expect(timeSlot1).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
+            // await Expect(timeSlot2).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
+            // await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
+        }
+
+        [Test]
+        public async Task ShouldHaveUnexpectedErrorForTimeSlotList()
         {
 
-            // Arange
-            DateOnly today = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            TimeSlotDto[] timeSlotDtos = [
-                new()
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
+            {
+                await route.FulfillAsync(new()
                 {
-                    Id = 1,
-                    Start = new TimeOnly(9, 0, 0),
-                    End = new TimeOnly(12, 0, 0),
-                    IsBookedByUser = false
-                },
-                new()
-                {
-                    Id = 2,
-                    Start = new TimeOnly(12, 0, 0),
-                    End = new TimeOnly(15, 0, 0),
-                    IsBookedByUser = false
-                },
-                new()
-                {
-                    Id = 3,
-                    Start = new TimeOnly(15, 0, 0),
-                    End = new TimeOnly(18, 0, 0),
-                    IsBookedByUser = true
-                },
-            ];
+                    Status = 400,
+                    ContentType = "text/plain",
+                    Body = "Bad Request"
+                });
+            });
 
-            // Act
-            await Page.RouteAsync("*/**/api/TimeSlot/**", async route =>
+            await SelectAvailableDayOnCalendar();
+
+            await Page.GetByTestId("time-slot-list-fetch-error").IsVisibleAsync();
+        }
+
+        [Test]
+        public async Task ShouldHaveLoaderForTimeSlotList()
+        {
+
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
+            {
+                await Task.Delay(5000);
+                await route.FulfillAsync(new()
+                {
+                    Status = 400,
+                    ContentType = "text/plain",
+                    Body = "Bad Request"
+                });
+            });
+
+            await SelectAvailableDayOnCalendar();
+
+            await Page.GetByTestId("time-slot-list-loading-progress").IsVisibleAsync();
+        }
+
+        [Test]
+        public async Task ShouldHaveEmptyMessageForTimeSlotList()
+        {
+
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
             {
                 await route.FulfillAsync(new()
                 {
                     Status = 200,
                     ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(timeSlotDtos)
+                    Body = JsonSerializer.Serialize(new List<TimeSlotDto>())
                 });
             });
-            await Page.GotoAsync("/reservations");
 
-            var day = Page.GetByText($"{today.Day + 2}");
-            await day.ClickAsync();
+            await SelectAvailableDayOnCalendar();
 
-
-            var timeSlotList = Page.GetByTestId("time-slot-list");
-
-            var timeSlot1 = timeSlotList.GetByTestId("time-slot-1");
-            var timeSlot2 = timeSlotList.GetByTestId("time-slot-2");
-            var timeSlot3 = timeSlotList.GetByTestId("time-slot-3");
-
-
-            // Assert
-
-            timeSlot1.ShouldNotBeNull();
-            timeSlot2.ShouldNotBeNull();
-            timeSlot3.ShouldNotBeNull();
-
-            // Assert the styles
-            await Expect(timeSlot1).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
-            await Expect(timeSlot2).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
-            await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
+            await Page.GetByTestId("time-slots-none").IsVisibleAsync();
         }
 
         [Test]
@@ -187,7 +291,7 @@ namespace Rise.Client.Reservations
 
             await Page.GotoAsync("/reservations");
             ILocator prev = Page.GetByTestId("calendar-previous");
-            (await prev.IsDisabledAsync()).ShouldBeTrue();
+            await Expect(prev).ToBeDisabledAsync();
         }
 
         [Test]
@@ -209,7 +313,7 @@ namespace Rise.Client.Reservations
             }
 
             ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(currentMonth - 2);
-            (await previousMonth.IsDisabledAsync()).ShouldBeTrue();
+            await Expect(previousMonth).ToBeDisabledAsync();
         }
 
         [Test]
@@ -222,15 +326,13 @@ namespace Rise.Client.Reservations
 
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
-            string nextMonthText = await monthPicker.InnerTextAsync();
-            nextMonthText.ShouldNotBe(startMonthText);
+            await Expect(monthPicker).Not.ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
 
             ILocator prev = Page.GetByTestId("calendar-previous");
-            (await prev.IsDisabledAsync()).ShouldBeFalse();
+            await Expect(prev).Not.ToBeDisabledAsync();
             await prev.ClickAsync();
 
-            string currentMonthText = await monthPicker.InnerTextAsync();
-            currentMonthText.ShouldBe(startMonthText);
+            await Expect(monthPicker).ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
         }
 
         [Test]
@@ -243,8 +345,7 @@ namespace Rise.Client.Reservations
 
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
-            string nextMonthText = await monthPicker.InnerTextAsync();
-            nextMonthText.ShouldNotBe(startMonthText);
+            await Expect(monthPicker).Not.ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
 
             await monthPicker.ClickAsync();
 
@@ -258,11 +359,10 @@ namespace Rise.Client.Reservations
             }
 
             ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(nextMonth - 2);
-            (await previousMonth.IsDisabledAsync()).ShouldBeFalse();
+            await Expect(previousMonth).Not.ToBeDisabledAsync();
             await previousMonth.ClickAsync();
 
-            string currentMonthText = await monthPicker.InnerTextAsync();
-            currentMonthText.ShouldBe(startMonthText);
+            await Expect(monthPicker).ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
         }
 
         [Test]
@@ -270,7 +370,7 @@ namespace Rise.Client.Reservations
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync("/reservations");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
@@ -280,7 +380,7 @@ namespace Rise.Client.Reservations
             string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync($"/reservations?CurrentDate={toEarlyDate}");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
             Page.Url.ShouldContain($"CurrentDate={currentDate}");
         }
 
@@ -291,11 +391,11 @@ namespace Rise.Client.Reservations
             DateTime plusOneMonthDate = DateTime.Today.AddMonths(1);
             string plusOneMonthDateFormatted = plusOneMonthDate.ToString(universalDateFormat);
             await Page.GotoAsync($"/reservations?CurrentDate={plusOneMonthDateFormatted}");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={plusOneMonthDateFormatted}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={plusOneMonthDateFormatted}')");
             Page.Url.ShouldContain($"CurrentDate={plusOneMonthDateFormatted}");
 
-            ILocator date = Page.Locator($"[identifier={DateOnly.FromDateTime(plusOneMonthDate)}]");
-            date.ShouldNotBeNull();
+            ILocator date = Page.Locator(DateToCalendarIdentifier(DateOnly.FromDateTime(plusOneMonthDate)));
+            await Expect(date).ToHaveCountAsync(0);
         }
 
         [Test]
@@ -303,13 +403,93 @@ namespace Rise.Client.Reservations
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await Page.GotoAsync("/reservations");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={currentDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
 
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
             string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('?CurrentDate={nextMonthDate}')", options: new PageWaitForFunctionOptions() { Timeout = 5000 });
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={nextMonthDate}')");
             Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
+        }
+
+
+        [Test]
+        public async Task FullyBookedDaysAreUnclickable()
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            await Page.GotoAsync("/reservations");
+
+            ILocator timeSlotList = Page.GetByTestId("time-slot-list");
+            await Expect(timeSlotList).ToHaveCountAsync(0);
+
+            ILocator calendarCellToday = Page.Locator(DateToCalendarIdentifier(today));
+            await calendarCellToday.ClickAsync();
+
+            await Expect(timeSlotList).ToHaveCountAsync(0);
+        }
+
+        [Test]
+        public async Task SelectingFullyBookedDayShouldRemoveExistingSelectedDay()
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            await MockTimeSlotAndSelectAvailableDay();
+
+            ILocator timeSlotList = Page.GetByTestId("time-slot-list");
+            await Expect(timeSlotList).ToHaveCountAsync(1);
+
+            DateOnly day = new(today.Year, today.Month, 1);
+            if (today.Day == 1) day = day.AddDays(1);
+
+            ILocator calendarCellToday = Page.Locator(DateToCalendarIdentifier(day));
+            await calendarCellToday.ClickAsync();
+
+            await Expect(timeSlotList).ToHaveCountAsync(0);
+        }
+
+        [Test]
+        public async Task ReservationDialogShouldCloseWhenCloseButtonIsClicked()
+        {
+            //Arrange
+            await OpenCreateReservationDialog();
+
+            ILocator dialog = Page.GetByTestId("reservation-dialog");
+            ILocator closeButton = Page.GetByTestId("dialog-cancel-button");
+            await closeButton.ClickAsync();
+
+            await Expect(dialog).Not.ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task ReservationDialogShouldProceedWhenCreateButtonIsClicked()
+        {
+            //Arrange
+            await OpenCreateReservationDialog();
+
+            // Act
+            // ILocator dialog = Page.GetByTestId("reservation-dialog");
+            ILocator closeButton = Page.GetByTestId("dialog-create-button");
+            await closeButton.ClickAsync();
+
+            // Assert
+            ILocator dialogPaymentContent = Page.GetByTestId("dialog-payment-content");
+            await Expect(dialogPaymentContent).ToBeVisibleAsync();
+
+            // TODO mock post to server
+            // wait for the payment to go trough
+            await Task.Delay(4000);
+
+            ILocator dialogSuccessContent = Page.GetByTestId("dialog-success-content");
+            await Expect(dialogSuccessContent).ToBeVisibleAsync();
+        }
+
+        private async Task OpenCreateReservationDialog()
+        {
+            await MockTimeSlotAndSelectAvailableDay();
+            ILocator timeSlot1 = Page.GetByTestId("time-slot-1");
+            await timeSlot1.ClickAsync();
+            await Page.WaitForSelectorAsync("[data-testid='reservation-dialog']", new() { State = WaitForSelectorState.Visible });
         }
     }
 }

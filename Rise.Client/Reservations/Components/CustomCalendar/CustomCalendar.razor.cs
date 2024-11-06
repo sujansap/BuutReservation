@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using Rise.Shared.TimeSlots;
 
-namespace Rise.Client.Reservations.Components
+namespace Rise.Client.Reservations.Components.CustomCalendar
 {
     public partial class CustomCalendar
     {

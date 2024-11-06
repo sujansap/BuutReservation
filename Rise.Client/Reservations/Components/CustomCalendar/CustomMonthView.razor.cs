@@ -3,7 +3,7 @@ using Heron.MudCalendar;
 using MudBlazor.Utilities;
 using Rise.Shared.TimeSlots;
 
-namespace Rise.Client.Reservations.Components
+namespace Rise.Client.Reservations.Components.CustomCalendar
 {
     public partial class CustomMonthView
     {

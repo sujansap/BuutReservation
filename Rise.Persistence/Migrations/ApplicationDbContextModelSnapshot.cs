@@ -55,34 +55,6 @@ namespace Rise.Persistence.Migrations
                     b.ToTable("Boat", (string)null);
                 });
 
-            modelBuilder.Entity("Rise.Domain.Timeslots.CruisePeriod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("End")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("Start")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CruisePeriod", (string)null);
-                });
-
             modelBuilder.Entity("Rise.Domain.Reservations.Reservation", b =>
                 {
                     b.Property<int>("Id")
@@ -117,16 +89,46 @@ namespace Rise.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoatId");
-
                     b.HasIndex("TimeSlotId");
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("BoatId", "TimeSlotId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+
                     b.ToTable("Reservation", (string)null);
                 });
 
-            modelBuilder.Entity("Rise.Domain.Reservations.TimeSlot", b =>
+            modelBuilder.Entity("Rise.Domain.Timeslots.CruisePeriod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CruisePeriod", (string)null);
+                });
+
+            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -156,8 +158,6 @@ namespace Rise.Persistence.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
-
-                    b.HasAlternateKey("Date", "Start", "End");
 
                     b.HasIndex("CruisePeriodId");
 
@@ -205,7 +205,7 @@ namespace Rise.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Rise.Domain.Reservations.TimeSlot", "TimeSlot")
+                    b.HasOne("Rise.Domain.Timeslots.TimeSlot", "TimeSlot")
                         .WithMany("Reservations")
                         .HasForeignKey("TimeSlotId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -224,9 +224,9 @@ namespace Rise.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Rise.Domain.Reservations.TimeSlot", b =>
+            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
                 {
-                    b.HasOne("Rise.Domain.Reservations.CruisePeriod", "CruisePeriod")
+                    b.HasOne("Rise.Domain.Timeslots.CruisePeriod", "CruisePeriod")
                         .WithMany("TimeSlots")
                         .HasForeignKey("CruisePeriodId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -240,12 +240,12 @@ namespace Rise.Persistence.Migrations
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("Rise.Domain.Reservations.CruisePeriod", b =>
+            modelBuilder.Entity("Rise.Domain.Timeslots.CruisePeriod", b =>
                 {
                     b.Navigation("TimeSlots");
                 });
 
-            modelBuilder.Entity("Rise.Domain.Reservations.TimeSlot", b =>
+            modelBuilder.Entity("Rise.Domain.Timeslots.TimeSlot", b =>
                 {
                     b.Navigation("Reservations");
                 });
