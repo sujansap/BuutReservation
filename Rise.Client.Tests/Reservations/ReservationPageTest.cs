@@ -202,8 +202,6 @@ namespace Rise.Client.Tests.Reservations
 
         }
 
-        //  TODO make tests for no timeslots found and loading
-
         [Test]
         public async Task HasTimeSlotsInTimeSlotList()
         {
@@ -246,6 +244,26 @@ namespace Rise.Client.Tests.Reservations
             await SelectAvailableDayOnCalendar();
 
             await Page.GetByTestId("time-slot-list-fetch-error").IsVisibleAsync();
+        }
+
+        [Test]
+        public async Task ShouldHaveLoaderForTimeSlotList()
+        {
+
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
+            {
+                await Task.Delay(5000);
+                await route.FulfillAsync(new()
+                {
+                    Status = 400,
+                    ContentType = "text/plain",
+                    Body = "Bad Request"
+                });
+            });
+
+            await SelectAvailableDayOnCalendar();
+
+            await Page.GetByTestId("time-slot-list-loading-progress").IsVisibleAsync();
         }
 
         [Test]
