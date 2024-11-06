@@ -48,6 +48,7 @@ namespace Rise.Client.Tests
                 Locale = "en-US",
                 ColorScheme = ColorScheme.Light,
                 BaseURL = baseUrl,
+                IgnoreHTTPSErrors = true
             };
         }
     }
