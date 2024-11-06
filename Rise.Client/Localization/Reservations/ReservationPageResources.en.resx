@@ -57,4 +57,28 @@
 	<data name="Upcoming" xml:space="preserve">
 		<value>Present</value>
 	</data>
+	<data name="ReservationFor" xml:space="preserve">
+		<value>Reservation for</value>
+	</data>
+	<data name="Boat" xml:space="preserve">
+		<value>Boat</value>
+	</data>
+	<data name="Time" xml:space="preserve">
+		<value>Time</value>
+	</data>
+	<data name="ViewDetails" xml:space="preserve">
+		<value>View details</value>
+	</data>
+	<data name="Previous" xml:space="preserve">
+		<value>Previous</value>
+	</data>
+	<data name="Next" xml:space="preserve">
+		<value>Next</value>
+	</data>
+	<data name="LoadingReservations" xml:space="preserve">
+		<value>Loading reservations...</value>
+	</data>
+	<data name="NoReservationsFound" xml:space="preserve">
+		<value>No reservations found.</value>
+	</data>
 </root>

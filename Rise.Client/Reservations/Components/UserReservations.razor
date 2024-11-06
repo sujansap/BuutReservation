@@ -2,7 +2,6 @@
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Reservations
 @using Rise.Shared.Reservations
-@inject IStringLocalizer<ReservationPageResources> Localizer
 @inherits UserReservationsBase
 
 <MudGrid>
@@ -89,7 +88,7 @@
                         Style="border-radius: 20px;">
                         @Localizer["Previous"]
                     </MudButton>
-                    <MudButton OnClick="@LoadNextPage" 
+                    <MudButton OnClick="@(async () => { await LoadNextPage(); await ScrollToTop(); })" 
                         Disabled="@(ReservationPage?.NextId == null)"
                         EndIcon="@Icons.Material.Filled.ArrowForward" 
                         Color="Color.Primary"

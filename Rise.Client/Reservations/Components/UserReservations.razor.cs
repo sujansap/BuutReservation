@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Components;
 using Rise.Client.Services;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
+using Microsoft.JSInterop;
+using Microsoft.Extensions.Localization;
+using Rise.Client.Localization.Reservations;
 
 namespace Rise.Client.Reservations.Components;
 
@@ -16,6 +19,8 @@ public class UserReservationsBase : ComponentBase
         {
             if (_showPastReservations == value) return;
             _showPastReservations = value;
+            // Reset pagination and load new reservations
+            ReservationPage = null;
             LoadReservations().ConfigureAwait(false);
         }
     }
@@ -23,7 +28,11 @@ public class UserReservationsBase : ComponentBase
     private bool _showPastReservations;
 
     [Inject]
+    public required IStringLocalizer<ReservationPageResources> Localizer { get; set; } = default!;
+    [Inject]
     public required IReservationService ReservationService { get; set; }
+    [Inject]
+    public required IJSRuntime JS { get; set; }
 
     protected override async Task OnInitializedAsync() => await LoadReservations();
 
@@ -34,16 +43,13 @@ public class UserReservationsBase : ComponentBase
             IsLoading = true;
             var cursor = isNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
             
-            Console.WriteLine($"Loading reservations with ShowPastReservations={ShowPastReservations}");
-            
             var result = await ReservationService.GetUserReservations(
                 1,
                 cursor,
-                isNextPage,
+                cursor != null ? isNextPage : null, // Only send isNextPage if we have a cursor
                 getPast: ShowPastReservations
             );
 
-            Console.WriteLine($"Received {result.Data.Count()} reservations");
             ReservationPage = result;
         }
         catch (Exception ex)
@@ -61,6 +67,20 @@ public class UserReservationsBase : ComponentBase
         }
     }
 
-    protected Task LoadNextPage() => LoadReservations(true);
-    protected Task LoadPreviousPage() => LoadReservations(false);
+    protected async Task LoadNextPage()
+    {
+        await LoadReservations(true);
+        await ScrollToTop();
+    }
+
+    protected async Task LoadPreviousPage()
+    {
+        await LoadReservations(false);
+        await ScrollToTop();
+    }
+
+    protected async Task ScrollToTop()
+    {
+        await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
 }
