@@ -122,6 +122,10 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationsApi();
 
             await Page.GotoAsync(UserReservationsUrl);
+
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
+
+
             await Expect(Page.GetByTestId("user-reservations-loading-progress")).ToBeVisibleAsync(new() { Timeout = 8000 });
 
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden, Timeout = 8000 });
