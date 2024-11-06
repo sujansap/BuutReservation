@@ -1,9 +1,8 @@
 using Microsoft.Playwright;
-using Shouldly;
 using Rise.Shared.Reservations;
 using Rise.Shared.Pagination;
 
-namespace Rise.Client.Reservations
+namespace Rise.Client.Tests.Reservations
 {
 
     [TestFixture]
@@ -83,8 +82,8 @@ namespace Rise.Client.Reservations
         public async Task DoesNotHaveLegendComponent()
         {
             await Page.GotoAsync(UserReservationsUrl);
-            var legend = Page.GetByTestId("custom-calendar-legend");
-            (await legend.CountAsync()).ShouldBe(0);
+            ILocator legend = Page.GetByTestId("custom-calendar-legend");
+            await Expect(legend).ToHaveCountAsync(0);
         }
 
 
@@ -94,11 +93,9 @@ namespace Rise.Client.Reservations
             await MockReservationsApi();
             await Page.GotoAsync(UserReservationsUrl);
 
-            // Wait for loading to complete AND for at least one reservation to appear
-            await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
-            await Page.WaitForSelectorAsync("[data-testid='reservation-item']", new() { State = WaitForSelectorState.Visible });
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
 
-            var locator = Page.GetByTestId("reservation-item");
+            ILocator locator = Page.GetByTestId("reservation-item");
             await Expect(locator).ToHaveCountAsync(1);
         }
 
@@ -108,11 +105,13 @@ namespace Rise.Client.Reservations
             await MockReservationsApi();
             await Page.GotoAsync(UserReservationsUrl);
 
-            var firstReservation = Page.GetByTestId("reservation-item").First;
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
 
-            (await firstReservation.GetByTestId("reservation-date").InnerTextAsync()).ShouldContain(ValidReservation.Date.ToString("dd/MM/yyyy"));
-            (await firstReservation.GetByTestId("reservation-boat-name").InnerTextAsync()).ShouldContain(ValidReservation.BoatPersonalName);
-            (await firstReservation.GetByTestId("reservation-time").InnerTextAsync()).ShouldContain($"{ValidReservation.Start.ToString("HH:mm")} - {ValidReservation.End.ToString("HH:mm")}");
+            ILocator firstReservation = Page.GetByTestId("reservation-item").First;
+
+            await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"));
+            await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(ValidReservation.BoatPersonalName);
+            await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}");
 
         }
 
@@ -123,9 +122,13 @@ namespace Rise.Client.Reservations
             await MockReservationsApi();
 
             await Page.GotoAsync(UserReservationsUrl);
-            await Expect(Page.GetByTestId("loading-progress")).ToBeVisibleAsync(new() { Timeout = 8000 });
 
-            await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden, Timeout = 8000 });
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
+
+
+            await Expect(Page.GetByTestId("user-reservations-loading-progress")).ToBeVisibleAsync(new() { Timeout = 8000 });
+
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']");
         }
 
         [Test]
@@ -135,15 +138,14 @@ namespace Rise.Client.Reservations
             await Page.GotoAsync(UserReservationsUrl);
 
             // Wait for loading to complete AND for the empty state message to appear
-            await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
             await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible });
 
-            var emptyStateMessage = Page.GetByTestId("no-reservations");
-            (await emptyStateMessage.IsVisibleAsync()).ShouldBeTrue();
-            (await emptyStateMessage.TextContentAsync()).ShouldBe("Geen reservaties gevonden.");
+            ILocator emptyStateMessage = Page.GetByTestId("no-reservations");
+            await Expect(emptyStateMessage).ToBeVisibleAsync();
+            await Expect(emptyStateMessage).ToHaveTextAsync("Geen reservaties gevonden.");
 
-            var reservations = await Page.GetByTestId("reservation-item").AllAsync();
-            reservations.Count.ShouldBe(0);
+            await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
         }
 
         [Test]
@@ -153,15 +155,13 @@ namespace Rise.Client.Reservations
             await Page.GotoAsync(UserReservationsUrl);
 
             // Wait for loading to complete
-            await Page.WaitForSelectorAsync("[data-testid='loading-progress']", new() { State = WaitForSelectorState.Hidden });
-            await Page.WaitForSelectorAsync("[data-testid='error-message']", new() { State = WaitForSelectorState.Visible });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-fetch-error']", new() { State = WaitForSelectorState.Visible });
 
-            var errorMessage = Page.GetByTestId("error-message");
-            (await errorMessage.IsVisibleAsync()).ShouldBeTrue();
-            (await errorMessage.TextContentAsync() ?? "").ShouldContain("ErrorFetchingReservations");
+            ILocator errorMessage = Page.GetByTestId("user-reservations-fetch-error");
+            await Expect(errorMessage).ToBeVisibleAsync();
 
-            var reservations = await Page.GetByTestId("reservation-item").AllAsync();
-            reservations.Count.ShouldBe(0);
+            await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
         }
     }
 }

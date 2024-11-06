@@ -1,12 +1,17 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 
-namespace Rise.Client
+namespace Rise.Client.Tests
 {
     [Parallelizable(ParallelScope.Self)]
     [TestFixture]
     public class CustomPageTest : PageTest
     {
+        [OneTimeSetUp]
+        public void GlobalSetup()
+        {
+            SetDefaultExpectTimeout(10_000);
+        }
 
         [SetUp]
         public async Task Setup()
@@ -42,7 +47,7 @@ namespace Rise.Client
             {
                 Locale = "en-US",
                 ColorScheme = ColorScheme.Light,
-                BaseURL = baseUrl
+                BaseURL = baseUrl,
             };
         }
     }
