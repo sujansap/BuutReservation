@@ -10,15 +10,29 @@ using MudBlazor;
 using System.Globalization;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Serilog.Core;
+using Serilog;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+var levelSwitch = new LoggingLevelSwitch();
+Log.Logger = new LoggerConfiguration().MinimumLevel.ControlledBy(levelSwitch)
+                .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
+                .WriteTo.BrowserConsole()
+                .WriteTo.BrowserHttp($"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
+                .CreateLogger();
 
 builder.Services.AddLocalization();
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices(config =>
 {
-    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.VisibleStateDuration = 8000;
+    config.SnackbarConfiguration.HideTransitionDuration = 500;
+    config.SnackbarConfiguration.ShowTransitionDuration = 100;
+
 });
 builder.Services.AddMudPopoverService();
 
@@ -62,5 +76,8 @@ if (result == null)
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+Log.Information("Starting up Client in Environment: {Environment}",
+                builder.HostEnvironment.Environment);
 
 await host.RunAsync();

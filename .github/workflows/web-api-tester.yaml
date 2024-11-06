@@ -1,0 +1,81 @@
+name: dotnet acceptation testing
+
+on: 
+  pull_request:
+    branches:
+      - staging
+      - main
+      - production
+jobs:
+  build:
+    name: dotnet-run-all-tests
+    runs-on: self-hosted
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: Hogent.Rise  # Zorg ervoor dat dit overeenkomt met je connection string
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+    
+      - name: copy commit files into the runner
+        uses: actions/checkout@v4
+
+      - name: Install .NET SDK and Runtime
+        run: |
+          wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          rm packages-microsoft-prod.deb
+          sudo apt-get update && \
+          sudo apt-get install -y dotnet-sdk-8.0
+
+      - name: Install dotnet-ef tool
+        run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
+          dotnet tool install --global dotnet-ef
+
+      - name: Run database migrations
+        env:
+          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
+        run: |
+          export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
+          dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
+
+      - name: Run the application
+        env:
+          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
+        run: |
+          dotnet run --project Rise.Server --configuration Release &  
+ 
+      - name: Wait for the application to be ready
+        run: |
+          for i in {1..30}; do
+            response=$(curl -s -k -o /dev/null -w "%{http_code}" https://localhost:5001 || echo "connection_error")
+            
+            if [ "$response" -eq 200 ]; then
+              echo "Application is ready! HTTP status code: $response"
+              break
+            elif [ "$response" == "connection_error" ]; then
+              echo "Connection failed. Application might not be running yet."
+            else
+              echo "Received HTTP status code: $response. Waiting for the application to be ready..."
+            fi
+            sleep 2
+          done
+
+      - name: Run Unit Tests
+        run: dotnet test Rise.Domain.Tests
+
+      - name: Run Integration Tests
+        env:
+          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
+        run: dotnet test Rise.Server.Tests
+
+      - name: Check test result
+        if: ${{ failure() }}
+        run: echo "Tests failed, please check the logs."

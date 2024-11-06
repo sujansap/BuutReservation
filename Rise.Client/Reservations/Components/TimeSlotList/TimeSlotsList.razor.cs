@@ -1,27 +1,23 @@
 using Microsoft.AspNetCore.Components;
+using Rise.Client.Common;
 using Rise.Shared.TimeSlots;
 
 namespace Rise.Client.Reservations.Components.TimeSlotList
 {
     public partial class TimeSlotsList
     {
-        private IEnumerable<TimeSlotDto> timeslots = [];
+        public required AsyncData<IEnumerable<TimeSlotDto>> AsyncDataRef { get; set; }
+        private IEnumerable<TimeSlotDto> TimeSlots { get; set; } = [];
 
         [Inject]
         public required ITimeSlotService TimeSlotService { get; set; }
 
         [Parameter]
-        public DateOnly SelectedDate { get; set; }
+        public required DateOnly SelectedDate { get; set; }
 
-        protected override async Task OnParametersSetAsync()
+        private Task<IEnumerable<TimeSlotDto>> FetchTimeSlots()
         {
-            await base.OnParametersSetAsync();
-            await UpdateTimeSlots();
-        }
-
-        private async Task UpdateTimeSlots()
-        {
-            timeslots = await TimeSlotService.GetTimeSlotsByDate(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day);
+            return TimeSlotService.GetTimeSlotsByDate(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day);
         }
     }
 }

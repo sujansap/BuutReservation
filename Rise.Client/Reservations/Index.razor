@@ -1,56 +1,27 @@
 @page "/reservations"
 @using Microsoft.Extensions.Localization
 @using MudBlazor
-@using Rise.Client.Localization.Reservations
-@using Rise.Client.Reservations.Components
-@using Rise.Client.TimeSlots
 @using Heron.MudCalendar
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Reservations
+@using Rise.Client.TimeSlots
+@using Rise.Client.Reservations.Components
+@using Rise.Client.Reservations.Components.CustomCalendar
 @using Rise.Client.Reservations.Components.TimeSlotList
-@inject NavigationManager Navigation
-@inject ISnackbar Snackbar
-
+@using Rise.Client.Common
+@using Rise.Shared.Reservations
+@using Rise.Shared.TimeSlots
 @inject IStringLocalizer<ReservationPageResources> Localizer
-@* @attribute [Authorize] uncomment to require Auth0 authorization*@
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
 
-<MudPopoverProvider />
+<PageTitle>@Localizer["YourReservations"]</PageTitle>
 
-<PageTitle>Reservaties</PageTitle>
-
-<MudTabs Elevation="0" Centered="true" Class="mb-16" @bind-ActivePanelIndex="activeTabIndex">
-    <MudTabPanel Text="Reserveer" data-testid="tab-reserve">
-        <MudGrid>
-            @* TODO make mobile first *@
-            @* TODO margin is messing with tabs *@
-            @* TODO calendar is clickable and navigeable to the past *@
-            @* TODO everything is clickeable (this is hell) *@
-            <MudItem xs="12" md="8">
-                <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
-                    Class="mt-8" data-testid="custom-calendar-reserve" GreyedOutDates="GreyedOutDates"
-                    DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked">
-                    <MonthTemplate>
-                        <CustomDayComponent Context="context" />
-                    </MonthTemplate>
-                </CustomCalendar>
-            </MudItem>
-            <MudItem xs="12" md="4" Class="mt-8">
-                @if (SelectedDate.HasValue)
-                {
-                    <TimeSlotsList SelectedDate="SelectedDate.Value" />
-                }
-            </MudItem>
-        </MudGrid>
-
+<MudTabs Elevation="0" Centered="true" Class="mb-16" @bind-ActivePanelIndex="@TabIndex">
+    <MudTabPanel Text="@Localizer["Reserve"]" data-testid="tab-reserve">
+        <TimeSlotOverview />
     </MudTabPanel>
-    <MudTabPanel Text="Uw Reservaties" data-testid="tab-your-reservations">
+    <MudTabPanel Text="@Localizer["YourReservations"]" data-testid="tab-your-reservations">
         <UserReservations />
     </MudTabPanel>
 </MudTabs>
-
-@if (activeTabIndex == 0)
-{
-    <ReservationCalendarLegend data-testid="custom-calendar-legend" />
-}
-
-@code {
-    private int activeTabIndex = 0;
-}

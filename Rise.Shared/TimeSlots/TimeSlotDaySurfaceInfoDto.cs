@@ -6,10 +6,9 @@ namespace Rise.Shared.TimeSlots
     /// <param name="Date">The date</param>
     /// <param name="IsFullyBooked">If the day is fully booked</param>
     /// <param name="IsSlotAvailable">If the day has a slot available to be booked</param>
-    public record class TimeSlotDaySurfaceInfoDto(DateOnly Date, bool IsFullyBooked, bool IsSlotAvailable)
+    /// <param name="IsBookedByUser">If the day is booked by the current user</param>
+    public record class TimeSlotDaySurfaceInfoDto(DateOnly Date, bool IsFullyBooked, bool IsSlotAvailable, bool IsBookedByUser = false)
     {
 
     }
-
-
 }

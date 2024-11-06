@@ -1,26 +1,24 @@
-using System.Threading.Tasks;
-using Microsoft.Playwright.MSTest;
 using Shouldly;
 
-namespace Rise.Client.Layout
+namespace Rise.Client.Tests.Layout
 {
-    [TestClass]
-    public class NavMenuTest : PageTest
+    [TestFixture]
+    public class NavMenuTest : CustomPageTest
     {
         private const int DefaultHeight = 1920;
 
-        [TestMethod]
-        [DataRow("nav-brand-logo", "/home", "/reservations")]
-        [DataRow("nav-desktop-home", "/home", "/reservations")]
-        [DataRow("nav-desktop-about", "/about", "")]
-        [DataRow("nav-desktop-reservations", "/reservations", "")]
-        [DataRow("nav-desktop-book", "/book", "")]
-        [DataRow("nav-desktop-profile", "/profile", "")]
-        [DataRow("nav-desktop-notifications", "/notifications", "")]
+        [Test]
+        [TestCase("nav-brand-logo", "/home", "/reservations")]
+        [TestCase("nav-desktop-home", "/home", "/reservations")]
+        [TestCase("nav-desktop-about", "/about", "")]
+        [TestCase("nav-desktop-reservations", "/reservations", "")]
+        [TestCase("nav-desktop-book", "/book", "")]
+        [TestCase("nav-desktop-profile", "/profile", "")]
+        [TestCase("nav-desktop-notifications", "/notifications", "")]
         public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix)
         {
             await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await Page.GotoAsync("https://localhost:5001" + startSuffix);
+            await Page.GotoAsync(startSuffix);
             string beginUri = Page.Url;
             await Page.GetByTestId(testId).ClickAsync();
 
@@ -28,19 +26,19 @@ namespace Rise.Client.Layout
             Page.Url.ShouldContain(resultSuffix);
         }
 
-        [TestMethod]
-        [DataRow("nav-mobile-home", "home", "/reservations")]
-        [DataRow("nav-mobile-about", "about", "")]
-        [DataRow("nav-mobile-profile", "profile", "")]
-        [DataRow("nav-mobile-reservations", "reservations", "")]
-        [DataRow("nav-mobile-book", "book", "")]
-        [DataRow("nav-mobile-notifications", "notifications", "")]
-        [DataRow("nav-mobile-profile", "profile", "")]
-        [DataRow("nav-mobile-notifications", "notifications", "")]
+        [Test]
+        [TestCase("nav-mobile-home", "home", "/reservations")]
+        [TestCase("nav-mobile-about", "about", "")]
+        [TestCase("nav-mobile-profile", "profile", "")]
+        [TestCase("nav-mobile-reservations", "reservations", "")]
+        [TestCase("nav-mobile-book", "book", "")]
+        [TestCase("nav-mobile-notifications", "notifications", "")]
+        [TestCase("nav-mobile-profile", "profile", "")]
+        [TestCase("nav-mobile-notifications", "notifications", "")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await Page.GotoAsync("https://localhost:5001" + startSuffix);
+            await Page.GotoAsync(startSuffix);
             string beginUri = Page.Url;
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId(testId).ClickAsync();
@@ -54,11 +52,11 @@ namespace Rise.Client.Layout
         /// Test to check if the change language button is visible on the desktop version of the website.
         /// </summary>
         /// <returns></returns>
-        [TestMethod]
+        [Test]
         public async Task CheckLanguageChangeDesktop()
         {
             await Page.SetViewportSizeAsync(1080, 1920);
-            await Page.GotoAsync("https://localhost:5001");
+            await Page.GotoAsync("/");
 
             await Page.GetByTestId("culture-selector-desktop").IsVisibleAsync();
         }
@@ -68,11 +66,11 @@ namespace Rise.Client.Layout
         /// Test to check if the change language button is visible on the mobile version of the website.
         /// </summary>
         /// <returns></returns>
-        [TestMethod]
+        [Test]
         public async Task CheckLanguageChangeMobile()
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await Page.GotoAsync("https://localhost:5001");
+            await Page.GotoAsync("/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").IsVisibleAsync();
         }
@@ -86,19 +84,19 @@ namespace Rise.Client.Layout
         /// <param name="dutch"></param>
         /// <param name="english"></param>
         /// <returns></returns>
-        [TestMethod]
-        [DataRow("nav-desktop-home", "HOME", "HOME")]
-        [DataRow("nav-desktop-about", "OVER", "ABOUT")]
-        [DataRow("nav-desktop-reservations", "RESERVEER", "RESERVE")]
+        [Test]
+        [TestCase("nav-desktop-home", "HOME", "HOME")]
+        [TestCase("nav-desktop-about", "OVER", "ABOUT")]
+        [TestCase("nav-desktop-reservations", "RESERVEER", "RESERVE")]
         public async Task ChangeLanguageBetweenLanguagesDesktop(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(1080, 1920);
-            await Page.GotoAsync("https://localhost:5001/");
+            await Page.GotoAsync("/");
 
             await Page.GetByTestId("culture-selector-desktop").First.ClickAsync();
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
 
@@ -114,21 +112,21 @@ namespace Rise.Client.Layout
         /// <param name="dutch"></param>
         /// <param name="english"></param>
         /// <returns></returns>
-        [TestMethod]
-        [DataRow("nav-mobile-home", "HOME", "HOME")]
-        [DataRow("nav-mobile-about", "OVER", "ABOUT")]
-        [DataRow("nav-mobile-reservations", "RESERVEER", "RESERVE")]
+        [Test]
+        [TestCase("nav-mobile-home", "HOME", "HOME")]
+        [TestCase("nav-mobile-about", "OVER", "ABOUT")]
+        [TestCase("nav-mobile-reservations", "RESERVEER", "RESERVE")]
         public async Task ChangeLanguageBetweenLanguagesMobile(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await Page.GotoAsync("https://localhost:5001/");
+            await Page.GotoAsync("/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").First.ClickAsync();
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
 
             await Page.GetByTestId("en (US)").ClickAsync();
 
-            await Page.GotoAsync("https://localhost:5001/reservations");
+            await Page.GotoAsync("/reservations");
 
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();

@@ -12,7 +12,7 @@ namespace Rise.Persistence.Seeders
 
         protected readonly ApplicationDbContext _dbContext = dbContext;
 
-        protected abstract ICollection<T> Items { get; }
+        protected abstract IEnumerable<T> Items { get; }
         protected abstract DbSet<T> DbSet { get; }
 
         public void Seed()
