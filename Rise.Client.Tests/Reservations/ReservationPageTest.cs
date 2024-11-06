@@ -44,18 +44,8 @@ namespace Rise.Client.Tests.Reservations
             await Page.WaitForRequestAsync(request => request.Url.Contains("api/TimeSlot/range"));
         }
 
-        private async Task MockTimeSlotAndSelectOnCalendar()
+        private async Task MockTimeSlot()
         {
-            // Arange
-            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-            TimeSlotRangeInfoDto timeRange = new(
-                TotalDays: 1,
-                Days: [
-                    new(today, false, true),
-                ]
-            );
-
-
             TimeSlotDto[] timeSlotDtos = [
                 new()
                 {
@@ -80,16 +70,6 @@ namespace Rise.Client.Tests.Reservations
                 },
             ];
 
-            // Act
-            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
-            {
-                await route.FulfillAsync(new()
-                {
-                    Status = 200,
-                    ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(timeRange)
-                });
-            });
             await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
             {
                 await route.FulfillAsync(new()
@@ -99,6 +79,28 @@ namespace Rise.Client.Tests.Reservations
                     Body = JsonSerializer.Serialize(timeSlotDtos)
                 });
             });
+        }
+
+        private async Task SelectAvailableDayOnCalendar()
+        {
+            // Arange
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            TimeSlotRangeInfoDto timeRange = new(
+                TotalDays: 1,
+                Days: [
+                    new(today, false, true),
+                ]
+            );
+
+            await Page.RouteAsync("*/**/api/TimeSlot/range**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(timeRange)
+                });
+            });
 
             await Page.GotoAsync("/reservations");
 
@@ -106,6 +108,12 @@ namespace Rise.Client.Tests.Reservations
 
             ILocator day = Page.Locator(DateToCalendarIdentifier(today));
             await day.ClickAsync();
+        }
+
+        private async Task MockTimeSlotAndSelectAvailableDay()
+        {
+            await MockTimeSlot();
+            await SelectAvailableDayOnCalendar();
         }
 
         [Test]
@@ -147,8 +155,6 @@ namespace Rise.Client.Tests.Reservations
             await Page.GotoAsync("/reservations");
             await Page.GetByTestId("calendar-your-reservations").IsVisibleAsync();
         }
-
-        // TODO loader
 
         [Test]
         public async Task HasUnexpectedError()
@@ -201,7 +207,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasTimeSlotsInTimeSlotList()
         {
-            await MockTimeSlotAndSelectOnCalendar();
+            await MockTimeSlotAndSelectAvailableDay();
 
             ILocator timeSlotList = Page.GetByTestId("time-slot-list");
 
@@ -221,6 +227,25 @@ namespace Rise.Client.Tests.Reservations
             // await Expect(timeSlot1).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
             // await Expect(timeSlot2).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-dark-rgb), 0.1);");
             // await Expect(timeSlot3).ToHaveAttributeAsync("style", "background-color:rgba(var(--mud-palette-primary-rgb), 0.1);");
+        }
+
+        [Test]
+        public async Task ShouldHaveUnexpectedErrorForTimeSlotList()
+        {
+
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 400,
+                    ContentType = "text/plain",
+                    Body = "Bad Request"
+                });
+            });
+
+            await SelectAvailableDayOnCalendar();
+
+            await Page.GetByTestId("time-slot-list-fetch-error").IsVisibleAsync();
         }
 
         [Test]
@@ -372,7 +397,7 @@ namespace Rise.Client.Tests.Reservations
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
-            await MockTimeSlotAndSelectOnCalendar();
+            await MockTimeSlotAndSelectAvailableDay();
 
             ILocator timeSlotList = Page.GetByTestId("time-slot-list");
             await Expect(timeSlotList).ToHaveCountAsync(1);
@@ -424,7 +449,7 @@ namespace Rise.Client.Tests.Reservations
 
         private async Task OpenCreateReservationDialog()
         {
-            await MockTimeSlotAndSelectOnCalendar();
+            await MockTimeSlotAndSelectAvailableDay();
             ILocator timeSlot1 = Page.GetByTestId("time-slot-1");
             await timeSlot1.ClickAsync();
             await Page.WaitForSelectorAsync("[data-testid='reservation-dialog']", new() { State = WaitForSelectorState.Visible });
