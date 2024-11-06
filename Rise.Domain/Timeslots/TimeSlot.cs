@@ -16,7 +16,17 @@ public class TimeSlot : Entity, ITimeSlot
         get => _date;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(Date), DateOnly.FromDateTime(DateTime.Today), DateOnly.MaxValue, "Date must be today or in the future.");
+            if (CruisePeriod != null)
+            {
+                DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);
+                DateOnly endDate = DateOnly.FromDateTime(CruisePeriod.End);
+                
+                if (value < startDate || value > endDate)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Date), 
+                        "TimeSlot date must be within the CruisePeriod's date range.");
+                }
+            }
             _date = value;
         }
     }

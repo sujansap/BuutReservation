@@ -13,14 +13,12 @@ public class Seeder
 
     public void Seed()
     {
-        new UserSeeder(dbContext).Seed();
+        if (dbContext.Users.Any()) return;
 
+        new UserSeeder(dbContext).Seed();
+        new BoatSeeder(dbContext).Seed();
         new CruisePeriodSeeder(dbContext).Seed();
         new TimeSlotSeeder(dbContext).Seed();
-
-        new BoatSeeder(dbContext).Seed();
-        // new BatterySeeder(dbContext).Seed();
-
         new ReservationSeeder(dbContext).Seed();
     }
 }

@@ -10,9 +10,10 @@ internal class CruisePeriodSeeder(ApplicationDbContext dbContext) : GeneralSeede
     static CruisePeriodSeeder()
     {
         cruisePeriods = [
-            new() { Start = DateTime.Now, End = DateTime.Now.AddDays(7) },
-            new() { Start = DateTime.Now.AddDays(9), End = DateTime.Now.AddDays(25) },
-            new() { Start = DateTime.Now.AddMonths(1), End = DateTime.Now.AddMonths(2) }
+            new() { Start = DateTime.Now.AddDays(-10), End = DateTime.Now.AddDays(-7) },
+            new() { Start = DateTime.Now.AddDays(-6), End = DateTime.Now.AddDays(-4) },
+            new() { Start = DateTime.Now.AddDays(-3), End = DateTime.Now.AddDays(-1) },
+            new() { Start = DateTime.Now.AddMonths(-1), End = DateTime.Now.AddDays(-11) }
         ];
     }
 

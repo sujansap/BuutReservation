@@ -54,7 +54,7 @@
                                 <!-- Text Content Section -->
                                 <MudItem xs="7" Class="d-flex flex-column" Style="padding-left: 20px;">
                                     <MudText Typo="Typo.h5" Class="mb-2" Style="color: #333;" data-testid="reservation-date">
-                                        @Localizer["ReservationFor"] <strong>@reservation.Date.ToShortDateString()</strong>
+                                        @Localizer["ReservationFor"] <strong>@reservation.Date.ToString("dd/MM/yyyy")</strong>
                                     </MudText>
                                     <MudText data-testid="reservation-boat-name" Style="color: #777;">
                                         <strong>@Localizer["Boat"]:</strong> @reservation.BoatPersonalName
