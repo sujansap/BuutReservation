@@ -496,7 +496,7 @@ namespace Rise.Client.Tests.Reservations
 
 
             ILocator dialogSuccessContent = Page.GetByTestId("dialog-success-content");
-            await Expect(dialogSuccessContent).ToBeVisibleAsync(new() { Timeout = 15000 });
+            await Expect(dialogSuccessContent).ToBeVisibleAsync();
 
             // Close the dialog
             ILocator closeButton = Page.GetByTestId("dialog-close-button");
@@ -504,7 +504,7 @@ namespace Rise.Client.Tests.Reservations
 
             // Assert
             // Check if the calendar shows the updated state
-            ILocator calendarCell = Page.Locator($"[identifier='{today.ToString("d/M/yyyy")}']");
+            ILocator calendarCell = Page.Locator(DateToCalendarIdentifier(today));
             await Expect(calendarCell).ToBeVisibleAsync();
 
             ILocator svgElement = calendarCell.Locator("svg");
@@ -513,7 +513,6 @@ namespace Rise.Client.Tests.Reservations
 
         private async Task OpenCreateReservationDialog()
         {
-            await MockTimeSlotAndSelectAvailableDay();
             // Arrange
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
             TimeSlotRangeInfoDto initialTimeRange = new(
@@ -614,7 +613,7 @@ namespace Rise.Client.Tests.Reservations
                     {
                         Status = 200,
                         ContentType = "application/json",
-                        Body = JsonSerializer.Serialize(new { id = 1 })
+                        Body = JsonSerializer.Serialize(1)
                     });
                 }
             });
@@ -623,7 +622,7 @@ namespace Rise.Client.Tests.Reservations
             await Page.GotoAsync("/reservations");
 
             // Select the day and time slot
-            ILocator day = Page.Locator($"[identifier='{today}']");
+            ILocator day = Page.Locator(DateToCalendarIdentifier(today));
             await day.ClickAsync();
 
             ILocator timeSlot1 = Page.GetByTestId("time-slot-1");
