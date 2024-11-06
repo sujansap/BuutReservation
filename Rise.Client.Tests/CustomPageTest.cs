@@ -7,6 +7,11 @@ namespace Rise.Client.Tests
     [TestFixture]
     public class CustomPageTest : PageTest
     {
+        [OneTimeSetUp]
+        public void GlobalSetup()
+        {
+            SetDefaultExpectTimeout(10_000);
+        }
 
         [SetUp]
         public async Task Setup()
@@ -42,7 +47,7 @@ namespace Rise.Client.Tests
             {
                 Locale = "en-US",
                 ColorScheme = ColorScheme.Light,
-                BaseURL = baseUrl
+                BaseURL = baseUrl,
             };
         }
     }

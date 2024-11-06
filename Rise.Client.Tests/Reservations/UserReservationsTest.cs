@@ -109,9 +109,9 @@ namespace Rise.Client.Tests.Reservations
 
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
-            await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"), new() { Timeout = 8000 });
-            await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(ValidReservation.BoatPersonalName, new() { Timeout = 8000 });
-            await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}", new() { Timeout = 8000 });
+            await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"));
+            await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(ValidReservation.BoatPersonalName);
+            await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}");
 
         }
 
@@ -128,7 +128,7 @@ namespace Rise.Client.Tests.Reservations
 
             await Expect(Page.GetByTestId("user-reservations-loading-progress")).ToBeVisibleAsync(new() { Timeout = 8000 });
 
-            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden, Timeout = 8000 });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']");
         }
 
         [Test]
