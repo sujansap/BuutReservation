@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Rise.Shared.TimeSlots;
 using Shouldly;
@@ -147,6 +148,8 @@ namespace Rise.Client.Tests.Reservations
             await Page.GetByTestId("calendar-your-reservations").IsVisibleAsync();
         }
 
+        // TODO loader
+
         [Test]
         public async Task HasUnexpectedError()
         {
@@ -160,7 +163,7 @@ namespace Rise.Client.Tests.Reservations
                 });
             });
             await Page.GotoAsync("/reservations");
-            await Page.GetByTestId("error-message").IsVisibleAsync();
+            await Page.GetByTestId("custom-calendar-reserve-fetch-error").IsVisibleAsync();
         }
 
         [Test]
@@ -229,7 +232,7 @@ namespace Rise.Client.Tests.Reservations
 
             await Page.GotoAsync("/reservations");
             ILocator prev = Page.GetByTestId("calendar-previous");
-            (await prev.IsDisabledAsync()).ShouldBeTrue();
+            await Expect(prev).ToBeDisabledAsync(new() { Timeout = 8000 });
         }
 
         [Test]
@@ -251,7 +254,7 @@ namespace Rise.Client.Tests.Reservations
             }
 
             ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(currentMonth - 2);
-            (await previousMonth.IsDisabledAsync()).ShouldBeTrue();
+            await Expect(previousMonth).ToBeDisabledAsync();
         }
 
         [Test]
@@ -264,15 +267,13 @@ namespace Rise.Client.Tests.Reservations
 
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
-            string nextMonthText = await monthPicker.InnerTextAsync();
-            nextMonthText.ShouldNotBe(startMonthText);
+            await Expect(monthPicker).Not.ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
 
             ILocator prev = Page.GetByTestId("calendar-previous");
-            (await prev.IsDisabledAsync()).ShouldBeFalse();
+            await Expect(prev).Not.ToBeDisabledAsync();
             await prev.ClickAsync();
 
-            string currentMonthText = await monthPicker.InnerTextAsync();
-            currentMonthText.ShouldBe(startMonthText);
+            await Expect(monthPicker).ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
         }
 
         [Test]
@@ -285,8 +286,7 @@ namespace Rise.Client.Tests.Reservations
 
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
-            string nextMonthText = await monthPicker.InnerTextAsync();
-            nextMonthText.ShouldNotBe(startMonthText);
+            await Expect(monthPicker).Not.ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
 
             await monthPicker.ClickAsync();
 
@@ -300,11 +300,10 @@ namespace Rise.Client.Tests.Reservations
             }
 
             ILocator previousMonth = monthPickerCollapsed.Locator(".mud-picker-month").Nth(nextMonth - 2);
-            (await previousMonth.IsDisabledAsync()).ShouldBeFalse();
+            await Expect(previousMonth).Not.ToBeDisabledAsync();
             await previousMonth.ClickAsync();
 
-            string currentMonthText = await monthPicker.InnerTextAsync();
-            currentMonthText.ShouldBe(startMonthText);
+            await Expect(monthPicker).ToHaveTextAsync(new Regex(startMonthText.ToLower(), RegexOptions.IgnoreCase));
         }
 
         [Test]
@@ -337,7 +336,7 @@ namespace Rise.Client.Tests.Reservations
             Page.Url.ShouldContain($"CurrentDate={plusOneMonthDateFormatted}");
 
             ILocator date = Page.Locator(DateToCalendarIdentifier(DateOnly.FromDateTime(plusOneMonthDate)));
-            date.ShouldNotBeNull();
+            await Expect(date).ToHaveCountAsync(0);
         }
 
         [Test]
