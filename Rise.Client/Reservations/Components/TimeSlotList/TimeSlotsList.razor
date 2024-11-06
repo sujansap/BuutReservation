@@ -15,7 +15,7 @@
         @* TODO make loader use skeleton *@
         @if (TimeSlots.Count() == 0)
         {
-            <MudAlert Severity="Severity.Info">@Localizer["NoTimeSlotAvailable"]</MudAlert>
+            <MudAlert Severity="Severity.Info" data-testid="time-slots-none">@Localizer["NoTimeSlotAvailable"]</MudAlert>
         }
         else
         {

@@ -267,6 +267,25 @@ namespace Rise.Client.Tests.Reservations
         }
 
         [Test]
+        public async Task ShouldHaveEmptyMessageForTimeSlotList()
+        {
+
+            await Page.RouteAsync("*/**/api/TimeSlot/*/*/**", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(new List<TimeSlotDto>())
+                });
+            });
+
+            await SelectAvailableDayOnCalendar();
+
+            await Page.GetByTestId("time-slots-none").IsVisibleAsync();
+        }
+
+        [Test]
         public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingButtons()
         {
 
