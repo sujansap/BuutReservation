@@ -77,40 +77,16 @@ namespace Rise.Server.Controllers
             return Ok(reservations);
         }
         /// <summary>
-        /// Creates a reservation for a specific user, timeslot, and boat
+        /// Creates a reservation for a specific timeslot for the current user
         /// </summary>
-        /// <param name="request">The details of the reservation to create</param>
-        /// <param name="validator">The validator for the request</param>
-        /// <returns>The details of the created reservation</returns>
+        /// <param name="reservationDto">The details of the reservation to create</param>
+        /// <returns>The deatils of the created reservation</returns>
         [HttpPost]
         [NoQueryParameters]
-        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto request, [FromServices] IValidator<CreateReservationDto> validator)
+        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto reservationDto)
         {
-
-            var validationResult = await validator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                var problemDetails = new ValidationProblemDetails();
-                foreach (var error in validationResult.Errors)
-                {
-                    problemDetails.Errors.Add(error.PropertyName, new[] { error.ErrorMessage });
-                }
-                return ValidationProblem(problemDetails);
-            }
-
-            try
-            {
-                var reservation = await _reservationService.CreateReservation(request.TimeSlotId);
-                return CreatedAtAction(nameof(CreateReservation), new { id = reservation.Id }, reservation);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while creating the reservation.", details = ex.Message });
-            }
+            var reservationId = await _reservationService.CreateReservation(reservationDto);
+            return CreatedAtAction(nameof(CreateReservation), reservationId);
         }
 
 

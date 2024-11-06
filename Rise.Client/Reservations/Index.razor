@@ -7,35 +7,18 @@
 @using Rise.Client.Reservations.Components
 @using Rise.Client.Reservations.Components.CustomCalendar
 @using Rise.Client.Reservations.Components.TimeSlotList
+@using Rise.Client.Common
 @using Rise.Shared.Reservations
+@using Rise.Shared.TimeSlots
 @inject IStringLocalizer<ReservationPageResources> Localizer
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
 
 <PageTitle>@Localizer["YourReservations"]</PageTitle>
 
-<MudTabs Elevation="0" Centered="true" Class="mb-16">
+<MudTabs Elevation="0" Centered="true" Class="mb-16" @bind-ActivePanelIndex="@TabIndex">
     <MudTabPanel Text="@Localizer["Reserve"]" data-testid="tab-reserve">
-        <MudGrid>
-            <MudItem xs="12" md="8">
-                <CustomCalendar ShowTodayButton="true" ShowDay="false" ShowWeek="false" ShowWorkWeek="false"
-                    Class="mt-8" data-testid="custom-calendar-reserve" AvailableDays="AvailableDays"
-                    DateRangeChanged="OnDateRangeChanged" CellClicked="OnCellClicked" Items="ReservationsOfCurrentUser">
-                    <MonthTemplate>
-                        <CustomDayComponent Context="context" />
-                    </MonthTemplate>
-                </CustomCalendar>
-            </MudItem>
-            <MudItem xs="12" md="4" Class="mt-8">
-                @if (SelectedDate.HasValue)
-                {
-                    <TimeSlotsList SelectedDate="SelectedDate.Value" RefetchData="UpdateDates" />
-                }
-            </MudItem>
-            <MudItem xs="12">
-                <ReservationCalendarLegend data-testid="custom-calendar-legend" />
-            </MudItem>
-        </MudGrid>
+        <TimeSlotOverview />
     </MudTabPanel>
     <MudTabPanel Text="@Localizer["YourReservations"]" data-testid="tab-your-reservations">
         <UserReservations />
