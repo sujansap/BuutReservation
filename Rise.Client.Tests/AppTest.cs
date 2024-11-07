@@ -13,7 +13,7 @@ namespace Rise.Client.Tests
         public async Task NotFoundPage(int width)
         {
             await Page.SetViewportSizeAsync(width, DefaultHeight);
-            await Page.GotoAsync("/huh");
+            await InitNavigationToUrl("/huh");
             await Expect(Page).ToHaveTitleAsync("Not found", new() { Timeout = 30000 });
             await Expect(Page.GetByTestId("page-not-found")).ToHaveTextAsync("Sorry, there's nothing at this address.");
         }
