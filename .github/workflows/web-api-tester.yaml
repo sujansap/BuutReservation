@@ -6,9 +6,6 @@ on:
       - staging
       - main
       - production
-  push:
-    branches:
-      - opst-testing
 
 jobs:
   build:
