@@ -66,11 +66,12 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ github.run_number }}
           
+      # Trigger FluxCD Image Update via Webhook - This runs after the image push
       - name: Trigger FluxCD Image Update via Webhook
         run: |
-          curl -X POST https://flux-webhook.groep2.k8s.be/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825 \
-          -H "Content-Type: application/json" \
-          -H "X-Flux-Webhook-Token: Y8Var*Wnh3Xo6sxmqjM9F4z*V28asF" \
-          -d '{
-                "event": "push"
-              }'          
+          curl -s -o /dev/null -X POST https://flux-webhook.groep2.k8s.be/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825 \
+            -H "Content-Type: application/json" \
+            -H "X-Flux-Webhook-Token: Y8Var*Wnh3Xo6sxmqjM9F4z*V28asF" \
+            -d '{
+                  "event": "push"
+                }'
