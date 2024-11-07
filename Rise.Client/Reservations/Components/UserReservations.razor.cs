@@ -44,57 +44,30 @@ public class UserReservationsBase : ComponentBase
     [Parameter]
     public bool IsNextPage { get; set; } = true;
 
-    protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
+  protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
     {
-        try
-        {
-            IsLoading = true;
-            var cursor = isNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
-            
-            if (isNextPage && cursor != null)
-            {
-                _previousCursors.Push(ReservationPage?.PreviousId);
-            }
-            else if (!isNextPage && _previousCursors.Count > 0)
-            {
-                cursor = _previousCursors.Pop();
-            }
+        int? cursor = IsNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
 
-            IsFirstPage = cursor == null;
-            
-            var result = await ReservationService.GetUserReservations(
+        return ReservationService.GetUserReservations(
                 1,
                 cursor,
-                cursor != null ? isNextPage : null,
+                IsNextPage,
                 getPast: ShowPastReservations
             );
 
-            ReservationPage = result;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading reservations: {ex.Message}");
-            ReservationPage = new()
-            {
-                Data = new List<ReservationDto>()
-            };
-        }
-        finally
-        {
-            IsLoading = false;
-            StateHasChanged();
-        }
     }
 
     protected async Task LoadNextPage()
     {
-        await LoadReservations(true);
+        IsNextPage = true;
+        await AsyncDataRef.FetchData();
         await ScrollToTop();
     }
 
-    protected async Task LoadPreviousPage()
+     protected async Task LoadPreviousPage()
     {
-        await LoadReservations(false);
+        IsNextPage = false;
+        await AsyncDataRef.FetchData();
         await ScrollToTop();
     }
 

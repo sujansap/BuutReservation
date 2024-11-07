@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.TimeSlots;
 
+
 namespace Rise.Client.Reservations
 {
     public partial class Index : ComponentBase
@@ -26,7 +27,6 @@ namespace Rise.Client.Reservations
             }
         }
 
-        [SupplyParameterFromQuery]
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; } = default!;
 
@@ -114,6 +114,22 @@ namespace Rise.Client.Reservations
             {
                 UpdateSelectedTabInQuery(TabIndex);
             }
+        }
+
+        /// <summary>
+        /// Converts calendar item to highlight on calendar using day info
+        /// </summary>
+        /// <param name="day">day info about the events</param>
+        /// <returns>calendar item</returns>
+        private static ColoredCalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
+        {
+            return new ColoredCalendarItem()
+            {
+                Start = day.Date.ToDateTime(TimeOnly.MinValue),
+                End = day.Date.ToDateTime(TimeOnly.MaxValue),
+                Text = "",
+                Color = Color.Primary,
+            };
         }
 
     }
