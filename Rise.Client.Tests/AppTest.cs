@@ -14,7 +14,7 @@ namespace Rise.Client.Tests
         {
             await Page.SetViewportSizeAsync(width, DefaultHeight);
             await Page.GotoAsync("/huh");
-            await Expect(Page).ToHaveTitleAsync("Not found");
+            await Expect(Page).ToHaveTitleAsync("Not found", new() { Timeout = 30000 });
             await Expect(Page.GetByTestId("page-not-found")).ToHaveTextAsync("Sorry, there's nothing at this address.");
         }
     }

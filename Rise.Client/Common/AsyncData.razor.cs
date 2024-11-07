@@ -58,7 +58,7 @@ namespace Rise.Client.Common
             return _cachedData?.Equals(Data) ?? false;
         }
 
-        protected override async Task OnParametersSetAsync()
+        protected override async Task OnInitializedAsync()
         {
             bool isDifferentFetcher = _previousDataFetcher != DataFetcher;
             bool isCachedDataEqual = IsCachedDataEqual();
