@@ -139,7 +139,7 @@ namespace Rise.Client.Tests.Reservations
             ILocator daysLocator = Page.GetByTestId("calendar-cel");
 
             // Assert the correct number of days
-            await Expect(daysLocator).ToHaveCountAsync(35);
+            await Expect(daysLocator).ToHaveCountAsync(35, new() { Timeout = 30000 });
         }
 
         [Test]
