@@ -6,6 +6,7 @@ on:
       - staging
       - main
       - production
+      - opst-testing
 
 jobs:
   build:
@@ -68,7 +69,7 @@ jobs:
             fi
             sleep 2
           done
-          
+
       # New steps for setting up and running Playwright tests------------------------------------------------------
       - name: Create Playwright test project
         run: |
