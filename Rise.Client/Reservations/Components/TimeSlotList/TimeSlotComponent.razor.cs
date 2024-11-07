@@ -17,6 +17,8 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
         public required TimeSlotDto TimeSlot { get; set; }
         [Parameter]
         public DateOnly Date { get; set; }
+        [Parameter, EditorRequired]
+        public required Func<Task> RefetchData { get; set; }
 
         private string StackStyle { get; set; } = GetStyle(AvailabilityEnum.Unavailable).style;
         private Color TextColor { get; set; } = GetColor(AvailabilityEnum.Unavailable);
@@ -73,7 +75,7 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
                 return;
             }
 
-            var parameters = new DialogParameters<CreateReservationDialog> { { x => x.TimeSlot, TimeSlot }, { x => x.Date, Date } };
+            var parameters = new DialogParameters<CreateReservationDialog> { { x => x.TimeSlot, TimeSlot }, { x => x.Date, Date }, { x => x.RefetchData, RefetchData } };
             var options = new DialogOptions { CloseButton = true };
 
             var dialog = await DialogService.ShowAsync<CreateReservationDialog>("Create reservation", parameters, options);

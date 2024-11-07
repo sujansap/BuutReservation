@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Client.Common;
 using Rise.Shared.TimeSlots;
+using Serilog;
 
 namespace Rise.Client.Reservations.Components
 {
@@ -35,11 +36,7 @@ namespace Rise.Client.Reservations.Components
             if (dateRange.Start.HasValue && dateRange.End.HasValue && !dateRange.Equals(this.dateRange))
             {
                 this.dateRange = dateRange;
-
-
-                await AsyncDateRangeRef.FetchData();
-
-                DisplayDateRange();
+                await FetchAndDisplayData(false);
             }
         }
 
@@ -60,7 +57,13 @@ namespace Rise.Client.Reservations.Components
             return Task.FromResult(TimeSlotRangeInfo ?? new TimeSlotRangeInfoDto(0, []));
         }
 
-        private void DisplayDateRange()
+        private async Task FetchAndDisplayData(bool withNotifyState)
+        {
+            await AsyncDateRangeRef.FetchData();
+            DisplayDateRange(withNotifyState);
+        }
+
+        private void DisplayDateRange(bool withNotifyState)
         {
 
             if (TimeSlotRangeInfo is not null)
@@ -73,6 +76,8 @@ namespace Rise.Client.Reservations.Components
                 .Select(ConvertToCalendarItems)
                 .ToList();
 
+                if (withNotifyState)
+                    StateHasChanged();
             }
         }
 
@@ -106,54 +111,6 @@ namespace Rise.Client.Reservations.Components
             else
             {
                 SelectedDate = null;
-            }
-        }
-
-        // TODO refactor tab tracer to tabs components
-        private static readonly List<string> tabNames = ["calendar", "reservations"];
-
-        private int _tabIndex = 0;
-        private int TabIndex
-        {
-            get => _tabIndex; set
-            {
-                UpdateSelectedTabInQuery(value);
-                _tabIndex = value;
-            }
-        }
-
-        [SupplyParameterFromQuery]
-        /// <summary>
-        /// Which tab is open on the page
-        /// </summary>
-        private string? CurrentTab { get; set; }
-
-        private void UpdateSelectedTabInQuery(int index)
-        {
-            string tabName = tabNames[index];
-            bool noCurrentTabName = CurrentTab is null;
-            if (noCurrentTabName || (CurrentTab is not null && !CurrentTab.Equals(tabName)))
-            {
-                Dictionary<string, object?> queries = new()
-                {
-                    ["CurrentTab"] = tabName,
-                };
-                Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(queries), forceLoad: false, replace: true);
-            }
-
-        }
-
-        private void ChangeTabViaName()
-        {
-            if (CurrentTab is not null)
-            {
-                CurrentTab = CurrentTab.ToLower();
-                int index = tabNames.IndexOf(CurrentTab);
-                TabIndex = index < 0 ? 0 : index;
-            }
-            else
-            {
-                UpdateSelectedTabInQuery(TabIndex);
             }
         }
 

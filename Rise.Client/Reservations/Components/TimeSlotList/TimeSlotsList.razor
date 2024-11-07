@@ -22,7 +22,7 @@
             <MudStack>
                 @foreach (TimeSlotDto? timeSlot in TimeSlots)
                 {
-                    <TimeSlotComponent TimeSlot="timeSlot" Date="SelectedDate" />
+                    <TimeSlotComponent TimeSlot="@timeSlot" Date="@SelectedDate" RefetchData="@RefetchTimeSlotOverviewData" />
                 }
             </MudStack>
         }
