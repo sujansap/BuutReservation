@@ -1,0 +1,51 @@
+﻿@using Rise.Client.Common
+@typeparam T
+@inject ISnackbar SnackbarService
+
+@* TODO check mobile view *@
+@* TODO limit loader to show up only after 1 second *@
+@if (!DisableLoader && IsLoading)
+{
+    @RenderLoading
+}
+else
+{
+    @if (HasError)
+    {
+        @if (ShowStaticAlert())
+        {
+            @RenderError
+        }
+        @if (ShowSnackBarAlert())
+        {
+            ShowErrorOnSnackbar();
+        }
+    }
+
+    @* TODO fix spacing between content and error *@
+    @if (ShowContentWhenError || !HasError)
+    {
+        @ChildContent
+    }
+
+}
+
+@code {
+    protected virtual RenderFragment RenderInfoContainer(RenderFragment content) => @<MudContainer
+        Class="d-flex justify-center">
+        @content
+    </MudContainer>;
+
+    protected virtual RenderFragment RenderLoading => RenderInfoContainer(@<MudProgressCircular Indeterminate="true" data-testid="@TestIdLoading()" />);
+
+    protected virtual RenderFragment RenderErrorMessage => @<MudText Typo="Typo.body1" data-testid="@TestIdError()">
+        @ErrorMessage</MudText>;
+
+    protected virtual RenderFragment RenderError => RenderInfoContainer(@<MudAlert Severity="Severity.Error">
+        @RenderErrorMessage</MudAlert>);
+
+    private void ShowErrorOnSnackbar()
+    {
+        SnackbarService.Add(@RenderErrorMessage, Severity.Error);
+    }
+}

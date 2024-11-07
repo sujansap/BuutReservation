@@ -7,6 +7,26 @@ namespace Rise.Client.Reservations
 {
     public partial class Index : ComponentBase
     {
+
+        // TODO refactor tab tracer to tabs components
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            ChangeTabViaName();
+        }
+        private static readonly List<string> tabNames = ["calendar", "reservations"];
+
+        private int _tabIndex = 0;
+        private int TabIndex
+        {
+            get => _tabIndex; set
+            {
+                UpdateSelectedTabInQuery(value);
+                _tabIndex = value;
+            }
+        }
+
+        [SupplyParameterFromQuery]
         [Inject]
         private ITimeSlotService TimeSlotService { get; set; } = default!;
 
@@ -63,35 +83,36 @@ namespace Rise.Client.Reservations
         }
 
         /// <summary>
-        /// Converts calendar item to highlight on calendar using day info
+        /// Which tab is open on the page
         /// </summary>
-        /// <param name="day">day info about the events</param>
-        /// <returns>calendar item</returns>
-        private static ColoredCalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
+        private string? CurrentTab { get; set; }
+
+        private void UpdateSelectedTabInQuery(int index)
         {
-            return new ColoredCalendarItem()
+            string tabName = tabNames[index];
+            bool noCurrentTabName = CurrentTab is null;
+            if (noCurrentTabName || (CurrentTab is not null && !CurrentTab.Equals(tabName)))
             {
-                Start = day.Date.ToDateTime(TimeOnly.MinValue),
-                End = day.Date.ToDateTime(TimeOnly.MaxValue),
-                Text = "",
-                Color = Color.Primary,
-            };
+                Dictionary<string, object?> queries = new()
+                {
+                    ["CurrentTab"] = tabName,
+                };
+                Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(queries), forceLoad: false, replace: true);
+            }
+
         }
 
-        /// <summary>
-        /// When a day is being selected
-        /// </summary>
-        /// <param name="date">The clicked date</param>
-        /// <returns></returns>
-        private void OnCellClicked(DateTime date)
+        private void ChangeTabViaName()
         {
-            if (AvailableDays.ContainsKey(DateOnly.FromDateTime(date)))
+            if (CurrentTab is not null)
             {
-                SelectedDate = DateOnly.FromDateTime(date);
+                CurrentTab = CurrentTab.ToLower();
+                int index = tabNames.IndexOf(CurrentTab);
+                TabIndex = index < 0 ? 0 : index;
             }
             else
             {
-                SelectedDate = null;
+                UpdateSelectedTabInQuery(TabIndex);
             }
         }
 

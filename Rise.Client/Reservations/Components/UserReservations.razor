@@ -1,7 +1,11 @@
 @using MudBlazor
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Reservations
+@using Rise.Shared.Pagination
 @using Rise.Shared.Reservations
+@using Rise.Client.Common
+
+@inject IStringLocalizer<ReservationPageResources> Localizer
 @namespace Rise.Client.Reservations.Components
 @inherits UserReservationsBase
 

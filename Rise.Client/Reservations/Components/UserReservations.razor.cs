@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Rise.Client.Services;
+using Rise.Client.Common;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 using Microsoft.JSInterop;
@@ -10,8 +10,12 @@ namespace Rise.Client.Reservations.Components;
 
 public class UserReservationsBase : ComponentBase
 {
-    protected ItemsPageDto<ReservationDto>? ReservationPage { get; private set; }
+    public required AsyncData<ItemsPageDto<ReservationDto>> AsyncDataRef { get; set; }
+    protected ItemsPageDto<ReservationDto>? ReservationPage { get; set; }
     protected bool IsLoading { get; private set; }
+    public bool HasError { get; private set; }
+    protected string? ErrorMessage { get; private set; }
+
     protected bool ShowPastReservations
     {
         get => _showPastReservations;
@@ -37,9 +41,10 @@ public class UserReservationsBase : ComponentBase
     [Inject]
     public required IJSRuntime JS { get; set; }
 
-    protected override async Task OnInitializedAsync() => await LoadReservations();
+    [Parameter]
+    public bool IsNextPage { get; set; } = true;
 
-    private async Task LoadReservations(bool isNextPage = true)
+    protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
     {
         try
         {

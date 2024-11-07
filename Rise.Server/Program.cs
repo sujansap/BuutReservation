@@ -9,69 +9,90 @@ using Rise.Shared.TimeSlots;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Rise.Server.Middleware;
+using Serilog.Events;
+using Serilog;
 
-
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+try
 {
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    options.IncludeXmlComments(xmlPath);
-    options.EnableAnnotations();
-});
+    Log.Information("Starting up Server");
+    var builder = WebApplication.CreateBuilder(args);
 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+    Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
+                    .CreateLogger();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"));
-    options.EnableDetailedErrors();
-    options.EnableSensitiveDataLogging();
-    options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
-});
+    builder.Services.AddSerilog();
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        options.IncludeXmlComments(xmlPath);
+        options.EnableAnnotations();
+    });
 
-builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-//validation using fluent validation
-builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
-builder.Services.AddFluentValidationAutoValidation();
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"));
+        options.EnableDetailedErrors();
+        options.EnableSensitiveDataLogging();
+        options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
+    });
 
+    builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+    builder.Services.AddScoped<IReservationService, ReservationService>();
 
-builder.Services.AddLocalization();
+    //validation using fluent validation
+    builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
+    builder.Services.AddFluentValidationAutoValidation();
 
-var app = builder.Build();
+    builder.Services.AddLocalization();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    if (app.Environment.IsProduction() || app.Environment.IsStaging())
+        app.UseHttpsRedirection();
+
+    app.UseBlazorFrameworkFiles();
+    app.UseStaticFiles();
+
+    app.UseSerilogIngestion();
+
+    app.UseMiddleware<ExceptionMiddleware>();
+
+    app.UseRouting();
+
+    app.MapControllers();
+    app.MapFallbackToFile("index.html");
+
+    if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+    {
+        using var scope = app.Services.CreateScope();
+        // Require a DbContext from the service provider and seed the database.
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        new Seeder(dbContext).Seed();
+    }
+
+    await app.RunAsync();
 }
-
-app.UseHttpsRedirection();
-
-app.UseBlazorFrameworkFiles();
-app.UseStaticFiles();
-
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseRouting();
-
-app.MapControllers();
-app.MapFallbackToFile("index.html");
-
-if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+catch (Exception ex)
 {
-    using var scope = app.Services.CreateScope();
-    // Require a DbContext from the service provider and seed the database.
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    new Seeder(dbContext).Seed();
+    Log.Fatal(ex, "Application terminated unexpectedly");
 }
-
-await app.RunAsync();
-
+finally
+{
+    Log.CloseAndFlush();
+}
 public partial class Program { }
