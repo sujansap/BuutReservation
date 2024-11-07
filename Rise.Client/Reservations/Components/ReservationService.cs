@@ -24,11 +24,15 @@ namespace Rise.Client.Services
         {
             Dictionary<string, string?> queries = new()
             {
-                ["cursor"] = cursor.ToString(),
-                ["isNextPage"] = isNextPage.ToString(),
                 ["getPast"] = getPast.ToString(),
                 ["pageSize"] = pageSize.ToString(),
             };
+
+            if (cursor is not null)
+                queries.Add("cursor", cursor.ToString());
+
+            if (isNextPage is not null)
+                queries.Add("isNextPage", isNextPage.ToString());
 
             string queryString = QueryHelpers.AddQueryString("me", queries);
 
