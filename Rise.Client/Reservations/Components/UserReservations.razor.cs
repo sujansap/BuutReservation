@@ -25,14 +25,14 @@ public class UserReservationsBase : ComponentBase
             _showPastReservations = value;
             // Reset pagination and load new reservations
             ReservationPage = null;
-            LoadReservations().ConfigureAwait(false);
+            IsFirstPage = true;
+            _previousCursors.Clear();  // Clear the cursor history
+            AsyncDataRef.FetchData().ConfigureAwait(false);
         }
     }
     protected bool IsFirstPage { get; private set; } = true;
 
     private bool _showPastReservations;
-
-    private Stack<int?> _previousCursors = new();
 
     [Inject]
     public required IStringLocalizer<ReservationPageResources> Localizer { get; set; } = default!;
@@ -44,7 +44,9 @@ public class UserReservationsBase : ComponentBase
     [Parameter]
     public bool IsNextPage { get; set; } = true;
 
-  protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
+    private Stack<int> _previousCursors = new();
+
+    protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
     {
         int? cursor = IsNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
 
@@ -54,21 +56,30 @@ public class UserReservationsBase : ComponentBase
                 IsNextPage,
                 getPast: ShowPastReservations
             );
-
     }
 
     protected async Task LoadNextPage()
     {
-        IsNextPage = true;
-        await AsyncDataRef.FetchData();
-        await ScrollToTop();
+        if (ReservationPage?.NextId != null)
+        {
+            _previousCursors.Push(ReservationPage.Data.First().Id);
+            IsFirstPage = false;
+            IsNextPage = true;
+            await AsyncDataRef.FetchData();
+            await ScrollToTop();
+        }
     }
 
-     protected async Task LoadPreviousPage()
+    protected async Task LoadPreviousPage()
     {
-        IsNextPage = false;
-        await AsyncDataRef.FetchData();
-        await ScrollToTop();
+        if (_previousCursors.Count > 0)
+        {
+            IsNextPage = false;
+            await AsyncDataRef.FetchData();
+            _previousCursors.Pop();
+            IsFirstPage = _previousCursors.Count == 0;
+            await ScrollToTop();
+        }
     }
 
     protected async Task ScrollToTop()
@@ -77,4 +88,24 @@ public class UserReservationsBase : ComponentBase
     }
 
     protected bool CanGoBack => !IsFirstPage && _previousCursors.Count > 0;
+
+    public async Task FetchData()
+    {
+        try
+        {
+            IsLoading = true;
+            HasError = false;
+            ErrorMessage = null;
+            ReservationPage = await LoadReservations();
+        }
+        catch (Exception ex)
+        {
+            HasError = true;
+            ErrorMessage = Localizer["ErrorLoadingReservations"];
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 }
