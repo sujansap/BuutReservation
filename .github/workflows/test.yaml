@@ -1,13 +1,11 @@
 name: Test FluxCD Webhook
 
 on:
-  # Trigger workflow handmatig
   workflow_dispatch:
-  
-  # Trigger workflow bij een push naar de 'ops-testing' branch
   push:
     branches:
       - ops-testing
+
 jobs:
   test-fluxcd-webhook:
     name: Test FluxCD Webhook Image-Updater
@@ -15,10 +13,16 @@ jobs:
     
     steps:
       - name: Trigger FluxCD Webhook image-updater
+        env:
+          ENCODED_TOKEN: "WThWYXIqV25oM1hvNnN4bXFqTTlGNHoqVjI4YXNG"
+          WEBHOOK_URL: "http://notification-controller.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
+          REQUEST_BODY: '{"username": "testuser", "action": "login"}'
         run: |
-          ENCODED_TOKEN="WThWYXIqV25oM1hvNnN4bXFqTTlGNHoqVjI4YXNG"
+          # Decode the token
           TOKEN=$(echo "$ENCODED_TOKEN" | base64 --decode)
-          WEBHOOK_URL="http://notification-controller.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
-          REQUEST_BODY='{"username": "testuser", "action": "login"}'
+
+          # Generate the HMAC hash
           HMAC_HASH=$(echo -n "$REQUEST_BODY" | openssl dgst -sha1 -r -hmac "$TOKEN" | awk '{print $1}')
+          
+          # Send the HTTP POST request
           curl -X POST "$WEBHOOK_URL" -H "X-Signature: sha1=$HMAC_HASH" -d "$REQUEST_BODY" -v
