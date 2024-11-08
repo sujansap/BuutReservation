@@ -7,7 +7,7 @@ on:
   # Trigger workflow bij een push naar de 'ops-testing' branch
   push:
     branches:
-      - ops-testin
+      - ops-testing
 jobs:
   test-fluxcd-webhook:
     name: Test FluxCD Webhook Image-Updater
