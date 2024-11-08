@@ -93,7 +93,10 @@ public class UserReservationsBase : ComponentBase
         if (ShowPastReservations != enable)
         {
             ShowPastReservations = enable;
-            // TODO reset cursor
+            ReservationPage = null;
+            _previousCursors.Clear();
+            IsFirstPage = true;
+            IsNextPage = true;
             await FetchAndResetScroll();
         }
     }

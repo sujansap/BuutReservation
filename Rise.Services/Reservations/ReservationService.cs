@@ -53,13 +53,15 @@ namespace Rise.Services.Reservations
                    r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
                    r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
                 orderingExpressions: [
-                new OrderingExpression<IReservation, object>
-                {
-                    OrderLambda = r => r.TimeSlot.Date
-                },
                     new OrderingExpression<IReservation, object>
                     {
-                        OrderLambda = r => r.Id
+                        OrderLambda = r => r.TimeSlot.Date,
+                        IsDescending = getPast
+                    },
+                    new OrderingExpression<IReservation, object>
+                    {
+                        OrderLambda = r => r.Id,
+                        IsDescending = getPast
                     }
                 ],
                 projection: r => new ReservationDto
