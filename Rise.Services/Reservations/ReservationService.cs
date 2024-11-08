@@ -9,6 +9,7 @@ using Rise.Domain.Reservations;
 using Rise.Domain.Timeslots;
 using Rise.Domain.Users;
 using Rise.Persistence;
+using Rise.Services.Constants;
 using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
@@ -136,22 +137,36 @@ namespace Rise.Services.Reservations
             }
             catch (DbUpdateException ex)
             {
-                var innerException = ex.InnerException as PostgresException;
-
-                if (innerException?.ConstraintName == "IX_Unique_Boat_TimeSlot")
-                {
-                    throw new UniqueConstraintViolationException("This boat is already reserved for the selected time slot.");
-                }
-                if (innerException?.ConstraintName == "IX_Unique_User_TimeSlot")
-                {
-                    throw new UniqueConstraintViolationException("You already have a booking for this time slot.");
-                }
-
-                throw new ReservationCreationFailedException(
-                    "An unexpected error occurred while creating the reservation.");
+                HandleDbUpdateException(ex);
+                throw;
             }
 
 
         }
+
+        /// <summary>
+        /// Handles the exceptions thrown by the database when creating a reservation
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <exception cref="UniqueConstraintViolationException"></exception>
+        /// <exception cref="ReservationCreationFailedException"></exception>
+        private void HandleDbUpdateException(DbUpdateException ex)
+        {
+            if (ex.InnerException is PostgresException pgEx)
+            {
+                var message = pgEx.ConstraintName switch
+                {
+                    DatabaseConstraints.UniqueBoatTimeSlot => ErrorMessages.Reservation.BoatAlreadyReserved,
+                    DatabaseConstraints.UniqueUserTimeSlot => ErrorMessages.Reservation.UserAlreadyBooked,
+                    _ => ErrorMessages.Reservation.UnexpectedError //default message for unexpected errors
+                };
+
+                throw new UniqueConstraintViolationException(message);
+            }
+
+            throw new ReservationCreationFailedException(ErrorMessages.Reservation.UnexpectedError);
+        }
     }
+
+
 }
