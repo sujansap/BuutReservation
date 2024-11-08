@@ -18,12 +18,9 @@ jobs:
           WEBHOOK_URL: "http://notification-controller.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
           REQUEST_BODY: '{"username": "testuser", "action": "login"}'
         run: |
-          # Decode the token
+          ENCODED_TOKEN="WThWYXIqV25oM1hvNnN4bXFqTTlGNHoqVjI4YXNG"
           TOKEN=$(echo "$ENCODED_TOKEN" | base64 --decode)
-
-          # Generate the HMAC hash
+          WEBHOOK_URL="http://webhook-receiver.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
+          REQUEST_BODY='{"username": "testuser", "action": "login"}'
           HMAC_HASH=$(echo -n "$REQUEST_BODY" | openssl dgst -sha1 -r -hmac "$TOKEN" | awk '{print $1}')
-          
-          # Send the HTTP POST request
-          curl -X POST "$WEBHOOK_URL" -H "X-Signature: sha1=$HMAC_HASH" -d "$REQUEST_BODY" -v
-          curl http://notification-controller.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825 -v
+          curl -X POST "$WEBHOOK_URL" -H "X-Signature: sha1=$HMAC_HASH" -d "$REQUEST_BODY"
