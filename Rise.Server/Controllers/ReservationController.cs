@@ -4,6 +4,7 @@ using Rise.Server.Common.Filters;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 using FluentValidation;
+using Rise.Domain.Exceptions;
 namespace Rise.Server.Controllers
 {
     [ApiController]
@@ -90,5 +91,29 @@ namespace Rise.Server.Controllers
         }
 
 
+
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetReservationDetails(int id)
+        {
+            try
+            {
+                var reservationDetails = await _reservationService.GetReservationDetailsAsync(id);
+                return Ok(reservationDetails);
+            }
+            catch (EntityNotFoundException)
+            {
+                _logger.LogWarning("Reservation with id {id} not found.", id);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving reservation details for id {id}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the reservation details.");
+            }
+        }
     }
 }
+
