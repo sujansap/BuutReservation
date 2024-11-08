@@ -10,7 +10,7 @@
 
 <MudGrid>
     <AsyncData DataFetcher="@LoadReservations" @bind-Data="@ReservationPage" T="ItemsPageDto<ReservationDto>"
-              @ref="@AsyncDataRef" TestIdPrefix="user-reservations">
+              @ref="@AsyncDataRef" TestIdPrefix="user-reservations" ShowContentWhenError="false">
         <!-- Toggle Button -->
         <MudItem xs="12" Style="padding: 48px 0 24px 0;">
             <MudButton 
@@ -87,10 +87,10 @@
                 <MudItem xs="12" Class="d-flex justify-center mt-4">
                     <MudStack Row="true" Spacing="2" Justify="Justify.Center">
                         <MudButton OnClick="@LoadPreviousPage" 
-                            Disabled="@(!CanGoBack)"
                             StartIcon="@Icons.Material.Filled.ArrowBack" 
                             Color="Color.Primary"
                             Variant="Variant.Filled"
+                            Disabled="@(ReservationPage?.PreviousId is null || ReservationPage?.IsFirstPage == true)"
                             data-testid="previous-page" 
                             Style="border-radius: 20px;">
                             @Localizer["Previous"]
