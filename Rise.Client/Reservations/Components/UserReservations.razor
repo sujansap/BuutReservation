@@ -17,7 +17,9 @@
                 Variant="Variant.Text"
                 Color="Color.Primary"
                 FullWidth="true"
-                Class="d-flex justify-start mb-4 ml-2" Style="border-radius: 20px;" OnClick="@TogglePastReservations"
+                Class="d-flex justify-start mb-4 ml-2" 
+                Style="border-radius: 20px;" 
+                OnClick="@TogglePastReservations"
                 data-testid="reservation-toggle-button">
                 <MudToggleIconButton 
                     Toggled="ShowPastReservations"
@@ -34,13 +36,12 @@
             </MudButton>
         </MudItem>
 
-
         <MudGrid Spacing="6">
             @if (ReservationPage?.Data?.Any() ?? false)
             {
                 @foreach (var reservation in ReservationPage.Data)
                 {
-                    <MudItem xs="12">
+                    <MudItem xs="12" data-testid="reservation-item">
                         <MudCard Elevation="6" Class="mb-6" Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
                             <MudCardContent>
                                 <MudGrid>
@@ -66,7 +67,8 @@
                                     <!-- View Details Button -->
                                     <MudItem xs="3" Class="d-flex justify-end align-center">
                                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                            Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
+                                            Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
+                                            data-testid="view-details-button">
                                             @Localizer["ViewDetails"]
                                         </MudButton>
                                     </MudItem>
