@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Net.Cache;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Rise.Domain.Boats;
 using Rise.Domain.Common;
 using Rise.Domain.Exceptions;
@@ -115,6 +116,8 @@ namespace Rise.Services.Reservations
             }
             var boatId = boat.Id;
 
+            var hasReservationForTimeslot = await _dbContext.Reservations.AnyAsync(r => r.TimeSlotId == timeSlot.Id && r.UserId == userId);
+
             var reservation = new Reservation
             {
                 UserId = userId,
@@ -129,13 +132,26 @@ namespace Rise.Services.Reservations
             {
                 _dbContext.Reservations.Add(reservation);
                 await _dbContext.SaveChangesAsync();
+                return reservation.Id;
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
-                throw new ReservationCreationFailedException("Failed to create reservation.");
+                var innerException = ex.InnerException as PostgresException;
+
+                if (innerException?.ConstraintName == "IX_Unique_Boat_TimeSlot")
+                {
+                    throw new UniqueConstraintViolationException("This boat is already reserved for the selected time slot.");
+                }
+                if (innerException?.ConstraintName == "IX_Unique_User_TimeSlot")
+                {
+                    throw new UniqueConstraintViolationException("You already have a booking for this time slot.");
+                }
+
+                throw new ReservationCreationFailedException(
+                    "An unexpected error occurred while creating the reservation.");
             }
 
-            return reservation.Id;
+
         }
     }
 }
