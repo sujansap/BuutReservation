@@ -5,7 +5,7 @@ on:
     branches:
       - staging
       - production
-      - ops-testng
+      - ops-testing
 
 env:
   REGISTRY: ghcr.io
