@@ -12,9 +12,6 @@ public class UserReservationsBase : ComponentBase
 {
     public required AsyncData<ItemsPageDto<ReservationDto>> AsyncDataRef { get; set; }
     protected ItemsPageDto<ReservationDto>? ReservationPage { get; set; }
-    protected bool IsLoading { get; private set; }
-    public bool HasError { get; private set; }
-    protected string? ErrorMessage { get; private set; }
 
     [Inject]
     public required IReservationService ReservationService { get; set; }
@@ -27,20 +24,13 @@ public class UserReservationsBase : ComponentBase
 
     [Parameter]
     public bool IsNextPage { get; set; } = true;
-
-    private bool _showPastReservations;
     private Stack<int?> _previousCursors = new();
     private bool IsFirstPage;
 
     protected bool ShowPastReservations
     {
-        get => _showPastReservations;
-        set
-        {
-            if (_showPastReservations == value) return;
-            _showPastReservations = value;
-            AsyncDataRef?.FetchData();
-        }
+        get;
+        set;
     }
 
     protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
@@ -67,11 +57,16 @@ public class UserReservationsBase : ComponentBase
         );
     }
 
+    protected async Task FetchAndResetScroll()
+    {
+        await AsyncDataRef.FetchData();
+        await ScrollToTop();
+    }
+
     protected async Task LoadNextPage()
     {
         IsNextPage = true;
-        await AsyncDataRef.FetchData();
-        await ScrollToTop();
+        await FetchAndResetScroll();
     }
 
     protected async Task LoadPreviousPage()
@@ -80,12 +75,12 @@ public class UserReservationsBase : ComponentBase
             return;
         
         IsNextPage = false;
-        await AsyncDataRef.FetchData();
-        await ScrollToTop(); 
+        await FetchAndResetScroll();
     }
 
     protected async Task ScrollToTop()
     {
         await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
+
 }
