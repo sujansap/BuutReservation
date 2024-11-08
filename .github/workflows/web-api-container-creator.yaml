@@ -69,15 +69,11 @@ jobs:
 
       # Trigger FluxCD Webhook to inform Flux about the new image
       - name: Trigger FluxCD Webhook image-updater
-        env:
-          TOKEN: "Y8Var*Wnh3Xo6sxmqjM9F4z*V28asF"
-          WEBHOOK_URL: "http://notification-controller.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
         run: |
-          # Empty body, just triggering the webhook
-          BODY=''
+          ENCODED_TOKEN="WThWYXIqV25oM1hvNnN4bXFqTTlGNHoqVjI4YXNG"
+          TOKEN=$(echo "$ENCODED_TOKEN" | base64 --decode)
+          WEBHOOK_URL="https://flux-webhook.groep2.k8s.be/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
+          REQUEST_BODY='{"username": "testuser", "action": "login"}'
+          HMAC_HASH=$(echo -n "$REQUEST_BODY" | openssl dgst -sha1 -r -hmac "$TOKEN" | awk '{print $1}')
+          curl -X POST "$WEBHOOK_URL" -H "X-Signature: sha1=$HMAC_HASH" -d "$REQUEST_BODY"
 
-          # Generate HMAC SHA256 signature for the empty body is voor ddos enzo tegen te gaan
-          SIGNATURE=$(echo -n "$BODY" | openssl dgst -sha256 -hmac "$TOKEN" | awk '{print $2}')
-
-          # Send the POST request with the generated HMAC signature is voor security!!!
-          curl -X POST "$WEBHOOK_URL" -H "X-Signature: sha256=$SIGNATURE" -d "$BODY"
