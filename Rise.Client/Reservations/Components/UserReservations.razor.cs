@@ -83,4 +83,19 @@ public class UserReservationsBase : ComponentBase
         await JS.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
 
+    protected async Task TogglePastReservations()
+    {
+        await TogglePastReservations(!ShowPastReservations);
+    }
+
+    protected async Task TogglePastReservations(bool enable)
+    {
+        if (ShowPastReservations != enable)
+        {
+            ShowPastReservations = enable;
+            // TODO reset cursor
+            await FetchAndResetScroll();
+        }
+    }
+
 }

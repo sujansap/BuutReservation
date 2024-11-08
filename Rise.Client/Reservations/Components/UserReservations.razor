@@ -10,20 +10,18 @@
 
 <MudGrid>
     <AsyncData DataFetcher="@LoadReservations" @bind-Data="@ReservationPage" T="ItemsPageDto<ReservationDto>"
-              @ref="@AsyncDataRef" TestIdPrefix="user-reservations" ShowContentWhenError="false">
+        @ref="@AsyncDataRef" TestIdPrefix="user-reservations" ShowContentWhenError="false">
         <!-- Toggle Button -->
         <MudItem xs="12" Style="padding: 48px 0 24px 0;">
             <MudButton 
                 Variant="Variant.Text"
                 Color="Color.Primary"
                 FullWidth="true"
-                Class="d-flex justify-start mb-4 ml-2"
-                Style="border-radius: 20px;"
-                OnClick="@(() => ShowPastReservations = !ShowPastReservations)"
+                Class="d-flex justify-start mb-4 ml-2" Style="border-radius: 20px;" OnClick="@TogglePastReservations"
                 data-testid="reservation-toggle-button">
                 <MudToggleIconButton 
                     Toggled="ShowPastReservations"
-                    ToggledChanged="((bool toggled) => ShowPastReservations = toggled)"
+                    ToggledChanged="((bool toggled) => TogglePastReservations(toggled))"
                     Icon="@Icons.Material.Filled.Today" 
                     ToggledIcon="@Icons.Material.Filled.History"
                     Color="Color.Primary"
@@ -36,14 +34,9 @@
             </MudButton>
         </MudItem>
 
+
         <MudGrid Spacing="6">
-            @if (IsLoading)
-            {
-                <MudItem xs="12" Class="d-flex justify-center">
-                    <MudProgressCircular Indeterminate="true" data-testid="loading-progress" />
-                </MudItem>
-            }
-            else if (ReservationPage?.Data?.Any() ?? false)
+            @if (ReservationPage?.Data?.Any() ?? false)
             {
                 @foreach (var reservation in ReservationPage.Data)
                 {
