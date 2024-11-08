@@ -69,6 +69,7 @@ jobs:
       # Trigger FluxCD Webhook to inform Flux about the new image
       - name: Trigger FluxCD Webhook image-updater
         run: |
+          curl -I http://10.43.42.252/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825
           ENCODED_TOKEN="WThWYXIqV25oM1hvNnN4bXFqTTlGNHoqVjI4YXNG"
           TOKEN=$(echo "$ENCODED_TOKEN" | base64 --decode)
           WEBHOOK_URL="http://10.43.42.252/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
