@@ -72,7 +72,7 @@ jobs:
         run: |
           ENCODED_TOKEN="WThWYXIqV25oM1hvNnN4bXFqTTlGNHoqVjI4YXNG"
           TOKEN=$(echo "$ENCODED_TOKEN" | base64 --decode)
-          WEBHOOK_URL="https://flux-webhook.groep2.k8s.be/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
+          WEBHOOK_URL="http://notification-controller.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825"
           REQUEST_BODY='{"username": "testuser", "action": "login"}'
           HMAC_HASH=$(echo -n "$REQUEST_BODY" | openssl dgst -sha1 -r -hmac "$TOKEN" | awk '{print $1}')
           curl -X POST "$WEBHOOK_URL" -H "X-Signature: sha1=$HMAC_HASH" -d "$REQUEST_BODY"
