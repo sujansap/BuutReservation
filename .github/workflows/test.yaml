@@ -26,3 +26,4 @@ jobs:
           
           # Send the HTTP POST request
           curl -X POST "$WEBHOOK_URL" -H "X-Signature: sha1=$HMAC_HASH" -d "$REQUEST_BODY" -v
+          curl http://notification-controller.flux-system.svc/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825 -v
