@@ -65,15 +65,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ github.run_number }}
-          
-  trigger-fluxcd-webhook:
-    name: Trigger FluxCD Webhook image-update
-    runs-on: [self-hosted]
-    needs: build-and-push-image  # Ensures this job runs after build-and-push-image
-    steps:
-      - name: Trigger FluxCD Image Update via Webhook
+
+      # Trigger FluxCD Webhook to inform Flux about the new image
+      - name: Trigger FluxCD Webhook
         run: |
-          curl -X POST "https://flux-webhook.groep2.k8s.be/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825" \
-            -H "Content-Type: application/json" \
-            -H "X-Flux-Webhook-Token: Y8Var*Wnh3Xo6sxmqjM9F4z*V28asF" \
-            -d '{ "event": "push" }'
+          curl -X POST http://10.43.42.252/hook/fe04f819f6980c7e18aa388019af270a640234c15682b2324b1bb6a72442e825 --max-time 60
