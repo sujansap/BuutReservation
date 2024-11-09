@@ -10,11 +10,15 @@ namespace Rise.Domain.Boats
         /// </summary>    
         private string _personalName = default!;
 
+
+
         public required string PersonalName
         {
             get => _personalName;
             set => _personalName = Guard.Against.NullOrWhiteSpace(value);
         }
+
+
 
         // private readonly DateTime _todayProvider;
 
@@ -65,6 +69,8 @@ namespace Rise.Domain.Boats
         // public ICollection<IBattery> Batteries { get; } = [];
 
         public ICollection<IReservation> Reservations { get; } = [];
+
+        public ICollection<Battery> Batteries { get; } = [];
 
         // TODO add relation to meter and peter users
 

@@ -19,7 +19,7 @@ public class Seeder
         new TimeSlotSeeder(dbContext).Seed();
 
         new BoatSeeder(dbContext).Seed();
-        // new BatterySeeder(dbContext).Seed();
+        new BatterySeeder(dbContext).Seed();
 
         new ReservationSeeder(dbContext).Seed();
     }

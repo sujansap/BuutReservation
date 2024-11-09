@@ -18,6 +18,8 @@ namespace Rise.Persistence.Boats
             // builder.Property(x => x.MaximumAdults).HasDefaultValue(1);
             // builder.Property(x => x.MaximumChildren).HasDefaultValue(0);
             // builder.Property(x => x.MaximumPets).HasDefaultValue(0);
+
+
         }
     }
 }

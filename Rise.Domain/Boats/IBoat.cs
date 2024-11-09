@@ -15,6 +15,8 @@ namespace Rise.Domain.Boats
             set;
         }
 
+
+
         // ! out of order admin user story 
         // public DateTime? StartOutOfOrder
         // {
@@ -52,6 +54,11 @@ namespace Rise.Domain.Boats
         // }
 
         public ICollection<IReservation> Reservations
+        {
+            get;
+        }
+
+        public ICollection<Battery> Batteries
         {
             get;
         }
