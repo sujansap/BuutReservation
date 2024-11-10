@@ -34,6 +34,12 @@
                                 <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-time">
                                     <strong>@Localizer["Time"]:</strong> @ReservationDetails.Start - @ReservationDetails.End
                                 </MudText>
+                                <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery">
+                                    <strong>@Localizer["Battery"]:</strong> @ReservationDetails.BatteryType
+                                </MudText>
+                                <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery">
+                                    <strong>@Localizer["Meter/Peter"]:</strong> @ReservationDetails.MentorName
+                                </MudText>
                             </MudItem>
                         </MudGrid>
                     </MudCardContent>

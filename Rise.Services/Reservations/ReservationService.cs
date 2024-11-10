@@ -143,9 +143,14 @@ namespace Rise.Services.Reservations
         {
             Reservation reservation = (await _dbContext.Reservations
             .Include(r => r.Boat)
+            .ThenInclude(b => b.Batteries)
+            .ThenInclude(battery => battery.Mentor)
             .Include(r => r.TimeSlot)
             .FirstOrDefaultAsync(r => r.Id == reservationId))
             ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
+
+            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
+            Battery battery = reservation.Boat.Batteries.FirstOrDefault();
 
 
             return new ReservationDetailsDto
@@ -154,7 +159,10 @@ namespace Rise.Services.Reservations
                 Start = reservation.TimeSlot.Start,
                 End = reservation.TimeSlot.End,
                 Date = reservation.TimeSlot.Date,
-                BoatPersonalName = reservation.Boat.PersonalName
+                BoatPersonalName = reservation.Boat.PersonalName,
+                MentorName = battery?.Mentor?.FamilyName,
+                BatteryType = battery?.Type
+
             };
         }
     }
