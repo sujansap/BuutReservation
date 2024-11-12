@@ -15,11 +15,11 @@ namespace Rise.Domain.Boats
             set;
         }
 
-        public int? BoatId { get; set; }
-        public IBoat? Boat { get; set; }
+        public int BoatId { get; set; }
+        public IBoat Boat { get; set; }
 
-        public int? MentorId { get; set; }
-        public IUser? Mentor { get; set; }
+        public int MentorId { get; set; }
+        public IUser Mentor { get; set; }
 
         public ICollection<IReservation> Reservations
         {

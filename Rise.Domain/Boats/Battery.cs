@@ -16,11 +16,11 @@ namespace Rise.Domain.Boats
             set => _type = Guard.Against.NullOrEmpty(value, "Type", "Battery type cannot be null or zero");
         }
 
-        public int? BoatId { get; set; }
-        public IBoat? Boat { get; set; } = null!;
+        public int BoatId { get; set; }
+        public required IBoat Boat { get; set; }
 
-        public int? MentorId { get; set; }
-        public IUser? Mentor { get; set; } = null!;
+        public int MentorId { get; set; }
+        public required IUser Mentor { get; set; }
 
 
         public ICollection<IReservation> Reservations
