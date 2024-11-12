@@ -84,7 +84,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasTabs()
         {
-            await Page.GotoAsync(UserReservationsUrl);
+            await InitNavigationToUrl(UserReservationsUrl);
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
         }
@@ -93,7 +93,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task DoesNotHaveLegendComponent()
         {
-            await Page.GotoAsync(UserReservationsUrl);
+            await InitNavigationToUrl(UserReservationsUrl);
             ILocator legend = Page.GetByTestId("custom-calendar-legend");
             await Expect(legend).ToHaveCountAsync(0);
         }
@@ -103,9 +103,9 @@ namespace Rise.Client.Tests.Reservations
         public async Task HasCorrectAmountOfReservations()
         {
             await MockReservationsApi();
-            await Page.GotoAsync(UserReservationsUrl);
+            await InitNavigationToUrl(UserReservationsUrl);
 
-            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
+
 
             ILocator locator = Page.GetByTestId("reservation-item");
             await Expect(locator).ToHaveCountAsync(1);
@@ -115,9 +115,9 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsReservations()
         {
             await MockReservationsApi();
-            await Page.GotoAsync(UserReservationsUrl);
+            await InitNavigationToUrl(UserReservationsUrl);
 
-            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
+
 
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
@@ -133,9 +133,9 @@ namespace Rise.Client.Tests.Reservations
         {
             await MockReservationsApi();
 
-            await Page.GotoAsync(UserReservationsUrl);
+            await InitNavigationToUrl(UserReservationsUrl);
 
-            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
+
 
 
             await Expect(Page.GetByTestId("user-reservations-loading-progress")).ToBeVisibleAsync(new() { Timeout = 8000 });
@@ -147,7 +147,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsEmptyStateWhenNoReservations()
         {
             await MockEmptyReservationsApi();
-            await Page.GotoAsync(UserReservationsUrl);
+            await InitNavigationToUrl(UserReservationsUrl);
 
             // Wait for loading to complete AND for the empty state message to appear
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
@@ -164,7 +164,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsErrorStateWhenApiReturns400()
         {
             await MockReservationsApiError();
-            await Page.GotoAsync(UserReservationsUrl);
+            await InitNavigationToUrl(UserReservationsUrl);
 
             // Wait for loading to complete
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });

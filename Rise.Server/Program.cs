@@ -62,7 +62,7 @@ try
         app.UseSwaggerUI();
     }
 
-    if (app.Environment.IsProduction() || app.Environment.IsStaging())
+    if (!(app.Environment.IsProduction() || app.Environment.IsStaging()))
         app.UseHttpsRedirection();
 
     app.UseBlazorFrameworkFiles();
