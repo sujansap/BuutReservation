@@ -186,7 +186,7 @@ namespace Rise.Client.Tests.Reservations
      // I want to test when someone presses the button to swap pages to past that the page swaps to past dont check the list of reservations
 
         await MockReservationsApi();
-        await Page.GotoAsync(UserReservationsUrl);
+        await InitNavigationToUrl(UserReservationsUrl);
 
         await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
 
@@ -203,7 +203,7 @@ namespace Rise.Client.Tests.Reservations
     public async Task ShowsPastReservations()
     {
         await MockReservationsApi();
-        await Page.GotoAsync(UserReservationsUrl);
+        await InitNavigationToUrl(UserReservationsUrl);
 
         await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
 
