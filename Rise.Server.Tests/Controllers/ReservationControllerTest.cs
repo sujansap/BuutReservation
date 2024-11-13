@@ -117,6 +117,24 @@ namespace Rise.Server.Tests.Controllers
             reservationId.ShouldBeGreaterThan(0);
         }
 
+
+        [Fact]
+        public async Task POST_CreateReservation_WithDuplicateTimeSlot_ExpectConflict()
+        {
+
+            var request = new CreateReservationDto
+            {
+                TimeSlotId = 33
+            };
+
+            //first a reservation should be created then it shouldn't be for the same user
+            var response1 = await _client.PostAsJsonAsync("", request);
+            response1.StatusCode.ShouldBe(HttpStatusCode.Created);
+            var response2 = await _client.PostAsJsonAsync("", request);
+            response2.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        }
+
+
         [Fact]
         public async Task POST_CreateReservation_WithQueryParameters_ExpectBadRequest()
         {

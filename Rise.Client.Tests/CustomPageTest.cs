@@ -48,7 +48,18 @@ namespace Rise.Client.Tests
                 Locale = "en-US",
                 ColorScheme = ColorScheme.Light,
                 BaseURL = baseUrl,
+                IgnoreHTTPSErrors = true
             };
         }
+
+        protected async Task InitNavigationToUrl(string url)
+        {
+            await Page.GotoAsync(url);
+
+            await Page.WaitForFunctionAsync("() => window.hasOwnProperty('Blazor')");
+
+            await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
+        }
+
     }
 }

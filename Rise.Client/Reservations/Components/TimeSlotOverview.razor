@@ -30,7 +30,7 @@
     <MudItem xs="12" md="4" Class="mt-8">
         @if (SelectedDate.HasValue)
         {
-            <TimeSlotsList SelectedDate="@SelectedDate.Value" />
+            <TimeSlotsList SelectedDate="@SelectedDate.Value" FetchAvailableDays="() => FetchAndDisplayData(true)" />
         }
     </MudItem>
     <MudItem xs="12">
