@@ -13,7 +13,7 @@ namespace Rise.Domain.Boats
         public string Type
         {
             get => _type;
-            set => _type = Guard.Against.NullOrEmpty(value, "Type", "Battery type cannot be null or zero");
+            set => _type = Guard.Against.NullOrWhiteSpace(value, nameof(Type), "Battery type cannot be null or empty");
         }
 
         public int BoatId { get; set; }
