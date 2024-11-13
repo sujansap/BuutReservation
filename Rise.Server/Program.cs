@@ -14,6 +14,9 @@ using Serilog;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Auth0Net.DependencyInjection;
+using Rise.Server.Auth;
+using Rise.Services.Auth;
 
 try
 {
@@ -36,7 +39,29 @@ try
         options.IncludeXmlComments(xmlPath);
         options.EnableAnnotations();
     });
+    
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(options =>
+    {
+        options.Authority = builder.Configuration["Auth0:Authority"];
+        options.Audience = builder.Configuration["Auth0:Audience"];
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            NameClaimType = ClaimTypes.NameIdentifier
+        };
+    });
 
+    builder.Services.AddAuth0AuthenticationClient(config =>
+    {
+        config.Domain = builder.Configuration["Auth0:Authority"]!;
+        config.ClientId = builder.Configuration["Auth0:M2MClientId"];
+        config.ClientSecret = builder.Configuration["Auth0:M2MClientSecret"];
+    });
+    builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
+    
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -49,20 +74,9 @@ try
 
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
+    builder.Services.AddHttpContextAccessor()
+                .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
     
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.Authority = builder.Configuration["Auth0:Authority"];
-    options.Audience = builder.Configuration["Auth0:Audience"];
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        NameClaimType = ClaimTypes.NameIdentifier
-    };
-});
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
@@ -76,7 +90,12 @@ builder.Services.AddAuthentication(options =>
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1.0");
+        options.OAuthClientId(builder.Configuration["Auth0:BlazorClientId"]);
+        options.OAuthClientSecret(builder.Configuration["Auth0:BlazorClientSecret"]);
+    });
     }
 
     if (app.Environment.IsProduction() || app.Environment.IsStaging())

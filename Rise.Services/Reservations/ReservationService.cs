@@ -8,15 +8,26 @@ using Rise.Domain.Reservations;
 using Rise.Domain.Timeslots;
 using Rise.Domain.Users;
 using Rise.Persistence;
+using Rise.Services.Auth;
 using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
 namespace Rise.Services.Reservations
 {
-    public class ReservationService(ApplicationDbContext dbContext) : IReservationService
+    public class ReservationService : IReservationService
     {
-        private readonly ApplicationDbContext _dbContext = dbContext;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IAuthContextProvider _authContextProvider;
+
+         public ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+        {
+            if (authContextProvider.User is null)
+                throw new ArgumentNullException($"{nameof(ReservationService)} requires a {nameof(authContextProvider)}");
+
+            _dbContext = dbContext;
+            _authContextProvider = authContextProvider;
+        }
 
         /// <summary>
         /// Gets all reservations in the given date range by the current user

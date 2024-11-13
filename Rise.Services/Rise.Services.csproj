@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Rise.Shared\Rise.Shared.csproj" />
     <ProjectReference Include="..\Rise.Persistence\Rise.Persistence.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Auth\" />
+  </ItemGroup>
 </Project>

@@ -37,6 +37,7 @@ public class ExceptionMiddleware
             EntityAlreadyExistsException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
             ReservationCreationFailedException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
             NoBoatAvailableException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
+            UserInvalidAppMetadataException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
 
             ApplicationException ex => new ErrorDetails(ex.Message),
             _ => new ErrorDetails(exception.Message)
