@@ -1,6 +1,7 @@
 using Microsoft.Playwright;
 using Rise.Shared.Reservations;
 using Rise.Shared.Pagination;
+using System.Text.RegularExpressions;
 
 namespace Rise.Client.Tests.Reservations
 {
@@ -10,6 +11,7 @@ namespace Rise.Client.Tests.Reservations
     {
 
         private const string UserReservationsUrl = "/reservations?CurrentTab=reservations";
+
 
         private readonly ReservationDto ValidReservation = new()
         {
@@ -60,6 +62,27 @@ namespace Rise.Client.Tests.Reservations
                 });
             });
         }
+        [Test]
+        public async Task RedirectsToReservationDetails_WhenViewDetailsButtonClicked()
+        {
+
+            await MockReservationsApi();
+            await Page.GotoAsync(UserReservationsUrl);
+
+
+            await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
+
+
+            var viewDetailsButton = Page.GetByTestId("reservation-item").First.Locator("button:has-text('ZIE DETAILS')");
+            await viewDetailsButton.ClickAsync();
+
+
+            await Expect(Page).ToHaveURLAsync($"/reservations/{ValidReservation.Id}");
+        }
+
+
+
+
 
         private async Task MockReservationsApiError()
         {
@@ -105,14 +128,26 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationsApi();
             await InitNavigationToUrl(UserReservationsUrl);
 
-
-
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
-            await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"));
-            await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(ValidReservation.BoatPersonalName);
-            await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}");
 
+            var dateText = await firstReservation.GetByTestId("reservation-date").TextContentAsync();
+            var datePattern = @"\b\d{2}/\d{2}/\d{4}\b";
+            var match = Regex.Match(dateText, datePattern);
+
+
+            Assert.IsTrue(match.Success);
+            var formattedDate = match.Value.Replace("/", "-");
+
+
+            Assert.AreEqual(formattedDate, ValidReservation.Date.ToString("dd-MM-yyyy"));
+
+
+            var boatNameText = await firstReservation.GetByTestId("reservation-boat-name").TextContentAsync();
+            Assert.IsTrue(boatNameText.Contains(ValidReservation.BoatPersonalName));
+
+            var timeText = await firstReservation.GetByTestId("reservation-time").TextContentAsync();
+            Assert.IsTrue(timeText.Contains($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}"));
         }
 
 
@@ -163,6 +198,7 @@ namespace Rise.Client.Tests.Reservations
 
             await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
         }
+
     }
 }
 
