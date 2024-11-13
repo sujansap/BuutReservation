@@ -90,36 +90,21 @@ namespace Rise.Services.Reservations
         /// <exception cref="ReservationCreationFailedException"></exception>
         public async Task<int> CreateReservation(CreateReservationDto reservationDto)
         {
-            var userId = 2; //get this from session or token later
+            int userId = 2; //get this from session or token later
 
-            var user = await _dbContext.Users.FindAsync(userId);
+            User user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(User), userId);
 
-            if (user is null)
-            {
-                throw new EntityNotFoundException(nameof(User), userId);
-            }
+            TimeSlot timeSlot = await _dbContext.TimeSlots.FindAsync(reservationDto.TimeSlotId) ?? throw new EntityNotFoundException(nameof(TimeSlot), reservationDto.TimeSlotId);
 
-            var timeSlot = await _dbContext.TimeSlots.FindAsync(reservationDto.TimeSlotId);
-
-            if (timeSlot is null)
-            {
-                throw new EntityNotFoundException(nameof(TimeSlot), reservationDto.TimeSlotId);
-            }
-
-            //get a boat that is available for that timeslot
+            //get a boat that is available for that time slot
             //we just assign the first boat that is available
             //user can't choose a boat
-            var boat = await _dbContext.Boats.Where(b => b.Reservations.All(r => r.TimeSlotId != timeSlot.Id)).FirstOrDefaultAsync();
+            Boat boat = await _dbContext.Boats.Where(b => b.Reservations.All(r => r.TimeSlotId != timeSlot.Id)).FirstOrDefaultAsync() ?? throw new NoBoatAvailableException(timeSlot.Id);
+            int boatId = boat.Id;
 
-            if (boat is null)
-            {
-                throw new NoBoatAvailableException(timeSlot.Id);
-            }
-            var boatId = boat.Id;
+            bool hasReservationForTimeSlot = await _dbContext.Reservations.AnyAsync(r => r.TimeSlotId == timeSlot.Id && r.UserId == userId);
 
-            var hasReservationForTimeslot = await _dbContext.Reservations.AnyAsync(r => r.TimeSlotId == timeSlot.Id && r.UserId == userId);
-
-            var reservation = new Reservation
+            Reservation reservation = new()
             {
                 UserId = userId,
                 User = user,
@@ -140,8 +125,6 @@ namespace Rise.Services.Reservations
                 HandleDbUpdateException(ex);
                 throw new ReservationCreationFailedException(ErrorMessages.Reservation.UnexpectedError);
             }
-
-
         }
 
         /// <summary>
@@ -163,8 +146,6 @@ namespace Rise.Services.Reservations
 
                 throw new UniqueConstraintViolationException(message);
             }
-
-            throw new ReservationCreationFailedException(ErrorMessages.Reservation.UnexpectedError);
         }
     }
 
