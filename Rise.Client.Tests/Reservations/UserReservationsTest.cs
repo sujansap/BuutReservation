@@ -150,12 +150,12 @@ namespace Rise.Client.Tests.Reservations
             await InitNavigationToUrl(UserReservationsUrl);
 
             // Wait for loading to complete AND for the empty state message to appear
-            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
-            await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden, Timeout = 10000 });
+            await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible, Timeout = 10000 });
 
             ILocator emptyStateMessage = Page.GetByTestId("no-reservations");
             await Expect(emptyStateMessage).ToBeVisibleAsync();
-            await Expect(emptyStateMessage).ToHaveTextAsync("Geen reservaties gevonden.");
+            await Expect(emptyStateMessage).ToHaveTextAsync("U heeft geen aankomende reserveringen.");
 
             await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
         }
