@@ -138,7 +138,7 @@ namespace Rise.Services.Reservations
             catch (DbUpdateException ex)
             {
                 HandleDbUpdateException(ex);
-                throw;
+                throw new ReservationCreationFailedException(ErrorMessages.Reservation.UnexpectedError);
             }
 
 
@@ -150,11 +150,11 @@ namespace Rise.Services.Reservations
         /// <param name="ex"></param>
         /// <exception cref="UniqueConstraintViolationException"></exception>
         /// <exception cref="ReservationCreationFailedException"></exception>
-        private void HandleDbUpdateException(DbUpdateException ex)
+        private static void HandleDbUpdateException(DbUpdateException ex)
         {
             if (ex.InnerException is PostgresException pgEx)
             {
-                var message = pgEx.ConstraintName switch
+                string message = pgEx.ConstraintName switch
                 {
                     DatabaseConstraints.UniqueBoatTimeSlot => ErrorMessages.Reservation.BoatAlreadyReserved,
                     DatabaseConstraints.UniqueUserTimeSlot => ErrorMessages.Reservation.UserAlreadyBooked,
