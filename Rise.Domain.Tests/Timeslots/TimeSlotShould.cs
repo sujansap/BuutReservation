@@ -168,6 +168,35 @@ namespace Rise.Domain.Tests.Timeslots
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
 
+        [Fact]
+        public void NotBeCreatedWithDateOutsideCruisePeriod()
+        {
+            // Arrange
+            var cruisePeriod = new CruisePeriod
+            {
+                Start = DateTime.Today,
+                End = DateTime.Today.AddDays(5)
+            };
+
+            // Act
+            Action act = () =>
+            {
+                TimeSlot timeSlot = new()
+                {
+                    CruisePeriod = cruisePeriod,
+                    CruisePeriodId = 1,
+                    Date = DateOnly.FromDateTime(DateTime.Today.AddDays(6)), // One day after cruise period
+                    Start = ValidStart,
+                    End = ValidEnd
+                };
+            };
+
+            // Assert
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
         // TODO make with constructor for checking relation with cruiseperiod
+
     }
 }

@@ -178,26 +178,9 @@ namespace Rise.Client.Tests.Reservations
     
     // TODO: test amount of reservations on past pages
     // TODO: Show reservations
-
-    [Test]
     // TODO: test toggling past reservations
-    public async Task TogglesPastReservations()
-    {
-     // I want to test when someone presses the button to swap pages to past that the page swaps to past dont check the list of reservations
 
-        await MockReservationsApi();
-        await InitNavigationToUrl(UserReservationsUrl);
-
-        await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
-
-        // Click the toggle button to show past reservations
-        ILocator toggleButton = Page.GetByTestId("reservation-toggle");
-        await toggleButton.ClickAsync();
-
-        // Wait for the API request to complete
-        await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me") && request.Url.Contains("getPast=true"));
-
-    }
+    
 
     [Test]
     public async Task ShowsPastReservations()
@@ -219,6 +202,29 @@ namespace Rise.Client.Tests.Reservations
         await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"));
         await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(ValidReservation.BoatPersonalName);
         await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}");
+    }
+
+    [Test]
+    public async Task CanSwapBetweenPresentAndPastReservations()
+    {
+        await InitNavigationToUrl(UserReservationsUrl);
+        
+        // Check initial state - Present reservations should be active
+        ILocator presentToggle = Page.GetByTestId("reservation-toggle-present");
+        ILocator pastToggle = Page.GetByTestId("reservation-toggle-past");
+        
+        await Expect(presentToggle).ToHaveClassAsync("active");
+        await Expect(pastToggle).Not.ToHaveClassAsync("active");
+        
+        // Click past toggle and verify state change
+        await pastToggle.ClickAsync();
+        await Expect(pastToggle).ToHaveClassAsync("active");
+        await Expect(presentToggle).Not.ToHaveClassAsync("active");
+        
+        // Click present toggle and verify state changes back
+        await presentToggle.ClickAsync();
+        await Expect(presentToggle).ToHaveClassAsync("active");
+        await Expect(pastToggle).Not.ToHaveClassAsync("active");
     }
 
     }

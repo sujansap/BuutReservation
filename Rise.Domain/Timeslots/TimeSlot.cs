@@ -16,6 +16,12 @@ public class TimeSlot : Entity, ITimeSlot
         get => _date;
         set
         {
+            if (value.Year < 2000)
+            {
+                throw new ArgumentOutOfRangeException(nameof(Date), 
+                    "TimeSlot date must be after year 1900.");
+            }
+
             if (CruisePeriod != null)
             {
                 DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);

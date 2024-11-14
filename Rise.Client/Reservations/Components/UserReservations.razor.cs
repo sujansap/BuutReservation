@@ -22,6 +22,9 @@ public class UserReservationsBase : ComponentBase
     [Inject]
     public required IJSRuntime JS { get; set; } 
 
+    [Inject]
+    public required NavigationManager Navigation { get; set; }
+
     [Parameter]
     public bool IsNextPage { get; set; } = true;
     private Stack<int?> _previousCursors = new();
@@ -97,6 +100,14 @@ public class UserReservationsBase : ComponentBase
             _previousCursors.Clear();
             IsFirstPage = true;
             IsNextPage = true;
+
+            Dictionary<string, object?> queries = new()
+            {
+                ["CurrentTab"] = "reservations",
+                ["Past"] = enable
+            };
+            Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(queries), forceLoad: false, replace: true);
+
             await FetchAndResetScroll();
         }
     }
