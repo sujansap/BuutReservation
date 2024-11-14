@@ -34,17 +34,36 @@ namespace Rise.Client.Tests.Reservations
             await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
                 await Task.Delay(3000);
-                
-                bool isPastRequest = route.Request.Url.Contains("getPast=true");
-                
+
                 var response = new ItemsPageDto<ReservationDto>()
                 {
-                    Data = isPastRequest ? [PastReservation] : [ValidReservation],
+                    Data = [ValidReservation],
                     NextId = 1,
                     PreviousId = 1,
                     IsFirstPage = true
                 };
-                
+
+                await route.FulfillAsync(new()
+                {
+                    ContentType = "application/json",
+                    Body = System.Text.Json.JsonSerializer.Serialize(response)
+                });
+            });
+        }
+        private async Task MockPastReservationsApi()
+        {
+            await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
+            {
+                await Task.Delay(3000);
+
+                var response = new ItemsPageDto<ReservationDto>()
+                {
+                    Data = [PastReservation],
+                    NextId = 1,
+                    PreviousId = 1,
+                    IsFirstPage = true
+                };
+
                 await route.FulfillAsync(new()
                 {
                     ContentType = "application/json",
@@ -80,6 +99,8 @@ namespace Rise.Client.Tests.Reservations
                 await route.FulfillAsync(new() { Status = 400, Body = "Bad Request" });
             });
         }
+
+
 
         [Test]
         public async Task HasTabs()
@@ -175,58 +196,44 @@ namespace Rise.Client.Tests.Reservations
 
             await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
         }
-    
-    // TODO: test amount of reservations on past pages
-    // TODO: Show reservations
-    // TODO: test toggling past reservations
 
-    
+        // TODO: test amount of reservations on past pages
+        // TODO: Show reservations
+        // TODO: test toggling past reservations
 
-    [Test]
-    public async Task ShowsPastReservations()
-    {
-        await MockReservationsApi();
-        await InitNavigationToUrl(UserReservationsUrl);
+        [Test]
+        public async Task ShowsPastReservations()
+        {
+            await MockPastReservationsApi();
+            await InitNavigationToUrl(UserReservationsUrl + "&Past=true");
 
-        await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me"));
+            ILocator locator = Page.GetByTestId("reservation-item");
+            await Expect(locator).ToHaveCountAsync(1);
+        }
 
-        // Click the toggle button to show past reservations
-        ILocator toggleButton = Page.GetByTestId("reservation-toggle");
-        await toggleButton.ClickAsync();
+        [Test]
+        public async Task HasPastTab()
+        {
+            // test if past tab is present
+            await InitNavigationToUrl(UserReservationsUrl);
+            await Page.GetByTestId("tab-past-reservations").IsVisibleAsync();
+        }
 
-        // Wait for the API request to complete
-        await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/me") && request.Url.Contains("getPast=true"));
 
-        // Verify the reservation details
-        ILocator firstReservation = Page.GetByTestId("reservation-item").First;
-        await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"));
-        await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(ValidReservation.BoatPersonalName);
-        await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}");
-    }
+        // now add a test that checks the info in past reservations
+        [Test]
+        public async Task CheckPastReservations()
+        {
+            await MockPastReservationsApi();
+            await InitNavigationToUrl(UserReservationsUrl + "&Past=true");
 
-    [Test]
-    public async Task CanSwapBetweenPresentAndPastReservations()
-    {
-        await InitNavigationToUrl(UserReservationsUrl);
-        
-        // Check initial state - Present reservations should be active
-        ILocator presentToggle = Page.GetByTestId("reservation-toggle-present");
-        ILocator pastToggle = Page.GetByTestId("reservation-toggle-past");
-        
-        await Expect(presentToggle).ToHaveClassAsync("active");
-        await Expect(pastToggle).Not.ToHaveClassAsync("active");
-        
-        // Click past toggle and verify state change
-        await pastToggle.ClickAsync();
-        await Expect(pastToggle).ToHaveClassAsync("active");
-        await Expect(presentToggle).Not.ToHaveClassAsync("active");
-        
-        // Click present toggle and verify state changes back
-        await presentToggle.ClickAsync();
-        await Expect(presentToggle).ToHaveClassAsync("active");
-        await Expect(pastToggle).Not.ToHaveClassAsync("active");
-    }
+            ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
+            await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(PastReservation.Date.ToString("dd/MM/yyyy"));
+            await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(PastReservation.BoatPersonalName);
+            await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{PastReservation.Start:HH:mm} - {PastReservation.End:HH:mm}");
+
+        }
     }
 
 }

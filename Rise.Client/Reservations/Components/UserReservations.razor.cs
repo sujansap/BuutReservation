@@ -30,10 +30,20 @@ public class UserReservationsBase : ComponentBase
     private Stack<int?> _previousCursors = new();
     private bool IsFirstPage;
 
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public bool Past { get; set; }
+
     protected bool ShowPastReservations
     {
         get;
         set;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ShowPastReservations = Past;
+        await base.OnInitializedAsync();
     }
 
     protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
