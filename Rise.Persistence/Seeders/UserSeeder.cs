@@ -13,6 +13,9 @@ namespace Rise.Persistence.Seeders
             new() { FamilyName = "Chin" },
             new() { FamilyName = "Barabich" },
             new() { FamilyName = "Helks" },
+            new() { FamilyName = "Montu" },
+            new() { FamilyName = "Serket" },
+            new() { FamilyName = "Amunet" },
         ];
 
         protected override DbSet<User> DbSet => _dbContext.Users;

@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Net.Cache;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Rise.Domain.Boats;
 using Rise.Domain.Common;
 using Rise.Domain.Exceptions;
@@ -8,7 +9,9 @@ using Rise.Domain.Reservations;
 using Rise.Domain.Timeslots;
 using Rise.Domain.Users;
 using Rise.Persistence;
+using Rise.Services.Constants;
 using Rise.Services.Pagination;
+using Rise.Shared;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
@@ -90,34 +93,21 @@ namespace Rise.Services.Reservations
         /// <exception cref="ReservationCreationFailedException"></exception>
         public async Task<int> CreateReservation(CreateReservationDto reservationDto)
         {
-            var userId = 2; //get this from session or token later
+            int userId = 2; //get this from session or token later
 
-            var user = await _dbContext.Users.FindAsync(userId);
+            User user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(User), userId);
 
-            if (user is null)
-            {
-                throw new EntityNotFoundException(nameof(User), userId);
-            }
+            TimeSlot timeSlot = await _dbContext.TimeSlots.FindAsync(reservationDto.TimeSlotId) ?? throw new EntityNotFoundException(nameof(TimeSlot), reservationDto.TimeSlotId);
 
-            var timeSlot = await _dbContext.TimeSlots.FindAsync(reservationDto.TimeSlotId);
-
-            if (timeSlot is null)
-            {
-                throw new EntityNotFoundException(nameof(TimeSlot), reservationDto.TimeSlotId);
-            }
-
-            //get a boat that is available for that timeslot
+            //get a boat that is available for that time slot
             //we just assign the first boat that is available
             //user can't choose a boat
-            var boat = await _dbContext.Boats.Where(b => b.Reservations.All(r => r.TimeSlotId != timeSlot.Id)).FirstOrDefaultAsync();
+            Boat boat = await _dbContext.Boats.Where(b => b.Reservations.All(r => r.TimeSlotId != timeSlot.Id)).FirstOrDefaultAsync() ?? throw new NoBoatAvailableException(timeSlot.Id);
+            int boatId = boat.Id;
 
-            if (boat is null)
-            {
-                throw new NoBoatAvailableException(timeSlot.Id);
-            }
-            var boatId = boat.Id;
+            bool hasReservationForTimeSlot = await _dbContext.Reservations.AnyAsync(r => r.TimeSlotId == timeSlot.Id && r.UserId == userId);
 
-            var reservation = new Reservation
+            Reservation reservation = new()
             {
                 UserId = userId,
                 User = user,
@@ -131,13 +121,63 @@ namespace Rise.Services.Reservations
             {
                 _dbContext.Reservations.Add(reservation);
                 await _dbContext.SaveChangesAsync();
+                return reservation.Id;
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
-                throw new ReservationCreationFailedException("Failed to create reservation.");
+                HandleDbUpdateException(ex);
+                throw new ReservationCreationFailedException(ErrorMessages.Reservation.UnexpectedError);
             }
+        }
 
-            return reservation.Id;
+        /// <summary>
+        /// Handles the exceptions thrown by the database when creating a reservation
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <exception cref="UniqueConstraintViolationException"></exception>
+        /// <exception cref="ReservationCreationFailedException"></exception>
+        private static void HandleDbUpdateException(DbUpdateException ex)
+        {
+            if (ex.InnerException is PostgresException pgEx)
+            {
+                string message = pgEx.ConstraintName switch
+                {
+                    DatabaseConstraints.UniqueBoatTimeSlot => ErrorMessages.Reservation.BoatAlreadyReserved,
+                    DatabaseConstraints.UniqueUserTimeSlot => ErrorMessages.Reservation.UserAlreadyBooked,
+                    _ => ErrorMessages.Reservation.UnexpectedError //default message for unexpected errors
+                };
+
+                throw new UniqueConstraintViolationException(message);
+            }
+        }
+
+        public async Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId)
+        {
+            Reservation reservation = (await _dbContext.Reservations
+            .Include(r => r.Boat)
+            .ThenInclude(b => b.Batteries)
+            .ThenInclude(battery => battery.Mentor)
+            .Include(r => r.TimeSlot)
+            .FirstOrDefaultAsync(r => r.Id == reservationId))
+            ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
+
+            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
+            Battery battery = reservation.Boat.Batteries.FirstOrDefault();
+
+
+            return new ReservationDetailsDto
+            {
+                Id = reservation.Id,
+                Start = reservation.TimeSlot.Start,
+                End = reservation.TimeSlot.End,
+                Date = reservation.TimeSlot.Date,
+                BoatPersonalName = reservation.Boat.PersonalName,
+                MentorName = battery?.Mentor?.FamilyName,
+                BatteryType = battery?.Type
+
+            };
         }
     }
+
+
 }

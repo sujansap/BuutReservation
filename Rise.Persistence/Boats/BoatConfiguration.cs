@@ -13,11 +13,6 @@ namespace Rise.Persistence.Boats
         {
             base.Configure(builder);
             builder.Property(x => x.PersonalName).HasMaxLength(64);
-            // builder.Property(x => x.StartOutOfOrder).HasDefaultValue(null);
-            // builder.Property(x => x.EndOutOfOrder).HasDefaultValue(null);
-            // builder.Property(x => x.MaximumAdults).HasDefaultValue(1);
-            // builder.Property(x => x.MaximumChildren).HasDefaultValue(0);
-            // builder.Property(x => x.MaximumPets).HasDefaultValue(0);
         }
     }
 }

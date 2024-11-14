@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Rise.Shared;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 using Microsoft.AspNetCore.WebUtilities;
@@ -18,6 +19,14 @@ namespace Rise.Client.Services
         public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId)
+        {
+            var result = await _httpClient.GetFromJsonAsync<ReservationDetailsDto>(reservationId.ToString())
+                    ?? throw new Exception($"Failed to get reservation details for ID {reservationId}");
+
+            return result;
         }
 
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)

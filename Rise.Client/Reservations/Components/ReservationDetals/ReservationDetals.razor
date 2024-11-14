@@ -1,0 +1,50 @@
+﻿@page "/reservations/{Id:int}"
+@using Rise.Client.Localization.Reservations
+@using Rise.Shared.Reservations
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Common
+
+<MudGrid Class="mt-8">
+    <AsyncData DataFetcher="@GetReservationDetails" @bind-Data="@ReservationDetails" T="ReservationDetailsDto"
+        @ref="@AsyncDataRef" TestIdPrefix="reservation-details">
+        @if (ReservationDetails != null)
+        {
+            <MudItem xs="12">
+                <MudCard Elevation="6" Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h4" data-testid="reservation-details-title">
+                                @Localizer["Reservatie Details:"]
+                            </MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="12" md="4" Class="d-flex justify-center align-center">
+                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
+                                    Style="width: 120px; height: 120px; color: #40e0d0;" />
+                            </MudItem>
+                            <MudItem xs="12" md="8">
+                                <MudText Typo="Typo.h6" data-testid="reservation-date">
+                                    <strong>@Localizer["Date"]:</strong> @ReservationDetails.Date.ToShortDateString()
+                                </MudText>
+                                <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-boat">
+                                    <strong>@Localizer["Boat"]:</strong> @ReservationDetails.BoatPersonalName
+                                </MudText>
+                                <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-time">
+                                    <strong>@Localizer["Time"]:</strong> @ReservationDetails.Start - @ReservationDetails.End
+                                </MudText>
+                                <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery">
+                                    <strong>@Localizer["Battery"]:</strong> @ReservationDetails.BatteryType
+                                </MudText>
+                                <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery-mentor">
+                                    <strong>@Localizer["Meter/Peter"]:</strong> @ReservationDetails.MentorName
+                                </MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </AsyncData>
+</MudGrid>

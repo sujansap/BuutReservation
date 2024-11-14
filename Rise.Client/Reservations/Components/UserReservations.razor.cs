@@ -14,6 +14,9 @@ public class UserReservationsBase : ComponentBase
     protected ItemsPageDto<ReservationDto>? ReservationPage { get; set; }
 
     [Inject]
+    public required NavigationManager NavigationManager { get; set; }
+
+    [Inject]
     public required IReservationService ReservationService { get; set; }
 
     [Inject]

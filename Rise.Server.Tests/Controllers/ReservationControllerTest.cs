@@ -117,6 +117,24 @@ namespace Rise.Server.Tests.Controllers
             reservationId.ShouldBeGreaterThan(0);
         }
 
+
+        [Fact]
+        public async Task POST_CreateReservation_WithDuplicateTimeSlot_ExpectConflict()
+        {
+
+            var request = new CreateReservationDto
+            {
+                TimeSlotId = 33
+            };
+
+            //first a reservation should be created then it shouldn't be for the same user
+            var response1 = await _client.PostAsJsonAsync("", request);
+            response1.StatusCode.ShouldBe(HttpStatusCode.Created);
+            var response2 = await _client.PostAsJsonAsync("", request);
+            response2.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        }
+
+
         [Fact]
         public async Task POST_CreateReservation_WithQueryParameters_ExpectBadRequest()
         {
@@ -162,6 +180,46 @@ namespace Rise.Server.Tests.Controllers
             var request = new CreateReservationDto();
 
             var response = await _client.PostAsJsonAsync("", request);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task GET_ReservationDetails_WithExistingId_ExpectOk()
+        {
+
+            var existingId = 1;
+            var response = await _client.GetAsync($"{existingId}");
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+
+            var reservationDetails = await response.Content.ReadFromJsonAsync<ReservationDetailsDto>();
+            reservationDetails.ShouldNotBeNull();
+            reservationDetails.Id.ShouldBe(existingId);
+        }
+
+        [Fact]
+        public async Task GET_ReservationDetails_WithNonExistentId_ExpectNotFound()
+        {
+
+            var nonExistentId = 9999;
+            var response = await _client.GetAsync($"{nonExistentId}");
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+
+        [Theory]
+        [InlineData("invalid")]
+        [InlineData("abc")]
+        [InlineData("@!#")]
+        public async Task GET_ReservationDetails_WithInvalidId_ExpectBadRequest(string invalidId)
+        {
+
+            var response = await _client.GetAsync($"{invalidId}");
+
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
