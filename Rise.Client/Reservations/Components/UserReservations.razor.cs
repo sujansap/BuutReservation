@@ -25,9 +25,6 @@ public class UserReservationsBase : ComponentBase
     [Inject]
     public required IJSRuntime JS { get; set; } 
 
-    [Inject]
-    public required NavigationManager Navigation { get; set; }
-
     [Parameter]
     public bool IsNextPage { get; set; } = true;
     private Stack<int?> _previousCursors = new();
@@ -104,6 +101,11 @@ public class UserReservationsBase : ComponentBase
         await TogglePastReservations(!ShowPastReservations);
     }
 
+    protected void NavigateTo(int reservationId)
+    {
+        NavigationManager.NavigateTo($"/reservations/{reservationId}");
+    }
+
     protected async Task TogglePastReservations(bool enable)
     {
         if (ShowPastReservations != enable)
@@ -119,7 +121,7 @@ public class UserReservationsBase : ComponentBase
                 ["CurrentTab"] = "reservations",
                 ["Past"] = enable
             };
-            Navigation.NavigateTo(Navigation.GetUriWithQueryParameters(queries), forceLoad: false, replace: true);
+            NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameters(queries), forceLoad: false, replace: true);
 
             await FetchAndResetScroll();
         }
