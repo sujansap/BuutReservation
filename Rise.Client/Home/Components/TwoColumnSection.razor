@@ -1,0 +1,113 @@
+﻿@using MudBlazor
+
+<div class="relative @Class">
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="py-16">
+        <MudGrid>
+            @if (!ImageFirst)
+            {
+                <MudItem xs="12" md="6" Class="d-flex flex-column justify-center">
+                    @ContentSection
+                </MudItem>
+            }
+
+            <MudItem xs="12" md="6" Style="position: static;">
+                <div class="image-wrapper @(ImageFirst ? "image-left" : "image-right")">
+                    <MudImage Src="@ImageSrc" Alt="@ImageAlt" ObjectFit="ObjectFit.Cover"
+                        ObjectPosition="ObjectPosition.Center" Class="@ImageClass" Style="@GetImageStyle()" />
+                </div>
+            </MudItem>
+
+            @if (ImageFirst)
+            {
+                <MudItem xs="12" md="6" Class="d-flex flex-column justify-center">
+                    @ContentSection
+                </MudItem>
+            }
+        </MudGrid>
+    </MudContainer>
+</div>
+
+<style>
+    /* Desktop styles */
+    @@media (min-width: 960px) {
+        .image-wrapper {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100vw;
+        }
+
+        .image-left {
+            right: 50%;
+        }
+
+        .image-right {
+            left: 50%;
+        }
+
+        .image-left .mud-image {
+            padding-right: 2rem;
+        }
+
+        .image-right .mud-image {
+            padding-left: 2rem;
+        }
+    }
+
+    /* Mobile styles */
+    @@media (max-width: 959px) {
+        .image-wrapper {
+            margin: 2rem calc(-50vw + 50%);
+            width: 100vw;
+        }
+    }
+</style>
+
+@code {
+    [Parameter]
+    public string ImageSrc { get; set; } = "";
+
+    [Parameter]
+    public string ImageAlt { get; set; } = "";
+
+    [Parameter]
+    public bool ImageFirst { get; set; } = true;
+
+    [Parameter]
+    public string AspectRatio { get; set; }
+
+    [Parameter]
+    public string DesktopHeight { get; set; } = "600px";
+
+    [Parameter]
+    public string MobileHeight { get; set; } = "400px";
+
+    [Parameter]
+    public string Class { get; set; } = "";
+
+    [Parameter]
+    public string ImageClass { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment ContentSection { get; set; }
+
+    private string GetImageStyle()
+    {
+        var baseStyle = "width: 100%; height: 100%;";
+
+        if (string.IsNullOrEmpty(AspectRatio))
+        {
+            return $@"
+{baseStyle}
+@media (min-width: 960px) {{
+height: {DesktopHeight} !important;
+}}
+@media (max-width: 959px) {{
+height: {MobileHeight} !important;
+}}
+";
+        }
+
+        return $"{baseStyle} aspect-ratio: {AspectRatio};";
+    }
+}

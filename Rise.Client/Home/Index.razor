@@ -3,10 +3,47 @@
 @using MudBlazor
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Layout
+@using Rise.Client.Home.Components
 @inject NavigationManager navigation
 @inject IStringLocalizer<LandingPageResource> Localizer
 
 <PageTitle>Home</PageTitle>
 
-<MudText Typo="Typo.h1">@Localizer["Home"]</MudText>
-<MudText Typo="Typo.body1">@Localizer["WelcomeMessage"]</MudText>
+<div
+    Style="position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; min-height: 600px;">
+    <MudImage Src="assets/images/home.webp" Alt="BUUT Banner" ObjectFit="ObjectFit.Cover"
+        ObjectPosition="ObjectPosition.Center" Style="width: 100%; height: 600px; filter: brightness(0.5);" />
+
+    <div
+        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; padding: 0 1rem;">
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            <MudText Typo="Typo.h1" Align="Align.Start" Style="color:white">
+                BUUT
+            </MudText>
+            <MudText Typo="Typo.h4" Class="mb-4" Align="Align.Start" Style="color:white">
+                Deelbootjes voor<br />
+                Muide - Meulestede - Afrikalaan
+            </MudText>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                OnClick="@(() => navigation.NavigateTo("/reservations"))">
+                Book Online
+            </MudButton>
+        </MudContainer>
+    </div>
+</div>
+
+<TwoColumnSection ImageSrc="assets/images/water.webp" ImageAlt="Water view" ImageFirst="true" DesktopHeight="700px"
+    MobileHeight="450px" Class="my-custom-section" ImageClass="rounded-lg">
+    <ContentSection>
+        <MudText Typo="Typo.h3" Class="mb-4">Title</MudText>
+        <MudText Typo="Typo.subtitle1" Class="mb-4">Subtitle</MudText>
+        <MudText Typo="Typo.body1" Class="mb-6">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum mi eu mauris consectetur iaculis.
+            Maecenas nec auctor dolor, ac mattis metus. Curabitur volutpat id nisl et consectetur.
+        </MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="rounded-pill" Size="Size.Large">
+            Learn More
+        </MudButton>
+    </ContentSection>
+</TwoColumnSection>
