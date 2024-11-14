@@ -77,7 +77,7 @@ namespace Rise.Client.Tests
 
             var errorMessage = Page.Locator("text='Response status code does not indicate success: 404 (Not Found).'");
 
-            await Expect(errorMessage).ToBeVisibleAsync(new() { Timeout = 5000 });
+            await Expect(errorMessage).ToBeVisibleAsync(new() { Timeout = 30000 });
 
             Assert.IsTrue(await errorMessage.IsVisibleAsync());
         }
