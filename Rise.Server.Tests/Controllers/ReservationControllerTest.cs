@@ -183,5 +183,45 @@ namespace Rise.Server.Tests.Controllers
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
+
+        [Fact]
+        public async Task GET_ReservationDetails_WithExistingId_ExpectOk()
+        {
+
+            var existingId = 1;
+            var response = await _client.GetAsync($"{existingId}");
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+
+            var reservationDetails = await response.Content.ReadFromJsonAsync<ReservationDetailsDto>();
+            reservationDetails.ShouldNotBeNull();
+            reservationDetails.Id.ShouldBe(existingId);
+        }
+
+        [Fact]
+        public async Task GET_ReservationDetails_WithNonExistentId_ExpectNotFound()
+        {
+
+            var nonExistentId = 9999;
+            var response = await _client.GetAsync($"{nonExistentId}");
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+
+        [Theory]
+        [InlineData("invalid")]
+        [InlineData("abc")]
+        [InlineData("@!#")]
+        public async Task GET_ReservationDetails_WithInvalidId_ExpectBadRequest(string invalidId)
+        {
+
+            var response = await _client.GetAsync($"{invalidId}");
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
     }
 }

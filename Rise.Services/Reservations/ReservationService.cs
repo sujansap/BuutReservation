@@ -11,6 +11,7 @@ using Rise.Domain.Users;
 using Rise.Persistence;
 using Rise.Services.Constants;
 using Rise.Services.Pagination;
+using Rise.Shared;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
@@ -146,6 +147,33 @@ namespace Rise.Services.Reservations
 
                 throw new UniqueConstraintViolationException(message);
             }
+        }
+
+        public async Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId)
+        {
+            Reservation reservation = (await _dbContext.Reservations
+            .Include(r => r.Boat)
+            .ThenInclude(b => b.Batteries)
+            .ThenInclude(battery => battery.Mentor)
+            .Include(r => r.TimeSlot)
+            .FirstOrDefaultAsync(r => r.Id == reservationId))
+            ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
+
+            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
+            Battery battery = reservation.Boat.Batteries.FirstOrDefault();
+
+
+            return new ReservationDetailsDto
+            {
+                Id = reservation.Id,
+                Start = reservation.TimeSlot.Start,
+                End = reservation.TimeSlot.End,
+                Date = reservation.TimeSlot.Date,
+                BoatPersonalName = reservation.Boat.PersonalName,
+                MentorName = battery?.Mentor?.FamilyName,
+                BatteryType = battery?.Type
+
+            };
         }
     }
 

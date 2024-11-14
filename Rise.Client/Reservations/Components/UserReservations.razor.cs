@@ -14,6 +14,9 @@ public class UserReservationsBase : ComponentBase
     protected string? ErrorMessage { get; private set; }
 
     [Inject]
+    public required NavigationManager NavigationManager { get; set; }
+
+    [Inject]
     public required IReservationService ReservationService { get; set; }
 
     [Parameter]
@@ -41,5 +44,12 @@ public class UserReservationsBase : ComponentBase
     {
         IsNextPage = false;
         await AsyncDataRef.FetchData();
+    }
+
+    protected void NavigateTo(int reservationId)
+    {
+
+        NavigationManager.NavigateTo($"/reservations/{reservationId}");
+
     }
 }

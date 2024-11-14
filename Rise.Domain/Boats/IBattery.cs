@@ -1,43 +1,29 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading.Tasks;
-// using Rise.Domain.Reservations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Rise.Domain.Reservations;
+using Rise.Domain.Users;
 
-// namespace Rise.Domain.Boats
-// {
-//     public interface IBattery : IEntity
-//     {
-//         public string Type
-//         {
-//             get;
-//             set;
-//         }
+namespace Rise.Domain.Boats
+{
+    public interface IBattery : IEntity
+    {
+        public string Type
+        {
+            get;
+            set;
+        }
 
-//         public double MaximumCapacity
-//         {
-//             get;
-//             set;
-//         }
+        public int BoatId { get; set; }
+        public IBoat Boat { get; set; }
 
-//         public double CurrentLoad
-//         {
-//             get;
-//             set;
-//         }
+        public int MentorId { get; set; }
+        public IUser Mentor { get; set; }
 
-//         public bool OutOfOrder
-//         {
-//             get;
-//             set;
-//         }
-
-//         public int? BoatId { get; set; }
-//         public IBoat? Boat { get; set; }
-
-//         public ICollection<IReservation> Reservations
-//         {
-//             get;
-//         }
-//     }
-// }
+        public ICollection<IReservation> Reservations
+        {
+            get;
+        }
+    }
+}

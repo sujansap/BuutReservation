@@ -42,6 +42,7 @@
                                 <!-- View Details Button -->
                                 <MudItem xs="3" Class="d-flex justify-end align-center">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                        OnClick="@(() => NavigateTo(reservation.Id))"
                                         Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
                                         @Localizer["ViewDetails"]
                                     </MudButton>
