@@ -17,12 +17,10 @@ public class Seeder
 
         new UserSeeder(dbContext).Seed();
         new BoatSeeder(dbContext).Seed();
-        new CruisePeriodSeeder(dbContext).Seed();
-        new TimeSlotSeeder(dbContext).Seed();
-
-        new BoatSeeder(dbContext).Seed();
         new BatterySeeder(dbContext).Seed();
 
+        new CruisePeriodSeeder(dbContext).Seed();
+        new TimeSlotSeeder(dbContext).Seed();
         new ReservationSeeder(dbContext).Seed();
     }
 }

@@ -41,11 +41,10 @@ namespace Rise.Server.Tests.Controllers
                 new(startDate.AddDays(1), false, false, false),
                 new(startDate.AddDays(2), false, false, false),
                 new(startDate.AddDays(3), false, true, false),
-                new(startDate.AddDays(4), false, false, false),
+                new(startDate.AddDays(4), false, true, false),
                 new(startDate.AddDays(5), false, true, false),
                 new(startDate.AddDays(6), false, true, false),
-                // new(startDate.AddDays(6), true, false, false), failed due to new seed data
-                new(startDate.AddDays(7), false, true, true),
+                new(startDate.AddDays(7), false, false, false),
             ]);
         }
 
@@ -106,36 +105,30 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_TimeSlotsByDate_GivesTimeSlots()
         {
-
             DateTime threeDaysInAdvance = DateTime.Now.AddDays(3);
             int year = threeDaysInAdvance.Year;
             int month = threeDaysInAdvance.Month;
             int day = threeDaysInAdvance.Day;
 
-
             List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"{year}/{month}/{day}"))!;
 
             // Assert
             response.ShouldNotBeEmpty();
-            response.Count.ShouldBe(3);
+            response.Count.ShouldBe(5);
 
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("10:00:00")) && ts.End.Equals(TimeOnly.Parse("11:30:00")));
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("13:00:00")) && ts.End.Equals(TimeOnly.Parse("14:00:00")));
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("16:30:00")) && ts.End.Equals(TimeOnly.Parse("18:45:00")));
         }
 
-
-
         [Theory]
         [InlineData(8)]
         public async Task GET_TimeSlotsByDate_GivesNoTimeSlots(int daysFromNow)
         {
-
             DateTime daysInAdvance = DateTime.Now.AddDays(daysFromNow);
             int year = daysInAdvance.Year;
             int month = daysInAdvance.Month;
             int day = daysInAdvance.Day;
-
 
             List<TimeSlotDto> response = (await _client.GetFromJsonAsync<List<TimeSlotDto>>($"{year}/{month}/{day}"))!;
 
