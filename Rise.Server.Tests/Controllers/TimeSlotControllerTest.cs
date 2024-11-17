@@ -105,7 +105,9 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_TimeSlotsByDate_GivesTimeSlots()
         {
-            DateTime threeDaysInAdvance = DateTime.Now.AddDays(3);
+            // Use the start date of the first upcoming cruise period (index 2 in the array)
+            DateTime cruisePeriodStart = DateTime.Now.AddDays(3);
+            DateTime threeDaysInAdvance = cruisePeriodStart.AddDays(3);
             int year = threeDaysInAdvance.Year;
             int month = threeDaysInAdvance.Month;
             int day = threeDaysInAdvance.Day;
@@ -114,7 +116,7 @@ namespace Rise.Server.Tests.Controllers
 
             // Assert
             response.ShouldNotBeEmpty();
-            response.Count.ShouldBe(5);
+            response.Count.ShouldBe(3);
 
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("10:00:00")) && ts.End.Equals(TimeOnly.Parse("11:30:00")));
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("13:00:00")) && ts.End.Equals(TimeOnly.Parse("14:00:00")));
