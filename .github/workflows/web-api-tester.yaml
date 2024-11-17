@@ -53,10 +53,10 @@ jobs:
         run: |
           dotnet run --project Rise.Server --configuration Release &  
  
-      - name: Wait for the web-api-application to be ready on port https 5001
+      - name: Wait for the web-api-application to be ready on port http 5000
         run: |
           for i in {1..30}; do
-            response=$(curl -s -k -o /dev/null -w "%{http_code}" https://localhost:5001 || echo "connection_error")
+            response=$(curl -s -k -o /dev/null -w "%{http_code}" http://localhost:5000 || echo "connection_error")
             
             if [ "$response" -eq 200 ]; then
               echo "Application is ready! HTTP status code: $response"
