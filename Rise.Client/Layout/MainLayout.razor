@@ -2,28 +2,8 @@
 @inject NavigationManager NavigationManager
 @using System.Text.RegularExpressions
 
-<MudLayout>
-    <NavMenu />
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium" Class="@GetContainerClass()" Style="min-height: calc(100vh - 56px)">
-            @Body
-        </MudContainer>
-    </MudMainContent>
-    <Footer />
-</MudLayout>
-
-@code {
-    private string GetContainerClass()
-    {
-        var currentUri = NavigationManager.Uri;
-        var path = new Uri(currentUri).AbsolutePath;
-
-        // Check if we're on the home page (either "/" or "/home")
-        if (path == "/" || Regex.IsMatch(path, @"^/home/?$", RegexOptions.IgnoreCase))
-        {
-            return "";
-        }
-
-        return "py-16";
-    }
-}
+<EmptyLayout>
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="py-16" Style="min-height: calc(100vh - 56px)">
+        @Body
+    </MudContainer>
+</EmptyLayout>

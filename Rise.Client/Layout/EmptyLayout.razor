@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@using System.Text.RegularExpressions
+
+<MudLayout>
+    <NavMenu />
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+    <Footer />
+</MudLayout>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public required RenderFragment ChildContent { get; set; }
+}
