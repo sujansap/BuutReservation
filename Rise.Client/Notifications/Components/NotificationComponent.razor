@@ -4,7 +4,7 @@
 
 <MudCard @attributes="AdditionalAttributes" Class="cursor-pointer" @onclick="HandleClick">
     <MudCardContent>
-        <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;">
+        <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;" StretchItems="StretchItems.Middle">
             <MudIcon Icon="@(GetSeverityIcon())" Color="GetSeverityColor()" Size="Size.Large" />
             <MudStack Spacing="0" Style="min-width: 0">
                 @if (Title != null || Title != string.Empty)
@@ -19,10 +19,9 @@
                         @Message</MudText>
                 }
             </MudStack>
-            <MudSpacer />
             <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween"
                 Style="height: 100%; align-self: stretch;" Spacing="1">
-                <MudText Typo="Typo.caption">@(TimeStamp.ToRelativeDateString())</MudText>
+                <MudText Typo="Typo.caption" Align="Align.End">@(TimeStamp.ToRelativeDateString())</MudText>
                 @if (!IsRead)
                 {
                     <MudIcon Icon="@CircleIcon" Color="Color.Info" Size="Size.Small" />
