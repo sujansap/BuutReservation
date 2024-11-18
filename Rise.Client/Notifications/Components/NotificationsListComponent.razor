@@ -1,0 +1,9 @@
+﻿@using Rise.Shared.Notifications;
+<MudStack>
+    @foreach (var notification in Notifications)
+    {
+        <NotificationComponent Title="@notification.Title" Message="@notification.Message"
+            Severity="@(GetSeverityFromString(notification.Severity))" TimeStamp="@notification.CreatedAt"
+            IsRead="@notification.IsRead" />
+    }
+</MudStack>
