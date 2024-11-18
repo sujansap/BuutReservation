@@ -4,6 +4,6 @@
     {
         <NotificationComponent Title="@notification.Title" Message="@notification.Message"
             Severity="@(GetSeverityFromString(notification.Severity))" TimeStamp="@notification.CreatedAt"
-            IsRead="@notification.IsRead" />
+            IsRead="@notification.IsRead" OnClick="@(() => OnNotificationSelected.InvokeAsync(notification))" />
     }
 </MudStack>

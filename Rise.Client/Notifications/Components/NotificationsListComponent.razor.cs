@@ -10,6 +10,8 @@ namespace Rise.Client.Notifications.Components
         [Parameter, EditorRequired]
         public required NotificationDto[] Notifications { get; set; }
 
+        [Parameter]
+        public EventCallback<NotificationDto> OnNotificationSelected { get; set; }
 
         private Severity GetSeverityFromString(string severity)
         {

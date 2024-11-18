@@ -6,8 +6,14 @@ namespace Rise.Client.Notifications
 {
     public partial class Index
     {
+        private NotificationDto SelectedNotification { get; set; }
         private NotificationDto[] Notifications { get; set; } = new NotificationDto[0];
 
+        private void HandleNotificationSelected(NotificationDto notification)
+        {
+            SelectedNotification = notification;
+            notification.IsRead = true;
+        }
         protected override void OnInitialized()
         {
             FetchNotifications();

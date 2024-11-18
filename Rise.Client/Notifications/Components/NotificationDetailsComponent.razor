@@ -1,0 +1,22 @@
+﻿@using Client.Utils;
+
+<MudCard Class="pa-4">
+    @if (Notification != null)
+    {
+        <MudStack>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Notification.Severity.ToSeverity().Icon()"
+                    Color="@Notification.Severity.ToSeverity().Color()" Size="Size.Medium" />
+                <MudText Typo="Typo.h6">@Notification.Title</MudText>
+                <MudSpacer />
+                <MudText Typo="Typo.caption">@Notification.CreatedAt.ToRelativeDateString()</MudText>
+            </MudStack>
+
+            <MudText Typo="Typo.body1">@Notification.Message</MudText>
+        </MudStack>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1">Select a notification to view</MudText>
+    }
+</MudCard>
