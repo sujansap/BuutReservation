@@ -1,9 +1,10 @@
 ﻿@using MudBlazor.Components
 @using System.Reflection.Metadata;
+@using Rise.Client.Utils;
 
-<MudCard @attributes="AdditionalAttributes" Class="cursor-pointer">
+<MudCard @attributes="AdditionalAttributes" Class="cursor-pointer" @onclick="HandleClick">
     <MudCardContent>
-        <MudStack Row AlignItems="AlignItems.Center">
+        <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;">
             <MudIcon Icon="@(GetSeverityIcon())" Color="GetSeverityColor()" Size="Size.Large" />
             <MudStack Spacing="0" Style="min-width: 0">
                 @if (Title != null || Title != string.Empty)
@@ -19,8 +20,9 @@
                 }
             </MudStack>
             <MudSpacer />
-            <MudStack AlignItems="AlignItems.End">
-                <MudText Typo="Typo.caption">@(FormatTimeStamp(TimeStamp))</MudText>
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween"
+                Style="height: 100%; align-self: stretch;" Spacing="1">
+                <MudText Typo="Typo.caption">@(TimeStamp.ToRelativeDateString())</MudText>
                 @if (!IsRead)
                 {
                     <MudIcon Icon="@CircleIcon" Color="Color.Info" Size="Size.Small" />

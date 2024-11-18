@@ -1,17 +1,16 @@
 ﻿@page "/notifications"
 @using Rise.Client.Notifications.Components
+@using Rise.Client.Utils;
 
 <MudContainer>
-
-    <h3>Notifications</h3>
+    <MudText Typo="Typo.h4" Class="pb-8">Notifications</MudText>
     <MudGrid>
         <MudItem xs="12" md="6">
-            <NotificationsListComponent Notifications="Notifications" />
+            <NotificationsListComponent Notifications="Notifications"
+                OnNotificationSelected="HandleNotificationSelected" />
         </MudItem>
         <MudItem xs="12" md="6">
-            <MudCard Class="w-fill h-fill">
-                content
-            </MudCard>
+            <NotificationDetailsComponent Notification="SelectedNotification" />
         </MudItem>
     </MudGrid>
 </MudContainer>

@@ -6,6 +6,8 @@ namespace Rise.Client.Notifications.Components
 {
     public partial class NotificationComponent
     {
+        [Parameter]
+        public EventCallback OnClick { get; set; }
         [Parameter(CaptureUnmatchedValues = true)]
         public Dictionary<string, object> AdditionalAttributes { get; set; } = new();
 
@@ -23,6 +25,10 @@ namespace Rise.Client.Notifications.Components
         [Parameter, EditorRequired]
         public required bool IsRead { get; set; }
 
+        private async Task HandleClick()
+        {
+            await OnClick.InvokeAsync();
+        }
 
         private MudBlazor.Color GetSeverityColor()
         {
@@ -46,31 +52,6 @@ namespace Rise.Client.Notifications.Components
                 MudBlazor.Severity.Warning => Icons.Material.Outlined.Warning,
                 _ => Icons.Material.Outlined.Info
             };
-        }
-
-        private string FormatTimeStamp(DateTime timeStamp)
-        {
-            //If the timestamp is today, return the time
-            if (timeStamp.Date == DateTime.Today)
-            {
-                return timeStamp.ToString("t");
-            }
-
-            //If the timestamp was yesterday, return "Yesterday" + time
-            if (timeStamp.Date == DateTime.Today.AddDays(-1))
-            {
-                return "Gisteren om " + timeStamp.ToString("t");
-            }
-
-            //If the timestamp is within the last 7 days, return the day of the week and the time
-            if (timeStamp.Date >= DateTime.Today.AddDays(-7))
-            {
-                //return the day of the week and the time
-                return timeStamp.ToString("dddd HH:mm");
-            }
-
-            //Otherwise, return the date
-            return timeStamp.ToString("g");
         }
 
         private readonly string CircleIcon = "<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M12 6C8.69 6 6 8.69 6 12s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z\"/>";
