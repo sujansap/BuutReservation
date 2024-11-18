@@ -10,9 +10,7 @@
         }
 
         <MudItem xs="12" md="6">
-            <MudImage Src="@ImageSrc" Alt="@ImageAlt" 
-                ObjectFit="ObjectFit.Cover"
-                Style=@($"width: 100%; height: {DesktopHeight};")
+            <MudImage Src="@ImageSrc" Alt="@ImageAlt" ObjectFit="ObjectFit.Cover" Style="width: 100%; height: 100%;"
                 Class="rounded" />
         </MudItem>
 
@@ -34,16 +32,10 @@
 
     [Parameter]
     public bool ImageFirst { get; set; } = true;
-
-    [Parameter]
-    public string DesktopHeight { get; set; } = "350px";
-
-    [Parameter]
-    public string MobileHeight { get; set; } = "400px";
-
     [Parameter]
     public string Class { get; set; } = "";
 
     [Parameter, EditorRequired]
     public required RenderFragment ContentSection { get; set; }
+
 }
