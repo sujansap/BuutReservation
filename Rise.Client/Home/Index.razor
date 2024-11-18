@@ -13,13 +13,13 @@
 
 <div
     Style="position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; min-height: 600px;">
-    <MudImage Src="assets/images/home.webp" Alt="BUUT Banner" ObjectFit="ObjectFit.Cover"
+    <MudImage data-testid="hero-image" Src="assets/images/home.webp" Alt="BUUT Banner" ObjectFit="ObjectFit.Cover"
         ObjectPosition="ObjectPosition.Center" Style="width: 100%; height: 600px; filter: brightness(0.5);" />
 
     <div
         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; padding: 0 1rem;">
         <MudContainer MaxWidth="MaxWidth.Medium">
-            <MudText Typo="Typo.h1" Align="Align.Start" Style="color:white">
+            <MudText data-testid="hero-title" Typo="Typo.h1" Align="Align.Start" Style="color:white">
                 BUUT
             </MudText>
             <MudText Typo="Typo.h4" Class="mb-4" Align="Align.Start" Style="color:white">
@@ -27,7 +27,8 @@
                 Muide - Meulestede - Afrikalaan
             </MudText>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Href="/reservations">
+            <MudButton data-testid="reservation-button" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                Href="/reservations">
                 Reserveer
             </MudButton>
         </MudContainer>
@@ -35,7 +36,8 @@
 </div>
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
-    <TwoColumnSection ImageSrc="assets/images/water.webp" ImageAlt="Water view" ImageFirst="true">
+    <TwoColumnSection ImageSrc="assets/images/water.webp" ImageAlt="Water view" ImageFirst="true"
+        data-testid="boats-section">
         <ContentSection>
             <MudText Typo="Typo.h3" Class="mb-4">DE BOTEN</MudText>
             <MudText Typo="Typo.body1" Class="mb-6">
