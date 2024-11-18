@@ -27,36 +27,38 @@
                 Muide - Meulestede - Afrikalaan
             </MudText>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
-                OnClick="@(() => navigation.NavigateTo("/reservations"))">
-                Book Online
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Href="/reservations">
+                Reserveer
             </MudButton>
         </MudContainer>
     </div>
 </div>
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
-    <TwoColumnSection ImageSrc="assets/images/water.webp" ImageAlt="Water view" ImageFirst="true" DesktopHeight="400px"
-        MobileHeight="450px">
+    <TwoColumnSection ImageSrc="assets/images/water.webp" ImageAlt="Water view" ImageFirst="true">
         <ContentSection>
-            <MudText Typo="Typo.h3" Class="mb-4">Title</MudText>
-            <MudText Typo="Typo.subtitle1" Class="mb-4">Subtitle</MudText>
+            <MudText Typo="Typo.h3" Class="mb-4">DE BOTEN</MudText>
             <MudText Typo="Typo.body1" Class="mb-6">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin elementum mi eu mauris consectetur
-                iaculis.
-                Maecenas nec auctor dolor, ac mattis metus. Curabitur volutpat id nisl et consectetur.
+                Via het Wijkbudget van Stad Gent kocht VZW Buut drie bootjes aan (type Whaly 450 classic), aangedreven
+                met een elektrische motor.
             </MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">
-                Learn More
-            </MudButton>
+            <MudText Typo="Typo.body1" Class="mb-6">
+                Deze 3 bootjes, Lubeck, Limba en Leith werden vernoemd naar straten in de buurt
+                Muide-Meulestee-Afrikalaan. Deze straten verwijzen naar havens. Er werd gekozen voor namen beginnend met
+                de letter L, als eerbetoon aan de overleden buurtwerker Lucien De Ridder.
+            </MudText>
+            <MudText Typo="Typo.body1" Class="mb-6">
+                De bootjes kunnen door wijkbewoners online gereserveerd worden.
+            </MudText>
+            <MudText Typo="Typo.body1" Class="mb-6">
+                Geniet van op het water van de rust en pracht van onze buurt, van aan de Meulestedebrug tot aan het
+                Keizerspark. De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
+            </MudText>
+            <div Class="d-inline-block">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/reservations">
+                    Reserveer
+                </MudButton>
+            </div>
         </ContentSection>
     </TwoColumnSection>
-
-    <div>
-        <br />
-        <br />
-        <br />
-        <br />
-    </div>
-
 </MudContainer>
