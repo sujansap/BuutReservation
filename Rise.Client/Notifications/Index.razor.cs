@@ -37,7 +37,7 @@ namespace Rise.Client.Notifications
                 {
                     Severity = Severity.Warning.ToString(),
                     Title = "Warning",
-                    Message = "This is a warning message",
+                    Message = "This is a warning message, but it is really long so it will be truncated",
                     CreatedAt = DateTime.Now.Subtract(TimeSpan.FromMinutes(10)),
                     UpdatedAt = DateTime.Now.Subtract(TimeSpan.FromMinutes(10)),
                     IsRead = false,
