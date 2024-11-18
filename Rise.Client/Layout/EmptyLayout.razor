@@ -1,6 +1,5 @@
-﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
-@using System.Text.RegularExpressions
+﻿@namespace Rise.Client.Layout
+@inherits LayoutComponentBase
 
 <MudLayout>
     <NavMenu />
@@ -9,9 +8,3 @@
     </MudMainContent>
     <Footer />
 </MudLayout>
-
-
-@code {
-    [Parameter, EditorRequired]
-    public required RenderFragment ChildContent { get; set; }
-}
