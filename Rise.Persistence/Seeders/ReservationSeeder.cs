@@ -22,10 +22,10 @@ namespace Rise.Persistence.Seeders
                 throw new InvalidOperationException($"TimeSlotSeeder must contain at least 4 groups of time slots. Current count: {TimeSlotSeeder.timeSlots.Count}");
             }
 
-            AddMonthLongCruisePeriodItems();
             AddPastMonthLongCruisePeriodItems();
             AddWeekLongCruisePeriodItems();
             AddABitOverTwoWeekLongCruisePeriodItems();
+            AddMonthLongCruisePeriodItems();
         }
 
         private static void AddMonthLongCruisePeriodItems()

@@ -205,7 +205,6 @@ namespace Rise.Client.Tests.Reservations
             await MockEmptyReservationsApi();
             await InitNavigationToUrl(UserReservationsUrl);
 
-            // Wait for loading to complete AND for the empty state message to appear
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden, Timeout = 10000 });
             await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible, Timeout = 10000 });
 
@@ -222,7 +221,6 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationsApiError();
             await InitNavigationToUrl(UserReservationsUrl);
 
-            // Wait for loading to complete
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-fetch-error']", new() { State = WaitForSelectorState.Visible });
 
@@ -231,10 +229,6 @@ namespace Rise.Client.Tests.Reservations
 
             await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
         }
-
-        // TODO: test amount of reservations on past pages
-        // TODO: Show reservations
-        // TODO: test toggling past reservations
 
         [Test]
         public async Task ShowsPastReservations()
@@ -249,13 +243,11 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasPastTab()
         {
-            // test if past tab is present
             await InitNavigationToUrl(UserReservationsUrl);
             await Page.GetByTestId("tab-past-reservations").IsVisibleAsync();
         }
 
 
-        // now add a test that checks the info in past reservations
         [Test]
         public async Task CheckPastReservations()
         {
@@ -269,6 +261,31 @@ namespace Rise.Client.Tests.Reservations
             await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{PastReservation.Start:HH:mm} - {PastReservation.End:HH:mm}");
 
         }
+
+
+        [Test]
+        public async Task TestTogglePastReservations()
+        {
+           
+            await MockReservationsApi();
+            await InitNavigationToUrl(UserReservationsUrl);
+
+     
+            ILocator upcomingReservation = Page.GetByTestId("reservation-item");
+            await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
+            Assert.AreEqual(1, await upcomingReservation.CountAsync());
+
+            await MockPastReservationsApi();
+            var toggleButton = Page.GetByTestId("reservation-toggle-button");
+            await toggleButton.ClickAsync();
+
+            await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
+
+            ILocator pastReservation = Page.GetByTestId("reservation-item");
+            Assert.AreEqual(1, await pastReservation.CountAsync());
+
+        }
+
     }
 
 }

@@ -10,13 +10,13 @@ namespace Rise.Persistence.Seeders
 
         static TimeSlotSeeder()
         {
-            AddMonthLongCruisePeriodItems();
-            AddPastMonthLongCruisePeriodItems();
-            AddWeekLongCruisePeriodItems();
-            AddABitOverTwoWeekLongCruisePeriodItems();
+            AddPastThreeDayCruisePeriodItems();
+            AddFourDayCruisePeriodItems();
+            AddSecondFourDayCruisePeriodItems();
+            AddFutureFourDayCruisePeriodItems();
         }
 
-        private static void AddWeekLongCruisePeriodItems()
+        private static void AddFourDayCruisePeriodItems()
         {
             CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[2];
             int cruisePeriodId = cruisePeriod.Id;
@@ -66,7 +66,7 @@ namespace Rise.Persistence.Seeders
             ]);
         }
 
-        private static void AddABitOverTwoWeekLongCruisePeriodItems()
+        private static void AddSecondFourDayCruisePeriodItems()
         {
             CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[3];
             int cruisePeriodId = cruisePeriod.Id;
@@ -152,8 +152,7 @@ namespace Rise.Persistence.Seeders
             timeSlots.Add(twoWeekLongTimeSlots);
         }
 
-
-        private static void AddMonthLongCruisePeriodItems()
+        private static void AddFutureFourDayCruisePeriodItems()
         {
             CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[0];
             int cruisePeriodId = cruisePeriod.Id;
@@ -213,6 +212,34 @@ namespace Rise.Persistence.Seeders
                 ]
             ]);
 
+            // Add missing days 8-11
+            monthLongTimeSlots.AddRange([
+                // Today + 1 month + 8 day(s)
+                [
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(8), Start = new TimeOnly(10, 0, 0), End = new TimeOnly(13, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(8), Start = new TimeOnly(14, 0, 0), End = new TimeOnly(17, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(8), Start = new TimeOnly(18, 0, 0), End = new TimeOnly(21, 0, 0), },
+                ],
+                // Today + 1 month + 9 day(s)
+                [
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(9), Start = new TimeOnly(10, 0, 0), End = new TimeOnly(13, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(9), Start = new TimeOnly(14, 0, 0), End = new TimeOnly(17, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(9), Start = new TimeOnly(18, 0, 0), End = new TimeOnly(21, 0, 0), },
+                ],
+                // Today + 1 month + 10 day(s)
+                [
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(10), Start = new TimeOnly(10, 0, 0), End = new TimeOnly(13, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(10), Start = new TimeOnly(14, 0, 0), End = new TimeOnly(17, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(10), Start = new TimeOnly(18, 0, 0), End = new TimeOnly(21, 0, 0), },
+                ],
+                // Today + 1 month + 11 day(s)
+                [
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(11), Start = new TimeOnly(10, 0, 0), End = new TimeOnly(13, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(11), Start = new TimeOnly(14, 0, 0), End = new TimeOnly(17, 0, 0), },
+                    new TimeSlot() { CruisePeriodId = cruisePeriodId, Date = cruisePeriodDate.AddDays(11), Start = new TimeOnly(18, 0, 0), End = new TimeOnly(21, 0, 0), },
+                ],
+            ]);
+
             monthLongTimeSlots.AddRange([
                 // Today + 1 month + 12 day(s)
                 [
@@ -237,28 +264,40 @@ namespace Rise.Persistence.Seeders
             timeSlots.Add(monthLongTimeSlots);
         }
 
-        private static void AddPastMonthLongCruisePeriodItems()
+        private static void AddPastThreeDayCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[1];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[0];
             int cruisePeriodId = cruisePeriod.Id;
-            DateOnly cruisePeriodStartDate = DateOnly.FromDateTime(cruisePeriod.Start);
-            DateOnly cruisePeriodEndDate = DateOnly.FromDateTime(cruisePeriod.End);
+            DateOnly cruisePeriodDate = DateOnly.FromDateTime(cruisePeriod.Start);
 
-            List<List<TimeSlot>> pastMonthLongTimeSlots = [];
-
-            // Only create TimeSlots within the CruisePeriod range
-            for (DateOnly date = cruisePeriodStartDate; date <= cruisePeriodEndDate; date = date.AddDays(1))
+            var periodSlots = new List<List<TimeSlot>>();
+            
+            // Add 11 days of slots
+            for (int day = 0; day < 11; day++)
             {
-                var daySlots = new List<TimeSlot>
-                {
-                    new() { CruisePeriodId = cruisePeriodId, Date = date, Start = new TimeOnly(10, 0, 0), End = new TimeOnly(13, 0, 0) },
-                    new() { CruisePeriodId = cruisePeriodId, Date = date, Start = new TimeOnly(14, 0, 0), End = new TimeOnly(17, 0, 0) },
-                    new() { CruisePeriodId = cruisePeriodId, Date = date, Start = new TimeOnly(18, 0, 0), End = new TimeOnly(21, 0, 0) }
-                };
-                pastMonthLongTimeSlots.Add(daySlots);
+                periodSlots.Add([
+                    new TimeSlot() { 
+                        CruisePeriodId = cruisePeriodId, 
+                        Date = cruisePeriodDate.AddDays(day), 
+                        Start = new TimeOnly(10, 0, 0), 
+                        End = new TimeOnly(13, 0, 0) 
+                    },
+                    new TimeSlot() { 
+                        CruisePeriodId = cruisePeriodId, 
+                        Date = cruisePeriodDate.AddDays(day), 
+                        Start = new TimeOnly(14, 0, 0), 
+                        End = new TimeOnly(17, 0, 0) 
+                    },
+                    new TimeSlot() { 
+                        CruisePeriodId = cruisePeriodId, 
+                        Date = cruisePeriodDate.AddDays(day), 
+                        Start = new TimeOnly(18, 0, 0), 
+                        End = new TimeOnly(21, 0, 0) 
+                    }
+                ]);
             }
 
-            timeSlots.Add(pastMonthLongTimeSlots);
+            timeSlots.Add(periodSlots);
         }
 
         protected override DbSet<TimeSlot> DbSet => _dbContext.TimeSlots;

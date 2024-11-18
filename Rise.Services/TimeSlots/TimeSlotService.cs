@@ -85,15 +85,6 @@ namespace Rise.Services.TimeSlots
             var today = DateOnly.FromDateTime(DateTime.Today);
             var minReservationDate = GetMinReservationDate();
             
-            var dateTime = date.ToDateTime(TimeOnly.MinValue);
-            bool isWithinCruisePeriod = await _dbContext.CruisePeriods
-                .AnyAsync(cp => dateTime >= cp.Start && dateTime <= cp.End && !cp.IsDeleted);
-
-            if (!isWithinCruisePeriod)
-            {
-                return [];
-            }
-
             // Right now we don't keep the information of whether a boat is available or not
             var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
 

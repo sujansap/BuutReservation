@@ -17,13 +17,14 @@ public class UserReservationsBase : ComponentBase
     public required NavigationManager NavigationManager { get; set; }
 
     [Inject]
+    public required IStringLocalizer<ReservationPageResources> Localizer { get; set; }
+
+
+    [Inject]
     public required IReservationService ReservationService { get; set; }
 
     [Inject]
-    public required IStringLocalizer<ReservationPageResources> Localizer { get; set; } = default!;
-
-    [Inject]
-    public required IJSRuntime JS { get; set; } 
+    public required IJSRuntime JS { get; set; }
 
     [Parameter]
     public bool IsNextPage { get; set; } = true;
@@ -49,7 +50,7 @@ public class UserReservationsBase : ComponentBase
     protected Task<ItemsPageDto<ReservationDto>> LoadReservations()
     {
         int? cursor = IsNextPage ? ReservationPage?.NextId : ReservationPage?.PreviousId;
-        
+
         if (IsNextPage && cursor != null)
         {
             _previousCursors.Push(ReservationPage?.PreviousId);
@@ -83,10 +84,10 @@ public class UserReservationsBase : ComponentBase
     }
 
     protected async Task LoadPreviousPage()
-    {    
+    {
         if (ReservationPage?.PreviousId is null || ReservationPage?.IsFirstPage == true)
             return;
-        
+
         IsNextPage = false;
         await FetchAndResetScroll();
     }

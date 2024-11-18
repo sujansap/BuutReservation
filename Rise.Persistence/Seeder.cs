@@ -13,8 +13,6 @@ public class Seeder
 
     public void Seed()
     {
-        if (dbContext.Users.Any()) return;
-
         new UserSeeder(dbContext).Seed();
         new BoatSeeder(dbContext).Seed();
         new BatterySeeder(dbContext).Seed();
