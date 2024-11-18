@@ -1,7 +1,17 @@
 ﻿@page "/notifications"
+@using Rise.Client.Notifications.Components
 
-<h3>Notifications</h3>
+<MudContainer>
 
-@code {
-
-}
+    <h3>Notifications</h3>
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <NotificationsListComponent Notifications="Notifications" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudCard Class="w-fill h-fill">
+                content
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
