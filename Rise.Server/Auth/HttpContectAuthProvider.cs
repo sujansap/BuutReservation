@@ -10,7 +10,7 @@ public class HttpContextAuthProvider(IHttpContextAccessor httpContextAccessor) :
 {
     public ClaimsPrincipal? User => httpContextAccessor!.HttpContext?.User;
 
-    public int? GetBuutUserId()
+    public int? GetUserId()
     {
         if (User == null)
         {
