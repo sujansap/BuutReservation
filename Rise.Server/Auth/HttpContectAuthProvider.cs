@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Rise.Domain.Exceptions;
 using Rise.Services.Auth;
+using Serilog;
+using Serilog.Core;
 
 namespace Rise.Server.Auth;
 
@@ -8,7 +10,7 @@ public class HttpContextAuthProvider(IHttpContextAccessor httpContextAccessor) :
 {
     public ClaimsPrincipal? User => httpContextAccessor!.HttpContext?.User;
 
-    public int? GetUserId()
+    public int? GetBuutUserId()
     {
         if (User == null)
         {
