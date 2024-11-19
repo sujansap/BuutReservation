@@ -273,7 +273,7 @@ namespace Rise.Client.Tests.Reservations
      
             ILocator upcomingReservation = Page.GetByTestId("reservation-item");
             await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
-            Assert.AreEqual(1, await upcomingReservation.CountAsync());
+            await Expect(upcomingReservation).ToHaveCountAsync(1);
 
             await MockPastReservationsApi();
             var toggleButton = Page.GetByTestId("reservation-toggle-button");
@@ -282,7 +282,7 @@ namespace Rise.Client.Tests.Reservations
             await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
 
             ILocator pastReservation = Page.GetByTestId("reservation-item");
-            Assert.AreEqual(1, await pastReservation.CountAsync());
+            await Expect(pastReservation).ToHaveCountAsync(1);
 
         }
 

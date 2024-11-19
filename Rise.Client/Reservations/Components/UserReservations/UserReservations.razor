@@ -4,9 +4,10 @@
 @using Rise.Shared.Pagination
 @using Rise.Shared.Reservations
 @using Rise.Client.Common
+@inject IStringLocalizer<ReservationsResource> Localizer
 
-@namespace Rise.Client.Reservations.Components
 @inherits UserReservationsBase
+
 
 <MudGrid>
     <AsyncData DataFetcher="@LoadReservations" @bind-Data="@ReservationPage" T="ItemsPageDto<ReservationDto>"

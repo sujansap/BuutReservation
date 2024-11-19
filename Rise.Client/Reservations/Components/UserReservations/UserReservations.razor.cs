@@ -6,6 +6,7 @@ using Microsoft.JSInterop;
 using Microsoft.Extensions.Localization;
 using Rise.Client.Localization.Reservations;
 
+
 namespace Rise.Client.Reservations.Components;
 
 public class UserReservationsBase : ComponentBase
@@ -15,10 +16,6 @@ public class UserReservationsBase : ComponentBase
 
     [Inject]
     public required NavigationManager NavigationManager { get; set; }
-
-    [Inject]
-    public required IStringLocalizer<ReservationPageResources> Localizer { get; set; }
-
 
     [Inject]
     public required IReservationService ReservationService { get; set; }
