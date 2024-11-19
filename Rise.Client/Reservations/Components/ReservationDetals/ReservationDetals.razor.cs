@@ -16,8 +16,6 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
 
         [Parameter]
         public int Id { get; set; }
-        [Inject]
-        public required IStringLocalizer<ReservationPageResources> Localizer { get; set; }
 
         [Inject]
         public required IReservationService ReservationService { get; set; }
