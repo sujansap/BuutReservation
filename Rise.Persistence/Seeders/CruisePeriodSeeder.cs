@@ -12,7 +12,6 @@ internal class CruisePeriodSeeder(ApplicationDbContext dbContext) : GeneralSeede
         cruisePeriods = [
             // Past cruises
             new() { Start = DateTime.Now.AddDays(-10), End = DateTime.Now.AddDays(-7) },
-            new() { Start = DateTime.Now.AddDays(-6), End = DateTime.Now.AddDays(-4) },
             // Current/upcoming cruises
             new() { Start = DateTime.Now.AddDays(3), End = DateTime.Now.AddDays(7) },
             new() { Start = DateTime.Now.AddDays(10), End = DateTime.Now.AddDays(14) },
