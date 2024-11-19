@@ -4,6 +4,8 @@
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Common
 
+@inject IStringLocalizer<ReservationPageResources> Localizer
+
 <MudGrid Class="mt-8">
     <AsyncData DataFetcher="@GetReservationDetails" @bind-Data="@ReservationDetails" T="ReservationDetailsDto"
         @ref="@AsyncDataRef" TestIdPrefix="reservation-details">
