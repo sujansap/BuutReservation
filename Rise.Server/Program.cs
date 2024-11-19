@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Auth0Net.DependencyInjection;
 using Rise.Server.Auth;
 using Rise.Services.Auth;
+using Microsoft.OpenApi.Models;
 
 try
 {
@@ -32,14 +33,43 @@ try
     builder.Services.AddSerilog();
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
+    // builder.Services.AddSwaggerGen(options =>
+    // {
+    //     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    //     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    //     options.IncludeXmlComments(xmlPath);
+    //     options.EnableAnnotations();
+    // });
     builder.Services.AddSwaggerGen(options =>
     {
-        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-        options.IncludeXmlComments(xmlPath);
-        options.EnableAnnotations();
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                AuthorizationCode = new OpenApiOAuthFlow
+                {
+                    TokenUrl = new Uri($"{builder.Configuration["Auth0:Authority"]}/oauth/token"),
+                    AuthorizationUrl = new Uri($"{builder.Configuration["Auth0:Authority"]}/authorize?audience={builder.Configuration["Auth0:Audience"]}"),
+                }
+            }
+        });
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "oauth2"
+                    }
+                },
+                new string[] { "openid" }
+            }
+        });
     });
-    
+
     builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -50,7 +80,7 @@ try
         options.Audience = builder.Configuration["Auth0:Audience"];
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            NameClaimType = ClaimTypes.NameIdentifier
+            NameClaimType = "buutUserId"
         };
     });
 
@@ -61,7 +91,7 @@ try
         config.ClientSecret = builder.Configuration["Auth0:M2MClientSecret"];
     });
     builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
-    
+
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -76,7 +106,7 @@ try
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
-    
+
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
@@ -95,6 +125,7 @@ try
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1.0");
         options.OAuthClientId(builder.Configuration["Auth0:BlazorClientId"]);
         options.OAuthClientSecret(builder.Configuration["Auth0:BlazorClientSecret"]);
+        options.InjectJavascript("/swagger-custom.js");
     });
     }
 

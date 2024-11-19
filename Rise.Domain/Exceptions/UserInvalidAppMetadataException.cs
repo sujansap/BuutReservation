@@ -3,9 +3,10 @@ namespace Rise.Domain.Exceptions;
 /// <summary>
 /// <see cref="Exception"/> to throw when the app_metadata of the user is not what we expect.
 /// </summary>
-public class UserInvalidAppMetadataException : ApplicationException
+public class UserInvalidClaimStructureException : ApplicationException
 {
-    public UserInvalidAppMetadataException(string userId) : base($"Invalid app_metadata of user {userId}")
+    public UserInvalidClaimStructureException() : base($"The token has an invalid claim structure")
     {
+
     }
 }

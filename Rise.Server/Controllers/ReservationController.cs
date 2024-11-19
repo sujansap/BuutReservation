@@ -9,7 +9,7 @@ namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Member")]
     public class ReservationController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger;

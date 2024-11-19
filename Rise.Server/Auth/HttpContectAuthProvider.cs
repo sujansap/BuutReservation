@@ -1,6 +1,4 @@
-using System;
 using System.Security.Claims;
-using System.Text.Json;
 using Rise.Domain.Exceptions;
 using Rise.Services.Auth;
 
@@ -12,16 +10,14 @@ public class HttpContextAuthProvider(IHttpContextAccessor httpContextAccessor) :
 
     public int? GetUserId()
     {
-        if (User == null){
+        if (User == null)
+        {
             return null;
         }
-        Claim subClaim = User.Claims.First(c => c.Type == "sub");
-        Claim appMetadataClaim = User.Claims.First(c => c.Type == "app_metadata") ?? throw new UserInvalidAppMetadataException(subClaim.Value);
-        Dictionary<string, string> appMetadata = JsonSerializer.Deserialize<Dictionary<string, string>>(appMetadataClaim.Value) ?? throw new UserInvalidAppMetadataException(subClaim.Value);
-        if (!int.TryParse(appMetadata["userId"] ?? throw new UserInvalidAppMetadataException(subClaim.Value), out int userId))
+        if (!int.TryParse(User!.Identity?.Name, out int userId))
         {
-            throw new UserInvalidAppMetadataException(subClaim.Value);
-        }  
+            throw new UserInvalidClaimStructureException();
+        }
         return userId;
     }
 
