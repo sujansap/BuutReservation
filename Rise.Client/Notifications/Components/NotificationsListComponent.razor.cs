@@ -12,17 +12,5 @@ namespace Rise.Client.Notifications.Components
 
         [Parameter]
         public EventCallback<NotificationDto> OnNotificationSelected { get; set; }
-
-        private Severity GetSeverityFromString(string severity)
-        {
-            return severity switch
-            {
-                "Error" => Severity.Error,
-                "Info" => Severity.Info,
-                "Success" => Severity.Success,
-                "Warning" => Severity.Warning,
-                _ => Severity.Info
-            };
-        }
     }
 }
