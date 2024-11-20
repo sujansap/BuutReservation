@@ -8,6 +8,6 @@ namespace Rise.Client.Notifications.Components
     {
 
         [Parameter]
-        public NotificationDto Notification { get; set; }
+        public NotificationDto? Notification { get; set; }
     }
 }
