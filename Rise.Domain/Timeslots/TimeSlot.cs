@@ -16,14 +16,12 @@ public class TimeSlot : Entity
             Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, DateTime.Now.Year +100, 
                 "TimeSlot date must be after year 2000.");
 
-            if (CruisePeriod != null)
-            {
-                DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);
-                DateOnly endDate = DateOnly.FromDateTime(CruisePeriod.End);
-                
-                Guard.Against.OutOfRange(value, nameof(Date), startDate, endDate,
-                    "TimeSlot date must be within the CruisePeriod's date range.");
-            }
+            DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);
+            DateOnly endDate = DateOnly.FromDateTime(CruisePeriod.End);
+
+            Guard.Against.OutOfRange(value, nameof(Date), startDate, endDate,
+                "TimeSlot date must be within the CruisePeriod's date range.");
+
             _date = value;
         }
     }
@@ -54,7 +52,7 @@ public class TimeSlot : Entity
 
     // TODO remove references to cruise period
     public int CruisePeriodId { get; set; }
-    public CruisePeriod CruisePeriod { get; set; } = default!;
+    public required CruisePeriod CruisePeriod { get; set; }
 
     // TODO make reservations public read only
     public IList<Reservation> Reservations { get; } = [];

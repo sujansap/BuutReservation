@@ -42,10 +42,10 @@ namespace Rise.Domain.Tests.TestUtilities
         {
             return new TimeSlot
             {
+                CruisePeriod = cruisePeriod,
                 Date = date,
                 Start = start,
                 End = end,
-                CruisePeriod = cruisePeriod,
             };
         }
     }
