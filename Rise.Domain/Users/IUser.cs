@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Rise.Domain.Notifications;
 using Rise.Domain.Reservations;
 // using Rise.Domain.Reservations;
 
@@ -16,6 +17,11 @@ namespace Rise.Domain.Users
         }
 
         public ICollection<IReservation> Reservations
+        {
+            get;
+        }
+
+        public ICollection<INotification> Notifications
         {
             get;
         }
