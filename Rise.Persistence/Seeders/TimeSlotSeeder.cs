@@ -6,19 +6,20 @@ namespace Rise.Persistence.Seeders
     internal class TimeSlotSeeder(ApplicationDbContext dbContext) : GeneralSeeder<TimeSlot>(dbContext)
     {
 
+        // Lijst van periode per dag
         internal static readonly List<List<List<TimeSlot>>> timeSlots = [];
 
         static TimeSlotSeeder()
         {
-            AddMonthLongCruisePeriodItems();
             AddPastMonthLongCruisePeriodItems();
             AddWeekLongCruisePeriodItems();
             AddABitOverTwoWeekLongCruisePeriodItems();
+            AddMonthLongCruisePeriodItems();
         }
 
         private static void AddWeekLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[2];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[1];
             int cruisePeriodId = cruisePeriod.Id;
             DateOnly cruisePeriodDate = DateOnly.FromDateTime(cruisePeriod.Start);
 
@@ -68,7 +69,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddABitOverTwoWeekLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[3];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[2];
             int cruisePeriodId = cruisePeriod.Id;
             DateOnly cruisePeriodDate = DateOnly.FromDateTime(cruisePeriod.Start);
 
@@ -155,7 +156,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddMonthLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[0];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[3];
             int cruisePeriodId = cruisePeriod.Id;
             DateOnly cruisePeriodDate = DateOnly.FromDateTime(cruisePeriod.Start);
 
@@ -239,7 +240,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddPastMonthLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[1];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[0];
             int cruisePeriodId = cruisePeriod.Id;
             DateOnly cruisePeriodStartDate = DateOnly.FromDateTime(cruisePeriod.Start);
             DateOnly cruisePeriodEndDate = DateOnly.FromDateTime(cruisePeriod.End);

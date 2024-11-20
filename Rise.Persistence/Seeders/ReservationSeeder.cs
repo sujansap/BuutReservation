@@ -10,18 +10,6 @@ namespace Rise.Persistence.Seeders
 
         static ReservationSeeder()
         {
-            // Wait for TimeSlotSeeder to be initialized
-            if (TimeSlotSeeder.timeSlots.Count == 0)
-            {
-                throw new InvalidOperationException("TimeSlotSeeder must be initialized before ReservationSeeder");
-            }
-
-            // Add additional check to ensure we have enough time slot groups
-            if (TimeSlotSeeder.timeSlots.Count < 4) // We need at least 4 groups for all Add*Items methods
-            {
-                throw new InvalidOperationException($"TimeSlotSeeder must contain at least 4 groups of time slots. Current count: {TimeSlotSeeder.timeSlots.Count}");
-            }
-
             AddPastMonthLongCruisePeriodItems();
             AddWeekLongCruisePeriodItems();
             AddABitOverTwoWeekLongCruisePeriodItems();
@@ -30,13 +18,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddMonthLongCruisePeriodItems()
         {
-            List<List<TimeSlot>> monthLongTimeSlots = TimeSlotSeeder.timeSlots[0];
-
-            // Reduce the required number of days from 17 to 11
-            if (monthLongTimeSlots.Count < 11)
-            {
-                throw new InvalidOperationException($"First time slot group must contain at least 11 days of slots. Current count: {monthLongTimeSlots.Count}");
-            }
+            List<List<TimeSlot>> monthLongTimeSlots = TimeSlotSeeder.timeSlots[3];
 
             reservations.Add([
                 // Today + 1 month + 0 day(s)
@@ -76,35 +58,32 @@ namespace Rise.Persistence.Seeders
 
         private static void AddPastMonthLongCruisePeriodItems()
         {
-            List<List<TimeSlot>> pastMonthLongTimeSlots = TimeSlotSeeder.timeSlots[1];
+            List<List<TimeSlot>> pastMonthLongTimeSlots = TimeSlotSeeder.timeSlots[0];
 
-            reservations.Add([
-                // Today - 5 days or 1st november
-                [
-                    new() { User = UserSeeder.users[0], TimeSlot = pastMonthLongTimeSlots[0][0], Boat = BoatSeeder.boats[0], },
-                    new() { User = UserSeeder.users[2], TimeSlot = pastMonthLongTimeSlots[0][0], Boat = BoatSeeder.boats[1], },
-                    new() { User = UserSeeder.users[5], TimeSlot = pastMonthLongTimeSlots[0][0], Boat = BoatSeeder.boats[2], },
-                    new() { User = UserSeeder.users[0], TimeSlot = pastMonthLongTimeSlots[0][1], Boat = BoatSeeder.boats[0], },
-                ],
-                // Today - 4 days or 2nd november
-                [
-                    new() { User = UserSeeder.users[0], TimeSlot = pastMonthLongTimeSlots[1][0], Boat = BoatSeeder.boats[0], },
-                    new() { User = UserSeeder.users[2], TimeSlot = pastMonthLongTimeSlots[1][0], Boat = BoatSeeder.boats[1], },
-                    new() { User = UserSeeder.users[5], TimeSlot = pastMonthLongTimeSlots[1][0], Boat = BoatSeeder.boats[2], },
-                    new() { User = UserSeeder.users[0], TimeSlot = pastMonthLongTimeSlots[1][1], Boat = BoatSeeder.boats[0], },
-                ],
-                // Today - 3 days or 3rd november
-                [
-                    new() { User = UserSeeder.users[0], TimeSlot = pastMonthLongTimeSlots[2][0], Boat = BoatSeeder.boats[0], },
-                    new() { User = UserSeeder.users[2], TimeSlot = pastMonthLongTimeSlots[2][1], Boat = BoatSeeder.boats[1], },
-                    new() { User = UserSeeder.users[5], TimeSlot = pastMonthLongTimeSlots[2][2], Boat = BoatSeeder.boats[2], }, 
-                ],
-            ]);
+            List<List<Reservation>> pastMonthLongReservations = [];
+
+            foreach (List<TimeSlot> item in pastMonthLongTimeSlots)
+            {
+                pastMonthLongReservations.Add([
+                    new Reservation(){
+                        Boat = BoatSeeder.boats[0],
+                        TimeSlot = item[0],
+                        User = UserSeeder.users[0],
+                    },
+                    new Reservation(){
+                        Boat = BoatSeeder.boats[1],
+                        TimeSlot = item[1],
+                        User = UserSeeder.users[1],
+                    }
+                ]);
+            }
+
+            reservations.Add(pastMonthLongReservations);
         }
 
         private static void AddWeekLongCruisePeriodItems()
         {
-            List<List<TimeSlot>> weekLongTimeSlots = TimeSlotSeeder.timeSlots[2];
+            List<List<TimeSlot>> weekLongTimeSlots = TimeSlotSeeder.timeSlots[1];
 
             reservations.Add([
                 // Today + 0 day(s)
@@ -153,7 +132,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddABitOverTwoWeekLongCruisePeriodItems()
         {
-            List<List<TimeSlot>> twoWeekLongTimeSlots = TimeSlotSeeder.timeSlots[3];
+            List<List<TimeSlot>> twoWeekLongTimeSlots = TimeSlotSeeder.timeSlots[2];
 
             reservations.Add([
                 // Today + 9 day(s) + 0 day(s)

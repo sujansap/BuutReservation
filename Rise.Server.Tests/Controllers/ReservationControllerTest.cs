@@ -103,13 +103,12 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithValidTimeSlot_ExpectCreated()
         {
-            // Setup - ensure there's an available boat and the timeslot isn't booked
-            // This would depend on your test fixture implementation
 
             var request = new CreateReservationDto
             {
-                TimeSlotId = 30
+                TimeSlotId = 10
             };
+
 
             var response = await _client.PostAsJsonAsync("", request);
 
@@ -154,7 +153,7 @@ namespace Rise.Server.Tests.Controllers
         {
             var request = new CreateReservationDto
             {
-                TimeSlotId = 1
+                TimeSlotId = 50
             };
 
             var response = await _client.PostAsJsonAsync("", request);
