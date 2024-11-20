@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Admins/Components/" />
     <Folder Include="wwwroot/assets/icons/" />
   </ItemGroup>
 

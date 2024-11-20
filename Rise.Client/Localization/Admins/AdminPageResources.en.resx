@@ -12,4 +12,13 @@
 	<data name="NoUsersAvailable">
 		<value>No guest users available</value>
 	</data>
+	<data name="Id">
+		<value>ID</value>
+	</data>
+	<data name="FamilyName">
+		<value>Family Name</value>
+	</data>
+	<data name="Actions">
+		<value>Actions</value>
+	</data>
 </root>

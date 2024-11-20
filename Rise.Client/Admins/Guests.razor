@@ -1,5 +1,6 @@
 ﻿@page "/admin/guests"
 @using MudBlazor
+@using Rise.Client.Admins.Components
 @using Rise.Client.Localization.Admins;
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<AdminPageResources> Localizer
@@ -20,14 +21,14 @@
         }
         else
         {
-            <MudStack>
-                @foreach (UserDto? user in Users)
-                {
-                    <MudPaper Class="pa-3" Elevation="0">
-                        <MudText>@user.FamilyName</MudText>
-                    </MudPaper>
-                }
-            </MudStack>
+            <MudTable Elevation="0" Striped="true" Items="@Users" Dense="true" Hover="true" data-testid="users-table">
+                <HeaderContent>
+                    <MudTh>@Localizer["FamilyName"]</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <GuestUserRow User="@context" />
+                </RowTemplate>
+            </MudTable>
         }
     </AsyncData>
 </MudPaper>

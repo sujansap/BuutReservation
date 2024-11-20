@@ -12,4 +12,13 @@
 	<data name="NoUsersAvailable">
 		<value>Geen gasten beschikbaar</value>
 	</data>
+	<data name="Id">
+		<value>ID</value>
+	</data>
+	<data name="FamilyName">
+		<value>Familienaam</value>
+	</data>
+	<data name="Actions">
+		<value>Acties</value>
+	</data>
 </root>
