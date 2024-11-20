@@ -11,7 +11,7 @@
             <AsyncData DataFetcher="@FetchNotifications" @bind-Data="@Notifications" T="IEnumerable<NotificationDto>"
                 @ref="AsyncDataRef" ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert"
                 TestIdPrefix="custom-calendar-reserve">
-                <NotificationsListComponent Notifications="Notifications"
+                <NotificationsListComponent Notifications="Notifications" SelectedNotification="SelectedNotification"
                     OnNotificationSelected="HandleNotificationSelected" />
             </AsyncData>
         </MudItem>

@@ -1,8 +1,9 @@
 ﻿@using MudBlazor.Components
 @using System.Reflection.Metadata;
 @using Rise.Client.Utils;
+@inherits ComponentBase
 
-<MudCard @attributes="AdditionalAttributes" Class="cursor-pointer" @onclick="HandleClick">
+<MudCard @attributes="AdditionalAttributes" Class="@("cursor-pointer " + Class)" @onclick="HandleClick">
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;" StretchItems="StretchItems.Middle">
             <MudIcon Icon="@(Notification.Severity.Icon())" Color="Notification.Severity.Color()" Size="Size.Large" />

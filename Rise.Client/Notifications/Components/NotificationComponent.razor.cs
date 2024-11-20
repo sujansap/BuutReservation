@@ -13,6 +13,8 @@ namespace Rise.Client.Notifications.Components
         [Parameter, EditorRequired]
         public required NotificationDto Notification { get; set; }
         [Parameter]
+        public string Class { get; set; } = "";
+        [Parameter]
         public EventCallback OnClick { get; set; }
 
         private async Task HandleClick()
