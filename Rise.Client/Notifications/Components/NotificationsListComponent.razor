@@ -5,6 +5,7 @@
         @foreach (var notification in Notifications)
         {
             <NotificationComponent Notification="notification"
+                Class="@(SelectedNotification == notification ? "selected-notification" : " ")"
                 OnClick="@(() => OnNotificationSelected.InvokeAsync(notification))" />
         }
     }

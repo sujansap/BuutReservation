@@ -12,5 +12,7 @@ namespace Rise.Client.Notifications.Components
 
         [Parameter]
         public EventCallback<NotificationDto> OnNotificationSelected { get; set; }
+        [Parameter]
+        public NotificationDto? SelectedNotification { get; set; }
     }
 }
