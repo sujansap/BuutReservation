@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
-using Rise.Domain.Timeslots;
-using Rise.Domain.Users;
 
 namespace Rise.Persistence.Timeslots
 {/// <summary>
@@ -20,39 +13,34 @@ namespace Rise.Persistence.Timeslots
             base.Configure(builder);
 
             builder
-                .HasOne(e => (Boat)e.Boat)
-                .WithMany(e => (ICollection<Reservation>)e.Reservations)
+                .HasOne(e => e.Boat)
+                .WithMany(e => e.Reservations)
                 .HasForeignKey(e => e.BoatId)
                 .IsRequired(true);
 
-            // builder
-            //     .HasOne(e => (Battery)e.Battery)
-            //     .WithMany(e => (ICollection<Reservation>)e.Reservations)
-            //     .HasForeignKey(e => e.BatteryId)
-            //     .IsRequired(true);
-
             builder
-                .HasOne(e => (TimeSlot)e.TimeSlot)
-                .WithMany(e => (ICollection<Reservation>)e.Reservations)
+                .HasOne(e => e.TimeSlot)
+                .WithMany(e => e.Reservations)
                 .HasForeignKey(e => e.TimeSlotId)
                 .IsRequired(true);
 
             builder
-                .HasOne(e => (User)e.User)
-                .WithMany(e => (ICollection<Reservation>)e.Reservations)
+                .HasOne(e => e.User)
+                .WithMany(e => e.Reservations)
                 .HasForeignKey(e => e.UserId)
                 .IsRequired(true);
 
             //boat has one reservation for each timeslot
             builder
-              .HasIndex(e => new { e.BoatId, e.TimeSlotId })
-              .IsUnique()
-              .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+                .HasIndex(e => new { e.BoatId, e.TimeSlotId })
+                .IsUnique()
+                .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+
             //user has one reservation for each timeslot 
             builder
-              .HasIndex(e => new { e.UserId, e.TimeSlotId })
-              .IsUnique()
-              .HasDatabaseName("IX_Unique_User_TimeSlot");
+                .HasIndex(e => new { e.UserId, e.TimeSlotId })
+                .IsUnique()
+                .HasDatabaseName("IX_Unique_User_TimeSlot");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Rise.Domain.Boats
         public required User Mentor { get; set; }
 
 
-        public ICollection<IReservation> Reservations
+        public ICollection<Reservation> Reservations
         {
             get;
         } = [];

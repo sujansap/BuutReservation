@@ -21,7 +21,7 @@ namespace Rise.Persistence.Boats
             .HasForeignKey(b => b.BoatId)
             .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => (User)x.Mentor)
+            builder.HasOne(x => x.Mentor)
             .WithOne()
             .HasForeignKey<Battery>(x => x.MentorId)
             .OnDelete(DeleteBehavior.SetNull);

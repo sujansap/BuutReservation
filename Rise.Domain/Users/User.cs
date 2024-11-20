@@ -17,6 +17,6 @@ namespace Rise.Domain.Users
             set => _familyName = Guard.Against.NullOrWhiteSpace(value, nameof(FamilyName)).Trim();
         }
 
-        public ICollection<IReservation> Reservations { get; } = [];
+        public ICollection<Reservation> Reservations { get; } = [];
     }
 }

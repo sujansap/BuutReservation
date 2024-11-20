@@ -15,7 +15,7 @@ public class BatteryShould
     public void BeCreated_WithValidType()
 
     {
-
+        // TODO forgot to make the builder...
         Boat boat = new BoatBuilder().Build();
         User mentor = new UserBuilder().Build();
 
@@ -85,7 +85,6 @@ public class BatteryShould
 
         Boat boat = new BoatBuilder().Build();
         User mentor = new UserBuilder().Build();
-        var mockReservation = Substitute.For<IReservation>();
 
         var battery = new Battery
         {
@@ -95,12 +94,13 @@ public class BatteryShould
         };
 
 
-        battery.Reservations.Add(mockReservation);
+        Reservation reservation = new ReservationBuilder().Build();
+        battery.Reservations.Add(reservation);
 
 
         battery.Reservations.ShouldNotBeEmpty();
         battery.Reservations.Count.ShouldBe(1);
-        battery.Reservations.ShouldContain(mockReservation);
+        battery.Reservations.ShouldContain(reservation);
     }
 }
 

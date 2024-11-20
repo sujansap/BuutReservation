@@ -1,9 +1,5 @@
 using Shouldly;
-using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
-using NSubstitute;
-using Rise.Domain.Users;
-using Rise.Domain.Timeslots;
 using Rise.Domain.Tests.TestUtilities;
 
 namespace Rise.Domain.Tests.Timeslots
@@ -13,74 +9,27 @@ namespace Rise.Domain.Tests.Timeslots
         [Fact]
         public void BeCreatedWithUser()
         {
-            Boat boat = new BoatBuilder().Build();
-
-            // Mock Time slot
-            TimeSlot timeSlot = new TimeSlotBuilder().Build();
-
-            User user = new UserBuilder().Build();
-
-            Reservation reservation = new()
-            {
-                User = user,
-                Boat = boat,
-                TimeSlot = timeSlot,
-            };
+            Reservation reservation = new ReservationBuilder().Build();
 
             // Act & Assert
-            reservation.Boat.ShouldBe(boat);
-            reservation.TimeSlot.ShouldBe(timeSlot);
-            reservation.User.ShouldBe(user);
+            reservation.Boat.ShouldBe(ReservationBuilder.ValidBoat);
+            reservation.TimeSlot.ShouldBe(ReservationBuilder.ValidTimeSlot);
+            reservation.User.ShouldBe(ReservationBuilder.ValidUser);
         }
 
         [Fact]
-        public void CanCreateReservationWithValidData()
+        public void NotBeCreatedIfBoatIsAlreadyReservedForTimeSlot()
         {
-            Boat boat = new BoatBuilder().Build();
-            TimeSlot timeSlot = new TimeSlotBuilder().Build();
-            User user = new UserBuilder().Build();
 
-            var reservation = new Reservation
-            {
-                Boat = boat,
-                BoatId = 1,
-                TimeSlot = timeSlot,
-                TimeSlotId = 2,
-                User = user,
-                UserId = 3
-            };
+            Reservation reservation1 = new ReservationBuilder().Build();
 
-            reservation.Boat.ShouldNotBeNull();
-            reservation.TimeSlot.ShouldNotBeNull();
-            reservation.User.ShouldNotBeNull();
-        }
-
-        [Fact]
-        public void CannotCreateReservationIfBoatIsAlreadyReservedForTimeSlot()
-        {
-            Boat boat = new BoatBuilder().Build();
-            TimeSlot timeSlot = new TimeSlotBuilder().Build();
-            User user = new UserBuilder().Build();
-
-            var reservation1 = new Reservation
-            {
-                Boat = boat,
-                BoatId = 1,
-                TimeSlot = timeSlot,
-                TimeSlotId = 2,
-                User = user,
-                UserId = 3
-            };
-
-            var reservation2 = new Reservation
-            {
-                Boat = boat,
-                BoatId = 1,
-                TimeSlot = timeSlot,
-                TimeSlotId = 2,
-                User = user,
-                UserId = 4
-            };
+            Reservation reservation2 = new ReservationBuilder()
+            .WithUser(
+                new UserBuilder()
+                    .WithFamilyName("Other user")
+                    .Build()
+            )
+            .Build();
 
             CheckBoatAvailability(reservation1, reservation2).ShouldBeFalse("Boat should not be available for the same time slot.");
         }
@@ -88,30 +37,15 @@ namespace Rise.Domain.Tests.Timeslots
         [Fact]
         public void ShouldEnforceMinimumDaysBetweenReservations()
         {
-            Boat boat = new BoatBuilder().Build();
-            User user = new UserBuilder().Build();
+            Reservation reservation1 = new ReservationBuilder().Build();
 
-            TimeSlot timeSlot1 = new TimeSlotBuilder()
-                .WithDate(DateOnly.FromDateTime(DateTime.Now))
-                .Build();
-
-            TimeSlot timeSlot2 = new TimeSlotBuilder()
+            Reservation reservation2 = new ReservationBuilder()
+            .WithTimeSlot(
+                new TimeSlotBuilder()
                 .WithDate(DateOnly.FromDateTime(DateTime.Now.AddDays(1)))
-                .Build();
-
-            var reservation1 = new Reservation
-            {
-                Boat = boat,
-                TimeSlot = timeSlot1,
-                User = user
-            };
-
-            var reservation2 = new Reservation
-            {
-                Boat = boat,
-                TimeSlot = timeSlot2,
-                User = user
-            };
+                .Build()
+            )
+            .Build();
 
             IsValidReservationDate(reservation1, reservation2).ShouldBeFalse(
                          "Reservation should not be allowed within minimum 2 days.");

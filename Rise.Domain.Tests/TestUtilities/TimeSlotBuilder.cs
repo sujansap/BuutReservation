@@ -1,4 +1,3 @@
-using Rise.Domain.Reservations;
 using Rise.Domain.Timeslots;
 
 namespace Rise.Domain.Tests.TestUtilities
