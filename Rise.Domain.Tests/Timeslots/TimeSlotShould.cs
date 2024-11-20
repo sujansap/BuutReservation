@@ -92,7 +92,8 @@ namespace Rise.Domain.Tests.Timeslots
                 TimeSlot timeSlot = new() { Date = ValidDate, Start = ValidEnd, End = ValidStart };
             };
 
-            act.ShouldThrow<ArgumentOutOfRangeException>();
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("End");
         }
 
         [Theory]
@@ -196,7 +197,90 @@ namespace Rise.Domain.Tests.Timeslots
                 .ParamName.ShouldBe("Date");
         }
 
-        // TODO make with constructor for checking relation with cruiseperiod
+
+        [Theory]
+        [InlineData(1999, 1, 1)] // Year before 2000
+        [InlineData(10000, 1, 1)] // Year after 9999
+        public void NotBeCreatedWithDateOutsideValidYearRange(int year, int month, int day)
+        {
+            Action act = () =>
+            {
+                TimeSlot timeSlot = new()
+                {
+                    Date = new DateOnly(year, month, day),
+                    Start = ValidStart,
+                    End = ValidEnd
+                };
+            };
+
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
+        [Fact]
+        public void NotBeChangedToHaveDateOutsideValidYearRange()
+        {
+            TimeSlot timeSlot = new() { Date = ValidDate, Start = ValidStart, End = ValidEnd };
+
+            Action act = () =>
+            {
+                timeSlot.Date = new DateOnly(1999, 1, 1);
+            };
+
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
+        [Fact]
+        public void NotBeChangedToHaveDateOutsideCruisePeriod()
+        {
+            var cruisePeriod = new CruisePeriod
+            {
+                Start = DateTime.Today,
+                End = DateTime.Today.AddDays(5)
+            };
+
+            TimeSlot timeSlot = new()
+            {
+                CruisePeriod = cruisePeriod,
+                CruisePeriodId = 1,
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                Start = ValidStart,
+                End = ValidEnd
+            };
+
+            Action act = () =>
+            {
+                timeSlot.Date = DateOnly.FromDateTime(DateTime.Today.AddDays(6));
+            };
+
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
+        [Fact]
+        public void AllowDateChangeWithinCruisePeriod()
+        {
+            var cruisePeriod = new CruisePeriod
+            {
+                Start = DateTime.Today,
+                End = DateTime.Today.AddDays(5)
+            };
+
+            TimeSlot timeSlot = new()
+            {
+                CruisePeriod = cruisePeriod,
+                CruisePeriodId = 1,
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                Start = ValidStart,
+                End = ValidEnd
+            };
+
+            DateOnly newDate = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+            timeSlot.Date = newDate;
+
+            timeSlot.Date.ShouldBe(newDate);
+        }
 
     }
 }

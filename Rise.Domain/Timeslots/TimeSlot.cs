@@ -49,8 +49,7 @@ public class TimeSlot : Entity, ITimeSlot
         {
             Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, 
                 "End time must be within a valid range.");
-            Guard.Against.InvalidInput(value, nameof(End), 
-                x => _start == default || x > _start,
+            Guard.Against.OutOfRange(value, nameof(End), Start.AddMinutes(1), TimeOnly.MaxValue,
                 "End time must be after Start time.");
             _end = value;
         }
