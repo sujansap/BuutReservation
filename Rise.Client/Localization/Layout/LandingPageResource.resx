@@ -22,6 +22,9 @@
 	<data name="Notifications">
 		<value>Notifications</value>
 	</data>
+	<data name="Admin">
+		<value>ADMIN</value>
+	</data>
 	<!--navmenu-->
 	<!--footer-->
 	<data name="GeneralTerms">

@@ -18,6 +18,8 @@
             <MudNavLink Href="home" data-testid="nav-desktop-home">@Localizer["Home"]</MudNavLink>
             <MudNavLink Href="about" data-testid="nav-desktop-about">@Localizer["About"]</MudNavLink>
             <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]</MudNavLink>
+            @*TODO: make only visible for admin*@
+            <MudNavLink Href="admin" data-testid="nav-desktop-admin"> @Localizer["Admin"]</MudNavLink>
         </MudStack>
         <MudSpacer></MudSpacer>
         <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
@@ -58,6 +60,7 @@
         <MudNavLink Href="about" data-testid="nav-mobile-about">@Localizer["About"]</MudNavLink>
         <MudNavLink Href="book" data-testid="nav-mobile-book">@Localizer["BookNow"]</MudNavLink>
         <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">@Localizer["Reserve"]</MudNavLink>
+        @*TODO: make only visible for admin*@
         <MudNavGroup Title="ADMIN" Expanded="true">
             <AdminMenu />
         </MudNavGroup>
