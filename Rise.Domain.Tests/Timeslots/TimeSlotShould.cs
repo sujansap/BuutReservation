@@ -62,10 +62,49 @@ namespace Rise.Domain.Tests.Timeslots
             };
 
             act.ShouldThrow<ArgumentOutOfRangeException>()
-                .ParamName.ShouldBe("Date");
-
+            .ParamName.ShouldBe("Date");
         }
 
+        [Theory]
+        [InlineData(25, 0)]
+        [InlineData(-1, 0)]
+        public void NotBeChangedToHaveAnInvalidStart(int hour, int minute)
+        {
+            // Arrange
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
+            TimeOnly invalidStart = new(hour, minute);
+
+            // Act
+            Action act = () =>
+            {
+                timeSlot.Start = invalidStart;
+            };
+
+            // Assert
+            act.ShouldThrow<ArgumentOutOfRangeException>();
+        }
+
+
+        [Theory]
+        [InlineData(25, 0)]
+        [InlineData(-1, 0)]
+        public void NotBeChangedToHaveAnInvalidEnd(int hour, int minute)
+        {
+            // Arrange
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
+            TimeOnly invalidEnd = new(hour, minute);
+
+            // Act
+            Action act = () =>
+            {
+                // Attempt to set the invalid end time
+                timeSlot.End = invalidEnd;
+            };
+
+            // Assert
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+            .ParamName.ShouldBe("End");
+        }
 
         [Fact]
         public void NotBeChangedToHaveEndBeforeStart()
@@ -83,6 +122,104 @@ namespace Rise.Domain.Tests.Timeslots
 
         }
 
-        // TODO make with constructor for checking relation with cruiseperiod
+        [Fact]
+        public void NotBeCreatedWithDateOutsideCruisePeriod()
+        {
+            // Arrange
+            DateTime endDate = DateTime.Today.AddDays(5);
+
+            // Act
+            Action act = () =>
+            {
+                TimeSlot timeSlot = new TimeSlotBuilder()
+                .WithCruisePeriod(
+                    new CruisePeriodBuilder()
+                        .WithEnd(endDate)
+                        .Build()
+                )
+                .WithDate(DateOnly.FromDateTime(endDate.AddDays(1)))
+                .Build();
+            };
+
+            // Assert
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
+
+        [Theory]
+        [InlineData(1999, 1, 1)] // Year before 2000
+        [InlineData(2125, 1, 1)] // Year after more than 100 years to-date.
+        public void NotBeCreatedWithDateOutsideValidYearRange(int year, int month, int day)
+        {
+            Action act = () =>
+            {
+                TimeSlot timeSlot = new TimeSlotBuilder()
+                .WithDate(new DateOnly(year, month, day))
+                .Build();
+            };
+
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
+        [Fact]
+        public void NotBeChangedToHaveDateOutsideValidYearRange()
+        {
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
+
+            Action act = () =>
+            {
+                timeSlot.Date = new DateOnly(1999, 1, 1);
+            };
+
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
+        [Fact]
+        public void NotBeChangedToHaveDateOutsideCruisePeriod()
+        {
+            // Arrange
+            DateTime endDate = DateTime.Today.AddDays(5);
+            TimeSlot timeSlot = new TimeSlotBuilder()
+                .WithCruisePeriod(
+                    new CruisePeriodBuilder()
+                        .WithEnd(endDate)
+                        .Build()
+                )
+                .Build();
+
+            // Act
+            Action act = () =>
+            {
+                timeSlot.Date = DateOnly.FromDateTime(endDate.AddDays(1));
+            };
+
+            // Assert
+            act.ShouldThrow<ArgumentOutOfRangeException>()
+                .ParamName.ShouldBe("Date");
+        }
+
+        [Fact]
+        public void AllowDateChangeWithinCruisePeriod()
+        {
+
+            // Arrange
+            DateTime endDate = DateTime.Today.AddDays(5);
+            TimeSlot timeSlot = new TimeSlotBuilder()
+                .WithCruisePeriod(
+                    new CruisePeriodBuilder()
+                        .WithEnd(endDate)
+                        .Build()
+                )
+                .Build();
+
+            DateOnly newDate = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
+            timeSlot.Date = newDate;
+
+            timeSlot.Date.ShouldBe(newDate);
+        }
+
     }
 }

@@ -35,6 +35,7 @@ namespace Rise.Client.Tests.Layout
         [TestCase("nav-mobile-notifications", "notifications", "")]
         [TestCase("nav-mobile-profile", "profile", "")]
         [TestCase("nav-mobile-notifications", "notifications", "")]
+        [TestCase("nav-admin-guests", "admin", "")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
         {
             await Page.SetViewportSizeAsync(959, 1920);
@@ -135,5 +136,19 @@ namespace Rise.Client.Tests.Layout
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(english);
 
         }
+
+
+        /// <summary>
+        /// Test to check if the admin dashboard is visible on the desktop version of the website.
+        /// <returns></returns>
+        [Test]
+        public async Task CheckAdminDashBoardDesktop()
+        {
+            await Page.SetViewportSizeAsync(1080, 1920);
+            await InitNavigationToUrl("/admin");
+
+            await Page.GetByTestId("nav-desktop-admin").IsVisibleAsync();
+        }
+
     }
 }

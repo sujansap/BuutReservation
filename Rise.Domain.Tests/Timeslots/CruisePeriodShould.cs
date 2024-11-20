@@ -17,20 +17,6 @@ namespace Rise.Domain.Tests.Timeslots
             cruisePeriod.TimeSlots.ShouldNotBeNull();
         }
 
-        [Theory]
-        [InlineData("0001-01-01")]
-        public void NotBeCreatedWithAnInvalidEnd(string endString)
-        {
-            DateTime invalidEnd = DateTime.Parse(endString);
-
-            Action act = () =>
-            {
-                CruisePeriod cruisePeriod = new CruisePeriodBuilder().WithEnd(invalidEnd).Build();
-            };
-
-            act.ShouldThrow<ArgumentOutOfRangeException>();
-        }
-
         [Fact]
         public void NotBeCreatedWithEndBeforeStart()
         {

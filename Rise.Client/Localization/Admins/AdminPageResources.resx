@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<data name="DashbordPageTitle">
+		<value>Admin Overzicht</value>
+	</data>
+	<data name="NewUsers">
+		<value>GASTEN</value>
+	</data>
+</root>
