@@ -17,13 +17,13 @@ public class BatteryShould
     {
 
         Boat boat = new BoatBuilder().Build();
-        var mockMentor = Substitute.For<IUser>();
+        User mentor = new UserBuilder().Build();
 
         var battery = new Battery
         {
             Type = ValidBatteryType,
             Boat = boat,
-            Mentor = mockMentor
+            Mentor = mentor
         };
 
 
@@ -38,7 +38,7 @@ public class BatteryShould
     {
 
         Boat boat = new BoatBuilder().Build();
-        var mockMentor = Substitute.For<IUser>();
+        User mentor = new UserBuilder().Build();
 
 
         Action act = () =>
@@ -47,7 +47,7 @@ public class BatteryShould
             {
                 Type = invalidType!,
                 Boat = boat,
-                Mentor = mockMentor
+                Mentor = mentor
             };
         };
 
@@ -63,13 +63,13 @@ public class BatteryShould
     {
 
         Boat boat = new BoatBuilder().Build();
-        var mockMentor = Substitute.For<IUser>();
+        User mentor = new UserBuilder().Build();
 
         var battery = new Battery
         {
             Type = ValidBatteryType,
             Boat = boat,
-            Mentor = mockMentor,
+            Mentor = mentor,
             BoatId = 1,
             MentorId = 2
         };
@@ -84,14 +84,14 @@ public class BatteryShould
     {
 
         Boat boat = new BoatBuilder().Build();
-        var mockMentor = Substitute.For<IUser>();
+        User mentor = new UserBuilder().Build();
         var mockReservation = Substitute.For<IReservation>();
 
         var battery = new Battery
         {
             Type = ValidBatteryType,
             Boat = boat,
-            Mentor = mockMentor
+            Mentor = mentor
         };
 
 

@@ -13,6 +13,6 @@ namespace Rise.Domain.Reservations
         public TimeSlot TimeSlot { get; set; }
 
         public int UserId { get; }
-        public IUser User { get; }
+        public User User { get; }
     }
 }

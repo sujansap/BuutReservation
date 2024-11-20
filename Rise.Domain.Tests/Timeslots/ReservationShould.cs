@@ -18,11 +18,11 @@ namespace Rise.Domain.Tests.Timeslots
             // Mock Time slot
             TimeSlot timeSlot = new TimeSlotBuilder().Build();
 
-            IUser mockUser = Substitute.For<IUser>();
+            User user = new UserBuilder().Build();
 
             Reservation reservation = new()
             {
-                User = mockUser,
+                User = user,
                 Boat = boat,
                 TimeSlot = timeSlot,
             };
@@ -30,7 +30,7 @@ namespace Rise.Domain.Tests.Timeslots
             // Act & Assert
             reservation.Boat.ShouldBe(boat);
             reservation.TimeSlot.ShouldBe(timeSlot);
-            reservation.User.ShouldBe(mockUser);
+            reservation.User.ShouldBe(user);
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace Rise.Domain.Tests.Timeslots
         {
             Boat boat = new BoatBuilder().Build();
             TimeSlot timeSlot = new TimeSlotBuilder().Build();
-            IUser mockUser = Substitute.For<IUser>();
+            User user = new UserBuilder().Build();
 
             var reservation = new Reservation
             {
@@ -46,7 +46,7 @@ namespace Rise.Domain.Tests.Timeslots
                 BoatId = 1,
                 TimeSlot = timeSlot,
                 TimeSlotId = 2,
-                User = mockUser,
+                User = user,
                 UserId = 3
             };
 
@@ -60,7 +60,7 @@ namespace Rise.Domain.Tests.Timeslots
         {
             Boat boat = new BoatBuilder().Build();
             TimeSlot timeSlot = new TimeSlotBuilder().Build();
-            IUser mockUser = Substitute.For<IUser>();
+            User user = new UserBuilder().Build();
 
             var reservation1 = new Reservation
             {
@@ -68,7 +68,7 @@ namespace Rise.Domain.Tests.Timeslots
                 BoatId = 1,
                 TimeSlot = timeSlot,
                 TimeSlotId = 2,
-                User = mockUser,
+                User = user,
                 UserId = 3
             };
 
@@ -78,7 +78,7 @@ namespace Rise.Domain.Tests.Timeslots
                 BoatId = 1,
                 TimeSlot = timeSlot,
                 TimeSlotId = 2,
-                User = mockUser,
+                User = user,
                 UserId = 4
             };
 
@@ -89,7 +89,7 @@ namespace Rise.Domain.Tests.Timeslots
         public void ShouldEnforceMinimumDaysBetweenReservations()
         {
             Boat boat = new BoatBuilder().Build();
-            IUser mockUser = Substitute.For<IUser>();
+            User user = new UserBuilder().Build();
 
             TimeSlot timeSlot1 = new TimeSlotBuilder()
                 .WithDate(DateOnly.FromDateTime(DateTime.Now))
@@ -103,14 +103,14 @@ namespace Rise.Domain.Tests.Timeslots
             {
                 Boat = boat,
                 TimeSlot = timeSlot1,
-                User = mockUser
+                User = user
             };
 
             var reservation2 = new Reservation
             {
                 Boat = boat,
                 TimeSlot = timeSlot2,
-                User = mockUser
+                User = user
             };
 
             IsValidReservationDate(reservation1, reservation2).ShouldBeFalse(

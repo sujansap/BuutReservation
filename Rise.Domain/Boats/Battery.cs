@@ -22,7 +22,7 @@ namespace Rise.Domain.Boats
 
         // TODO remove mentor id
         public int MentorId { get; set; }
-        public required IUser Mentor { get; set; }
+        public required User Mentor { get; set; }
 
 
         public ICollection<IReservation> Reservations

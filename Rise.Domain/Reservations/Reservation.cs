@@ -15,7 +15,7 @@ namespace Rise.Domain.Reservations
         public required TimeSlot TimeSlot { get; set; }
 
         public int UserId { get; set; }
-        public required IUser User { get; set; }
+        public required User User { get; set; }
 
         public Reservation()
         {
