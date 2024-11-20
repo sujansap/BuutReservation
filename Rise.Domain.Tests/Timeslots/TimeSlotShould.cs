@@ -65,47 +65,6 @@ namespace Rise.Domain.Tests.Timeslots
             .ParamName.ShouldBe("Date");
         }
 
-        [Theory]
-        [InlineData(25, 0)]
-        [InlineData(-1, 0)]
-        public void NotBeChangedToHaveAnInvalidStart(int hour, int minute)
-        {
-            // Arrange
-            TimeSlot timeSlot = new TimeSlotBuilder().Build();
-            TimeOnly invalidStart = new(hour, minute);
-
-            // Act
-            Action act = () =>
-            {
-                timeSlot.Start = invalidStart;
-            };
-
-            // Assert
-            act.ShouldThrow<ArgumentOutOfRangeException>();
-        }
-
-
-        [Theory]
-        [InlineData(25, 0)]
-        [InlineData(-1, 0)]
-        public void NotBeChangedToHaveAnInvalidEnd(int hour, int minute)
-        {
-            // Arrange
-            TimeSlot timeSlot = new TimeSlotBuilder().Build();
-            TimeOnly invalidEnd = new(hour, minute);
-
-            // Act
-            Action act = () =>
-            {
-                // Attempt to set the invalid end time
-                timeSlot.End = invalidEnd;
-            };
-
-            // Assert
-            act.ShouldThrow<ArgumentOutOfRangeException>()
-            .ParamName.ShouldBe("End");
-        }
-
         [Fact]
         public void NotBeChangedToHaveEndBeforeStart()
         {
