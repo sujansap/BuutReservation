@@ -1,4 +1,5 @@
 using MudBlazor;
+using Rise.Shared.Notifications;
 
 namespace Rise.Client.Utils
 {
@@ -35,39 +36,39 @@ namespace Rise.Client.Utils
             return date.ToString("g");
         }
 
-        public static MudBlazor.Color Color(this MudBlazor.Severity severity)
+        public static MudBlazor.Color Color(this SeverityEnum severity)
         {
             return severity switch
             {
-                MudBlazor.Severity.Error => MudBlazor.Color.Error,
-                MudBlazor.Severity.Info => MudBlazor.Color.Info,
-                MudBlazor.Severity.Success => MudBlazor.Color.Success,
-                MudBlazor.Severity.Warning => MudBlazor.Color.Warning,
+                SeverityEnum.Error => MudBlazor.Color.Error,
+                SeverityEnum.Info => MudBlazor.Color.Info,
+                SeverityEnum.Success => MudBlazor.Color.Success,
+                SeverityEnum.Warning => MudBlazor.Color.Warning,
                 _ => MudBlazor.Color.Default
             };
         }
 
-        public static string Icon(this MudBlazor.Severity severity)
+        public static string Icon(this SeverityEnum severity)
         {
             return severity switch
             {
-                MudBlazor.Severity.Error => Icons.Material.Outlined.Error,
-                MudBlazor.Severity.Info => Icons.Material.Outlined.Info,
-                MudBlazor.Severity.Success => Icons.Material.Outlined.CheckCircle,
-                MudBlazor.Severity.Warning => Icons.Material.Outlined.Warning,
+                SeverityEnum.Error => Icons.Material.Outlined.Error,
+                SeverityEnum.Info => Icons.Material.Outlined.Info,
+                SeverityEnum.Success => Icons.Material.Outlined.CheckCircle,
+                SeverityEnum.Warning => Icons.Material.Outlined.Warning,
                 _ => Icons.Material.Outlined.Info
             };
         }
 
-        public static MudBlazor.Severity ToSeverity(this string severity)
+        public static MudBlazor.Severity ToMudSeverity(this SeverityEnum severity)
         {
-            return severity.ToLower() switch
+            return severity switch
             {
-                "info" => MudBlazor.Severity.Info,
-                "success" => MudBlazor.Severity.Success,
-                "warning" => MudBlazor.Severity.Warning,
-                "error" => MudBlazor.Severity.Error,
-                _ => MudBlazor.Severity.Normal
+                SeverityEnum.Info => MudBlazor.Severity.Info,
+                SeverityEnum.Success => MudBlazor.Severity.Success,
+                SeverityEnum.Warning => MudBlazor.Severity.Warning,
+                SeverityEnum.Error => MudBlazor.Severity.Error,
+                _ => MudBlazor.Severity.Info
             };
         }
     }

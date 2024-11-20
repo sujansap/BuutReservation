@@ -2,9 +2,8 @@
 <MudStack Class="notifications-list" Spacing="2">
     @foreach (var notification in Notifications)
     {
-        <NotificationComponent Title="@notification.Title" Message="@notification.Message"
-            Severity="@(GetSeverityFromString(notification.Severity))" TimeStamp="@notification.CreatedAt"
-            IsRead="@notification.IsRead" OnClick="@(() => OnNotificationSelected.InvokeAsync(notification))" />
+        <NotificationComponent Notification="@notification"
+            OnClick="@(() => OnNotificationSelected.InvokeAsync(notification))" />
     }
 </MudStack>
 

@@ -5,26 +5,28 @@
 <MudCard @attributes="AdditionalAttributes" Class="cursor-pointer" @onclick="HandleClick">
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;" StretchItems="StretchItems.Middle">
-            <MudIcon Icon="@(GetSeverityIcon())" Color="GetSeverityColor()" Size="Size.Large" />
+            <MudIcon Icon="@(Notification.Severity.Icon())" Color="Notification.Severity.Color()" Size="Size.Large" />
             <MudStack Spacing="0" Style="min-width: 0">
-                @if (Title != null || Title != string.Empty)
+                @if (Notification.Title != null || Notification.Title != string.Empty)
                 {
-                    <MudText Typo="Typo.h6" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@Title
+                    <MudText Typo="Typo.h6" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        @Notification.Title
                     </MudText>
                 }
 
-                @if (Message != null || Message != string.Empty)
+                @if (Notification.Message != null || Notification.Message != string.Empty)
                 {
                     <MudText Typo="Typo.body1" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        @Message</MudText>
+                        @Notification.Message</MudText>
                 }
             </MudStack>
             <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween"
                 Style="height: 100%; align-self: stretch;" Spacing="1">
-                <MudText Typo="Typo.caption" Align="Align.End">@(TimeStamp.ToRelativeDateString())</MudText>
-                @if (!IsRead)
+                <MudText Typo="Typo.caption" Align="Align.End">@(Notification.CreatedAt.ToRelativeDateString())
+                </MudText>
+                @if (!Notification.IsRead)
                 {
-                    <MudIcon Icon="@CircleIcon" Color="Color.Info" Size="Size.Small" />
+                    <MudIcon Icon="@NotificationIcon" Color="Color.Info" Size="Size.Small" />
                 }
             </MudStack>
         </MudStack>
