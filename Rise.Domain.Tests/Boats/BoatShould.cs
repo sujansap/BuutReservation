@@ -33,7 +33,24 @@ namespace Rise.Domain.Tests.Boats
                 .WithPersonalName(personalName!)
                 .Build();
             };
-            act.ShouldThrow<ArgumentException>();
+            act.ShouldThrow<ArgumentException>()
+            .ParamName.ShouldBe("PersonalName");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("   ")]
+        [InlineData("")]
+        public void NotBeChangedWithInvalidPersonalName(string? personalName)
+        {
+            Action act = () =>
+            {
+                Boat boat = new BoatBuilder()
+                .Build();
+                boat.PersonalName = personalName!;
+            };
+            act.ShouldThrow<ArgumentException>()
+            .ParamName.ShouldBe("PersonalName");
         }
     }
 }

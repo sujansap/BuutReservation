@@ -13,7 +13,7 @@ namespace Rise.Domain.Boats
         public required string PersonalName
         {
             get => _personalName;
-            set => _personalName = Guard.Against.NullOrWhiteSpace(value).Trim();
+            set => _personalName = Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName)).Trim();
         }
 
         public ICollection<IReservation> Reservations { get; } = [];
