@@ -16,7 +16,7 @@ public class TimeSlot : Entity, ITimeSlot
         get => _date;
         set
         {
-            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, 9999, 
+            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, DateTime.Now.Year +100, 
                 "TimeSlot date must be after year 2000.");
 
             if (CruisePeriod != null)

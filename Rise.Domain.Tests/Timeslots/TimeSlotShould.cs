@@ -200,7 +200,7 @@ namespace Rise.Domain.Tests.Timeslots
 
         [Theory]
         [InlineData(1999, 1, 1)] // Year before 2000
-        [InlineData(10000, 1, 1)] // Year after 9999
+        [InlineData(2125, 1, 1)] // Year after more than 100 years to-date.
         public void NotBeCreatedWithDateOutsideValidYearRange(int year, int month, int day)
         {
             Action act = () =>
