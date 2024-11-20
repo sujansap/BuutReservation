@@ -9,7 +9,7 @@ namespace Rise.Domain.Reservations
     {
         public readonly static int MinDaysBetweenReservation = 2;
         public int BoatId { get; set; }
-        public required IBoat Boat { get; set; }
+        public required Boat Boat { get; set; }
 
         public int TimeSlotId { get; set; }
         public required TimeSlot TimeSlot { get; set; }

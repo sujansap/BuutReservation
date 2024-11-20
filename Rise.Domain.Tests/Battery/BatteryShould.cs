@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
+using Rise.Domain.Tests.TestUtilities;
 using Rise.Domain.Users;
 using Shouldly;
 
@@ -15,13 +16,13 @@ public class BatteryShould
 
     {
         
-        var mockBoat = Substitute.For<IBoat>();
+        Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
 
         var battery = new Battery
         {
             Type = ValidBatteryType,
-            Boat = mockBoat,
+            Boat = boat,
             Mentor = mockMentor
         };
 
@@ -36,7 +37,7 @@ public class BatteryShould
     public void NotBeCreated_WithInvalidType(string? invalidType)
     {
         
-        var mockBoat = Substitute.For<IBoat>();
+        Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
 
         
@@ -45,7 +46,7 @@ public class BatteryShould
             var battery = new Battery
             {
                 Type = invalidType!,
-                Boat = mockBoat,
+                Boat = boat,
                 Mentor = mockMentor
             };
         };
@@ -61,13 +62,13 @@ public class BatteryShould
     public void SetAndRetrieve_BoatIdAndMentorId()
     {
         
-        var mockBoat = Substitute.For<IBoat>();
+        Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
 
         var battery = new Battery
         {
             Type = ValidBatteryType,
-            Boat = mockBoat,
+            Boat = boat,
             Mentor = mockMentor,
             BoatId = 1,
             MentorId = 2
@@ -82,14 +83,14 @@ public class BatteryShould
     public void Initialize_ReservationsCollection_WhenCreated()
     {
         
-        var mockBoat = Substitute.For<IBoat>();
+        Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
         var mockReservation = Substitute.For<IReservation>();
 
         var battery = new Battery
         {
             Type = ValidBatteryType,
-            Boat = mockBoat,
+            Boat = boat,
             Mentor = mockMentor
         };
 

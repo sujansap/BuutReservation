@@ -16,7 +16,7 @@ namespace Rise.Domain.Boats
         }
 
         public int BoatId { get; set; }
-        public IBoat Boat { get; set; }
+        public Boat Boat { get; set; }
 
         public int MentorId { get; set; }
         public IUser Mentor { get; set; }

@@ -7,7 +7,7 @@ namespace Rise.Domain.Reservations
     public interface IReservation : IEntity
     {
         public int BoatId { get; set; }
-        public IBoat Boat { get; set; }
+        public Boat Boat { get; set; }
 
         public int TimeSlotId { get; set; }
         public TimeSlot TimeSlot { get; set; }
