@@ -16,8 +16,6 @@ namespace Rise.Domain.Boats
             set => _type = Guard.Against.NullOrWhiteSpace(value, nameof(Type), "Battery type cannot be null or empty");
         }
 
-        // TODO remove boat id
-        public int BoatId { get; set; }
         public required Boat Boat { get; set; }
 
         // TODO remove mentor id
