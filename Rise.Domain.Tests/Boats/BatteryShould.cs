@@ -1,5 +1,4 @@
-﻿using NSubstitute;
-using Rise.Domain.Boats;
+﻿using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
 using Rise.Domain.Tests.TestUtilities;
 using Rise.Domain.Users;
@@ -9,27 +8,17 @@ namespace Rise.Domain.Tests.Boats;
 
 public class BatteryShould
 {
-    public const string ValidBatteryType = "Lithium-Ion";
-
     [Fact]
-    public void BeCreated_WithValidType()
-
+    public void BeCreated()
     {
-        // TODO forgot to make the builder...
-        Boat boat = new BoatBuilder().Build();
-        User mentor = new UserBuilder().Build();
+        Battery battery = new BatteryBuilder().Build();
 
-        var battery = new Battery
-        {
-            Type = ValidBatteryType,
-            Boat = boat,
-            Mentor = mentor
-        };
-
-
-        battery.Type.ShouldBe(ValidBatteryType);
+        battery.Type.ShouldBe(BatteryBuilder.ValidBatteryType);
+        battery.Boat.ShouldBe(BatteryBuilder.ValidBoat);
+        battery.Mentor.ShouldBe(BatteryBuilder.ValidMentor);
         battery.Reservations.ShouldBeEmpty();
     }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -37,68 +26,28 @@ public class BatteryShould
     public void NotBeCreated_WithInvalidType(string? invalidType)
     {
 
-        Boat boat = new BoatBuilder().Build();
-        User mentor = new UserBuilder().Build();
-
-
         Action act = () =>
         {
-            var battery = new Battery
-            {
-                Type = invalidType!,
-                Boat = boat,
-                Mentor = mentor
-            };
+            Battery battery = new BatteryBuilder()
+            .WithBatteryType(invalidType!)
+            .Build();
         };
 
 
-        act.ShouldThrow<ArgumentException>();
-    }
-
-    [Fact]
-
-
-
-    public void SetAndRetrieve_BoatIdAndMentorId()
-    {
-
-        Boat boat = new BoatBuilder().Build();
-        User mentor = new UserBuilder().Build();
-
-        var battery = new Battery
-        {
-            Type = ValidBatteryType,
-            Boat = boat,
-            Mentor = mentor,
-            BoatId = 1,
-            MentorId = 2
-        };
-
-
-        battery.BoatId.ShouldBe(1);
-        battery.MentorId.ShouldBe(2);
+        act.ShouldThrow<ArgumentException>()
+            .ParamName.ShouldBe("Type");
     }
 
     [Fact]
     public void Initialize_ReservationsCollection_WhenCreated()
     {
+        Battery battery = new BatteryBuilder().Build();
 
-        Boat boat = new BoatBuilder().Build();
-        User mentor = new UserBuilder().Build();
-
-        var battery = new Battery
-        {
-            Type = ValidBatteryType,
-            Boat = boat,
-            Mentor = mentor
-        };
-
+        battery.Reservations.ShouldBeEmpty();
 
         Reservation reservation = new ReservationBuilder().Build();
         battery.Reservations.Add(reservation);
 
-
-        battery.Reservations.ShouldNotBeEmpty();
         battery.Reservations.Count.ShouldBe(1);
         battery.Reservations.ShouldContain(reservation);
     }

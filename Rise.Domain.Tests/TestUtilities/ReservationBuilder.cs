@@ -7,14 +7,12 @@ namespace Rise.Domain.Tests.TestUtilities
 {
     public class ReservationBuilder
     {
-        // TODO valid boats en stuff
         public static readonly Boat ValidBoat = new BoatBuilder().Build();
-        private Boat boat = ValidBoat;
-
         public static readonly TimeSlot ValidTimeSlot = new TimeSlotBuilder().Build();
-        private TimeSlot timeSlot = ValidTimeSlot;
-
         public static readonly User ValidUser = new UserBuilder().Build();
+
+        private TimeSlot timeSlot = ValidTimeSlot;
+        private Boat boat = ValidBoat;
         private User user = ValidUser;
 
         public ReservationBuilder WithBoat(Boat boat)
