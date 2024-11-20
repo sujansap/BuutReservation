@@ -1,9 +1,7 @@
 using Rise.Server.Tests.Fixtures;
 using Shouldly;
-using Rise.Shared.TimeSlots;
 using System.Net.Http.Json;
 using System.Net;
-using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
@@ -27,6 +25,7 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.Data.ShouldAllBe(r => r.Date >= DateOnly.FromDateTime(DateTime.Now));
         }
 
+        // baken zelf de range af van de reservations van een maand geleden + 5
         [Fact]
         public async Task GET_CurrentUser_PastReservations_WithNoParameters_FirstPage_ExpectOk_5OrLessReservations()
         {
@@ -35,13 +34,47 @@ namespace Rise.Server.Tests.Controllers
 
             var reservationsPage = await response.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
             reservationsPage.ShouldNotBeNull();
-            // no data to be tested against
-            // reservationsPage.Data.ShouldNotBeEmpty();
-            // reservationsPage.Data.Count().ShouldBeLessThanOrEqualTo(5);
-            // reservationsPage.IsFirstPage.ShouldBeTrue();
-            // reservationsPage.PreviousId.ShouldBeNull();
-            // reservationsPage.NextId.ShouldNotBeNull();
-            // reservationsPage.Data.ShouldAllBe(r => r.Date < DateOnly.FromDateTime(DateTime.Now));
+            reservationsPage.Data.ShouldNotBeEmpty();
+            reservationsPage.Data.Count().ShouldBeLessThanOrEqualTo(5);
+            reservationsPage.IsFirstPage.ShouldBeTrue();
+            reservationsPage.PreviousId.ShouldBeNull();
+            reservationsPage.NextId.ShouldNotBeNull();
+
+            // Additional checks for past reservations
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var oneMonthAgo = today.AddMonths(-1);
+
+            // Verify all returned reservations are from the past
+            reservationsPage.Data.ShouldAllBe(r => r.Date < today);
+
+            reservationsPage.Data.ShouldAllBe(r => r.Date >= oneMonthAgo.AddDays(5));
+        }
+
+        [Fact]
+        public async Task GET_CurrentUser_PastReservations_NextPage_ExpectOk_5OrLessReservations()
+        {
+            var firstResponse = await _client.GetAsync("me?getPast=true");
+            firstResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            var firstPage = await firstResponse.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
+            firstPage.ShouldNotBeNull();
+            firstPage.NextId.ShouldNotBeNull();
+
+            var nextResponse = await _client.GetAsync($"me?getPast=true&cursor={firstPage.NextId}&isNextPage=true");
+            nextResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var nextPage = await nextResponse.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var oneMonthAgo = today.AddMonths(-1);
+            nextPage.ShouldNotBeNull();
+            nextPage.Data.ShouldNotBeEmpty();
+            nextPage.Data.Count().ShouldBeLessThanOrEqualTo(5);
+            nextPage.IsFirstPage.ShouldBeFalse();
+            nextPage.PreviousId.ShouldNotBeNull();
+            nextPage.Data.ShouldAllBe(r => r.Date < DateOnly.FromDateTime(DateTime.Now));
+
+            nextPage.Data.First().Id.ShouldNotBe(firstPage.Data.First().Id);
+            //maand geleden + 5 + 1 tot een maand geleden + 11 
+            nextPage.Data.ShouldAllBe(r => r.Date >= oneMonthAgo.AddDays(5).AddDays(1) && r.Date <= oneMonthAgo.AddDays(11));
         }
 
         [Theory]
@@ -153,7 +186,7 @@ namespace Rise.Server.Tests.Controllers
         {
             var request = new CreateReservationDto
             {
-                TimeSlotId = 50
+                TimeSlotId = 1
             };
 
             var response = await _client.PostAsJsonAsync("", request);
