@@ -8,7 +8,7 @@ namespace Rise.Client.Notifications.Components
     public partial class NotificationsListComponent
     {
         [Parameter, EditorRequired]
-        public required NotificationDto[] Notifications { get; set; }
+        public required IEnumerable<NotificationDto> Notifications { get; set; }
 
         [Parameter]
         public EventCallback<NotificationDto> OnNotificationSelected { get; set; }
