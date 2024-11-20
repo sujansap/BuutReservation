@@ -4,6 +4,7 @@ using Rise.Domain.Users;
 using Rise.Domain.Reservations;
 using Rise.Domain.Boats;
 using Rise.Domain.Timeslots;
+using Rise.Domain.Notifications;
 
 namespace Rise.Persistence;
 
@@ -19,6 +20,7 @@ public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<Battery> Batteries => Set<Battery>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

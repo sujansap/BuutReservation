@@ -22,5 +22,6 @@ public class Seeder
         new BatterySeeder(dbContext).Seed();
 
         new ReservationSeeder(dbContext).Seed();
+        new NotificationSeeder(dbContext).Seed();
     }
 }
