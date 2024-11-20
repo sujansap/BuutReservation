@@ -1,9 +1,15 @@
 ﻿@using Rise.Shared.Notifications;
 <MudStack Class="notifications-list" Spacing="2">
-    @foreach (var notification in Notifications)
+    @if (Notifications != null && Notifications.Any())
     {
-        <NotificationComponent Notification="@notification"
-            OnClick="@(() => OnNotificationSelected.InvokeAsync(notification))" />
+        @foreach (var notification in Notifications)
+        {
+            <NotificationComponent Notification="notification" />
+        }
+    }
+    else
+    {
+        <MudText Typo="Typo.body1" Color="Color.Inherit">No notifications</MudText>
     }
 </MudStack>
 
