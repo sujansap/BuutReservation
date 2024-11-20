@@ -46,26 +46,36 @@ namespace Rise.Server.Tests.Controllers
 
             // Verify all returned reservations are from the past
             reservationsPage.Data.ShouldAllBe(r => r.Date < today);
-
-            reservationsPage.Data.ShouldAllBe(r => r.Date >= oneMonthAgo.AddDays(5));
+    // start van 2 dagen geleden tot 7 dagen geleden
+            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-7) && r.Date <= today.AddDays(-2));
         }
 
         [Fact]
         public async Task GET_CurrentUser_PastReservations_NextPage_ExpectOk_5OrLessReservations()
         {
+            // Get first page
             var firstResponse = await _client.GetAsync("me?getPast=true");
             firstResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
             var firstPage = await firstResponse.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
             firstPage.ShouldNotBeNull();
             firstPage.NextId.ShouldNotBeNull();
 
+            // Store the last ID from first page to verify cursor implementation
+            var lastIdFromFirstPage = firstPage.Data.Last().Id;
+            
+            // Get next page using cursor
             var nextResponse = await _client.GetAsync($"me?getPast=true&cursor={firstPage.NextId}&isNextPage=true");
             nextResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
             var nextPage = await nextResponse.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
+            nextPage.ShouldNotBeNull();
+            
+            // de eerste van de lijst moet de cursor zijn van de vorige pagina
+            nextPage.PreviousId.ShouldNotBe(lastIdFromFirstPage);  // Previous cursor should point to last item of first page
+            nextPage.Data.First().Id.ShouldBeLessThan(lastIdFromFirstPage);  // Items should be ordered by ID descending
+            
             var today = DateOnly.FromDateTime(DateTime.Now);
             var oneMonthAgo = today.AddMonths(-1);
-            nextPage.ShouldNotBeNull();
             nextPage.Data.ShouldNotBeEmpty();
             nextPage.Data.Count().ShouldBeLessThanOrEqualTo(5);
             nextPage.IsFirstPage.ShouldBeFalse();
@@ -73,8 +83,11 @@ namespace Rise.Server.Tests.Controllers
             nextPage.Data.ShouldAllBe(r => r.Date < DateOnly.FromDateTime(DateTime.Now));
 
             nextPage.Data.First().Id.ShouldNotBe(firstPage.Data.First().Id);
-            //maand geleden + 5 + 1 tot een maand geleden + 11 
-            nextPage.Data.ShouldAllBe(r => r.Date >= oneMonthAgo.AddDays(5).AddDays(1) && r.Date <= oneMonthAgo.AddDays(11));
+            // van 8 dagen geleden tot 13 dagen geleden
+            // moet de cursor meegeven van de pagina
+            nextPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-11) && r.Date <= today.AddDays(-6),
+                customMessage: $"Expected dates between {today.AddDays(-13)} and {today.AddDays(-8)}. " +
+                $"Actual dates: {string.Join(", ", nextPage.Data.Select(r => r.Date))}");
         }
 
         [Theory]
@@ -186,7 +199,7 @@ namespace Rise.Server.Tests.Controllers
         {
             var request = new CreateReservationDto
             {
-                TimeSlotId = 1
+                TimeSlotId = 50
             };
 
             var response = await _client.PostAsJsonAsync("", request);
