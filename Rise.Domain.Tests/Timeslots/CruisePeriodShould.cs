@@ -1,27 +1,19 @@
-using System;
-using System.Collections.Generic;
 using Rise.Domain.Timeslots;
+using Rise.Domain.Tests.TestUtilities;
 using Shouldly;
-using Xunit;
 
 namespace Rise.Domain.Tests.Timeslots
 {
     public class CruisePeriodShould
     {
-        private static readonly DateTime ValidStart = DateTime.Today.AddDays(1);
-        private static readonly DateTime ValidEnd = DateTime.Today.AddDays(2);
 
         [Fact]
         public void BeCreated()
         {
-            CruisePeriod cruisePeriod = new()
-            {
-                Start = ValidStart,
-                End = ValidEnd
-            };
+            CruisePeriod cruisePeriod = new CruisePeriodBuilder().Build();
 
-            cruisePeriod.Start.ShouldBe(ValidStart);
-            cruisePeriod.End.ShouldBe(ValidEnd);
+            cruisePeriod.Start.ShouldBe(CruisePeriodBuilder.ValidStart);
+            cruisePeriod.End.ShouldBe(CruisePeriodBuilder.ValidEnd);
             cruisePeriod.TimeSlots.ShouldNotBeNull();
         }
 
@@ -33,7 +25,7 @@ namespace Rise.Domain.Tests.Timeslots
 
             Action act = () =>
             {
-                CruisePeriod cruisePeriod = new() { Start = ValidStart, End = invalidEnd };
+                CruisePeriod cruisePeriod = new CruisePeriodBuilder().WithEnd(invalidEnd).Build();
             };
 
             act.ShouldThrow<ArgumentOutOfRangeException>();
@@ -44,7 +36,7 @@ namespace Rise.Domain.Tests.Timeslots
         {
             Action act = () =>
             {
-                CruisePeriod cruisePeriod = new() { Start = ValidEnd, End = ValidStart };
+                CruisePeriod cruisePeriod = new CruisePeriodBuilder().WithStart(CruisePeriodBuilder.ValidEnd).WithEnd(CruisePeriodBuilder.ValidStart).Build();
             };
 
             act.ShouldThrow<ArgumentOutOfRangeException>();
@@ -58,7 +50,7 @@ namespace Rise.Domain.Tests.Timeslots
 
             Action act = () =>
             {
-                CruisePeriod cruisePeriod = new() { Start = ValidStart, End = ValidEnd };
+                CruisePeriod cruisePeriod = new CruisePeriodBuilder().Build();
                 cruisePeriod.End = invalidEnd;
             };
 
@@ -70,8 +62,8 @@ namespace Rise.Domain.Tests.Timeslots
         {
             Action act = () =>
             {
-                CruisePeriod cruisePeriod = new() { Start = ValidStart, End = ValidEnd };
-                cruisePeriod.End = ValidStart.AddDays(-1);
+                CruisePeriod cruisePeriod = new CruisePeriodBuilder().Build();
+                cruisePeriod.End = CruisePeriodBuilder.ValidStart.AddDays(-1);
             };
 
             act.ShouldThrow<ArgumentOutOfRangeException>();

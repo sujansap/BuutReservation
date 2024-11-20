@@ -1,7 +1,7 @@
 
 
 namespace Rise.Domain.Timeslots;
-public class CruisePeriod : Entity, ICruisePeriod
+public class CruisePeriod : Entity
 {
 
     private DateTime _start;
@@ -32,5 +32,6 @@ public class CruisePeriod : Entity, ICruisePeriod
     }
 
 
-    public ICollection<ITimeSlot> TimeSlots { get; set; } = [];
+    // TODO protect timeslot list
+    public ICollection<TimeSlot> TimeSlots { get; set; } = [];
 }

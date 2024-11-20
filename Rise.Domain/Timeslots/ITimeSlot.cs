@@ -18,7 +18,7 @@ namespace Rise.Domain.Timeslots
         public TimeOnly End { get; set; }
 
         public int CruisePeriodId { get; set; }
-        public ICruisePeriod CruisePeriod { get; set; }
+        public CruisePeriod CruisePeriod { get; set; }
 
         public ICollection<IReservation> Reservations
         {
