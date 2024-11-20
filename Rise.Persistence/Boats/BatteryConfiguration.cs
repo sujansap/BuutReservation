@@ -20,8 +20,7 @@ namespace Rise.Persistence.Boats
             .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Mentor)
-            .WithOne()
-            .HasForeignKey<Battery>(x => x.MentorId)
+            .WithMany(u => u.ResponsibleBatteries)
             .OnDelete(DeleteBehavior.SetNull);
         }
     }

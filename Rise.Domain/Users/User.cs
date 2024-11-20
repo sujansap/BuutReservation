@@ -1,5 +1,6 @@
 // using Rise.Domain.Reservations;
 
+using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Users
@@ -18,5 +19,6 @@ namespace Rise.Domain.Users
         }
 
         public ICollection<Reservation> Reservations { get; } = [];
+        public ICollection<Battery> ResponsibleBatteries { get; } = [];
     }
 }

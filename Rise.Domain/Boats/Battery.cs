@@ -18,8 +18,6 @@ namespace Rise.Domain.Boats
 
         public required Boat Boat { get; set; }
 
-        // TODO remove mentor id
-        public int MentorId { get; set; }
         public required User Mentor { get; set; }
 
     }
