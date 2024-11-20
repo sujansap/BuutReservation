@@ -16,22 +16,16 @@ public class TimeSlot : Entity, ITimeSlot
         get => _date;
         set
         {
-            if (value.Year < 2000)
-            {
-                throw new ArgumentOutOfRangeException(nameof(Date), 
-                    "TimeSlot date must be after year 1900.");
-            }
+            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, 9999, 
+                "TimeSlot date must be after year 2000.");
 
             if (CruisePeriod != null)
             {
                 DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);
                 DateOnly endDate = DateOnly.FromDateTime(CruisePeriod.End);
                 
-                if (value < startDate || value > endDate)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(Date), 
-                        "TimeSlot date must be within the CruisePeriod's date range.");
-                }
+                Guard.Against.OutOfRange(value, nameof(Date), startDate, endDate,
+                    "TimeSlot date must be within the CruisePeriod's date range.");
             }
             _date = value;
         }
@@ -53,11 +47,11 @@ public class TimeSlot : Entity, ITimeSlot
         get => _end;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, "End time must be within a valid range.");
-            if (_start != default && value <= _start)
-            {
-                throw new ArgumentOutOfRangeException(nameof(End), "End time must be after Start time.");
-            }
+            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, 
+                "End time must be within a valid range.");
+            Guard.Against.InvalidInput(value, nameof(End), 
+                x => _start == default || x > _start,
+                "End time must be after Start time.");
             _end = value;
         }
     }
