@@ -6,4 +6,10 @@
 	<data name="NewUsers">
 		<value>GASTEN</value>
 	</data>
+	<data name="GuestUsers">
+		<value>GASTEN</value>
+	</data>
+	<data name="NoUsersAvailable">
+		<value>Geen gasten beschikbaar</value>
+	</data>
 </root>
