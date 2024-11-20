@@ -5,7 +5,7 @@ using Rise.Domain.Common;
 
 namespace Rise.Services.Pagination;
 
-public class OrderingExpression<TEntity, TProperty> where TEntity : IEntity
+public class OrderingExpression<TEntity, TProperty> where TEntity : Entity
 {
     public required Expression<Func<TEntity, TProperty>> OrderLambda { get; set; }
     public bool IsDescending { get; set; } = false;
