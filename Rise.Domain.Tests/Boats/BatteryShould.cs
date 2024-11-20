@@ -5,7 +5,7 @@ using Rise.Domain.Tests.TestUtilities;
 using Rise.Domain.Users;
 using Shouldly;
 
-namespace Rise.Domain.Tests;
+namespace Rise.Domain.Tests.Boats;
 
 public class BatteryShould
 {
@@ -15,7 +15,7 @@ public class BatteryShould
     public void BeCreated_WithValidType()
 
     {
-        
+
         Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
 
@@ -26,7 +26,7 @@ public class BatteryShould
             Mentor = mockMentor
         };
 
-        
+
         battery.Type.ShouldBe(ValidBatteryType);
         battery.Reservations.ShouldBeEmpty();
     }
@@ -36,11 +36,11 @@ public class BatteryShould
     [InlineData("   ")]
     public void NotBeCreated_WithInvalidType(string? invalidType)
     {
-        
+
         Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
 
-        
+
         Action act = () =>
         {
             var battery = new Battery
@@ -51,7 +51,7 @@ public class BatteryShould
             };
         };
 
-        
+
         act.ShouldThrow<ArgumentException>();
     }
 
@@ -61,7 +61,7 @@ public class BatteryShould
 
     public void SetAndRetrieve_BoatIdAndMentorId()
     {
-        
+
         Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
 
@@ -74,7 +74,7 @@ public class BatteryShould
             MentorId = 2
         };
 
-        
+
         battery.BoatId.ShouldBe(1);
         battery.MentorId.ShouldBe(2);
     }
@@ -82,7 +82,7 @@ public class BatteryShould
     [Fact]
     public void Initialize_ReservationsCollection_WhenCreated()
     {
-        
+
         Boat boat = new BoatBuilder().Build();
         var mockMentor = Substitute.For<IUser>();
         var mockReservation = Substitute.For<IReservation>();
@@ -94,10 +94,10 @@ public class BatteryShould
             Mentor = mockMentor
         };
 
-        
+
         battery.Reservations.Add(mockReservation);
 
-        
+
         battery.Reservations.ShouldNotBeEmpty();
         battery.Reservations.Count.ShouldBe(1);
         battery.Reservations.ShouldContain(mockReservation);

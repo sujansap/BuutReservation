@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rise.Domain.Boats;
@@ -20,7 +16,7 @@ namespace Rise.Persistence.Boats
             builder.Property(x => x.Type).HasMaxLength(64);
             builder.Property(x => x.BoatId);
 
-            builder.HasOne(x => (Boat) x.Boat)
+            builder.HasOne(x => x.Boat)
             .WithMany(b => b.Batteries)
             .HasForeignKey(b => b.BoatId)
             .OnDelete(DeleteBehavior.Restrict);
@@ -29,10 +25,6 @@ namespace Rise.Persistence.Boats
             .WithOne()
             .HasForeignKey<Battery>(x => x.MentorId)
             .OnDelete(DeleteBehavior.SetNull);
-
-            // TODO:
-            // Boat connectie maken met battey, domeintesten van battery, meterEnPeterRelatie doen
-            // voor hulp kijk in de code en naar de entity framework docs
         }
     }
 }
