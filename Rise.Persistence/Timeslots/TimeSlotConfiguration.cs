@@ -16,15 +16,8 @@ internal class TimeSlotConfiguration : IEntityTypeConfiguration<TimeSlot>
 
         // Configure foreign key relationship
         builder.HasOne(x => x.CruisePeriod)
-               .WithMany(x => x.TimeSlots)
-               .HasForeignKey(x => x.CruisePeriodId)
-               .OnDelete(DeleteBehavior.Cascade);
-        //    TODO verify onDelete for TimeSlotConfiguration
-
-        builder.HasOne(x => x.CruisePeriod)
-       .WithMany(x => x.TimeSlots)
-       .HasForeignKey(x => x.CruisePeriodId)
-       .OnDelete(DeleteBehavior.Cascade);
+            .WithMany(x => x.TimeSlots)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 

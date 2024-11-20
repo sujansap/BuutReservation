@@ -50,8 +50,6 @@ public class TimeSlot : Entity
         }
     }
 
-    // TODO remove references to cruise period
-    public int CruisePeriodId { get; set; }
     public required CruisePeriod CruisePeriod { get; set; }
 
     // TODO make reservations public read only
