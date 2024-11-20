@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Abstractions;
+using Rise.Server.Tests.Utils;
 
 namespace Rise.Server.Tests.Controllers
 {
@@ -31,6 +32,8 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_ValidDateRange_GivesDates()
         {
+            await LoginAsync(TestLoginRole.Guest);
+
             int daysDifference = 7;
             DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
             DateOnly endDate = startDate.AddDays(daysDifference);
@@ -47,6 +50,8 @@ namespace Rise.Server.Tests.Controllers
                 // new(startDate.AddDays(6), true, false, false), failed due to new seed data
                 new(startDate.AddDays(7), false, true, true),
             ]);
+
+            Logout();
         }
 
         [Theory]
@@ -55,6 +60,8 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(false, true)]
         public async Task GET_NoDateRange_GetsDefaultDate(bool startDate, bool endDate)
         {
+            await LoginAsync(TestLoginRole.Guest);
+
             DateOnly defaultDay = DateOnly.MinValue;
             string uri = MakeTimeSlotRangeUrl(startDate ? defaultDay : null, endDate ? defaultDay : null);
             TimeSlotRangeInfoDto response = (await _client.GetFromJsonAsync<TimeSlotRangeInfoDto>(uri))!;
@@ -62,11 +69,15 @@ namespace Rise.Server.Tests.Controllers
             response.Days.ShouldBe([
                 new(defaultDay, false, false),
             ]);
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_InvalidStartDate_Expects404()
         {
+            await LoginAsync(TestLoginRole.Guest);
+
             var response = await _client.GetAsync($"range?startDate=&endDate={DateOnlyToUniversalDate(DateOnly.MaxValue)}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
@@ -75,11 +86,15 @@ namespace Rise.Server.Tests.Controllers
             result.Title.ShouldBe(defaultValidationErrorTitle);
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("startDate");
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_InvalidEndDate_Expects404()
         {
+            await LoginAsync(TestLoginRole.Guest);
+
             var response = await _client.GetAsync($"range?startDate={DateOnlyToUniversalDate(DateOnly.MinValue)}&endDate=");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
@@ -88,11 +103,15 @@ namespace Rise.Server.Tests.Controllers
             result.Title.ShouldBe(defaultValidationErrorTitle);
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("endDate");
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_EndDateBeforeStartDate_Expects404()
         {
+            await LoginAsync(TestLoginRole.Guest);
+
             var response = await _client.GetAsync(MakeTimeSlotRangeUrl(DateOnly.MaxValue, DateOnly.MinValue));
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
@@ -101,11 +120,14 @@ namespace Rise.Server.Tests.Controllers
             result.Title.ShouldBe(defaultValidationErrorTitle);
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("DateRange");
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_TimeSlotsByDate_GivesTimeSlots()
         {
+            await LoginAsync(TestLoginRole.Guest);
 
             DateTime threeDaysInAdvance = DateTime.Now.AddDays(3);
             int year = threeDaysInAdvance.Year;
@@ -122,6 +144,8 @@ namespace Rise.Server.Tests.Controllers
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("10:00:00")) && ts.End.Equals(TimeOnly.Parse("11:30:00")));
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("13:00:00")) && ts.End.Equals(TimeOnly.Parse("14:00:00")));
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("16:30:00")) && ts.End.Equals(TimeOnly.Parse("18:45:00")));
+
+            Logout();
         }
 
 
@@ -130,6 +154,7 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(8)]
         public async Task GET_TimeSlotsByDate_GivesNoTimeSlots(int daysFromNow)
         {
+            await LoginAsync(TestLoginRole.Guest);
 
             DateTime daysInAdvance = DateTime.Now.AddDays(daysFromNow);
             int year = daysInAdvance.Year;
@@ -142,11 +167,14 @@ namespace Rise.Server.Tests.Controllers
             // Assert
             response.ShouldBeEmpty();
             response.Count.ShouldBe(0);
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_TimeSlotsByDate_InvalidDate_ReturnsBadRequest()
         {
+            await LoginAsync(TestLoginRole.Guest);
 
             DateTime tomorrow = DateTime.Now.AddDays(1);
             int year = tomorrow.Year;
@@ -156,6 +184,8 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.GetAsync($"{year}/{month}/{day}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
     }
 }
