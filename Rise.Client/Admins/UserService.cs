@@ -15,11 +15,7 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<UserDto>> GetGuestUsers()
     {
-
-        Console.WriteLine("Getting guest users");
         var result = await _httpClient.GetFromJsonAsync<IEnumerable<UserDto>>("guests");
-        Console.WriteLine("Users are here" + result);
-        Console.WriteLine("Got guest users");
         return result ?? Enumerable.Empty<UserDto>();
     }
 }

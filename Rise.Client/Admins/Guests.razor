@@ -23,7 +23,7 @@
         {
             <MudTable Elevation="0" Striped="true" Items="@Users" Dense="true" Hover="true" data-testid="users-table">
                 <HeaderContent>
-                    <MudTh>@Localizer["FamilyName"]</MudTh>
+                    <MudTh data-testid="users-list-familyName">@Localizer["FamilyName"]</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <GuestUserRow User="@context" />
