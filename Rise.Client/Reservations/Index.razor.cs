@@ -7,6 +7,9 @@ namespace Rise.Client.Reservations
 {
     public partial class Index : ComponentBase
     {
+        [Parameter]
+        [SupplyParameterFromQuery]
+        public bool Past { get; set; }
 
         // TODO refactor tab tracer to tabs components
         protected override void OnParametersSet()

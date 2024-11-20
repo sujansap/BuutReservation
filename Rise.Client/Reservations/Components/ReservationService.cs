@@ -49,7 +49,6 @@ namespace Rise.Client.Services
                 ?? new ItemsPageDto<ReservationDto> { Data = [] };
 
             return result;
-
         }
     }
 }
