@@ -2,7 +2,7 @@ using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Timeslots;
 
-public class TimeSlot : Entity, ITimeSlot
+public class TimeSlot : Entity
 {
     private TimeOnly _start;
     private TimeOnly _end;
@@ -35,16 +35,18 @@ public class TimeSlot : Entity, ITimeSlot
         set
         {
             Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, "End time must be within a valid range.");
-            if (_start != default && value <= _start)
+            if (_start != default)
             {
-                throw new ArgumentOutOfRangeException(nameof(End), "End time must be after Start time.");
+                Guard.Against.OutOfRange(value, nameof(End), _start.AddMinutes(30), TimeOnly.MaxValue, "End time must be after Start time.");
             }
             _end = value;
         }
     }
 
+    // TODO remove references to cruise period
     public int CruisePeriodId { get; set; }
     public CruisePeriod CruisePeriod { get; set; } = default!;
 
-    public ICollection<IReservation> Reservations { get; } = [];
+    // TODO make reservations public read only
+    public IList<Reservation> Reservations { get; } = [];
 }

@@ -1,11 +1,10 @@
 using Shouldly;
-using Xunit;
 using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NSubstitute;
 using Rise.Domain.Users;
 using Rise.Domain.Timeslots;
+using Rise.Domain.Tests.TestUtilities;
 
 namespace Rise.Domain.Tests.Timeslots
 {
@@ -18,7 +17,7 @@ namespace Rise.Domain.Tests.Timeslots
             IBoat mockBoat = Substitute.For<IBoat>();
 
             // Mock Time slot
-            ITimeSlot mockTimeSlot = Substitute.For<ITimeSlot>();
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
 
             IUser mockUser = Substitute.For<IUser>();
 
@@ -26,12 +25,12 @@ namespace Rise.Domain.Tests.Timeslots
             {
                 User = mockUser,
                 Boat = mockBoat,
-                TimeSlot = mockTimeSlot,
+                TimeSlot = timeSlot,
             };
 
             // Act & Assert
             reservation.Boat.ShouldBe(mockBoat);
-            reservation.TimeSlot.ShouldBe(mockTimeSlot);
+            reservation.TimeSlot.ShouldBe(timeSlot);
             reservation.User.ShouldBe(mockUser);
         }
 
@@ -39,14 +38,14 @@ namespace Rise.Domain.Tests.Timeslots
         public void CanCreateReservationWithValidData()
         {
             IBoat mockBoat = Substitute.For<IBoat>();
-            ITimeSlot mockTimeSlot = Substitute.For<ITimeSlot>();
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
             IUser mockUser = Substitute.For<IUser>();
 
             var reservation = new Reservation
             {
                 Boat = mockBoat,
                 BoatId = 1,
-                TimeSlot = mockTimeSlot,
+                TimeSlot = timeSlot,
                 TimeSlotId = 2,
                 User = mockUser,
                 UserId = 3
@@ -61,14 +60,14 @@ namespace Rise.Domain.Tests.Timeslots
         public void CannotCreateReservationIfBoatIsAlreadyReservedForTimeSlot()
         {
             IBoat mockBoat = Substitute.For<IBoat>();
-            ITimeSlot mockTimeSlot = Substitute.For<ITimeSlot>();
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
             IUser mockUser = Substitute.For<IUser>();
 
             var reservation1 = new Reservation
             {
                 Boat = mockBoat,
                 BoatId = 1,
-                TimeSlot = mockTimeSlot,
+                TimeSlot = timeSlot,
                 TimeSlotId = 2,
                 User = mockUser,
                 UserId = 3
@@ -78,7 +77,7 @@ namespace Rise.Domain.Tests.Timeslots
             {
                 Boat = mockBoat,
                 BoatId = 1,
-                TimeSlot = mockTimeSlot,
+                TimeSlot = timeSlot,
                 TimeSlotId = 2,
                 User = mockUser,
                 UserId = 4
@@ -93,23 +92,25 @@ namespace Rise.Domain.Tests.Timeslots
             IBoat mockBoat = Substitute.For<IBoat>();
             IUser mockUser = Substitute.For<IUser>();
 
-            ITimeSlot mockTimeSlot1 = Substitute.For<ITimeSlot>();
-            mockTimeSlot1.Date.Returns(DateOnly.FromDateTime(DateTime.Now));
+            TimeSlot timeSlot1 = new TimeSlotBuilder()
+                .WithDate(DateOnly.FromDateTime(DateTime.Now))
+                .Build();
 
-            ITimeSlot mockTimeSlot2 = Substitute.For<ITimeSlot>();
-            mockTimeSlot2.Date.Returns(DateOnly.FromDateTime(DateTime.Now.AddDays(1)));
+            TimeSlot timeSlot2 = new TimeSlotBuilder()
+                .WithDate(DateOnly.FromDateTime(DateTime.Now.AddDays(1)))
+                .Build();
 
             var reservation1 = new Reservation
             {
                 Boat = mockBoat,
-                TimeSlot = mockTimeSlot1,
+                TimeSlot = timeSlot1,
                 User = mockUser
             };
 
             var reservation2 = new Reservation
             {
                 Boat = mockBoat,
-                TimeSlot = mockTimeSlot2,
+                TimeSlot = timeSlot2,
                 User = mockUser
             };
 

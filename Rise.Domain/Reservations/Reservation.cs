@@ -12,7 +12,7 @@ namespace Rise.Domain.Reservations
         public required IBoat Boat { get; set; }
 
         public int TimeSlotId { get; set; }
-        public required ITimeSlot TimeSlot { get; set; }
+        public required TimeSlot TimeSlot { get; set; }
 
         public int UserId { get; set; }
         public required IUser User { get; set; }
