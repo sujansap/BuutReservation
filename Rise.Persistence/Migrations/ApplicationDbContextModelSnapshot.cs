@@ -22,6 +22,50 @@ namespace Rise.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Rise.Domain.Boats.Battery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BoatId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("MentorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoatId");
+
+                    b.HasIndex("MentorId")
+                        .IsUnique();
+
+                    b.ToTable("Battery", (string)null);
+                });
+
             modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
                 {
                     b.Property<int>("Id")
@@ -91,11 +135,13 @@ namespace Rise.Persistence.Migrations
 
                     b.HasIndex("TimeSlotId");
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("BoatId", "TimeSlotId")
                         .IsUnique()
                         .HasDatabaseName("IX_Unique_Boat_TimeSlot");
+
+                    b.HasIndex("UserId", "TimeSlotId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Unique_User_TimeSlot");
 
                     b.ToTable("Reservation", (string)null);
                 });
@@ -197,6 +243,25 @@ namespace Rise.Persistence.Migrations
                     b.ToTable("User", (string)null);
                 });
 
+            modelBuilder.Entity("Rise.Domain.Boats.Battery", b =>
+                {
+                    b.HasOne("Rise.Domain.Boats.Boat", "Boat")
+                        .WithMany("Batteries")
+                        .HasForeignKey("BoatId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Rise.Domain.Users.User", "Mentor")
+                        .WithOne()
+                        .HasForeignKey("Rise.Domain.Boats.Battery", "MentorId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.Navigation("Boat");
+
+                    b.Navigation("Mentor");
+                });
+
             modelBuilder.Entity("Rise.Domain.Reservations.Reservation", b =>
                 {
                     b.HasOne("Rise.Domain.Boats.Boat", "Boat")
@@ -237,6 +302,8 @@ namespace Rise.Persistence.Migrations
 
             modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
                 {
+                    b.Navigation("Batteries");
+
                     b.Navigation("Reservations");
                 });
 

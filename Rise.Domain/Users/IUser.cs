@@ -20,6 +20,8 @@ namespace Rise.Domain.Users
             get;
         }
 
+
+
         // TODO add field + property givenName (only in authentication!)
         // TODO add field + property email (only in authentication!)
         // TODO add field + property mobilePhone (only in authentication!)

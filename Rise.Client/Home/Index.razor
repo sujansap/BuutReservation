@@ -3,10 +3,64 @@
 @using MudBlazor
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Layout
+@using Rise.Client.Home.Components
 @inject NavigationManager navigation
 @inject IStringLocalizer<LandingPageResource> Localizer
 
+@layout EmptyLayout
+
 <PageTitle>Home</PageTitle>
 
-<MudText Typo="Typo.h1">@Localizer["Home"]</MudText>
-<MudText Typo="Typo.body1">@Localizer["WelcomeMessage"]</MudText>
+<div
+    Style="position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; min-height: 600px;">
+    <MudImage data-testid="hero-image" Src="assets/images/home.webp" Alt="BUUT Banner" ObjectFit="ObjectFit.Cover"
+        ObjectPosition="ObjectPosition.Center" Style="width: 100%; height: 600px; filter: brightness(0.5);" />
+
+    <div
+        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; padding: 0 1rem;">
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            <MudText data-testid="hero-title" Typo="Typo.h1" Align="Align.Start" Style="color:white">
+                BUUT
+            </MudText>
+            <MudText Typo="Typo.h4" Class="mb-4" Align="Align.Start" Style="color:white">
+                Deelbootjes voor<br />
+                Muide - Meulestede - Afrikalaan
+            </MudText>
+
+            <MudButton data-testid="reservation-button" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                Href="/reservations">
+                Reserveer
+            </MudButton>
+        </MudContainer>
+    </div>
+</div>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
+    <TwoColumnSection ImageSrc="assets/images/water.webp" ImageAlt="Water view" ImageFirst="true"
+        data-testid="boats-section">
+        <ContentSection>
+            <MudText Typo="Typo.h3" Class="mb-4">DE BOTEN</MudText>
+            <MudText Typo="Typo.body1" Class="mb-6">
+                Via het Wijkbudget van Stad Gent kocht VZW Buut drie bootjes aan (type Whaly 450 classic), aangedreven
+                met een elektrische motor.
+            </MudText>
+            <MudText Typo="Typo.body1" Class="mb-6">
+                Deze 3 bootjes, Lubeck, Limba en Leith werden vernoemd naar straten in de buurt
+                Muide-Meulestee-Afrikalaan. Deze straten verwijzen naar havens. Er werd gekozen voor namen beginnend met
+                de letter L, als eerbetoon aan de overleden buurtwerker Lucien De Ridder.
+            </MudText>
+            <MudText Typo="Typo.body1" Class="mb-6">
+                De bootjes kunnen door wijkbewoners online gereserveerd worden.
+            </MudText>
+            <MudText Typo="Typo.body1" Class="mb-6">
+                Geniet van op het water van de rust en pracht van onze buurt, van aan de Meulestedebrug tot aan het
+                Keizerspark. De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
+            </MudText>
+            <div Class="d-inline-block">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/reservations">
+                    Reserveer
+                </MudButton>
+            </div>
+        </ContentSection>
+    </TwoColumnSection>
+</MudContainer>

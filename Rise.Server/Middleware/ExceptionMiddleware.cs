@@ -35,8 +35,9 @@ public class ExceptionMiddleware
         {
             EntityNotFoundException ex => new ErrorDetails(ex.Message, HttpStatusCode.NotFound),
             EntityAlreadyExistsException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
-            ReservationCreationFailedException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
+            ReservationCreationFailedException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
             NoBoatAvailableException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
+            UniqueConstraintViolationException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
             UserInvalidClaimStructureException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
 
             ApplicationException ex => new ErrorDetails(ex.Message),

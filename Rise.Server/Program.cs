@@ -11,6 +11,8 @@ using FluentValidation.AspNetCore;
 using Rise.Server.Middleware;
 using Serilog.Events;
 using Serilog;
+using Rise.Shared.Users;
+using Rise.Services.Users;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -104,6 +106,7 @@ try
 
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
+    builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
 
@@ -129,7 +132,7 @@ try
     });
     }
 
-    if (app.Environment.IsProduction() || app.Environment.IsStaging())
+    if (!(app.Environment.IsProduction() || app.Environment.IsStaging()))
         app.UseHttpsRedirection();
 
     app.UseBlazorFrameworkFiles();

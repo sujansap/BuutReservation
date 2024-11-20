@@ -98,13 +98,12 @@ namespace Rise.Services.TimeSlots
             var date = new DateOnly(year, month, day);
             var today = DateOnly.FromDateTime(DateTime.Today);
             var minReservationDate = GetMinReservationDate();
-
+            
             // Right now we don't keep the information of whether a boat is available or not
             var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
 
-
             var availableTimeSlots = await _dbContext.TimeSlots
-                .Where(ts => ts.Date == date) // Filter by the given date, we only want the time slots for that day
+                .Where(ts => ts.Date == date)
                 .Select(ts => new
                 {
                     TimeSlot = ts,
@@ -112,8 +111,8 @@ namespace Rise.Services.TimeSlots
                     IsBookedByUser = ts.Reservations.Any(r => r.UserId == userId)
                 })
                 .Where(item =>
-                    (date >= today && date <= minReservationDate && item.IsBookedByUser) || // Case 1: Date between today and minReservationDate, only booked by user (because you can't book between today and minReservationDate)
-                    (date > minReservationDate && (item.ReservationCount < amountOfAvailableBoats || item.IsBookedByUser)) // Case 2: Date >= minReservationDate, available or booked by user (because you can book from after minReservationDate onwards)
+                    (date >= today && date <= minReservationDate && item.IsBookedByUser) ||
+                    (date > minReservationDate && (item.ReservationCount < amountOfAvailableBoats || item.IsBookedByUser))
                 )
                 .Select(item => new TimeSlotDto
                 {
@@ -122,9 +121,8 @@ namespace Rise.Services.TimeSlots
                     End = item.TimeSlot.End,
                     IsBookedByUser = item.IsBookedByUser
                 })
-                .OrderBy(item => item.Start) // Order by start time
+                .OrderBy(item => item.Start)
                 .ToListAsync();
-
 
             return availableTimeSlots;
         }

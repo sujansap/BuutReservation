@@ -18,7 +18,7 @@ namespace Rise.Client.Tests.Layout
         public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix)
         {
             await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await Page.GotoAsync(startSuffix);
+            await InitNavigationToUrl(startSuffix);
             string beginUri = Page.Url;
             await Page.GetByTestId(testId).ClickAsync();
 
@@ -35,10 +35,11 @@ namespace Rise.Client.Tests.Layout
         [TestCase("nav-mobile-notifications", "notifications", "")]
         [TestCase("nav-mobile-profile", "profile", "")]
         [TestCase("nav-mobile-notifications", "notifications", "")]
+        [TestCase("nav-admin-guests", "admin", "")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await Page.GotoAsync(startSuffix);
+            await InitNavigationToUrl(startSuffix);
             string beginUri = Page.Url;
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId(testId).ClickAsync();
@@ -56,7 +57,7 @@ namespace Rise.Client.Tests.Layout
         public async Task CheckLanguageChangeDesktop()
         {
             await Page.SetViewportSizeAsync(1080, 1920);
-            await Page.GotoAsync("/");
+            await InitNavigationToUrl("/");
 
             await Page.GetByTestId("culture-selector-desktop").IsVisibleAsync();
         }
@@ -70,7 +71,7 @@ namespace Rise.Client.Tests.Layout
         public async Task CheckLanguageChangeMobile()
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await Page.GotoAsync("/");
+            await InitNavigationToUrl("/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").IsVisibleAsync();
         }
@@ -91,7 +92,7 @@ namespace Rise.Client.Tests.Layout
         public async Task ChangeLanguageBetweenLanguagesDesktop(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(1080, 1920);
-            await Page.GotoAsync("/");
+            await InitNavigationToUrl("/");
 
             await Page.GetByTestId("culture-selector-desktop").First.ClickAsync();
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
@@ -119,7 +120,7 @@ namespace Rise.Client.Tests.Layout
         public async Task ChangeLanguageBetweenLanguagesMobile(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await Page.GotoAsync("/");
+            await InitNavigationToUrl("/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").First.ClickAsync();
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
@@ -135,5 +136,19 @@ namespace Rise.Client.Tests.Layout
             (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(english);
 
         }
+
+
+        /// <summary>
+        /// Test to check if the admin dashboard is visible on the desktop version of the website.
+        /// <returns></returns>
+        [Test]
+        public async Task CheckAdminDashBoardDesktop()
+        {
+            await Page.SetViewportSizeAsync(1080, 1920);
+            await InitNavigationToUrl("/admin");
+
+            await Page.GetByTestId("nav-desktop-admin").IsVisibleAsync();
+        }
+
     }
 }

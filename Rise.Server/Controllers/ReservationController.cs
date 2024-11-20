@@ -5,6 +5,7 @@ using Rise.Server.Common.Filters;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 using FluentValidation;
+using Rise.Domain.Exceptions;
 namespace Rise.Server.Controllers
 {
     [ApiController]
@@ -92,5 +93,37 @@ namespace Rise.Server.Controllers
         }
 
 
+
+        /// <summary>
+        /// Retrieves the details of a specific reservation by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the reservation to retrieve.</param>
+        /// <returns>The details of the reservation.</returns>
+        /// <response code="200">Returns the reservation details if found.</response>
+        /// <response code="400">If the ID is invalid or missing.</response>
+        /// <response code="404">If no reservation with the specified ID is found.</response>
+        /// <response code="500">If an error occurs while retrieving the reservation details.</response>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservationDetailsDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetReservationDetails(int id)
+        {
+            try
+            {
+                var reservationDetails = await _reservationService.GetReservationDetailsAsync(id);
+                return Ok(reservationDetails);
+            }
+            catch (EntityNotFoundException)
+            {
+                _logger.LogWarning("Reservation with id {id} not found.", id);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving reservation details for id {id}", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the reservation details.");
+            }
+        }
     }
 }
+

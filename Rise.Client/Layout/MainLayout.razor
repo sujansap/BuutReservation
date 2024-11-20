@@ -1,11 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@namespace Rise.Client.Layout
+@using Rise.Client.Layout
+@inherits LayoutComponentBase
+@layout EmptyLayout
 
-<MudLayout>
-    <NavMenu />
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium" Class="py-16" Style="min-height: calc(100vh - 56px)">
-            @Body
-        </MudContainer>
-    </MudMainContent>
-    <Footer />
-</MudLayout>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="py-16" Style="min-height: calc(100vh - 56px)">
+    @Body
+</MudContainer>

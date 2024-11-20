@@ -72,4 +72,22 @@
 	<data name="ReservationSuccessfulyCreated" xml:space="preserve">
 		<value>Uw reservatie is succesvol aangemaakt</value>
 	</data>
+	<data name="UpcomingReservations" xml:space="preserve">
+		<value>Aankomende reserveringen</value>
+	</data>
+	<data name="PastReservations" xml:space="preserve">
+		<value>Eerdere reserveringen</value>
+	</data>
+	<data name="NoUpcomingReservations" xml:space="preserve">
+		<value>U heeft geen aankomende reserveringen.</value>
+	</data>
+	<data name="NoPastReservations" xml:space="preserve">
+		<value>U heeft geen eerdere reserveringen.</value>
+	</data>
+	<data name="Past" xml:space="preserve">
+		<value>Verleden</value>
+	</data>
+	<data name="Upcoming" xml:space="preserve">
+		<value>Heden</value>
+	</data>
 </root>
