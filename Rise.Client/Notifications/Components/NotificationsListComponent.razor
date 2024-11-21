@@ -1,16 +1,18 @@
 ﻿@using Rise.Shared.Notifications;
-<MudStack Class="notifications-list" Spacing="2">
-    @if (Notifications != null && Notifications.Any())
-    {
-        @foreach (var notification in Notifications)
+<span>
+    <MudStack Class="notifications-list" Spacing="2">
+        @if (Notifications != null && Notifications.Any())
         {
-            <NotificationComponent Notification="notification"
-                Class="@(SelectedNotification == notification ? "selected-notification" : " ")"
-                OnClick="@(() => OnNotificationSelected.InvokeAsync(notification))" />
+            @foreach (var notification in Notifications)
+            {
+                <NotificationComponent Notification="notification"
+                    Class="@(SelectedNotification == notification ? "selected-notification" : " ")"
+                    OnClick="@(() => OnNotificationSelected.InvokeAsync(notification))" />
+            }
         }
-    }
-    else
-    {
-        <MudText Typo="Typo.body1" Color="Color.Inherit">No notifications</MudText>
-    }
-</MudStack>
+        else
+        {
+            <MudText Typo="Typo.body1" Color="Color.Inherit">No notifications</MudText>
+        }
+    </MudStack>
+</span>
