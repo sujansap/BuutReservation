@@ -18,4 +18,10 @@ public class UserService : IUserService
         var result = await _httpClient.GetFromJsonAsync<IEnumerable<UserDto>>("guests");
         return result ?? Enumerable.Empty<UserDto>();
     }
+
+    public Task<UserDetailDto> GetUserDetails(int userId)
+    {
+        /*TODO: Implement this method*/
+        throw new NotImplementedException();
+    }
 }
