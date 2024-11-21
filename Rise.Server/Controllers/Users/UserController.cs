@@ -52,15 +52,15 @@ namespace Rise.Server.Controllers.Users
         /// <summary>
         /// Adds memeber role to a user
         /// </summary>
-        /// <param name="userId">ID of the user whome you want to make a memeber</param>
+        /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
         [HttpPost("role/member")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddUserRole([FromBody] int userId)
+        public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
         {
-            _logger.LogInformation("POST api/User/role for userId: {userId}", userId);
-            // TODO: add role to the user with the given userId using auth0 management api
+            _logger.LogInformation("POST api/User/role for userId: {userId}", request.UserId);
+            await _userService.AddMemberRole(request.UserId);
             return Ok();
         }
 
