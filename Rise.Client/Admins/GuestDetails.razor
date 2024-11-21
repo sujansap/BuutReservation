@@ -14,5 +14,5 @@
 
 <AsyncData DataFetcher="@FetchUserDetails" @bind-Data="@UserDetails" T="UserDetailDto" @ref="@AsyncDataRef"
     TestIdPrefix="user-details">
-    <MudText data-testid="user-details-page-familyname" Typo="Typo.h1">@UserDetails?.FamilyName</MudText>
+    <MudText data-testid="user-details-page-familyname" Typo="Typo.h3">@UserDetails?.FamilyName</MudText>
 </AsyncData>
