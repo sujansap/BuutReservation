@@ -3,33 +3,36 @@
 @using Rise.Client.Utils;
 @inherits ComponentBase
 
-<MudCard @attributes="AdditionalAttributes" Class="@("cursor-pointer " + Class)" @onclick="HandleClick">
-    <MudCardContent>
-        <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;" StretchItems="StretchItems.Middle">
-            <MudIcon Icon="@(Notification.Severity.Icon())" Color="Notification.Severity.Color()" Size="Size.Large" />
-            <MudStack Spacing="0" Style="min-width: 0">
-                @if (Notification.Title != null || Notification.Title != string.Empty)
-                {
-                    <MudText Typo="Typo.h6" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        @Notification.Title
-                    </MudText>
-                }
+<span>
+    <MudCard @attributes="AdditionalAttributes" Class="@("cursor-pointer " + Class)" @onclick="HandleClick">
+        <MudCardContent>
+            <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;" StretchItems="StretchItems.Middle">
+                <MudIcon Icon="@(Notification.Severity.Icon())" Color="Notification.Severity.Color()"
+                    Size="Size.Large" />
+                <MudStack Spacing="0" Style="min-width: 0">
+                    @if (Notification.Title != null || Notification.Title != string.Empty)
+                    {
+                        <MudText Typo="Typo.h6" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @Notification.Title
+                        </MudText>
+                    }
 
-                @if (Notification.Message != null || Notification.Message != string.Empty)
-                {
-                    <MudText Typo="Typo.body1" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        @Notification.Message</MudText>
-                }
+                    @if (Notification.Message != null || Notification.Message != string.Empty)
+                    {
+                        <MudText Typo="Typo.body1" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @Notification.Message</MudText>
+                    }
+                </MudStack>
+                <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween"
+                    Style="height: 100%; align-self: stretch;" Spacing="1">
+                    <MudText Typo="Typo.caption" Align="Align.End">@(Notification.CreatedAt.ToRelativeDateString())
+                    </MudText>
+                    @if (!Notification.IsRead)
+                    {
+                        <MudIcon Icon="@NotificationIcon" Color="Color.Info" Size="Size.Small" />
+                    }
+                </MudStack>
             </MudStack>
-            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween"
-                Style="height: 100%; align-self: stretch;" Spacing="1">
-                <MudText Typo="Typo.caption" Align="Align.End">@(Notification.CreatedAt.ToRelativeDateString())
-                </MudText>
-                @if (!Notification.IsRead)
-                {
-                    <MudIcon Icon="@NotificationIcon" Color="Color.Info" Size="Size.Small" />
-                }
-            </MudStack>
-        </MudStack>
-    </MudCardContent>
-</MudCard>
+        </MudCardContent>
+    </MudCard>
+</span>
