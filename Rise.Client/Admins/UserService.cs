@@ -19,9 +19,9 @@ public class UserService : IUserService
         return result ?? Enumerable.Empty<UserDto>();
     }
 
-    public Task<UserDetailDto> GetUserDetails(int userId)
+    public async Task<UserDetailDto> GetUserDetails(int userId)
     {
-        /*TODO: Implement this method*/
-        throw new NotImplementedException();
+        var result = await _httpClient.GetFromJsonAsync<UserDetailDto>(userId.ToString());
+        return result ?? throw new Exception("Failed to get user details for user");
     }
 }

@@ -1,6 +1,8 @@
 ﻿@page "/admin/guests/{id:int}"
+@using Rise.Client.Common
 @using Rise.Client.Localization.Admins;
 @using Microsoft.Extensions.Localization
+@using Rise.Shared.Users
 @inject IStringLocalizer<AdminPageResources> Localizer
 
 @layout AdminLayout
@@ -9,4 +11,8 @@
     Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" Size="Size.Small">
     @Localizer["Back"]
 </MudButton>
-<h3>GuestDetail</h3>
+
+<AsyncData DataFetcher="@FetchUserDetails" @bind-Data="@UserDetails" T="UserDetailDto" @ref="@AsyncDataRef"
+    TestIdPrefix="user-details">
+    <h1>@UserDetails?.FamilyName</h1>
+</AsyncData>
