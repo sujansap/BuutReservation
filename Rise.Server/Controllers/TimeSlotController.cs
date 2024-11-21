@@ -26,6 +26,8 @@ namespace Rise.Server.Controllers
         [HttpGet("range")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotRangeInfoDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetAvailableTimeSlotsInMonth(
             [FromQuery, SwaggerParameter(Required = true)]
             DateOnly startDate,
@@ -74,6 +76,9 @@ namespace Rise.Server.Controllers
         [HttpGet("{year}/{month}/{day}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<IActionResult> GetTimeSlotsByDate(
             [FromRoute]
             [Range(1, 9999, ErrorMessage = "Year must be between 1 and 9999")]

@@ -29,6 +29,22 @@ namespace Rise.Server.Tests.Controllers
             return $"range{joinedQueries}";
         }
 
+        [Theory]
+        [InlineData("range", "GET")]
+        [InlineData("2024/11/15", "GET")]
+        public async Task Call_TimeSlotController_Endpoints_ExpectUnauthorized(string url, string httpMethod)
+        {
+
+            HttpResponseMessage? response = httpMethod switch
+            {
+                "GET" => await _client.GetAsync(url),
+                "POST" => await _client.PostAsJsonAsync(url, new object()),
+                _ => null,
+            };
+            ;
+            response?.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        }
+
         [Fact]
         public async Task GET_ValidDateRange_GivesDates()
         {

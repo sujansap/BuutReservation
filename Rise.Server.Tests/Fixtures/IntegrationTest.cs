@@ -93,13 +93,63 @@ namespace Rise.Server.Tests.Fixtures
                 Username = testLoginRole.GetEmail(),
                 Password = testLoginRole.GetPassword(),
             };
-            var tokenResponse = await _authenticationApiClient.GetTokenAsync(tokenRequest);
-            var token = tokenResponse.AccessToken;
 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var retries = 0;
+            var retryLimit = 50;
+            var success = false;
+            while (retries <= retryLimit && !success)
+            {
+                success = await SendLoginRequest(tokenRequest);
+                retries++;
+            }
+        }
+
+        private async Task<bool> SendLoginRequest(ResourceOwnerTokenRequest tokenRequest)
+        {
+            try
+            {
+                var tokenResponse = await _authenticationApiClient.GetTokenAsync(tokenRequest);
+                var token = tokenResponse.AccessToken;
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                return true;
+            }
+            catch (RateLimitApiException ex)
+            {
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine($"Rate limit exceeded. Retrying after 1 seconds...");
+                //Delay so that auth0 api doesn't throw a rate limit exception
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                return false;
+            }
         }
 
         private async Task CreateUserWithRole(TestLoginRole testLoginRole)
+        {
+            try
+            {
+                var retries = 0;
+                var retryLimit = 50;
+                var success = false;
+                while (retries <= retryLimit && !success)
+                {
+                    success = await SendCreateUserRequest(testLoginRole);
+                    retries++;
+                }
+            }
+            catch (ErrorApiException)
+            {
+                // User already exists
+                return;
+            }
+            catch
+            {
+                //Unexpected error
+                return;
+            }
+
+        }
+
+        private async Task<bool> SendCreateUserRequest(TestLoginRole testLoginRole)
         {
             try
             {
@@ -123,20 +173,17 @@ namespace Rise.Server.Tests.Fixtures
                 {
                     Roles = [role.Id]
                 });
-                // Call Auth0 API
+
+                return true;
             }
             catch (RateLimitApiException ex)
             {
                 Console.WriteLine(ex.ToString());
                 Console.WriteLine($"Rate limit exceeded. Retrying after 1 seconds...");
+                //Delay so that auth0 api doesn't throw a rate limit exception
                 await Task.Delay(TimeSpan.FromSeconds(1));
-                // Retry the API call
+                return false;
             }
-            catch (ErrorApiException)
-            {
-                return;
-            }
-
         }
 
         protected void Logout()

@@ -23,6 +23,7 @@ namespace Rise.Client.Tests
                 Snapshots = true,
                 Sources = true
             });
+
         }
 
         [TearDown]

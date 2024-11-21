@@ -10,6 +10,42 @@ namespace Rise.Server.Tests.Controllers
 {
     public class ReservationControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture, "Reservation")
     {
+        [Theory]
+        [InlineData("me", TestLoginRole.Guest, "GET")]
+        [InlineData("", TestLoginRole.Guest, "POST")]
+        [InlineData("1", TestLoginRole.Guest, "GET")]
+        public async Task Call_ReservationController_Endpoints_ExpectForbidden(string url, TestLoginRole testLoginRole, string httpMethod)
+        {
+            await LoginAsync(testLoginRole);
+
+            HttpResponseMessage? response = httpMethod switch
+            {
+                "GET" => await _client.GetAsync(url),
+                "POST" => await _client.PostAsJsonAsync(url, new object()),
+                _ => null,
+            };
+            ;
+            response?.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+
+            Logout();
+        }
+
+        [Theory]
+        [InlineData("me", "GET")]
+        [InlineData("", "POST")]
+        [InlineData("1", "GET")]
+        public async Task Call_ReservationController_Endpoints_ExpectUnauthorized(string url, string httpMethod)
+        {
+
+            HttpResponseMessage? response = httpMethod switch
+            {
+                "GET" => await _client.GetAsync(url),
+                "POST" => await _client.PostAsJsonAsync(url, new object()),
+                _ => null,
+            };
+            ;
+            response?.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        }
 
         [Fact]
         public async Task GET_CurrentUser_UpcomingReservations_WithNoParameters_FirstPage_ExpectOk_5OrLessReservations()
@@ -54,7 +90,7 @@ namespace Rise.Server.Tests.Controllers
 
             // Verify all returned reservations are from the past
             reservationsPage.Data.ShouldAllBe(r => r.Date < today);
-    // start van 2 dagen geleden tot 7 dagen geleden
+            // start van 2 dagen geleden tot 7 dagen geleden
             reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-7) && r.Date <= today.AddDays(-2));
             Logout();
         }
@@ -62,6 +98,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_CurrentUser_PastReservations_NextPage_ExpectOk_5OrLessReservations()
         {
+            await LoginAsync(TestLoginRole.Member);
             // Get first page
             var firstResponse = await _client.GetAsync("me?getPast=true");
             firstResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -71,18 +108,18 @@ namespace Rise.Server.Tests.Controllers
 
             // Store the last ID from first page to verify cursor implementation
             var lastIdFromFirstPage = firstPage.Data.Last().Id;
-            
+
             // Get next page using cursor
             var nextResponse = await _client.GetAsync($"me?getPast=true&cursor={firstPage.NextId}&isNextPage=true");
             nextResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
             var nextPage = await nextResponse.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
             nextPage.ShouldNotBeNull();
-            
+
             // de eerste van de lijst moet de cursor zijn van de vorige pagina
             nextPage.PreviousId.ShouldNotBe(lastIdFromFirstPage);  // Previous cursor should point to last item of first page
             nextPage.Data.First().Id.ShouldBeLessThan(lastIdFromFirstPage);  // Items should be ordered by ID descending
-            
+
             var today = DateOnly.FromDateTime(DateTime.Now);
             var oneMonthAgo = today.AddMonths(-1);
             nextPage.Data.ShouldNotBeEmpty();
@@ -97,6 +134,8 @@ namespace Rise.Server.Tests.Controllers
             nextPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-11) && r.Date <= today.AddDays(-6),
                 customMessage: $"Expected dates between {today.AddDays(-13)} and {today.AddDays(-8)}. " +
                 $"Actual dates: {string.Join(", ", nextPage.Data.Select(r => r.Date))}");
+
+            Logout();
         }
 
         [Theory]
@@ -203,6 +242,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithDuplicateTimeSlot_ExpectConflict()
         {
+            await LoginAsync(TestLoginRole.Member);
 
             var request = new CreateReservationDto
             {
@@ -214,6 +254,8 @@ namespace Rise.Server.Tests.Controllers
             response1.StatusCode.ShouldBe(HttpStatusCode.Created);
             var response2 = await _client.PostAsJsonAsync("", request);
             response2.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+
+            Logout();
         }
 
 
@@ -285,6 +327,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_ReservationDetails_WithExistingId_ExpectOk()
         {
+            await LoginAsync(TestLoginRole.Member);
 
             var existingId = 1;
             var response = await _client.GetAsync($"{existingId}");
@@ -296,17 +339,21 @@ namespace Rise.Server.Tests.Controllers
             var reservationDetails = await response.Content.ReadFromJsonAsync<ReservationDetailsDto>();
             reservationDetails.ShouldNotBeNull();
             reservationDetails.Id.ShouldBe(existingId);
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_ReservationDetails_WithNonExistentId_ExpectNotFound()
         {
+            await LoginAsync(TestLoginRole.Member);
 
             var nonExistentId = 9999;
             var response = await _client.GetAsync($"{nonExistentId}");
 
-
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+            Logout();
         }
 
         [Theory]
@@ -315,11 +362,13 @@ namespace Rise.Server.Tests.Controllers
         [InlineData("@!#")]
         public async Task GET_ReservationDetails_WithInvalidId_ExpectBadRequest(string invalidId)
         {
+            await LoginAsync(TestLoginRole.Member);
 
             var response = await _client.GetAsync($"{invalidId}");
 
-
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
     }
 }
