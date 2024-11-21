@@ -20,5 +20,26 @@ namespace Rise.Domain.Reservations
         public int UserId { get; set; }
         public required User User { get; set; }
 
+        private Battery? _battery;
+        public Battery? Battery 
+        { 
+            get => _battery;
+            set
+            {
+                _battery?.RemoveReservation(this);
+                _battery = value;
+                if (_battery is not null)
+                {
+                    BatteryId = _battery.Id;
+                    _battery.AddReservation(this);
+                }
+                else
+                {
+                    BatteryId = null;
+                }
+            }
+        }
+        
+        public int? BatteryId { get; private set; }
     }
 }
