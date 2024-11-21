@@ -1,5 +1,6 @@
 ﻿@page "/admin/guests/{id:int}"
 @using Rise.Client.Common
+@using Rise.Client.Common.Buttons
 @using Rise.Client.Localization.Admins;
 @using Microsoft.Extensions.Localization
 @using Rise.Shared.Users
@@ -7,9 +8,13 @@
 
 @layout AdminLayout
 
-<MudButton data-testid="back-to-guests-list-button" OnClick="@(() => NavigateToListPage())" Variant="Variant.Text"
-    Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" Size="Size.Small">
+<PrimaryButton data-testid="back-to-guests-list-button" OnClick="@(() => NavigateToListPage())">
+
     @Localizer["Back"]
+</PrimaryButton>
+
+<MudButton data-testid="reservation-button" Variant="Variant.Filled" Size="Size.Large" Href="/reservations">
+    Reserveer
 </MudButton>
 
 <AsyncData DataFetcher="@FetchUserDetails" @bind-Data="@UserDetails" T="UserDetailDto" @ref="@AsyncDataRef"
