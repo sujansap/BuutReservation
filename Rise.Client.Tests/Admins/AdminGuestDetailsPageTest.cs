@@ -1,15 +1,30 @@
 using System.Text.Json;
+using Microsoft.Playwright;
 using Rise.Shared.Users;
+using Shouldly;
 
 namespace Rise.Client.Tests.Admin
 {
     [TestFixture]
     public class AdminGuestDetailsPageTest : CustomPageTest
     {
-        private async Task MockUserDetails(int userId, UserDetailDto userDetails)
+
+        private async Task AssertUserDetail(string testId, string expectedValue)
+        {
+            var locator = Page.GetByTestId(testId);
+            await Expect(locator).ToBeVisibleAsync();
+            await Expect(locator).ToHaveTextAsync(expectedValue);
+        }
+
+        private async Task MockUserDetails(int userId, UserDetailDto userDetails, int? delayMs = null)
         {
             await Page.RouteAsync($"**/api/User/{userId}", async route =>
             {
+                if (delayMs.HasValue)
+                {
+                    await Task.Delay(delayMs.Value);
+                }
+
                 await route.FulfillAsync(new()
                 {
                     Status = 200,
@@ -19,7 +34,7 @@ namespace Rise.Client.Tests.Admin
             });
         }
 
-        private async Task InitializeWithMockUser(int userId = 1)
+        private async Task InitializeWithMockUser(int userId = 1, int? delayMs = null)
         {
             var userDetails = new UserDetailDto
             {
@@ -28,7 +43,7 @@ namespace Rise.Client.Tests.Admin
                 /*later more here*/
             };
 
-            await MockUserDetails(userId, userDetails);
+            await MockUserDetails(userId, userDetails, delayMs);
             await InitNavigationToUrl($"/admin/guests/{userId}");
         }
 
@@ -36,33 +51,14 @@ namespace Rise.Client.Tests.Admin
         public async Task DisplaysUserFamilyName()
         {
             await InitializeWithMockUser(1);
-            await Page.GetByTestId("user-details-page-familyname").IsVisibleAsync();
-            await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
+            await AssertUserDetail("user-details-page-familyname", "Smith");
+
         }
 
         [Test]
         public async Task ShowsLoadingStateWhileFetchingDetails()
         {
-            const int userId = 1;
-            await Page.RouteAsync($"**/api/User/{userId}", async route =>
-            {
-                await Task.Delay(1000);
-                await route.FulfillAsync(new()
-                {
-                    Status = 200,
-                    ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(
-                        new UserDetailDto
-                        {
-                            Id = userId,
-                            FamilyName = "Smith"
-                            /*later more here*/
-                        }
-                    )
-                });
-            });
-
-            await InitNavigationToUrl($"/admin/guests/{userId}");
+            await InitializeWithMockUser(1, 2000);
             await Page.GetByTestId("user-details-loading-progress").IsVisibleAsync();
         }
 
@@ -90,7 +86,6 @@ namespace Rise.Client.Tests.Admin
             await InitializeWithMockUser(1);
 
             await Page.GetByTestId("back-to-guests-list-button").ClickAsync();
-
             await Expect(Page).ToHaveURLAsync("/admin/guests");
         }
 
@@ -103,7 +98,7 @@ namespace Rise.Client.Tests.Admin
             {
                 Id = userId,
                 FamilyName = "Smith"
-                /*later more here...*/
+                /*later more here*/
             };
 
             await MockUserDetails(userId, initialUser);
@@ -115,12 +110,12 @@ namespace Rise.Client.Tests.Admin
             {
                 Id = userId,
                 FamilyName = "Johnson"
+                /*later more here*/
             };
 
             await MockUserDetails(userId, updatedUser);
             await Page.ReloadAsync();
-            await Expect(Page.GetByText("Johnson")).ToBeVisibleAsync();
-            await Expect(Page.GetByText("Smith")).Not.ToBeVisibleAsync();
+            await AssertUserDetail("user-details-page-familyname", "Johnson");
         }
 
         [Test]
