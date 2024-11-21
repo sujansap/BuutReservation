@@ -21,4 +21,7 @@
 	<data name="Actions">
 		<value>Acties</value>
 	</data>
+	<data name="ViewDeatils">
+		<value>Zie Details</value>
+	</data>
 </root>

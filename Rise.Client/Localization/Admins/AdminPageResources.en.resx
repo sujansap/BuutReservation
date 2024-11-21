@@ -21,4 +21,7 @@
 	<data name="Actions">
 		<value>Actions</value>
 	</data>
+	<data name="ViewDeatils">
+		<value>Details</value>
+	</data>
 </root>
