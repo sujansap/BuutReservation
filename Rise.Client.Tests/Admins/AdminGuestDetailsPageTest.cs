@@ -103,7 +103,7 @@ namespace Rise.Client.Tests.Admin
 
             await MockUserDetails(userId, initialUser);
             await InitNavigationToUrl($"/admin/guests/{userId}");
-            await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
+            await AssertUserDetail("user-details-page-familyname", "Smith");
 
             // updatedUser state
             var updatedUser = new UserDetailDto
