@@ -27,4 +27,7 @@
 	<data name="Back">
 		<value>Back</value>
 	</data>
+	<data name="Admin">
+		<value>ADMIN</value>
+	</data>
 </root>
