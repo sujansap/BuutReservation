@@ -54,5 +54,26 @@ namespace Rise.Server.Tests.Controllers.Users
                 user.FamilyName.ShouldNotBeNullOrWhiteSpace();
             }
         }
+
+        [Fact]
+        public async Task GET_UserDetails_ReturnsUserDetails()
+        {
+            var response = await _client.GetFromJsonAsync<UserDetailDto>("1");
+
+            response.ShouldNotBeNull();
+            response.Id.ShouldBe(1);
+            response.FamilyName.ShouldNotBeNull();
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(99999)]
+        public async Task Get_UserDetails_FailsForInvalidUserId(int userId)
+        {
+            var response = await _client.GetAsync(userId.ToString());
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
     }
 }

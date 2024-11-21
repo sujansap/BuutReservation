@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rise.Domain.Users;
+using Rise.Shared.Infrastructure;
 using Rise.Shared.Users;
 
 namespace Rise.Server.Controllers.Users
@@ -28,9 +30,24 @@ namespace Rise.Server.Controllers.Users
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetGuestUsers()
         {
-            _logger.LogInformation("GET api/user");
+            _logger.LogInformation("GET api/User/guests");
             var users = await _userService.GetGuestUsers();
             return Ok(users);
+        }
+
+
+        /// <summary>
+        /// Gets the details of a user
+        /// </summary>
+        /// <returns>The details of a user</returns>
+        [HttpGet("{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDetailDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetUserDetails(int userId)
+        {
+            _logger.LogInformation("GET api/User/{userId}", userId);
+            var details = await _userService.GetUserDetails(userId);
+            return Ok(details);
         }
     }
 }

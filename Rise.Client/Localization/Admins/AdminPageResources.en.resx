@@ -21,4 +21,13 @@
 	<data name="Actions">
 		<value>Actions</value>
 	</data>
+	<data name="ViewDetails">
+		<value>Details</value>
+	</data>
+	<data name="Back">
+		<value>Back</value>
+	</data>
+	<data name="Admin">
+		<value>ADMIN</value>
+	</data>
 </root>

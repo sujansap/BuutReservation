@@ -6,6 +6,10 @@
 <MudTd DataLabel="@Localizer["FamilyName"]">@User.FamilyName</MudTd>
 <MudTd>
     <MudStack Row="true">
-        @*can add ac cept for next feature*@
+        @*TODO:make this a common component*@
+        <MudButton data-testid="view-guest-details-button" OnClick="@(() => NavigateTo(@User.Id))"
+            Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Visibility"
+            Size="Size.Small">
+            @Localizer["ViewDetails"]</MudButton>
     </MudStack>
 </MudTd>
