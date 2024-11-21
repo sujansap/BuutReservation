@@ -4,7 +4,7 @@
 @inherits ComponentBase
 
 <span>
-    <MudCard @attributes="AdditionalAttributes" Class="@("cursor-pointer " + Class)" @onclick="HandleClick">
+    <MudCard @attributes="@AdditionalAttributes" Class="@($"cursor-pointer {Class}")" @onclick="@HandleClick">
         <MudCardContent>
             <MudStack Row AlignItems="AlignItems.Center" Style="min-height: 100%;" StretchItems="StretchItems.Middle">
                 <MudIcon Icon="@(Notification.Severity.Icon())" Color="Notification.Severity.Color()"
@@ -12,24 +12,29 @@
                 <MudStack Spacing="0" Style="min-width: 0">
                     @if (Notification.Title != null || Notification.Title != string.Empty)
                     {
-                        <MudText Typo="Typo.h6" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <MudText Typo="Typo.h6" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                            data-testid="@($"notification-title-{Notification.Id}")">
                             @Notification.Title
                         </MudText>
                     }
 
                     @if (Notification.Message != null || Notification.Message != string.Empty)
                     {
-                        <MudText Typo="Typo.body1" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <MudText Typo="Typo.body1" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                            data-testid="@($"notification-message-{Notification.Id}")">
                             @Notification.Message</MudText>
                     }
                 </MudStack>
                 <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.SpaceBetween"
                     Style="height: 100%; align-self: stretch;" Spacing="1">
-                    <MudText Typo="Typo.caption" Align="Align.End">@(Notification.CreatedAt.ToRelativeDateString())
+                    <MudText Typo="Typo.caption" Align="Align.End"
+                        data-testid="@($"notification-timestamp-{Notification.Id}")">
+                        @(Notification.CreatedAt.ToRelativeDateString())
                     </MudText>
                     @if (!Notification.IsRead)
                     {
-                        <MudIcon Icon="@NotificationIcon" Color="Color.Info" Size="Size.Small" />
+                        <MudIcon Icon="@NotificationIcon" Color="Color.Info" Size="Size.Small"
+                            data-testid="@($"notification-is-unread-icon-{Notification.Id}")" />
                     }
                 </MudStack>
             </MudStack>
