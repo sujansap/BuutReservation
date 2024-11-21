@@ -7,6 +7,8 @@ namespace Rise.Client.Notifications.Components
     public partial class NotificationDetailsComponent
     {
 
+        [Parameter(CaptureUnmatchedValues = true)]
+        public Dictionary<string, object> AdditionalAttributes { get; set; } = new();
         [Parameter]
         public NotificationDto? Notification { get; set; }
     }

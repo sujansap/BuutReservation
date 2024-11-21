@@ -12,11 +12,11 @@
                 @ref="AsyncDataRef" ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert"
                 TestIdPrefix="custom-calendar-reserve">
                 <NotificationsListComponent Notifications="Notifications" SelectedNotification="SelectedNotification"
-                    OnNotificationSelected="HandleNotificationSelected" />
+                    OnNotificationSelected="HandleNotificationSelected" data-testid="notifications-list" />
             </AsyncData>
         </MudItem>
         <MudItem xs="12" md="6">
-            <NotificationDetailsComponent Notification="SelectedNotification" />
+            <NotificationDetailsComponent Notification="SelectedNotification" data-testid="notification-details" />
         </MudItem>
     </MudGrid>
 </MudContainer>
