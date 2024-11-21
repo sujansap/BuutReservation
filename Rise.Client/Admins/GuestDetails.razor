@@ -1,5 +1,12 @@
 ﻿@page "/admin/guests/{id:int}"
+@using Rise.Client.Localization.Admins;
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<AdminPageResources> Localizer
 
 @layout AdminLayout
 
+<MudButton data-testid="back-to-guests-list-button" OnClick="@(() => NavigateToListPage())" Variant="Variant.Text"
+    Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowBack" Size="Size.Small">
+    @Localizer["Back"]
+</MudButton>
 <h3>GuestDetail</h3>

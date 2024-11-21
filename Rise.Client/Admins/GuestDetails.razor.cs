@@ -6,5 +6,13 @@ namespace Rise.Client.Admins
     {
         [Parameter]
         public int Id { get; set; }
+
+        [Inject]
+        public required NavigationManager NavigationManager { get; set; }
+
+        protected void NavigateToListPage()
+        {
+            NavigationManager.NavigateTo($"/admin/guests");
+        }
     }
 }
