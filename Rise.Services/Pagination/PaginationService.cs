@@ -17,7 +17,7 @@ public static class PaginationService
         bool? isNextPage,
         int pageSize,
         Expression<Func<TEntity, bool>>? filterLambda = null)
-        where TEntity : IEntity
+        where TEntity : Entity
         where TDto : BaseDto
     {
         var entitiesQuery = OrderingExpression<TEntity, object>.GetOrderedQuery(queryableDbSet, orderingExpressions, filterLambda);

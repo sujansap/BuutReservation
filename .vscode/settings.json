@@ -17,5 +17,8 @@
     "Sujan",
     "sujansapkota",
     "Unclickable"
+  ],
+  "conventionalCommits.scopes": [
+    "domain"
   ]
 }
