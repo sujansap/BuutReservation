@@ -35,7 +35,6 @@ namespace Rise.Server.Controllers.Users
             return Ok(users);
         }
 
-
         /// <summary>
         /// Gets the details of a user
         /// </summary>
@@ -49,5 +48,22 @@ namespace Rise.Server.Controllers.Users
             var details = await _userService.GetUserDetails(userId);
             return Ok(details);
         }
+
+        /// <summary>
+        /// Adds memeber role to a user
+        /// </summary>
+        /// <param name="userId">ID of the user whome you want to make a memeber</param>
+        /// <returns>Result of the operation</returns>
+        [HttpPost("role/member")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddUserRole([FromBody] int userId)
+        {
+            _logger.LogInformation("POST api/User/role for userId: {userId}", userId);
+            // TODO: add role to the user with the given userId using auth0 management api
+            return Ok();
+        }
+
+
     }
 }
