@@ -10,6 +10,8 @@ namespace Rise.Domain.Boats
         /// </summary>
         private string _type = default!;
 
+        private readonly List<Reservation> _reservations = [];
+
         public string Type
         {
             get => _type;
@@ -24,5 +26,18 @@ namespace Rise.Domain.Boats
         public int MentorId { get; set; }
         public required User Mentor { get; set; }
 
+        public IReadOnlyCollection<Reservation> Reservations => _reservations.AsReadOnly();
+
+        internal void AddReservation(Reservation reservation)
+        {
+            Guard.Against.Null(reservation, nameof(reservation));
+            _reservations.Add(reservation);
+        }
+
+        internal void RemoveReservation(Reservation reservation)
+        {
+            Guard.Against.Null(reservation, nameof(reservation));
+            _reservations.Remove(reservation);
+        }
     }
 }
