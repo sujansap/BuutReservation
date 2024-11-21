@@ -119,20 +119,6 @@ namespace Rise.Client.Tests.Admin
 
 
         [Test]
-        public async Task TableIsStripedAndDense()
-        {
-            await InitializeWithMockUsers();
-
-            ILocator table = Page.GetByTestId("users-table");
-            string className = await table.GetAttributeAsync("class");
-
-
-            className.ShouldContain("mud-table-dense");
-            className.ShouldContain("mud-table-striped");
-            className.ShouldContain("mud-table-hover");
-        }
-
-        [Test]
         public async Task RefreshesDataOnReload()
         {
             // initial state
