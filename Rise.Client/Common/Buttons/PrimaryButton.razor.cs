@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor;
 
 namespace Rise.Client.Common.Buttons
 {
@@ -15,6 +16,10 @@ namespace Rise.Client.Common.Buttons
 
         [Parameter]
         public required RenderFragment ChildContent { get; set; }
+
+        [Parameter]
+        public Size Size { get; set; } = Size.Medium;
+
     }
 
 }
