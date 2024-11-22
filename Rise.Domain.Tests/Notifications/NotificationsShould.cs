@@ -20,8 +20,8 @@ namespace Rise.Domain.Tests.Notifications
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(5)]
+        [InlineData(-1)]
+        [InlineData(4)]
         public void ThrowWhenSeverityOutOfRange(int severity)
         {
             Should.Throw<ArgumentOutOfRangeException>(() =>
@@ -86,9 +86,9 @@ namespace Rise.Domain.Tests.Notifications
         }
 
         [Theory]
+        [InlineData(0)]
         [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(4)]
+        [InlineData(3)]
         public void AllowValidSeverityValues(int severity)
         {
             var notification = new NotificationBuilder()
