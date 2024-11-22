@@ -10,7 +10,7 @@
                 <MudIcon Icon="@(Notification.Severity.Icon())" Color="Notification.Severity.Color()"
                     Size="Size.Large" />
                 <MudStack Spacing="0" Style="min-width: 0">
-                    @if (Notification.Title != null || Notification.Title != string.Empty)
+                    @if (!string.IsNullOrWhiteSpace(@Notification.Title))
                     {
                         <MudText Typo="Typo.h6" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                             data-testid="@($"notification-title-{Notification.Id}")">
@@ -18,7 +18,7 @@
                         </MudText>
                     }
 
-                    @if (Notification.Message != null || Notification.Message != string.Empty)
+                    @if (!string.IsNullOrWhiteSpace(@Notification.Message))
                     {
                         <MudText Typo="Typo.body1" Style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                             data-testid="@($"notification-message-{Notification.Id}")">
