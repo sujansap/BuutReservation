@@ -203,11 +203,6 @@ namespace Rise.Client.Tests.Notifications
             });
         }
 
-
-        // private async Task WaitForResponse()
-        // {
-        //     await Page.WaitForResponseAsync(response => response.Url.Contains("/api/Notification"));
-        // }
         [Test]
         public async Task HasNotificationsList()
         {
