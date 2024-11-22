@@ -1,0 +1,33 @@
+@page "/register"
+@using MudBlazor
+@using FluentValidation
+
+<PageTitle>Sign Up</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-5">
+        <MudText Typo="Typo.h4" GutterBottom>Register</MudText>
+        <MudForm Model="@User" @ref="@Form" @bind-IsValid="@isSuccess" Validation="@(validator.ValidateValue)" ValidationDelay="0">
+            <MudTextField @bind-Value="User.FirstName" For="@(() => User.FirstName)" Label="Voornaam" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.LastName" For="@(() => User.LastName)" Label="Naam" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.Email" For="@(() => User.Email)" Label="Email" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.Password" For="@(() => User.Password)" Label="Wachtwoord" InputType="InputType.Password" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.PhoneNumber" For="@(() => User.PhoneNumber)" Label="GSM Nummer" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.Address.Street" For="@(() => User.Address.Street)" Label="Straat" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.Address.Number" For="@(() => User.Address.Number)" Label="Nummer" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.Address.City" For="@(() => User.Address.City)" Label="Stad" Immediate="true" Required="true" />
+
+            <MudTextField @bind-Value="User.Address.PostalCode" For="@(() => User.Address.PostalCode)" Label="Postcode" Immediate="true" Required="true" />
+    
+            <MudTextField @bind-Value="User.Address.Country" For="@(() => User.Address.Country)" Label="Land" Immediate="true" Required="true" />
+
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DropShadow="false" OnClick="@(() => Form.ResetAsync())" Class="mx-2">Reset</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!isSuccess || isLoading)" OnClick="@(async () => await HandleSubmit())">Register</MudButton>
+        </MudForm>
+</MudContainer>
