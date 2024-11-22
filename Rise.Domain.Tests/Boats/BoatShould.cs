@@ -1,17 +1,21 @@
 using Rise.Domain.Boats;
+using Rise.Domain.Tests.TestUtilities;
 using Shouldly;
 
 namespace Rise.Domain.Tests.Boats
 {
     public class BoatShould
     {
-        public const string ValidPersonalNameRaw = "Limba";
         public const string ValidPersonalNameFormatted = "Limba";
 
-        [Fact]
-        public void BeCreated()
+        [Theory]
+        [InlineData("")]
+        [InlineData("\n")]
+        public void BeCreated(string extras)
         {
-            Boat b = new() { PersonalName = ValidPersonalNameRaw };
+            Boat b = new BoatBuilder()
+                .WithPersonalName(BoatBuilder.ValidPersonalName + extras)
+                .Build();
 
             b.PersonalName.ShouldBe(ValidPersonalNameFormatted);
             b.Reservations.ShouldBeEmpty();
@@ -25,9 +29,28 @@ namespace Rise.Domain.Tests.Boats
         {
             Action act = () =>
             {
-                Boat boat = new() { PersonalName = personalName! };
+                Boat boat = new BoatBuilder()
+                .WithPersonalName(personalName!)
+                .Build();
             };
-            act.ShouldThrow<ArgumentException>();
+            act.ShouldThrow<ArgumentException>()
+            .ParamName.ShouldBe("PersonalName");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("   ")]
+        [InlineData("")]
+        public void NotBeChangedWithInvalidPersonalName(string? personalName)
+        {
+            Action act = () =>
+            {
+                Boat boat = new BoatBuilder()
+                .Build();
+                boat.PersonalName = personalName!;
+            };
+            act.ShouldThrow<ArgumentException>()
+            .ParamName.ShouldBe("PersonalName");
         }
     }
 }
