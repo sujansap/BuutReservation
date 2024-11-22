@@ -6,10 +6,6 @@ on:
       - staging
       - main
       - production
-  push:
-    branches:
-      - ops-testing
-
 jobs:
   build:
     name: dotnet-run-all-tests
