@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<data name="DashbordPageTitle">
+		<value>Admin Overzicht</value>
+	</data>
+	<data name="NewUsers">
+		<value>GASTEN</value>
+	</data>
+	<data name="GuestUsers">
+		<value>GASTEN</value>
+	</data>
+	<data name="NoUsersAvailable">
+		<value>Geen gasten beschikbaar</value>
+	</data>
+	<data name="Id">
+		<value>ID</value>
+	</data>
+	<data name="FamilyName">
+		<value>Familienaam</value>
+	</data>
+	<data name="Actions">
+		<value>Acties</value>
+	</data>
+	<data name="ViewDetails">
+		<value>Zie Details</value>
+	</data>
+	<data name="Back">
+		<value>Terug</value>
+	</data>
+</root>

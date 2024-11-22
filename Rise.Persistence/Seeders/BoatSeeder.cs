@@ -17,6 +17,7 @@ namespace Rise.Persistence.Seeders
             ];
         }
 
+
         protected override DbSet<Boat> DbSet => _dbContext.Boats;
 
         protected override IEnumerable<Boat> Items { get => boats; }

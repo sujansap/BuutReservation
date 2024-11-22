@@ -11,6 +11,8 @@ using FluentValidation.AspNetCore;
 using Rise.Server.Middleware;
 using Serilog.Events;
 using Serilog;
+using Rise.Shared.Users;
+using Rise.Services.Users;
 
 try
 {
@@ -46,6 +48,7 @@ try
 
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
+    builder.Services.AddScoped<IUserService, UserService>();
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();

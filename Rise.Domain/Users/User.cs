@@ -7,17 +7,16 @@ namespace Rise.Domain.Users
     /// <summary>
     /// User base class
     /// </summary>
-    public class User : Entity, IUser
+    public class User : Entity
     {
         private string _familyName = default!;
-
 
         public required string FamilyName
         {
             get => _familyName;
-            set => _familyName = Guard.Against.NullOrWhiteSpace(value);
+            set => _familyName = Guard.Against.NullOrWhiteSpace(value, nameof(FamilyName)).Trim();
         }
 
-        public ICollection<IReservation> Reservations { get; } = [];
+        public ICollection<Reservation> Reservations { get; } = [];
     }
 }
