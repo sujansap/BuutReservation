@@ -92,7 +92,7 @@ jobs:
               libx11-xcb1 libxcursor1 libxi6 libgtk-3-0 ibpangocairo-1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0 
       - name: Install Playwright browsers
         run: |
-          pwsh PlaywrightTests/bin/Debug/net8.0/playwright.ps1 install
+          pwsh Rise.Client.Tests/bin/Debug/net8.0/playwright.ps1 install
 
       - name: Run Unit Tests
         run: dotnet test Rise.Domain.Tests
