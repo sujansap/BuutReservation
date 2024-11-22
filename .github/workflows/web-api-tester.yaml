@@ -72,16 +72,9 @@ jobs:
             sleep 2
           done
 
-      # New steps for setting up and running Playwright tests------------------------------------------------------
-      - name: Create Playwright test project
-        run: |
-          dotnet new nunit -n PlaywrightTests
-          cd PlaywrightTests
-          dotnet add package Microsoft.Playwright.NUnit
-
       - name: Build Playwright test project
         run: |
-          cd PlaywrightTests
+          cd Rise.Client.Tests
           dotnet build
 
       - name: Install PowerShell
@@ -127,8 +120,7 @@ jobs:
               echo "Received HTTP status code: $response. Waiting for the application to be ready..."
             fi
             sleep 2
-          done \
-          pwsh bin/Debug/netX/playwright.ps1 install 
+          done
 
       - name: Run E2E Tests
         env:
