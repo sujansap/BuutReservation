@@ -43,35 +43,6 @@ jobs:
           export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
           dotnet tool install --global dotnet-ef
 
-      - name: Run database migrations
-        env:
-          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: |
-          export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
-          dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
-
-      - name: Run the web-api application
-        env:
-          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: |
-          dotnet run --project Rise.Server --configuration Release &  
- 
-      - name: Wait for the web-api-application to be ready on port http 5000
-        run: |
-          for i in {1..30}; do
-            response=$(curl -s -k -o /dev/null -w "%{http_code}" http://localhost:5000 || echo "connection_error")
-            
-            if [ "$response" -eq 200 ]; then
-              echo "Application is ready! HTTP status code: $response"
-              break
-            elif [ "$response" == "connection_error" ]; then
-              echo "Connection failed. Application might not be running yet."
-            else
-              echo "Received HTTP status code: $response. Waiting for the application to be ready..."
-            fi
-            sleep 2
-          done
-
       - name: Build Playwright test project
         run: |
           cd Rise.Client.Tests
