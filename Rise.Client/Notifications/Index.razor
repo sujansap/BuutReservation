@@ -4,9 +4,12 @@
 @using Rise.Client.Utils;
 @using Rise.Client.Common;
 @using Rise.Shared.Notifications;
+@using Rise.Client.Localization.Notifications;
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<NotificationsPageResources> Localizer
 
 <MudContainer>
-    <MudText Typo="Typo.h4" Class="pb-8">Notifications</MudText>
+    <MudText Typo="Typo.h4" Class="pb-8">@Localizer["Notifications"]</MudText>
     <MudGrid>
         <MudItem xs="12" md="6">
             <AsyncData DataFetcher="@FetchNotifications" @bind-Data="@Notifications"

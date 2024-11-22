@@ -1,4 +1,8 @@
 ﻿@using Rise.Shared.Notifications;
+@using Rise.Client.Localization.Notifications;
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<NotificationsPageResources> Localizer;
+
 <span @attributes="AdditionalAttributes">
     <MudStack Class="@($"notifications-list {(Scrollbar ? "notifications-list-scrollbar" : "")}")" Spacing="2">
         @if (Notifications != null && Notifications.Any())
@@ -13,7 +17,7 @@
         }
         else
         {
-            <MudText Typo="Typo.body1" Color="Color.Inherit">No notifications</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Inherit">@Localizer["NoNotifications"]</MudText>
         }
     </MudStack>
 </span>

@@ -1,4 +1,7 @@
 ﻿@using Client.Utils;
+@using Rise.Client.Localization.Notifications;
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<NotificationsPageResources> Localizer
 
 <MudCard Class="pa-4" @attributes=AdditionalAttributes>
     @if (Notification != null)
@@ -17,6 +20,6 @@
     }
     else
     {
-        <MudText Typo="Typo.body1">Select a notification to view</MudText>
+        <MudText Typo="Typo.body1">@Localizer["SelectNotificationTovView"]</MudText>
     }
 </MudCard>

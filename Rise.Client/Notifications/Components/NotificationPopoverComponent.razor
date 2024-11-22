@@ -1,5 +1,8 @@
 ﻿@using Rise.Shared.Notifications;
 @using Rise.Client.Common;
+@using Rise.Client.Localization.Notifications;
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<NotificationsPageResources> Localizer;
 
 @if (IsOpen)
 {
@@ -9,7 +12,7 @@
     Style="max-width: 400px; z-index: 2000;" Class="pa-4" Fixed="true" Paper="true" data-testid="notifications-popover">
     <MudButton FullWidth Variant="Variant.Filled" Color="Color.Primary" Class="mb-4" Href="/notifications"
         OnClick="@HandleClose" data-testid="notifications-popover-button">
-        Notifications
+        @Localizer["Notifications"]
     </MudButton>
     <AsyncData DataFetcher="@FetchNotifications" @bind-Data="@_notifications" T="IEnumerable<NotificationDto>"
         @ref="AsyncDataRef" ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert"
