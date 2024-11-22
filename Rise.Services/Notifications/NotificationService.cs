@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Notifications;
+using Rise.Domain.Users;
 using Rise.Persistence;
 using Rise.Shared.Notifications;
 
@@ -14,10 +15,13 @@ namespace Rise.Services.Notifications
         public async Task<IEnumerable<NotificationDto>> GetUserNotifications()
         {
             const int userId = 1;
-            List<NotificationDto> notifications = await _dbContext.Notifications
-                .Where(notification => notification.UserId == userId)
-                .Select(notification => MapNotificationToDto(notification))
-                .ToListAsync();
+            User user = await _dbContext.Users.FirstAsync(u => u.Id == userId);
+            IEnumerable<NotificationDto> notifications = (await _dbContext
+                .Users.FirstAsync(u => u.Id == userId))
+                .Notifications
+                .OrderByDescending(notification => notification.CreatedAt)
+                .Select(MapNotificationToDto)
+                .ToList();
 
             return notifications;
 
