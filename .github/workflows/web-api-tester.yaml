@@ -6,6 +6,7 @@ on:
       - staging
       - main
       - production
+      - ops-testing
 
 jobs:
   build:
