@@ -59,18 +59,6 @@ namespace Rise.Client.Utils
                 _ => Icons.Material.Outlined.Info
             };
         }
-
-        public static MudBlazor.Severity ToMudSeverity(this SeverityEnum severity)
-        {
-            return severity switch
-            {
-                SeverityEnum.Info => MudBlazor.Severity.Info,
-                SeverityEnum.Success => MudBlazor.Severity.Success,
-                SeverityEnum.Warning => MudBlazor.Severity.Warning,
-                SeverityEnum.Error => MudBlazor.Severity.Error,
-                _ => MudBlazor.Severity.Info
-            };
-        }
     }
 }
 
