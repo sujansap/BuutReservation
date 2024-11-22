@@ -16,7 +16,7 @@ namespace Rise.Domain.Notifications
         {
             get => _severity; set
             {
-                Guard.Against.OutOfRange(value, nameof(Severity), 1, 4, "Severity must be between 0 and 5.");
+                Guard.Against.OutOfRange(value, nameof(Severity), 0, 3, "Severity must be between 0 and 3.");
                 _severity = value;
             }
         }
