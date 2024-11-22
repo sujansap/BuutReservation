@@ -2,6 +2,7 @@
 @page "/home"
 @using MudBlazor
 @using Microsoft.Extensions.Localization
+@using Rise.Client.Common.Buttons
 @using Rise.Client.Localization.Layout
 @using Rise.Client.Home.Components
 @inject NavigationManager navigation
@@ -26,11 +27,13 @@
                 Deelbootjes voor<br />
                 Muide - Meulestede - Afrikalaan
             </MudText>
-
-            <MudButton data-testid="reservation-button" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+            <PrimaryButton data-testid="reservation-button" Href="/reservations" Size="Size.Large">
+                Reserveer
+            </PrimaryButton>
+            @* <MudButton data-testid="reservation-button" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
                 Href="/reservations">
                 Reserveer
-            </MudButton>
+            </MudButton>*@
         </MudContainer>
     </div>
 </div>
@@ -57,9 +60,9 @@
                 Keizerspark. De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
             </MudText>
             <div Class="d-inline-block">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/reservations">
+                <PrimaryButton data-testid="reservation-button-two-coloum-section" Href="/reservations">
                     Reserveer
-                </MudButton>
+                </PrimaryButton>
             </div>
         </ContentSection>
     </TwoColumnSection>

@@ -1,4 +1,5 @@
 ﻿@page "/reservations/{Id:int}"
+@using Rise.Client.Common.Buttons
 @using Rise.Client.Localization.Reservations
 @using Rise.Shared.Reservations
 @using Microsoft.Extensions.Localization
@@ -6,7 +7,8 @@
 
 @inject IStringLocalizer<ReservationPageResources> Localizer
 
-<MudGrid Class="mt-8">
+<MudGrid Class="mt-4">
+    <BackButton data-testid="reservation-details-back-button" Href="/reservations?CurrentTab=reservations" />
     <AsyncData DataFetcher="@GetReservationDetails" @bind-Data="@ReservationDetails" T="ReservationDetailsDto"
         @ref="@AsyncDataRef" TestIdPrefix="reservation-details">
         @if (ReservationDetails != null)
