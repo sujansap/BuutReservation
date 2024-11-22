@@ -29,6 +29,7 @@ namespace Rise.Server.Controllers
         {
             try
             {
+                _logger.LogInformation("Fetching notifications for the current user.");
                 var notifications = await _notificationService.GetUserNotifications();
                 return Ok(notifications);
             }
