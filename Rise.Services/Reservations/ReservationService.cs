@@ -169,7 +169,8 @@ namespace Rise.Services.Reservations
                 Date = reservation.TimeSlot.Date,
                 BoatPersonalName = reservation.Boat.PersonalName,
                 MentorName = battery?.Mentor?.FamilyName,
-                BatteryType = battery?.Type
+                BatteryType = battery?.Type,
+                BatteryId = battery?.Id
 
             };
         }

@@ -39,5 +39,33 @@ namespace Rise.Domain.Boats
             Guard.Against.Null(reservation, nameof(reservation));
             _reservations.Remove(reservation);
         }
+
+        public bool IsAvailableForDate(DateOnly targetDate, TimeOnly targetStart)
+        {
+            const int ChargingHours = 4;
+            
+            foreach (var reservation in Reservations)
+            {
+                // Check reservations within 24 hours
+                if (Math.Abs(reservation.TimeSlot.Date.DayNumber - targetDate.DayNumber) <= 1)
+                {
+                    var reservationDateTime = reservation.TimeSlot.Date.ToDateTime(reservation.TimeSlot.Start);
+                    var reservationEndWithCharging = reservation.TimeSlot.Date.ToDateTime(reservation.TimeSlot.End)
+                        .AddHours(ChargingHours);
+                    var targetDateTime = targetDate.ToDateTime(targetStart);
+                    var targetEndWithCharging = targetDate.ToDateTime(targetStart).AddHours(3) // Assuming 3 hour slots
+                        .AddHours(ChargingHours);
+
+                    // Check if either the start or end (including charging time) overlaps
+                    if (targetDateTime <= reservationEndWithCharging && 
+                        targetEndWithCharging >= reservationDateTime)
+                    {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        }
     }
 }

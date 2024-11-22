@@ -12,4 +12,6 @@ public class ReservationDetailsDto : BaseDto
 
     public string? BatteryType { get; set; }
 
+    public int? BatteryId { get; set; }
+
 }

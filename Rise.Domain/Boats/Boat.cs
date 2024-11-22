@@ -22,5 +22,12 @@ namespace Rise.Domain.Boats
         // TODO make batteries protected
         public ICollection<Battery> Batteries { get; } = [];
 
+        public Battery? GetAvailableBatteryForDate(DateOnly date, TimeOnly startTime)
+        {
+            return Batteries
+                .OrderBy(b => b.Reservations.Count) // Balance usage across batteries
+                .FirstOrDefault(b => b.IsAvailableForDate(date, startTime));
+        }
+
     }
 }

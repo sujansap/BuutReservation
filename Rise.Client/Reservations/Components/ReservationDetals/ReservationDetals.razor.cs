@@ -25,6 +25,11 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
             return ReservationService.GetReservationDetailsAsync(Id);
         }
 
+        protected void NavigateBack()
+        {
+            NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
+        }
+
 
 
 
