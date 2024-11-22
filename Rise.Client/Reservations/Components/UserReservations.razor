@@ -16,8 +16,7 @@
             @foreach (ReservationDto? reservation in ReservationPage.Data)
             {
                 <MudItem xs="12" data-testid="reservation-item">
-                    <MudCard Elevation="6" Class="mb-6"
-                        Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+                    <MudCard Elevation="6" Class="mb-6" Style="@(reservation.IsDeleted ? "opacity: 0.5;" : "")">
                         <MudCardContent>
                             <MudGrid>
                                 <!-- Icon Section -->
@@ -39,21 +38,22 @@
                                     </MudText>
                                 </MudItem>
 
-                                <!-- View Details Button -->
+                                <!-- View Details or Status -->
                                 <MudItem xs="3" Class="d-flex justify-end align-center">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                        OnClick="@(() => NavigateTo(reservation.Id))"
-                                        Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
-                                        @Localizer["ViewDetails"]
-                                    </MudButton>
-                                </MudItem>
-                                <MudItem xs="3" Class="d-flex justify-end align-center">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                        OnClick="@(() => CancelReservation(reservation.Id))"
-                                        Style="background-color: #e06540; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
-                                        Disabled="@reservation.IsDeleted">
-                                        @Localizer["Cancel"]
-                                    </MudButton>
+                                    @if (reservation.IsDeleted)
+                                    {
+                                        <MudText Typo="Typo.h6" Style="color: red;">
+                                            @Localizer["Cancelled"]
+                                        </MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                            OnClick="@(() => NavigateTo(reservation.Id))"
+                                            Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
+                                            @Localizer["View Details"]
+                                        </MudButton>
+                                    }
                                 </MudItem>
                             </MudGrid>
                         </MudCardContent>

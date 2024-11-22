@@ -20,14 +20,38 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         [Inject]
         public required IReservationService ReservationService { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         protected Task<ReservationDetailsDto> GetReservationDetails()
         {
             return ReservationService.GetReservationDetailsAsync(Id);
         }
 
+        private void GoBack()
+        {
+            NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
+        }
+
+        private async Task CancelReservation()
+        {
+            try
+            {
+                await ReservationService.CancelReservationAsync(ReservationDetails.Id);
+                ReservationDetails.IsDeleted = true;
+                StateHasChanged();
 
 
-
-
+                NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error cancelling reservation: {ex.Message}");
+            }
+        }
     }
+
+
 }
+
+

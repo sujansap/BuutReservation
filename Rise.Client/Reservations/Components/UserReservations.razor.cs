@@ -52,29 +52,7 @@ public class UserReservationsBase : ComponentBase
         NavigationManager.NavigateTo($"/reservations/{reservationId}");
 
     }
-    protected async Task CancelReservation(int reservationId)
-    {
-        try
-        {
-            IsLoading = true;
-            await ReservationService.CancelReservationAsync(reservationId);
 
-            var reservation = ReservationPage?.Data?.FirstOrDefault(r => r.Id == reservationId);
-            if (reservation != null)
-            {
-                reservation.IsDeleted = true;
-            }
-        }
-        catch (Exception ex)
-        {
-            HasError = true;
-            ErrorMessage = $"Failed to cancel reservation: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
 
 
 }

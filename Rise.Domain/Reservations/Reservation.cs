@@ -21,6 +21,7 @@ namespace Rise.Domain.Reservations
         {
         }
 
+        // TODO: een andmin kan wel aanpassen tot net voor de reservatie
         public void Cancel()
         {
             if (IsDeleted)

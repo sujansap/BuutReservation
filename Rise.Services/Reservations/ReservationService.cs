@@ -51,20 +51,19 @@ namespace Rise.Services.Reservations
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
             return await PaginationService.GetPaginatedResultsAsync<IReservation, ReservationDto>(
-                //queryableDbSet: _dbContext.Reservations.AsQueryable(),
-                queryableDbSet: _dbContext.Reservations.Where(r => r.UserId == userId && !r.IsDeleted),
+                queryableDbSet: _dbContext.Reservations.Where(r => r.UserId == userId),
                 filterLambda: r => (r.UserId == userId) && (getPast ?
-                   r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
-                   r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
+                    r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
+                    r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
                 orderingExpressions: [
-                new OrderingExpression<IReservation, object>
-                {
-                    OrderLambda = r => r.TimeSlot.Date
-                },
                     new OrderingExpression<IReservation, object>
-                    {
-                        OrderLambda = r => r.Id
-                    }
+            {
+                OrderLambda = r => r.TimeSlot.Date
+            },
+            new OrderingExpression<IReservation, object>
+            {
+                OrderLambda = r => r.Id
+            }
                 ],
                 projection: r => new ReservationDto
                 {
@@ -167,7 +166,7 @@ namespace Rise.Services.Reservations
                 Start = reservation.TimeSlot.Start,
                 End = reservation.TimeSlot.End,
                 Date = reservation.TimeSlot.Date,
-                IsDeleted = reservation.IsDeleted, // Voeg IsDeleted toe
+                IsDeleted = reservation.IsDeleted,
                 BoatPersonalName = reservation.Boat.PersonalName,
                 MentorName = reservation.Boat.Batteries.FirstOrDefault()?.Mentor?.FamilyName,
                 BatteryType = reservation.Boat.Batteries.FirstOrDefault()?.Type
