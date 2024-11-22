@@ -29,7 +29,8 @@
         <MudIconButton Class="mr-2" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End"
             Href="profile" data-testid="nav-desktop-profile" />
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
-            Href="notifications" data-testid="nav-desktop-notifications" />
+            data-testid="nav-desktop-notifications" OnClick="HandleNotificationButtonClicked" />
+        <Rise.Client.Notifications.Components.NotificationPopoverComponent @bind-IsOpen="_notificationPopoverOpen" />
 
         <CultureSelector IsMobile="false" MenuColor="Color.Secondary" />
     </MudHidden>
