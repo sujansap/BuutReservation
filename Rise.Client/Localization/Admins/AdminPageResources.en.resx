@@ -30,4 +30,16 @@
 	<data name="Admin">
 		<value>ADMIN</value>
 	</data>
+	<data name="Approve">
+		<value>Approve</value>
+	</data>
+	<data name="Processing">
+		<value>Processing</value>
+	</data>
+	<data name="ApproveSuccess">
+		<value>Guest successfully approved as a member!</value>
+	</data>
+	<data name="ApproveFailure">
+		<value>Failed to approve guest: {0}</value>
+	</data>
 </root>

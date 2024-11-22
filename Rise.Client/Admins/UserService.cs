@@ -25,9 +25,9 @@ public class UserService : IUserService
         return result ?? throw new Exception("Failed to get user details for user");
     }
 
-    public Task AddMemberRole(int userId)
+    public async Task AddMemberRole(int userId)
     {
-        throw new NotImplementedException();
+        await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
     }
 
 }

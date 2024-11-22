@@ -27,4 +27,16 @@
 	<data name="Back">
 		<value>Terug</value>
 	</data>
+	<data name="Approve">
+		<value>Aanvaarden</value>
+	</data>
+	<data name="Verwerken">
+		<value>Verwerken</value>
+	</data>
+	<data name="ApproveSuccess">
+		<value>Gast is succesvol goedgekeurd als lid!</value>
+	</data>
+	<data name="ApproveFailure">
+		<value>Gast kon niet worden goedgekeurd: {0}</value>
+	</data>
 </root>
