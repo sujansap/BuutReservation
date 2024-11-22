@@ -12,8 +12,8 @@ namespace Rise.Persistence.Notifications
             base.Configure(builder);
 
             builder
-                .HasOne(e => (User)e.User)
-                .WithMany(e => (ICollection<Notification>)e.Notifications)
+                .HasOne(e => e.User)
+                .WithMany(e => e.Notifications)
                 .HasForeignKey(e => e.UserId)
                 .IsRequired(true);
         }
