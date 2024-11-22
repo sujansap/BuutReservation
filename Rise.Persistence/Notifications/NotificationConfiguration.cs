@@ -11,6 +11,9 @@ namespace Rise.Persistence.Notifications
         {
             base.Configure(builder);
 
+            builder.Property(e => e.Title)
+                        .HasMaxLength(130);
+
             builder
                 .HasOne(e => e.User)
                 .WithMany(e => e.Notifications)
