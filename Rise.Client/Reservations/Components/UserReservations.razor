@@ -47,6 +47,14 @@
                                         @Localizer["ViewDetails"]
                                     </MudButton>
                                 </MudItem>
+                                <MudItem xs="3" Class="d-flex justify-end align-center">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                        OnClick="@(() => CancelReservation(reservation.Id))"
+                                        Style="background-color: #e06540; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
+                                        Disabled="@reservation.IsDeleted">
+                                        @Localizer["Cancel"]
+                                    </MudButton>
+                                </MudItem>
                             </MudGrid>
                         </MudCardContent>
                     </MudCard>

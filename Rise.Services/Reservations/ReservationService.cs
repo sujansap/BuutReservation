@@ -51,7 +51,8 @@ namespace Rise.Services.Reservations
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
             return await PaginationService.GetPaginatedResultsAsync<IReservation, ReservationDto>(
-                queryableDbSet: _dbContext.Reservations.AsQueryable(),
+                //queryableDbSet: _dbContext.Reservations.AsQueryable(),
+                queryableDbSet: _dbContext.Reservations.Where(r => r.UserId == userId && !r.IsDeleted),
                 filterLambda: r => (r.UserId == userId) && (getPast ?
                    r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
                    r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
@@ -72,6 +73,7 @@ namespace Rise.Services.Reservations
                     End = r.TimeSlot.End,
                     Date = r.TimeSlot.Date,
                     BoatId = r.BoatId,
+                    IsDeleted = r.IsDeleted,
                     BoatPersonalName = r.Boat.PersonalName
                 },
                 cursor: cursor,
@@ -151,17 +153,13 @@ namespace Rise.Services.Reservations
 
         public async Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId)
         {
-            Reservation reservation = (await _dbContext.Reservations
-            .Include(r => r.Boat)
-            .ThenInclude(b => b.Batteries)
-            .ThenInclude(battery => battery.Mentor)
-            .Include(r => r.TimeSlot)
-            .FirstOrDefaultAsync(r => r.Id == reservationId))
-            ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
-
-            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
-            Battery battery = reservation.Boat.Batteries.FirstOrDefault();
-
+            var reservation = await _dbContext.Reservations
+                .Include(r => r.Boat)
+                .ThenInclude(b => b.Batteries)
+                .ThenInclude(battery => battery.Mentor)
+                .Include(r => r.TimeSlot)
+                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
             return new ReservationDetailsDto
             {
@@ -169,13 +167,26 @@ namespace Rise.Services.Reservations
                 Start = reservation.TimeSlot.Start,
                 End = reservation.TimeSlot.End,
                 Date = reservation.TimeSlot.Date,
+                IsDeleted = reservation.IsDeleted, // Voeg IsDeleted toe
                 BoatPersonalName = reservation.Boat.PersonalName,
-                MentorName = battery?.Mentor?.FamilyName,
-                BatteryType = battery?.Type
-
+                MentorName = reservation.Boat.Batteries.FirstOrDefault()?.Mentor?.FamilyName,
+                BatteryType = reservation.Boat.Batteries.FirstOrDefault()?.Type
             };
         }
+        public async Task CancelReservationAsync(int reservationId)
+        {
+            var reservation = await _dbContext.Reservations
+                .Include(r => r.TimeSlot)
+                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
+
+            reservation.Cancel();
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
-
-
 }
+
+
+
+

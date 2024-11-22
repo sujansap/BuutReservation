@@ -21,5 +21,20 @@ namespace Rise.Domain.Reservations
         {
         }
 
+        public void Cancel()
+        {
+            if (IsDeleted)
+            {
+                throw new InvalidOperationException("The reservation is already canceled.");
+            }
+
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+            if ((TimeSlot.Date.ToDateTime(TimeOnly.MinValue) - currentDate.ToDateTime(TimeOnly.MinValue)).TotalDays < MinDaysBetweenReservation)
+            {
+                throw new InvalidOperationException("Reservations can only be canceled at least 2 days before the reservation date.");
+            }
+
+            IsDeleted = true;
+        }
     }
 }

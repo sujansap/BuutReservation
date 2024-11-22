@@ -122,6 +122,25 @@ namespace Rise.Server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the reservation details.");
             }
         }
+
+        [HttpPatch("cancel/{id}")]
+        public async Task<IActionResult> CancelReservation(int id)
+        {
+            try
+            {
+                await _reservationService.CancelReservationAsync(id);
+                return NoContent();
+            }
+            catch (EntityNotFoundException)
+            {
+                _logger.LogWarning("Reservation with id {id} not found.", id);
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
 
