@@ -16,13 +16,13 @@ namespace Rise.Client.Utils
             //If the timestamp is today, return the time
             if (date.Date == DateTime.Today)
             {
-                return date.ToString("t");
+                return date.ToShortTimeString();
             }
 
             //If the timestamp was yesterday, return "Yesterday" + time
             if (date.Date == DateTime.Today.AddDays(-1))
             {
-                return "Gisteren om " + date.ToString("t");
+                return "Gisteren om " + date.ToShortTimeString();
             }
 
             //If the timestamp is within the last 7 days, return the day of the week and the time
