@@ -33,8 +33,10 @@
                     </MudText>
                     @if (!Notification.IsRead)
                     {
-                        <MudIcon Icon="@NotificationIcon" Color="Color.Info" Size="Size.Small"
-                            data-testid="@($"notification-is-unread-icon-{Notification.Id}")" />
+                        <MudBadge Color="Color.Info" Style="align-self: flex-start; display: flex; justify-content: center;"
+                            Dot Class="pa-2" Origin="Origin.CenterCenter"
+                            data-testid="@($"notification-is-unread-badge-{Notification.Id}")">
+                        </MudBadge>
                     }
                 </MudStack>
             </MudStack>

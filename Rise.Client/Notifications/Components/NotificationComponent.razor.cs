@@ -21,7 +21,5 @@ namespace Rise.Client.Notifications.Components
         {
             await OnClick.InvokeAsync();
         }
-
-        private readonly string NotificationIcon = "<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M12 6C8.69 6 6 8.69 6 12s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z\"/>";
     }
 }
