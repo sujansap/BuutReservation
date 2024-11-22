@@ -3,19 +3,19 @@
 
 @if (IsOpen)
 {
-                <MudOverlay Visible="true" OnClick="HandleClose" AutoClose="true" />
+    <MudOverlay Visible="true" OnClick="HandleClose" AutoClose="true" />
 }
 <MudPopover Open="@IsOpen" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.BottomRight"
-    Style="max-width: 400px; z-index: 2000;" Class="pa-4" Fixed="true" Paper="true">
-    <MudButton FullWidth Variant="Variant.Filled" Color="Color.Primary" Class="mb-4" Href="/notifications" OnClick="@HandleClose" >
+    Style="max-width: 400px; z-index: 2000;" Class="pa-4" Fixed="true" Paper="true" data-testid="notifications-popover">
+    <MudButton FullWidth Variant="Variant.Filled" Color="Color.Primary" Class="mb-4" Href="/notifications"
+        OnClick="@HandleClose" data-testid="notifications-popover-button">
         Notifications
     </MudButton>
     <AsyncData DataFetcher="@FetchNotifications" @bind-Data="@_notifications" T="IEnumerable<NotificationDto>"
         @ref="AsyncDataRef" ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert"
-        TestIdPrefix="custom-calendar-reserve"
-        >
+        TestIdPrefix="notifications-popover-list-async-data">
         <NotificationsListComponent Notifications="_notifications" OnNotificationClick="HandleNotificationClicked"
-            data-testid="notifications-list" />
+            data-testid="notifications-popover-list" />
     </AsyncData>
 </MudPopover>
 
