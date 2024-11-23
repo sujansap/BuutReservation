@@ -1,4 +1,5 @@
 using Rise.Domain.Boats;
+using Rise.Domain.Reservations;
 using Rise.Domain.Tests.TestUtilities;
 using Shouldly;
 
@@ -51,6 +52,21 @@ namespace Rise.Domain.Tests.Boats
             };
             act.ShouldThrow<ArgumentException>()
             .ParamName.ShouldBe("PersonalName");
+        }
+
+        [Fact]
+        public void BeAbleToAddValidReservation()
+        {
+            Boat b = new BoatBuilder().Build();
+            IReadOnlyList<Reservation> reservations = b.Reservations;
+            Reservation reservation = new ReservationBuilder().Build();
+
+            reservations.ShouldBeEmpty();
+            b.AddReservation(reservation);
+
+            reservations.Count.ShouldBe(1);
+            reservations.ShouldContain(reservation);
+
         }
     }
 }

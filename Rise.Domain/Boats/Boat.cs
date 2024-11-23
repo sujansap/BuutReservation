@@ -15,12 +15,17 @@ namespace Rise.Domain.Boats
             get => _personalName;
             set => _personalName = Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName)).Trim();
         }
-
-        // TODO make reservations protected
-        public ICollection<Reservation> Reservations { get; } = [];
+        private readonly List<Reservation> reservations = [];
+        public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 
         // TODO make batteries protected
-        public ICollection<Battery> Batteries { get; } = [];
+        public List<Battery> Batteries { get; } = [];
+
+        public void AddReservation(Reservation reservation)
+        {
+            // TODO add logic for making reservation
+            reservations.Add(reservation);
+        }
 
     }
 }
