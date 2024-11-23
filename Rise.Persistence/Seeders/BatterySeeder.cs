@@ -14,19 +14,19 @@ namespace Rise.Persistence.Seeders
             batteries =
             [
                 // Boot 1 met 3 batterijen en specifieke mentor toegewezen
-                new() { Type = "Lithium-Ion", Boat = BoatSeeder.boats[0], Mentor = UserSeeder.users[0] },
-                new() { Type = "Loodzuur", Boat = BoatSeeder.boats[0], Mentor = UserSeeder.users[1] },
-                new() { Type = "NiMH", Boat = BoatSeeder.boats[0], Mentor = UserSeeder.users[2] },
+                new() { Type = "Lithium-Ion", Boat = BoatSeeder.Limba, Mentor = UserSeeder.users[0] },
+                new() { Type = "Loodzuur", Boat = BoatSeeder.Limba, Mentor = UserSeeder.users[1] },
+                new() { Type = "NiMH", Boat = BoatSeeder.Limba, Mentor = UserSeeder.users[2] },
 
                 // Boot 2 met 3 batterijen en specifieke mentor toegewezen
-                new() { Type = "Lithium-Ion", Boat = BoatSeeder.boats[1], Mentor = UserSeeder.users[3] },
-                new() { Type = "Loodzuur", Boat = BoatSeeder.boats[1], Mentor = UserSeeder.users[4] },
-                new() { Type = "NiMH", Boat = BoatSeeder.boats[1], Mentor = UserSeeder.users[5] },
+                new() { Type = "Lithium-Ion", Boat = BoatSeeder.Leith, Mentor = UserSeeder.users[3] },
+                new() { Type = "Loodzuur", Boat = BoatSeeder.Leith, Mentor = UserSeeder.users[4] },
+                new() { Type = "NiMH", Boat = BoatSeeder.Leith, Mentor = UserSeeder.users[5] },
 
                 // Boot 3 met 3 batterijen en specifieke mentor toegewezen
-                new() { Type = "Lithium-Ion", Boat = BoatSeeder.boats[2], Mentor = UserSeeder.users[6] },
-                new() { Type = "Loodzuur", Boat = BoatSeeder.boats[2], Mentor = UserSeeder.users[7] },
-                new() { Type = "NiMH", Boat = BoatSeeder.boats[2], Mentor = UserSeeder.users[8] }
+                new() { Type = "Lithium-Ion", Boat = BoatSeeder.Lubeck, Mentor = UserSeeder.users[6] },
+                new() { Type = "Loodzuur", Boat = BoatSeeder.Lubeck, Mentor = UserSeeder.users[7] },
+                new() { Type = "NiMH", Boat = BoatSeeder.Lubeck, Mentor = UserSeeder.users[8] }
             ];
 
         }
