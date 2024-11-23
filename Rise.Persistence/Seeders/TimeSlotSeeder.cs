@@ -19,7 +19,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddWeekLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[1];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.WeekLong;
 
             DateOnly cruisePeriodDate = DateOnly.FromDateTime(cruisePeriod.Start);
 
@@ -69,7 +69,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddABitOverTwoWeekLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[2];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.TwoWeekAndTwoDaysLong;
 
             DateOnly cruisePeriodDate = DateOnly.FromDateTime(cruisePeriod.Start);
 
@@ -156,7 +156,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddMonthLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[3];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.MonthLong;
 
             DateOnly cruisePeriodDate = DateOnly.FromDateTime(cruisePeriod.Start);
 
@@ -240,7 +240,7 @@ namespace Rise.Persistence.Seeders
 
         private static void AddPastMonthLongCruisePeriodItems()
         {
-            CruisePeriod cruisePeriod = CruisePeriodSeeder.cruisePeriods[0];
+            CruisePeriod cruisePeriod = CruisePeriodSeeder.PastMonthLong;
 
             DateOnly cruisePeriodStartDate = DateOnly.FromDateTime(cruisePeriod.Start);
             DateOnly cruisePeriodEndDate = DateOnly.FromDateTime(cruisePeriod.End);
