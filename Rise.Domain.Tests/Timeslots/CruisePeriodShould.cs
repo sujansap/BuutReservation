@@ -2,7 +2,7 @@ using Rise.Domain.TimeSlots;
 using Rise.Domain.Tests.TestUtilities;
 using Shouldly;
 
-namespace Rise.Domain.Tests.Timeslots
+namespace Rise.Domain.Tests.TimeSlots
 {
     public class CruisePeriodShould
     {
