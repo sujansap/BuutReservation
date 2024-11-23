@@ -54,5 +54,44 @@ namespace Rise.Domain.Tests.Timeslots
 
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        public void BeAbleToAddValidTimeSlot(int amountDays)
+        {
+            CruisePeriod period = new CruisePeriodBuilder().Build();
+            IReadOnlyList<TimeSlot> timeSlots = period.TimeSlots;
+            TimeSlot timeSlot = new TimeSlotBuilder()
+            .WithDate(amountDays)
+            .Build();
+
+            timeSlots.ShouldBeEmpty();
+            period.AddTimeSlot(timeSlot);
+
+            timeSlots.Count.ShouldBe(1);
+            timeSlots.ShouldContain(timeSlot);
+        }
+
+        [Theory]
+        [InlineData(-2)]
+        [InlineData(-1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        public void BeAbleToAddInvalidTimeSlot(int amountDays)
+        {
+            CruisePeriod period = new CruisePeriodBuilder().Build();
+            IReadOnlyList<TimeSlot> timeSlots = period.TimeSlots;
+            TimeSlot timeSlot = new TimeSlotBuilder()
+            .WithDate(amountDays)
+            .Build();
+            Action act = () =>
+                        {
+                            timeSlots.ShouldBeEmpty();
+                            period.AddTimeSlot(timeSlot);
+                        };
+
+            act.ShouldThrow<ArgumentOutOfRangeException>();
+        }
     }
 }

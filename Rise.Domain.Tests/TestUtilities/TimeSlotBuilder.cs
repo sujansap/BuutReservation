@@ -4,7 +4,7 @@ namespace Rise.Domain.Tests.TestUtilities
 {
     public class TimeSlotBuilder
     {
-        public static readonly DateOnly ValidDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
+        public static readonly DateOnly ValidDate = DateOnly.FromDateTime(CruisePeriodBuilder.ValidStart);
         public static readonly TimeOnly ValidStart = new(10, 0, 0);
         public static readonly TimeOnly ValidEnd = new(13, 0, 0);
 
@@ -18,6 +18,10 @@ namespace Rise.Domain.Tests.TestUtilities
         {
             date = newDate;
             return this;
+        }
+        public TimeSlotBuilder WithDate(int days)
+        {
+            return WithDate(date.AddDays(days));
         }
 
         public TimeSlotBuilder WithStart(TimeOnly newStart)
