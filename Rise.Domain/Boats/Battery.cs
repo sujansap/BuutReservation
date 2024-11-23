@@ -15,7 +15,6 @@ namespace Rise.Domain.Boats
             get => _type;
             set => _type = Guard.Against.NullOrWhiteSpace(value, nameof(Type), "Battery type cannot be null or empty");
         }
-
         public required Boat Boat { get; set; }
 
         public required User Mentor { get; set; }

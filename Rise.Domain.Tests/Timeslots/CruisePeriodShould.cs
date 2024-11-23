@@ -1,4 +1,4 @@
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 using Rise.Domain.Tests.TestUtilities;
 using Shouldly;
 

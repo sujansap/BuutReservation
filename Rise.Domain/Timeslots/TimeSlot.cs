@@ -1,6 +1,6 @@
 using Rise.Domain.Reservations;
 
-namespace Rise.Domain.Timeslots;
+namespace Rise.Domain.TimeSlots;
 
 public class TimeSlot : Entity
 {

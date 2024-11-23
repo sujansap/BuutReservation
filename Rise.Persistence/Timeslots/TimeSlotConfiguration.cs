@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 
 namespace Rise.Persistence.Timeslots;
 

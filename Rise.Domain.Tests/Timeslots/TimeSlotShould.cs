@@ -1,5 +1,5 @@
 using Rise.Domain.Tests.TestUtilities;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 using Shouldly;
 
 namespace Rise.Domain.Tests.Timeslots

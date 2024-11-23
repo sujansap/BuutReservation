@@ -1,6 +1,6 @@
 
 
-namespace Rise.Domain.Timeslots;
+namespace Rise.Domain.TimeSlots;
 public class CruisePeriod : Entity
 {
 

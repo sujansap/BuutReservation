@@ -3,7 +3,7 @@
 using Rise.Domain.Users;
 using Rise.Domain.Reservations;
 using Rise.Domain.Boats;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 
 namespace Rise.Persistence;
 

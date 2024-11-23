@@ -1,4 +1,4 @@
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 
 namespace Rise.Domain.Tests.TestUtilities
 {
