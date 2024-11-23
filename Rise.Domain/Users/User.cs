@@ -18,7 +18,9 @@ namespace Rise.Domain.Users
             set => _familyName = Guard.Against.NullOrWhiteSpace(value, nameof(FamilyName)).Trim();
         }
 
-        public ICollection<Reservation> Reservations { get; } = [];
-        public ICollection<Battery> ResponsibleBatteries { get; } = [];
+        private readonly List<Reservation> reservations = [];
+        public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
+        private readonly List<Battery> responsibleBatteries = [];
+        public IReadOnlyList<Battery> ResponsibleBatteries => responsibleBatteries.AsReadOnly();
     }
 }
