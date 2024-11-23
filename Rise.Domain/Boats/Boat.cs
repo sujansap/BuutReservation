@@ -18,13 +18,20 @@ namespace Rise.Domain.Boats
         private readonly List<Reservation> reservations = [];
         public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 
-        // TODO make batteries protected
-        public List<Battery> Batteries { get; } = [];
+        private readonly List<Battery> batteries = [];
+
+        public IReadOnlyList<Battery> Batteries => batteries.AsReadOnly();
 
         public void AddReservation(Reservation reservation)
         {
             // TODO add logic for making reservation
             reservations.Add(reservation);
+        }
+
+        public void AddBattery(Battery battery)
+        {
+            // TODO add logic for adding battery
+            batteries.Add(battery);
         }
 
     }

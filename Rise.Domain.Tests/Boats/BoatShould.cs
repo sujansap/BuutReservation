@@ -68,5 +68,19 @@ namespace Rise.Domain.Tests.Boats
             reservations.ShouldContain(reservation);
 
         }
+
+        [Fact]
+        public void BeAbleToAddValidBattery()
+        {
+            Boat b = new BoatBuilder().Build();
+            IReadOnlyList<Battery> batteries = b.Batteries;
+            Battery battery = new BatteryBuilder().Build();
+
+            batteries.ShouldBeEmpty();
+            b.AddBattery(battery);
+
+            batteries.Count.ShouldBe(1);
+            batteries.ShouldContain(battery);
+        }
     }
 }
