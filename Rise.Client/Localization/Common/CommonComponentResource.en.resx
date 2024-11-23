@@ -3,4 +3,7 @@
 	<data name="ViewDetails">
 		<value>Details</value>
 	</data>
+	<data name="Back">
+		<value>Back</value>
+	</data>
 </root>

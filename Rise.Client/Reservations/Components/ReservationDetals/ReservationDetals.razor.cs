@@ -14,6 +14,7 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         protected ReservationDetailsDto? ReservationDetails { get; set; }
 
 
+
         [Parameter]
         public int Id { get; set; }
 

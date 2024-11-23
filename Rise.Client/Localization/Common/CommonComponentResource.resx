@@ -3,4 +3,7 @@
 	<data name="ViewDetails">
 		<value>Zie Details</value>
 	</data>
+	<data name="Back">
+		<value>Terug</value>
+	</data>
 </root>
