@@ -52,6 +52,6 @@ public class TimeSlot : Entity
 
     public required CruisePeriod CruisePeriod { get; set; }
 
-    // TODO make reservations public read only
-    public IList<Reservation> Reservations { get; } = [];
+    private readonly List<Reservation> reservations = [];
+    public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 }
