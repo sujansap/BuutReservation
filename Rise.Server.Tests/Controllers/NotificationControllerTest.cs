@@ -23,6 +23,16 @@ namespace Rise.Server.Tests.Controllers
             IEnumerable<NotificationDto> response = (await _client.GetFromJsonAsync<IEnumerable<NotificationDto>>("me"))!;
             response.Count().ShouldBe(20);
         }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        public async Task PATCH_CurrentUser_Notifications_MarkAsRead(int id)
+        {
+            var response = await _client.PatchAsync($"read/{id}", null);
+            response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        }
     }
 
 }
