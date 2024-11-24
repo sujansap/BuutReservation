@@ -8,7 +8,7 @@ public class TimeSlot : Entity
     private TimeOnly _end;
     private DateOnly _date;
 
-    public DateOnly Date
+    public required DateOnly Date
     {
         get => _date;
         set
@@ -26,7 +26,7 @@ public class TimeSlot : Entity
         }
     }
 
-    public TimeOnly Start
+    public required TimeOnly Start
     {
         get => _start;
         set
@@ -37,7 +37,7 @@ public class TimeSlot : Entity
         }
     }
 
-    public TimeOnly End
+    public required TimeOnly End
     {
         get => _end;
         set
