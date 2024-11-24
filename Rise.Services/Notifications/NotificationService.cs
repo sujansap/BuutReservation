@@ -12,16 +12,17 @@ namespace Rise.Services.Notifications
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
 
-        public Task<IEnumerable<NotificationDto>> GetUserNotifications()
+        public async Task<IEnumerable<NotificationDto>> GetUserNotifications()
         {
             const int userId = 1;
-            IEnumerable<NotificationDto> notifications = _dbContext.Users
-                .First(user => user.Id == userId)
+
+            IEnumerable<NotificationDto> notifications = (await _dbContext.Users.Include(user => user.Notifications)
+                .FirstAsync(user => user.Id == userId))
                 .Notifications.OrderByDescending(notification => notification.CreatedAt)
                 .Select(MapNotificationToDto)
                 .ToList();
 
-            return Task.FromResult(notifications);
+            return notifications;
         }
 
         public Task MarkNotificationAsRead(int id)
