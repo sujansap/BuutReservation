@@ -201,6 +201,16 @@ namespace Rise.Client.Tests.Notifications
                     Body = JsonSerializer.Serialize(_notifications)
                 });
             });
+
+            await Page.RouteAsync("*/**/api/Notification/read/*", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 204,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(new { })
+                });
+            });
         }
 
         [Test]
@@ -289,6 +299,32 @@ namespace Rise.Client.Tests.Notifications
             // Assert notification timestamp
             var timestampElement = Page.GetByTestId("notification-details-timestamp");
             await Expect(timestampElement).ToHaveTextAsync(_notifications.First(n => n.Id == id).CreatedAt.ToString("t"));
+        }
+
+        [Test]
+        [TestCase(1, 2)]
+        public async Task HasNoUnreadIndicatorWhenUnreadNotificationIsClicked(int id1, int id2)
+        {
+            await MockHTTPRequests();
+            await InitNavigationToUrl("/notifications");
+
+            // Assert is-unread indicator is visible
+            var isReadElementBadge = Page.GetByTestId($"notification-is-unread-badge-{id1}");
+            await Expect(isReadElementBadge).ToBeVisibleAsync();
+
+            // Click on the notification
+            var notificationElement1 = Page.GetByTestId($"notification-{id1}");
+            await notificationElement1.ClickAsync();
+
+            // Assert is-unread indicator is not visible
+            await Expect(isReadElementBadge).Not.ToBeVisibleAsync();
+
+            // Click on the notification
+            var notificationElement2 = Page.GetByTestId($"notification-{id2}");
+            await notificationElement2.ClickAsync();
+
+            // Assert is-unread indicator is not visible
+            await Expect(isReadElementBadge).Not.ToBeVisibleAsync();
         }
     }
 
