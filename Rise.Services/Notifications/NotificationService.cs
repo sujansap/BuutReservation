@@ -33,7 +33,11 @@ namespace Rise.Services.Notifications
 
         public Task MarkNotificationAsRead(int id)
         {
-            throw new NotImplementedException();
+            const int userId = 1;
+            return _dbContext.Users.Where(user => user.Id == userId)
+                .SelectMany(user => user.Notifications)
+                .Where(notification => notification.Id == id)
+                .ForEachAsync(notification => notification.IsRead = true);
         }
 
         private static NotificationDto MapNotificationToDto(Notification notification)
