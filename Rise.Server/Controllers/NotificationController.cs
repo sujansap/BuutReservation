@@ -53,9 +53,31 @@ namespace Rise.Server.Controllers
         /// <param name="id">The ID of the notification to mark as read.</param>
         /// <returns></returns>
         /// <response code="204">The notification was successfully marked as read.</response>
-        /// <response code="400">The notification ID is invalid.</response>
-        /// <response code="404">The notification was not found.</response>
         /// <response code="500">An error occurred while marking the notification as read.</response>
-        // [HttpPatch("{id}/read")]
+        [HttpPatch("read/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> MarkNotificationAsRead(int id)
+        {
+            if (id <= 0)
+            {
+                _logger.LogWarning("Invalid notification ID: {id} is not a valid ID.", id);
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "Id", [$"The notification ID must be a positive integer ({id})."] }
+                }));
+            }
+            try
+            {
+                await _notificationService.MarkNotificationAsRead(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while marking notification {id} as read.", id);
+                return Problem("An error occurred while marking the notification as read.", statusCode: StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
 }

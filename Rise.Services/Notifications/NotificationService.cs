@@ -34,6 +34,12 @@ namespace Rise.Services.Notifications
         public Task MarkNotificationAsRead(int id)
         {
             const int userId = 1;
+            int count = _dbContext.Users.Where(user => user.Id == userId)
+                .SelectMany(user => user.Notifications)
+                .Where(notification => notification.Id == id)
+                .Count();
+
+            Console.WriteLine($"Notification count: {count}");
             return _dbContext.Users.Where(user => user.Id == userId)
                 .SelectMany(user => user.Notifications)
                 .Where(notification => notification.Id == id)
