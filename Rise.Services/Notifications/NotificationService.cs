@@ -34,8 +34,7 @@ namespace Rise.Services.Notifications
             _dbContext.Users.Include(user => user.Notifications)
                 .Where(user => user.Id == userId)
                 .SelectMany(user => user.Notifications)
-                .Where(notification => notification.Id == id)
-                .ForEachAsync(notification => notification.IsRead = true);
+                .First(notification => notification.Id == id).IsRead = true;
 
             return _dbContext.SaveChangesAsync();
         }
