@@ -241,7 +241,7 @@ namespace Rise.Client.Tests.Notifications
             await Expect(timestampElement).ToHaveTextAsync(timeStamp.ToString("t"));
 
             // Assert is-unread indicator is visible
-            var isReadElement = Page.GetByTestId($"notification-is-unread-icon-{id}");
+            var isReadElement = Page.GetByTestId($"notification-is-unread-badge-{id}");
             await Expect(isReadElement).ToBeVisibleAsync();
         }
 
@@ -253,7 +253,7 @@ namespace Rise.Client.Tests.Notifications
             await InitNavigationToUrl("/notifications");
 
             // Assert is-unread indicator is visible
-            var isReadElement = Page.GetByTestId($"notification-is-unread-icon-{id}");
+            var isReadElement = Page.GetByTestId($"notification-is-unread-badge-{id}");
             await Expect(isReadElement).ToBeVisibleAsync();
 
             // Click on the notification to mark it as read
