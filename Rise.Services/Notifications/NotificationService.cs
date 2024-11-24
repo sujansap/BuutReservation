@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Notifications;
+using Rise.Domain.Users;
 using Rise.Persistence;
 using Rise.Shared.Notifications;
 
