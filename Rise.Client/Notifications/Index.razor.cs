@@ -43,7 +43,11 @@ namespace Rise.Client.Notifications
                 if (notification != null)
                 {
                     SelectedNotification = notification;
-                    notification.IsRead = true;
+                    if (!notification.IsRead)
+                    {
+                        notification.IsRead = true;
+                        NotificationService.MarkNotificationAsRead(notification.Id);
+                    }
                 }
             }
         }
