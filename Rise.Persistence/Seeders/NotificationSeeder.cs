@@ -190,6 +190,70 @@ namespace Rise.Persistence.Seeders
                     CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(14)),
                     IsRead = true,
                     User = UserSeeder.users[0]
+                },
+                new()
+                {
+                    Severity = 1, // Success
+                    Title = "Welcome!",
+                    Message = "Welcome to our platform! Your account has been successfully created.",
+                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromHours(1)),
+                    IsRead = false,
+                    User = UserSeeder.users[1]
+                },
+                new()
+                {
+                    Severity = 0, // Info
+                    Title = "Getting Started Guide",
+                    Message = "Check out our getting started guide to make the most of your account.",
+                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromHours(2)),
+                    IsRead = false,
+                    User = UserSeeder.users[1]
+                },
+                new()
+                {
+                    Severity = 2, // Warning
+                    Title = "Complete Your Profile",
+                    Message = "Your profile is incomplete. Add more information to unlock all features.",
+                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(1)),
+                    IsRead = true,
+                    User = UserSeeder.users[1]
+                },
+
+                new()
+                {
+                    Severity = 3, // Error
+                    Title = "Password Reset Required",
+                    Message = "For security reasons, please reset your password immediately.",
+                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromMinutes(30)),
+                    IsRead = false,
+                    User = UserSeeder.users[2]
+                },
+                new()
+                {
+                    Severity = 1, // Success
+                    Title = "Project Milestone Reached",
+                    Message = "Congratulations! Your team has completed the first milestone.",
+                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(2)),
+                    IsRead = true,
+                    User = UserSeeder.users[2]
+                },
+                new()
+                {
+                    Severity = 0, // Info
+                    Title = "Subscription Status",
+                    Message = "Your premium subscription will renew in 7 days.",
+                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromHours(12)),
+                    IsRead = false,
+                    User = UserSeeder.users[3]
+                },
+                new()
+                {
+                    Severity = 2, // Warning
+                    Title = "Storage Space Low",
+                    Message = "Your personal storage space is almost full. Consider upgrading your plan.",
+                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(3)),
+                    IsRead = true,
+                    User = UserSeeder.users[3]
                 }
             });
         }

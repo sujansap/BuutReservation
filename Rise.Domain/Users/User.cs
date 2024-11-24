@@ -19,6 +19,7 @@ namespace Rise.Domain.Users
         }
 
         public ICollection<Reservation> Reservations { get; } = [];
-        public ICollection<Notification> Notifications { get; } = [];
+        private readonly List<Notification> notifications = [];
+        public IReadOnlyList<Notification> Notifications => notifications.AsReadOnly();
     }
 }
