@@ -1,5 +1,6 @@
 // using Rise.Domain.Reservations;
 
+using Rise.Domain.Notifications;
 using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Users
@@ -18,5 +19,7 @@ namespace Rise.Domain.Users
         }
 
         public ICollection<Reservation> Reservations { get; } = [];
+        private readonly List<Notification> notifications = [];
+        public IReadOnlyList<Notification> Notifications => notifications.AsReadOnly();
     }
 }

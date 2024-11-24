@@ -20,5 +20,6 @@ public class Seeder
         new CruisePeriodSeeder(dbContext).Seed();
         new TimeSlotSeeder(dbContext).Seed();
         new ReservationSeeder(dbContext).Seed();
+        new NotificationSeeder(dbContext).Seed();
     }
 }
