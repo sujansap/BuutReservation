@@ -6,11 +6,11 @@ namespace Rise.Domain.Notifications
     public class Notification : Entity
     {
         private int _severity;
-        private string _title;
-        private string _message;
+        private string _title = default!;
+        private string _message = default!;
         private bool _isRead;
         private int _userId;
-        private User _user;
+        private User _user = default!;
 
         public int Severity
         {
