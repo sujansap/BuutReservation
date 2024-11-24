@@ -15,8 +15,8 @@ namespace Rise.Services.Notifications
         public async Task<IEnumerable<NotificationDto>> GetUserNotifications(int? limit)
         {
             const int userId = 1;
-            IQueryable<Notification> query = _dbContext.Notifications
-                .Where(notification => notification.UserId == userId)
+            IQueryable<Notification> query = _dbContext.Users.Where(user => user.Id == userId)
+                .SelectMany(user => user.Notifications)
                 .OrderByDescending(notification => notification.CreatedAt);
 
             var dtoQuery = query.Select(notification => MapNotificationToDto(notification));
