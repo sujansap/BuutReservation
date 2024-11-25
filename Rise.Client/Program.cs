@@ -11,6 +11,10 @@ using System.Globalization;
 using Microsoft.JSInterop;
 using Serilog.Core;
 using Serilog;
+using Rise.Shared.Users;
+using Rise.Client.Admins;
+using Rise.Shared.Notifications;
+using Rise.Client.Notifications;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -43,6 +47,14 @@ builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
 builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
+});
+builder.Services.AddHttpClient<IUserService, UserService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
+});
+builder.Services.AddHttpClient<INotificationService, NotificationService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Notification/");
 });
 
 var host = builder.Build();

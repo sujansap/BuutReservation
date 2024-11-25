@@ -3,9 +3,9 @@
 /// <summary>
 /// Entity Base Class
 /// </summary>
-public abstract class Entity : IEntity
+public abstract class Entity
 {
-    public int Id { get; set; }
+    public int Id { get; private set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }

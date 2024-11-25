@@ -86,7 +86,7 @@ namespace Rise.Client.Reservations.Components
         /// </summary>
         /// <param name="day">day info about the events</param>
         /// <returns>calendar item</returns>
-        private static ColoredCalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
+        public static ColoredCalendarItem ConvertToCalendarItems(TimeSlotDaySurfaceInfoDto day)
         {
             return new ColoredCalendarItem()
             {

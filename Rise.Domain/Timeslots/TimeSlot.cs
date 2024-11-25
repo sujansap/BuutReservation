@@ -1,27 +1,32 @@
-using Ardalis.GuardClauses;
 using Rise.Domain.Reservations;
 
-// using Rise.Domain.Reservations;
+namespace Rise.Domain.TimeSlots;
 
-namespace Rise.Domain.Timeslots;
-
-public class TimeSlot : Entity, ITimeSlot
+public class TimeSlot : Entity
 {
     private TimeOnly _start;
     private TimeOnly _end;
     private DateOnly _date;
 
-    public DateOnly Date
+    public required DateOnly Date
     {
         get => _date;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(Date), DateOnly.FromDateTime(DateTime.Today), DateOnly.MaxValue, "Date must be today or in the future.");
+            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, DateTime.Now.Year + 100,
+                "TimeSlot date must be after year 2000.");
+
+            DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);
+            DateOnly endDate = DateOnly.FromDateTime(CruisePeriod.End);
+
+            Guard.Against.OutOfRange(value, nameof(Date), startDate, endDate,
+                "TimeSlot date must be within the CruisePeriod's date range.");
+
             _date = value;
         }
     }
 
-    public TimeOnly Start
+    public required TimeOnly Start
     {
         get => _start;
         set
@@ -32,22 +37,21 @@ public class TimeSlot : Entity, ITimeSlot
         }
     }
 
-    public TimeOnly End
+    public required TimeOnly End
     {
         get => _end;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, "End time must be within a valid range.");
-            if (_start != default && value <= _start)
-            {
-                throw new ArgumentOutOfRangeException(nameof(End), "End time must be after Start time.");
-            }
+            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue,
+                "End time must be within a valid range.");
+            Guard.Against.OutOfRange(value, nameof(End), Start.AddMinutes(1), TimeOnly.MaxValue,
+                "End time must be after Start time.");
             _end = value;
         }
     }
 
-    public int CruisePeriodId { get; set; }
-    public ICruisePeriod CruisePeriod { get; set; } = default!;
+    public required CruisePeriod CruisePeriod { get; set; }
 
-    public ICollection<IReservation> Reservations { get; } = [];
+    private readonly List<Reservation> reservations = [];
+    public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 }

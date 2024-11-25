@@ -1,0 +1,12 @@
+﻿@using MudBlazor
+@using Rise.Client.Localization.Admins
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<AdminPageResources> Localizer
+@inherits LayoutComponentBase
+
+@*add here items for admin menu*@
+
+
+<MudNavLink data-testid="nav-admin-guests" Href="/admin/guests">
+    @Localizer["NewUsers"]
+ </MudNavLink>

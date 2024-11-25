@@ -1,17 +1,13 @@
-using System.Linq.Expressions;
-using System.Net.Cache;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Rise.Domain.Boats;
-using Rise.Domain.Common;
 using Rise.Domain.Exceptions;
 using Rise.Domain.Reservations;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 using Rise.Domain.Users;
 using Rise.Persistence;
 using Rise.Services.Constants;
 using Rise.Services.Pagination;
-using Rise.Shared;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
@@ -50,20 +46,22 @@ namespace Rise.Services.Reservations
 
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
-            return await PaginationService.GetPaginatedResultsAsync<IReservation, ReservationDto>(
-                queryableDbSet: _dbContext.Reservations.Where(r => r.UserId == userId),
+            return await PaginationService.GetPaginatedResultsAsync<Reservation, ReservationDto>(
+                queryableDbSet: _dbContext.Reservations.AsQueryable(),
                 filterLambda: r => (r.UserId == userId) && (getPast ?
                     r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
                     r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
                 orderingExpressions: [
-                    new OrderingExpression<IReservation, object>
-            {
-                OrderLambda = r => r.TimeSlot.Date
-            },
-            new OrderingExpression<IReservation, object>
-            {
-                OrderLambda = r => r.Id
-            }
+                    new OrderingExpression<Reservation, object>
+                    {
+                        OrderLambda = r => r.TimeSlot.Date,
+                        IsDescending = getPast
+                    },
+                    new OrderingExpression<Reservation, object>
+                    {
+                        OrderLambda = r => r.Id,
+                        IsDescending = getPast
+                    }
                 ],
                 projection: r => new ReservationDto
                 {
@@ -160,6 +158,10 @@ namespace Rise.Services.Reservations
                 .FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
+            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
+            Battery battery = reservation.Boat.Batteries[0];
+
+
             return new ReservationDetailsDto
             {
                 Id = reservation.Id,
@@ -168,8 +170,9 @@ namespace Rise.Services.Reservations
                 Date = reservation.TimeSlot.Date,
                 IsDeleted = reservation.IsDeleted,
                 BoatPersonalName = reservation.Boat.PersonalName,
-                MentorName = reservation.Boat.Batteries.FirstOrDefault()?.Mentor?.FamilyName,
-                BatteryType = reservation.Boat.Batteries.FirstOrDefault()?.Type
+                MentorName = battery.Mentor.FamilyName,
+                BatteryType = battery.Type
+
             };
         }
         public async Task CancelReservationAsync(int reservationId)
