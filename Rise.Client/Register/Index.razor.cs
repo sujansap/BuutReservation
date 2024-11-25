@@ -16,23 +16,22 @@ public partial class Index : ComponentBase
         Email = string.Empty,
         Password = string.Empty,
         PhoneNumber = string.Empty,
-        DateOfBirth = DateTime.Today,
+        DateOfBirth = null,
         Address = new UserRegistrationModelDto.AddressModel
         {
             Street = string.Empty,
             Number = string.Empty,
             City = string.Empty,
             PostalCode = string.Empty,
-            Country = string.Empty
+            Country = "Belgium"
         }
     };
 
     private bool isLoading = false;
     private bool isSuccess;
-    private MudForm Form;
-    private UserRegistrationModelDtoValidator validator = new UserRegistrationModelDtoValidator();
 
-    private string Password2 { get; set; }
+    private MudForm Form = null!;
+    private UserRegistrationModelDtoValidator validator = new UserRegistrationModelDtoValidator();
 
     private string CheckPasswordMatch(string passwordRepeat)
     {
@@ -40,7 +39,7 @@ public partial class Index : ComponentBase
         {
             return "Passwords do not match";
         }
-        return null;
+        return string.Empty;
     }
 
     private async Task HandleSubmit()
@@ -66,11 +65,11 @@ public partial class Index : ComponentBase
         await Form.ResetAsync();
     }
 
-    bool isPasswordShow;
-    InputType PasswordInputType = InputType.Password;
-    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private bool isPasswordShow;
+    private InputType PasswordInputType = InputType.Password;
+    private string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-    void TogglePasswordIcon()
+    private void TogglePasswordIcon()
     {
         if (isPasswordShow)
         {
