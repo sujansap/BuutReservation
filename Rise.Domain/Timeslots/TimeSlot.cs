@@ -13,7 +13,7 @@ public class TimeSlot : Entity
         get => _date;
         set
         {
-            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, DateTime.Now.Year +100, 
+            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, DateTime.Now.Year + 100,
                 "TimeSlot date must be after year 2000.");
 
             DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);
@@ -42,7 +42,7 @@ public class TimeSlot : Entity
         get => _end;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, 
+            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue,
                 "End time must be within a valid range.");
             Guard.Against.OutOfRange(value, nameof(End), Start.AddMinutes(1), TimeOnly.MaxValue,
                 "End time must be after Start time.");

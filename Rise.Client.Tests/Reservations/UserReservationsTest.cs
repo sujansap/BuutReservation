@@ -173,7 +173,7 @@ namespace Rise.Client.Tests.Reservations
             var formattedDate = match.Value.Replace("/", "-");
 
 
-            Assert.AreEqual(formattedDate, ValidReservation.Date.ToString("dd-MM-yyyy"));
+            Assert.That(ValidReservation.Date.ToString("dd-MM-yyyy"), Is.EqualTo(formattedDate));
 
 
             var boatNameText = await firstReservation.GetByTestId("reservation-boat-name").TextContentAsync();
@@ -266,11 +266,11 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task TestTogglePastReservations()
         {
-           
+
             await MockReservationsApi();
             await InitNavigationToUrl(UserReservationsUrl);
 
-     
+
             ILocator upcomingReservation = Page.GetByTestId("reservation-item");
             await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
             await Expect(upcomingReservation).ToHaveCountAsync(1);
