@@ -12,7 +12,8 @@
 
 
 <MudPaper Class="pa-2 h-fill" data-testid="user-list">
-    <MudText Typo="Typo.h5" Class="mud-text-secondary mb-4">@Localizer["GuestUsers"]</MudText>
+    <MudText data-testid="user-details-page-familyname" Typo="Typo.h3" Class="mb-4">@Localizer["GuestUsers"]
+    </MudText>
     <AsyncData DataFetcher="@FetchUsers" @bind-Data="@Users" T="IEnumerable<UserDto>" @ref="AsyncDataRef"
         ShowContentWhenError="@false" TestIdPrefix="user-list">
         @if (!Users.Any())
