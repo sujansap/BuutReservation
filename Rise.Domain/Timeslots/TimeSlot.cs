@@ -1,6 +1,6 @@
 using Rise.Domain.Reservations;
 
-namespace Rise.Domain.Timeslots;
+namespace Rise.Domain.TimeSlots;
 
 public class TimeSlot : Entity
 {
@@ -8,12 +8,12 @@ public class TimeSlot : Entity
     private TimeOnly _end;
     private DateOnly _date;
 
-    public DateOnly Date
+    public required DateOnly Date
     {
         get => _date;
         set
         {
-            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, DateTime.Now.Year +100, 
+            Guard.Against.OutOfRange(value.Year, nameof(Date), 2000, DateTime.Now.Year + 100,
                 "TimeSlot date must be after year 2000.");
 
             DateOnly startDate = DateOnly.FromDateTime(CruisePeriod.Start);
@@ -26,7 +26,7 @@ public class TimeSlot : Entity
         }
     }
 
-    public TimeOnly Start
+    public required TimeOnly Start
     {
         get => _start;
         set
@@ -37,12 +37,12 @@ public class TimeSlot : Entity
         }
     }
 
-    public TimeOnly End
+    public required TimeOnly End
     {
         get => _end;
         set
         {
-            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue, 
+            Guard.Against.OutOfRange(value, nameof(End), TimeOnly.MinValue, TimeOnly.MaxValue,
                 "End time must be within a valid range.");
             Guard.Against.OutOfRange(value, nameof(End), Start.AddMinutes(1), TimeOnly.MaxValue,
                 "End time must be after Start time.");
@@ -50,10 +50,8 @@ public class TimeSlot : Entity
         }
     }
 
-    // TODO remove references to cruise period
-    public int CruisePeriodId { get; set; }
     public required CruisePeriod CruisePeriod { get; set; }
 
-    // TODO make reservations public read only
-    public IList<Reservation> Reservations { get; } = [];
+    private readonly List<Reservation> reservations = [];
+    public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 }

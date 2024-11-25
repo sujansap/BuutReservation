@@ -1,14 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Net.Mail;
+using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.Playwright;
 using Rise.Shared.Reservations;
-using Rise.Shared.TimeSlots;
 using Shouldly;
 
-namespace Rise.Client.Tests
+namespace Rise.Client.Tests.Reservations
 {
     [TestFixture]
-    public class ReservationDetailsTest : CustomPageTest
+    public class ReservationDetailsPageTest : CustomPageTest
     {
         private const string UserReservationDetailsUrl = "/reservations/1";
         private const string InvalidReservationDetailsUrl = "/reservations/100";
@@ -22,7 +21,7 @@ namespace Rise.Client.Tests
                 {
                     Status = status,
                     ContentType = "application/json",
-                    Body = response != null ? System.Text.Json.JsonSerializer.Serialize(response) : string.Empty
+                    Body = response != null ? JsonSerializer.Serialize(response) : string.Empty
                 });
             });
         }
@@ -30,12 +29,12 @@ namespace Rise.Client.Tests
         [Test]
         public async Task ShowsReservationDetails()
         {
-            var reservationDetails = new ReservationDetailsDto
+            ReservationDetailsDto reservationDetails = new()
             {
                 Id = 1,
-                Date = DateOnly.Parse("2024/10/30"),
-                Start = TimeOnly.Parse("10:00"),
-                End = TimeOnly.Parse("13:00"),
+                Date = new DateOnly(2024, 10, 30),
+                Start = new TimeOnly(10, 0, 0),
+                End = new TimeOnly(13, 0, 0),
                 BoatId = 101,
                 BoatPersonalName = "Limba",
                 MentorName = "John Doe",
@@ -47,28 +46,13 @@ namespace Rise.Client.Tests
 
             await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
 
-            var dateText = await Page.GetByTestId("reservation-date").TextContentAsync();
-
-            var datePattern = @"\b\d{2}/\d{2}/\d{4}\b";
-            var match = Regex.Match(dateText, datePattern);
-
-            match.Success.ShouldBeTrue();
-            var formattedDate = match.Value.Replace("/", "-");
-
-            formattedDate.ShouldBe(reservationDetails.Date.ToString("dd-MM-yyyy"));
-
-            var boatNameText = await Page.GetByTestId("reservation-boat").TextContentAsync();
-            boatNameText.ShouldContain(reservationDetails.BoatPersonalName);
-
-            var timeText = await Page.GetByTestId("reservation-time").TextContentAsync();
-            timeText.ShouldContain($"{reservationDetails.Start:HH:mm} - {reservationDetails.End:HH:mm}");
-
-            var batteryText = await Page.GetByTestId("reservation-battery").TextContentAsync();
-            batteryText.ShouldContain(reservationDetails.BatteryType);
-
-            var batteryMentorText = await Page.GetByTestId("reservation-battery-mentor").TextContentAsync();
-            batteryMentorText.ShouldContain(reservationDetails.MentorName);
+            await Expect(Page.GetByTestId("reservation-date")).ToContainTextAsync(reservationDetails.Date.ToString("dd/MM/yyyy"));
+            await Expect(Page.GetByTestId("reservation-boat")).ToContainTextAsync(reservationDetails.BoatPersonalName);
+            await Expect(Page.GetByTestId("reservation-time")).ToContainTextAsync($"{reservationDetails.Start:HH:mm} - {reservationDetails.End:HH:mm}");
+            await Expect(Page.GetByTestId("reservation-battery")).ToContainTextAsync(reservationDetails.BatteryType);
+            await Expect(Page.GetByTestId("reservation-battery-mentor")).ToContainTextAsync(reservationDetails.MentorName);
         }
+
         [Test]
         public async Task ShowsNotFoundErrorForNonExistentReservation()
         {
@@ -78,8 +62,6 @@ namespace Rise.Client.Tests
             var errorMessage = Page.Locator("text='Response status code does not indicate success: 404 (Not Found).'");
 
             await Expect(errorMessage).ToBeVisibleAsync(new() { Timeout = 30000 });
-
-            Assert.IsTrue(await errorMessage.IsVisibleAsync());
         }
 
 
