@@ -78,4 +78,35 @@
 	<data name="ViewReports">
 		<value>Rapporten Bekijken</value>
 	</data>
+	<data name="WelcomeToBoatDashboard">
+		<value>Welkom bij het Boten Dashboard</value>
+	</data>
+	<data name="TotalBoats">
+		<value>Totaal Aantal Boten</value>
+	</data>
+	<data name="TodaysReservations">
+		<value>Reserveringen Vandaag</value>
+	</data>
+	<data name="ActiveMembers">
+		<value>Actieve Leden</value>
+	</data>
+	<data name="QuickActions">
+		<value>Snelle Acties</value>
+	</data>
+	<data name="NewReservation">
+		<value>Nieuwe Reservering</value>
+	</data>
+	<data name="ManageMembers">
+		<value>Ledenbeheer</value>
+	</data>
+	<data name="ViewBoatStatus">
+		<value>Bootstatus Bekijken</value>
+	</data>
+	<data name="BoatLocation">
+		<value>Bootlocatie</value>
+	</data>
+	<data name="BoatLocationDescription">
+		<value>De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
+			Vaargebied: van de Meulestedebrug tot aan het Keizerspark.</value>
+	</data>
 </root>

@@ -6,4 +6,49 @@
 
 @layout AdminLayout
 
-<p>Content will come here</p>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+    <MudText Typo="Typo.h3" Class="mb-4">@Localizer["WelcomeToBoatDashboard"]</MudText>
+
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Class="mb-2" Color="Color.Primary"
+                    Size="Size.Large" />
+                <MudText Typo="Typo.h6">@Localizer["TotalBoats"]</MudText>
+                <MudText Typo="Typo.h4">...</MudText>
+                <MudText Typo="Typo.body2">...</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudIcon Icon="@Icons.Material.Filled.Today" Class="mb-2" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.h6">@Localizer["TodaysReservations"]</MudText>
+                <MudText Typo="Typo.h4">...</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudIcon Icon="@Icons.Material.Filled.People" Class="mb-2" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.h6">@Localizer["ActiveMembers"]</MudText>
+                <MudText Typo="Typo.h4">...</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudCard Class="mt-6">
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@Localizer["QuickActions"]</MudText>
+        </MudCardHeader>
+    </MudCard>
+
+    <MudCard Class="mt-6">
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@Localizer["BoatLocation"]</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText>@Localizer["BoatLocationDescription"]</MudText>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>

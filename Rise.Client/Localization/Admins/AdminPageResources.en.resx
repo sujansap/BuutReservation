@@ -81,4 +81,35 @@
 	<data name="ViewReports">
 		<value>View Reports</value>
 	</data>
+	<data name="WelcomeToBoatDashboard">
+		<value>Welcome to the Boats Dashboard</value>
+	</data>
+	<data name="TotalBoats">
+		<value>Total Boats</value>
+	</data>
+	<data name="TodaysReservations">
+		<value>Today's Reservations</value>
+	</data>
+	<data name="ActiveMembers">
+		<value>Active Members</value>
+	</data>
+	<data name="QuickActions">
+		<value>Quick Actions</value>
+	</data>
+	<data name="NewReservation">
+		<value>New Reservation</value>
+	</data>
+	<data name="ManageMembers">
+		<value>Manage Members</value>
+	</data>
+	<data name="ViewBoatStatus">
+		<value>View Boat Status</value>
+	</data>
+	<data name="BoatLocation">
+		<value>Boat Location</value>
+	</data>
+	<data name="BoatLocationDescription">
+		<value>The boats are permanently moored at the lowered quay in Terneuzenlaan. Sailing area:
+			from Meulestedebrug to Keizerspark.</value>
+	</data>
 </root>
