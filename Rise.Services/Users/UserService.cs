@@ -36,7 +36,7 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
 
     public async Task AddMemberRole(int userId)
     {
-        User user = await _dbContext.Users.FindAsync(userId) ?? throw new Domain.Exceptions.EntityNotFoundException(nameof(User), userId);
+        User user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(User), userId);
         /**TODO: Implement adding role to user using management api (AUTH0)**/
     }
 }
