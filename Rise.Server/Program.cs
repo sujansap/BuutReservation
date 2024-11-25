@@ -11,6 +11,8 @@ using FluentValidation.AspNetCore;
 using Rise.Server.Middleware;
 using Serilog.Events;
 using Serilog;
+using Rise.Shared.Notifications;
+using Rise.Services.Notifications;
 using Rise.Shared.Users;
 using Rise.Services.Users;
 using Rise.Shared.Notifications;
@@ -50,6 +52,7 @@ try
 
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
+    builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
 
