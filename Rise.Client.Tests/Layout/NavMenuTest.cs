@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Playwright;
+using Rise.Client.Tests.Notifications;
 using Rise.Shared.Notifications;
 using Shouldly;
 
@@ -11,189 +12,7 @@ namespace Rise.Client.Tests.Layout
         private const int DefaultHeight = 1920;
 
 
-        internal IEnumerable<NotificationDto> _notifications = new List<NotificationDto>
-            {
-                new()
-                {
-                    Id = 1,
-                    Severity = SeverityEnum.Success, // Success
-                    Title = "Success",
-                    Message = "This data comes from the seeding of the db.",
-                    CreatedAt = DateTime.Now,
-                    IsRead = false,
-                },
-                new()
-                {
-                    Id = 2,
-                    Severity = SeverityEnum.Info, // Info
-                    Title = "Info",
-                    Message = "This is an info message",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromMinutes(5)),
-                    IsRead = false,
-                },
-                new()
-                {
-                    Id=3,
-                    Severity = SeverityEnum.Warning, // Warning
-                    Title = "Warning",
-                    Message = "This is a warning message, but it is really long so it will be truncated",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromMinutes(10)),
-                    IsRead = false,
-                },
-                new()
-                {
-                    Id = 4,
-                    Severity = SeverityEnum.Error, // Error
-                    Title = "Error",
-                    Message = "This is an error message",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(1).Add(TimeSpan.FromMinutes(5))),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 5,
-                    Severity = SeverityEnum.Error, // Error
-                    Title = "Error",
-                    Message = "This is an error message",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(1).Add(TimeSpan.FromMinutes(6))),
-                    IsRead = false,
-                },
-                new()
-                {
-                    Id = 6,
-                    Severity = SeverityEnum.Success, // Success
-                    Title = "Deployment Complete",
-                    Message = "Application successfully deployed to production environment",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(2)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 7,
-                    Severity = SeverityEnum.Info, // Info
-                    Title = "System Update",
-                    Message = "Scheduled maintenance will occur tomorrow at 2 AM",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(2).Add(TimeSpan.FromHours(3))),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 8,
-                    Severity = SeverityEnum.Warning, // Warning
-                    Title = "Storage Alert",
-                    Message = "Server storage capacity reaching 80%, consider cleanup",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(3)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 9,
-                    Severity = SeverityEnum.Success, // Success
-                    Title = "Backup Complete",
-                    Message = "Weekly backup completed successfully",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(4)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 10,
-                    Severity = SeverityEnum.Info, // Info
-                    Title = "New Feature",
-                    Message = "Dark mode is now available in your settings",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(5)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 11,
-                    Severity = SeverityEnum.Error, // Error
-                    Title = "Connection Failed",
-                    Message = "Unable to connect to secondary database server",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(5).Add(TimeSpan.FromHours(6))),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 12,
-                    Severity = SeverityEnum.Warning, // Warning
-                    Title = "CPU Usage High",
-                    Message = "System CPU usage exceeded 90% for 5 minutes",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(6)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 13,
-                    Severity = SeverityEnum.Success, // Success
-                    Title = "Test Suite Passed",
-                    Message = "All integration tests completed successfully",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(7)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 14,
-                    Severity = SeverityEnum.Info, // Info
-                    Title = "Profile Updated",
-                    Message = "Your profile information has been updated successfully",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(8)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 15,
-                    Severity = SeverityEnum.Warning, // Warning
-                    Title = "SSL Certificate",
-                    Message = "SSL Certificate will expire in 30 days",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(9)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 16,
-                    Severity = SeverityEnum.Error, // Error
-                    Title = "Payment Failed",
-                    Message = "Monthly subscription payment processing failed",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(10)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 17,
-                    Severity = SeverityEnum.Success, // Success
-                    Title = "Report Generated",
-                    Message = "Monthly analytics report has been generated",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(11)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 18,
-                    Severity = SeverityEnum.Info, // Info
-                    Title = "Team Meeting",
-                    Message = "Reminder: Team meeting scheduled for tomorrow at 10 AM",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(12)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 19,
-                    Severity = SeverityEnum.Warning, // Warning
-                    Title = "API Rate Limit",
-                    Message = "API rate limit reached 85% of maximum allocation",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(13)),
-                    IsRead = true,
-                },
-                new()
-                {
-                    Id = 20,
-                    Severity = SeverityEnum.Error, // Error
-                    Title = "Security Alert",
-                    Message = "Multiple failed login attempts detected from unknown IP",
-                    CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(14)),
-                    IsRead = true,
-                }
-            };
+        public static readonly List<NotificationDto> Notifications = NotificationPageTest.Notifications;
         private async Task MockHTTPRequests()
         {
             await Page.RouteAsync("*/**/api/Notification/me", async route =>
@@ -202,7 +21,7 @@ namespace Rise.Client.Tests.Layout
                 {
                     Status = 200,
                     ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(_notifications)
+                    Body = JsonSerializer.Serialize(Notifications)
                 });
             });
 
@@ -212,7 +31,7 @@ namespace Rise.Client.Tests.Layout
                 {
                     Status = 200,
                     ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(_notifications.Take(3))
+                    Body = JsonSerializer.Serialize(Notifications.Take(3))
                 });
             });
         }
