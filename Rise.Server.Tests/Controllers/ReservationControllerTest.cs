@@ -275,7 +275,7 @@ namespace Rise.Server.Tests.Controllers
         public async Task PATCH_CancelReservation_WithValidId_ExpectOk()
         {
 
-            var validReservationId = 40;
+            var validReservationId = 80;
 
 
             var response = await _client.PatchAsync($"cancel/{validReservationId}", null);

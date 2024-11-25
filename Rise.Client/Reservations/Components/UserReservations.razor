@@ -36,15 +36,17 @@
         <MudGrid Spacing="6">
             @if (ReservationPage?.Data?.Any() ?? false)
             {
-                <MudItem xs="12" data-testid="reservation-item">
-                    <MudCard Elevation="6" Class="mb-6" Style="@(reservation.IsDeleted ? "opacity: 0.5;" : "")">
-                        <MudCardContent>
-                            <MudGrid>
-                                <!-- Icon Section -->
-                                <MudItem xs="2" Class="d-flex justify-center align-center" Style="height: 100%;">
-                                    <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
-                                        Style="width: 70px; height: 70px; color: #40e0d0;" />
-                                </MudItem>
+                @foreach (var reservation in ReservationPage.Data)
+                {
+                    <MudItem xs="12" data-testid="reservation-item">
+                        <MudCard Elevation="6" Class="mb-6" Style="@(reservation.IsDeleted ? "opacity: 0.5;" : "")">
+                            <MudCardContent>
+                                <MudGrid>
+                                    <!-- Icon Section -->
+                                    <MudItem xs="2" Class="d-flex justify-center align-center" Style="height: 100%;">
+                                        <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
+                                            Style="width: 70px; height: 70px; color: #40e0d0;" />
+                                    </MudItem>
 
                                     <!-- Text Content Section -->
                                     <MudItem xs="7" Class="d-flex flex-column" Style="padding-left: 20px;">
@@ -61,27 +63,28 @@
                                         </MudText>
                                     </MudItem>
 
-                                <!-- View Details or Status -->
-                                <MudItem xs="3" Class="d-flex justify-end align-center">
-                                    @if (reservation.IsDeleted)
-                                    {
-                                        <MudText Typo="Typo.h6" Style="color: red;">
-                                            @Localizer["Cancelled"]
-                                        </MudText>
-                                    }
-                                    else
-                                    {
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                            OnClick="@(() => NavigateTo(reservation.Id))"
-                                            Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
-                                            @Localizer["View Details"]
-                                        </MudButton>
-                                    }
-                                </MudItem>
-                            </MudGrid>
-                        </MudCardContent>
-                    </MudCard>
-                </MudItem>
+                                    <!-- View Details or Status -->
+                                    <MudItem xs="3" Class="d-flex justify-end align-center">
+                                        @if (reservation.IsDeleted)
+                                        {
+                                            <MudText Typo="Typo.h6" Style="color: red;" data-testid="reservationList-cancelled">
+                                                @Localizer["Cancelled"]
+                                            </MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                                OnClick="@(() => NavigateTo(reservation.Id))"
+                                                Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
+                                                @Localizer["View Details"]
+                                            </MudButton>
+                                        }
+                                    </MudItem>
+                                </MudGrid>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                }
             }
             else
             {
@@ -92,5 +95,18 @@
                 </MudItem>
             }
         </MudGrid>
+
+        <!-- Pagination Controls -->
+        <MudItem xs="12" Class="d-flex justify-center mt-4">
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@LoadPreviousPage"
+                data-testid="pagination-previous">
+                <MudIcon Icon="@Icons.Material.Filled.ArrowBack" /> @Localizer["Previous"]
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@LoadNextPage"
+                data-testid="pagination-next">
+                @Localizer["Next"]
+                <MudIcon Icon="@Icons.Material.Filled.ArrowForward" />
+            </MudButton>
+        </MudItem>
     </AsyncData>
 </MudGrid>

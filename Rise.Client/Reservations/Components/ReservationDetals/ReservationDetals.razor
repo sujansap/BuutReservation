@@ -16,19 +16,14 @@
             @if (ReservationDetails.IsDeleted)
             {
                 <MudItem xs="12" Class="d-flex justify-center align-center mt-4">
-                    <MudText Typo="Typo.h5" Class="text-center" Style="color: red;">
+                    <MudText Typo="Typo.h5" Class="text-center" Style="color: red;"
+                        data-testid="cancel-reservation-geannuleerd">
                         @Localizer["Deze reservatie is geannuleerd. Je kan de details niet bekijken."]
                     </MudText>
                 </MudItem>
             }
             else
             {
-                <MudItem xs="12" Class="d-flex justify-start mt-4">
-                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary"
-                        OnClick="GoBack">
-                        @Localizer["Back"]
-                    </MudButton>
-                </MudItem>
                 <MudItem xs="12">
                     <MudCard Elevation="6" Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
                         <MudCardHeader>
@@ -65,7 +60,7 @@
                         </MudCardContent>
                         <MudCardActions Class="d-flex justify-end">
                             <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
-                                OnClick="CancelReservation"
+                                OnClick="CancelReservation" data-testid="cancel-reservation-button"
                                 Style="background-color: #e06540; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
                                 Disabled="@ReservationDetails.IsDeleted">
                                 @Localizer["Cancel Reservation"]
