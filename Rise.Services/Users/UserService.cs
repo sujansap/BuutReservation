@@ -2,6 +2,7 @@ using Rise.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Rise.Shared.Users;
 using Rise.Domain.Users;
+using Rise.Domain.Exceptions;
 
 namespace Rise.Services.Users;
 
