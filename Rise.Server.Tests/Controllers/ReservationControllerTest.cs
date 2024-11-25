@@ -223,5 +223,65 @@ namespace Rise.Server.Tests.Controllers
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
+
+        [Fact]
+        public async Task PATCH_CancelReservation_WithValidId_ExpectOk()
+        {
+
+            var validReservationId = 40;
+
+
+            var response = await _client.PatchAsync($"cancel/{validReservationId}", null);
+
+
+
+
+            var reservationDetailsResponse = await _client.GetAsync($"{validReservationId}");
+            reservationDetailsResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var reservationDetails = await reservationDetailsResponse.Content.ReadFromJsonAsync<ReservationDetailsDto>();
+            reservationDetails.ShouldNotBeNull();
+            reservationDetails.Id.ShouldBe(validReservationId);
+            reservationDetails.IsDeleted.ShouldBeTrue();
+        }
+
+
+        [Fact]
+        public async Task PATCH_CancelReservation_WithNonExistentId_ExpectNotFound()
+        {
+
+            var nonExistentReservationId = 9999;
+
+
+            var response = await _client.PatchAsync($"cancel/{nonExistentReservationId}", null);
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+        [Fact]
+        public async Task PATCH_CancelReservation_AlreadyCancelledReservation_ExpectBadRequest()
+        {
+
+            var cancelledReservationId = 38;
+
+
+            var response = await _client.PatchAsync($"cancel/{cancelledReservationId}", null);
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task PATCH_CancelReservation_WithinTwoDaysOfReservation_ExpectBadRequest()
+        {
+
+            var reservationIdWithinTwoDays = 2;
+
+
+            var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
     }
 }

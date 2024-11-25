@@ -39,8 +39,13 @@ namespace Rise.Persistence.Seeders
                     new() { User = UserSeeder.users[2], TimeSlot = TimeSlotSeeder.timeSlots[0][2][1], Boat = BoatSeeder.boats[1], },
                     new() { User = UserSeeder.users[2], TimeSlot = TimeSlotSeeder.timeSlots[0][2][2], Boat = BoatSeeder.boats[2], },
                 ],
+                // Today + 3 day(s)
+                // [
+                //     new() { User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[0][3][0], Boat = BoatSeeder.boats[0],IsDeleted = true },
+                // ],
                 // Today + 5 day(s)
                 [
+                    new() { User = UserSeeder.users[1], TimeSlot = TimeSlotSeeder.timeSlots[0][4][1], Boat = BoatSeeder.boats[0], IsDeleted = true },
                     new() { User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[0][4][0], Boat = BoatSeeder.boats[0], },
                     new() { User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[0][4][1], Boat = BoatSeeder.boats[1], },
                     new() { User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[0][4][2], Boat = BoatSeeder.boats[2], },
@@ -48,6 +53,7 @@ namespace Rise.Persistence.Seeders
                 // Today + 6 day(s)
                 [
                     new() { User = UserSeeder.users[0], TimeSlot = TimeSlotSeeder.timeSlots[0][5][0], Boat = BoatSeeder.boats[0], },
+
                 ],
                 // Today + 7 day(s)
                 [
