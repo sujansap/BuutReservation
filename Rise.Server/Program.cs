@@ -13,8 +13,8 @@ using Serilog.Events;
 using Serilog;
 using Rise.Shared.Users;
 using Rise.Services.Users;
-using Rise.Server.Workers;
 using Rise.Services.Boats;
+using Rise.Server.Workers;
 
 try
 {
@@ -59,7 +59,6 @@ try
 
     builder.Services.AddLocalization();
 
-    // Register the battery assignment worker
     builder.Services.AddHostedService<BatteryAssignmentWorker>();
 
     var app = builder.Build();

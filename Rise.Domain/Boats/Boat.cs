@@ -2,12 +2,8 @@ using Rise.Domain.Reservations;
 
 namespace Rise.Domain.Boats
 {
-
     public class Boat : Entity
     {
-        /// <summary>
-        /// Personal name of the boat. Not to be confused with the type/class name. e.x
-        /// </summary>    
         private string _personalName = default!;
 
         public required string PersonalName
@@ -16,18 +12,30 @@ namespace Rise.Domain.Boats
             set => _personalName = Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName)).Trim();
         }
 
-        // TODO make reservations protected
-        public ICollection<Reservation> Reservations { get; } = [];
+        private readonly List<Battery> _batteries = new();
+        private readonly List<Reservation> _reservations = new();
 
-        // TODO make batteries protected
-        public ICollection<Battery> Batteries { get; } = [];
+        public IReadOnlyCollection<Battery> Batteries => _batteries.AsReadOnly();
+        public IReadOnlyCollection<Reservation> Reservations => _reservations.AsReadOnly();
 
-        public Battery? GetAvailableBatteryForDate(DateOnly date, TimeOnly startTime)
+        public Battery? GetAvailableBatteryForDate(DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
-            return Batteries
-                .OrderBy(b => b.Reservations.Count) // Balance usage across batteries
-                .FirstOrDefault(b => b.IsAvailableForDate(date, startTime));
+            return _batteries
+                .OrderBy(b => b.UsageCount)
+                .ThenBy(b => b.LastUsedAt ?? DateTime.MinValue)
+                .FirstOrDefault(b => b.IsAvailableForDate(date, startTime, endTime));
         }
 
+        internal void AddBattery(Battery battery)
+        {
+            Guard.Against.Null(battery, nameof(battery));
+            _batteries.Add(battery);
+        }
+
+        internal void AddReservation(Reservation reservation)
+        {
+            Guard.Against.Null(reservation, nameof(reservation));
+            _reservations.Add(reservation);
+        }
     }
 }
