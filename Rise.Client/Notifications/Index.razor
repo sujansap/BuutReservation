@@ -1,0 +1,22 @@
+﻿@page "/notifications"
+@using Rise.Client.Notifications.Components
+@using Rise.Client.Utils;
+@using Rise.Client.Common;
+@using Rise.Shared.Notifications;
+
+<MudContainer>
+    <MudText Typo="Typo.h4" Class="pb-8">Notifications</MudText>
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <AsyncData DataFetcher="@FetchNotifications" @bind-Data="@Notifications" T="IEnumerable<NotificationDto>"
+                @ref="AsyncDataRef" ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert"
+                TestIdPrefix="custom-calendar-reserve">
+                <NotificationsListComponent Notifications="Notifications" SelectedNotification="SelectedNotification"
+                    OnNotificationSelected="HandleNotificationSelected" data-testid="notifications-list" />
+            </AsyncData>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <NotificationDetailsComponent Notification="SelectedNotification" data-testid="notification-details" />
+        </MudItem>
+    </MudGrid>
+</MudContainer>

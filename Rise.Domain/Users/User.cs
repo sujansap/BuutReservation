@@ -1,5 +1,6 @@
 // using Rise.Domain.Reservations;
 
+using Rise.Domain.Notifications;
 using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
 
@@ -22,5 +23,7 @@ namespace Rise.Domain.Users
         public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
         private readonly List<Battery> responsibleBatteries = [];
         public IReadOnlyList<Battery> ResponsibleBatteries => responsibleBatteries.AsReadOnly();
+        private readonly List<Notification> notifications = [];
+        public IReadOnlyList<Notification> Notifications => notifications.AsReadOnly();
     }
 }

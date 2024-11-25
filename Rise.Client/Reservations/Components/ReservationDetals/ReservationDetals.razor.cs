@@ -14,6 +14,7 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         protected ReservationDetailsDto? ReservationDetails { get; set; }
 
 
+
         [Parameter]
         public int Id { get; set; }
 
@@ -24,10 +25,6 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         {
             return ReservationService.GetReservationDetailsAsync(Id);
         }
-
-
-
-
 
     }
 }
