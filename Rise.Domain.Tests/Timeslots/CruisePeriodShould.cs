@@ -78,18 +78,18 @@ namespace Rise.Domain.Tests.TimeSlots
         [InlineData(-1)]
         [InlineData(2)]
         [InlineData(3)]
-        public void BeAbleToAddInvalidTimeSlot(int amountDays)
+        public void NotBeAbleToAddInvalidTimeSlot(int amountDays)
         {
             CruisePeriod period = new CruisePeriodBuilder().Build();
             IReadOnlyList<TimeSlot> timeSlots = period.TimeSlots;
-            TimeSlot timeSlot = new TimeSlotBuilder()
-            .WithDate(amountDays)
-            .Build();
             Action act = () =>
-                        {
-                            timeSlots.ShouldBeEmpty();
-                            period.AddTimeSlot(timeSlot);
-                        };
+                    {
+                        timeSlots.ShouldBeEmpty();
+                        TimeSlot timeSlot = new TimeSlotBuilder()
+                        .WithCruisePeriod(period)
+                        .WithDate(amountDays)
+                        .Build();
+                    };
 
             act.ShouldThrow<ArgumentOutOfRangeException>();
         }
