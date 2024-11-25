@@ -1,11 +1,11 @@
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 
 namespace Rise.Domain.Tests.TestUtilities
 {
     public class CruisePeriodBuilder
     {
         public static readonly DateTime ValidStart = DateTime.Today.AddDays(1);
-        public static readonly DateTime ValidEnd = DateTime.Today.AddDays(2);
+        public static readonly DateTime ValidEnd = DateTime.Today.AddDays(2).AddHours(23);
 
         private DateTime start = ValidStart;
         private DateTime end = ValidEnd;

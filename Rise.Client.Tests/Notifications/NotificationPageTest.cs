@@ -7,8 +7,8 @@ namespace Rise.Client.Tests.Notifications
     public class NotificationPageTest : CustomPageTest
     {
 
-        internal IEnumerable<NotificationDto> _notifications = new List<NotificationDto>
-            {
+        public static readonly List<NotificationDto> Notifications =
+            [
                 new()
                 {
                     Id = 1,
@@ -189,7 +189,7 @@ namespace Rise.Client.Tests.Notifications
                     CreatedAt = DateTime.Now.Subtract(TimeSpan.FromDays(14)),
                     IsRead = true,
                 }
-            };
+            ];
         private async Task MockHTTPRequests()
         {
             await Page.RouteAsync("*/**/api/Notification/me", async route =>
@@ -198,7 +198,7 @@ namespace Rise.Client.Tests.Notifications
                 {
                     Status = 200,
                     ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(_notifications)
+                    Body = JsonSerializer.Serialize(Notifications)
                 });
             });
 
@@ -236,7 +236,7 @@ namespace Rise.Client.Tests.Notifications
             await MockHTTPRequests();
             await InitNavigationToUrl("/notifications");
 
-            DateTime timeStamp = _notifications.First(n => n.Id == id).CreatedAt;
+            DateTime timeStamp = Notifications.First(n => n.Id == id).CreatedAt;
 
             // Assert notification title
             var titleElement = Page.GetByTestId($"notification-title-{id}");
@@ -298,7 +298,7 @@ namespace Rise.Client.Tests.Notifications
 
             // Assert notification timestamp
             var timestampElement = Page.GetByTestId("notification-details-timestamp");
-            await Expect(timestampElement).ToHaveTextAsync(_notifications.First(n => n.Id == id).CreatedAt.ToString("t"));
+            await Expect(timestampElement).ToHaveTextAsync(Notifications.First(n => n.Id == id).CreatedAt.ToString("t"));
         }
 
         [Test]

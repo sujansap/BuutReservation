@@ -33,6 +33,17 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.PatchAsync($"read/{id}", null);
             response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
         }
+
+        [Fact]
+        public async Task GET_CurrentUser_Notifications_DoesNotGiveNotificationsFromOtherUsers()
+        {
+            // These are the ids of the notifications that are not supposed to be returned
+            var forbiddenIds = new[] { 21, 22, 23, 24, 25, 26, 27 };
+
+            IEnumerable<NotificationDto> response = (await _client.GetFromJsonAsync<IEnumerable<NotificationDto>>("me"))!;
+
+            response.Any(n => forbiddenIds.Contains(n.Id)).ShouldBeFalse();
+        }
     }
 
 }
