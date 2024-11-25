@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net.Mail;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Rise.Shared.Reservations;
 using Shouldly;
@@ -45,7 +46,7 @@ namespace Rise.Client.Tests.Reservations
 
             await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
 
-            await Expect(Page.GetByTestId("reservation-date")).ToContainTextAsync(reservationDetails.Date.ToString());
+            await Expect(Page.GetByTestId("reservation-date")).ToContainTextAsync(reservationDetails.Date.ToString("dd/MM/yyyy"));
             await Expect(Page.GetByTestId("reservation-boat")).ToContainTextAsync(reservationDetails.BoatPersonalName);
             await Expect(Page.GetByTestId("reservation-time")).ToContainTextAsync($"{reservationDetails.Start:HH:mm} - {reservationDetails.End:HH:mm}");
             await Expect(Page.GetByTestId("reservation-battery")).ToContainTextAsync(reservationDetails.BatteryType);
