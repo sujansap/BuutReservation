@@ -21,8 +21,8 @@ namespace Rise.Domain.Users
 
         private readonly List<Reservation> reservations = [];
         public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
-        private readonly List<Battery> responsibleBatteries = [];
-        public IReadOnlyList<Battery> ResponsibleBatteries => responsibleBatteries.AsReadOnly();
+        private readonly List<Battery> guardedBatteries = [];
+        public IReadOnlyList<Battery> GuardedBatteries => guardedBatteries.AsReadOnly();
         private readonly List<Notification> notifications = [];
         public IReadOnlyList<Notification> Notifications => notifications.AsReadOnly();
     }

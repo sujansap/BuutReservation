@@ -19,7 +19,7 @@ namespace Rise.Domain.Tests.Users
 
             u.FamilyName.ShouldBe(ValidFamilyNameFormatted);
             u.Reservations.ShouldBeEmpty();
-            u.ResponsibleBatteries.ShouldBeEmpty();
+            u.GuardedBatteries.ShouldBeEmpty();
         }
 
         [Theory]
