@@ -43,17 +43,17 @@ public static class PaginationService
                 if (isDescendingOrder)
                 {
                     entitiesQuery = OrderingExpression<TEntity, object>.GetOrderedQuery(
-                        entitiesQuery, 
-                        orderingExpressions, 
-                        e => e.Id > cursor, 
+                        entitiesQuery,
+                        orderingExpressions,
+                        e => e.Id > cursor,
                         true);
                 }
                 else
                 {
                     entitiesQuery = OrderingExpression<TEntity, object>.GetOrderedQuery(
-                        entitiesQuery, 
-                        orderingExpressions, 
-                        e => e.Id < cursor, 
+                        entitiesQuery,
+                        orderingExpressions,
+                        e => e.Id < cursor,
                         true);
                 }
                 takeAmount = pageSize;

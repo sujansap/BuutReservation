@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rise.Domain.Reservations;
 
-namespace Rise.Persistence.Timeslots
+namespace Rise.Persistence.Reservations
 {/// <summary>
  /// Specific configuration for <see cref="Reservation"/>.
  /// </summary>

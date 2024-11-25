@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 
-namespace Rise.Persistence.Timeslots;
+namespace Rise.Persistence.TimeSlots;
 
 internal class TimeSlotConfiguration : IEntityTypeConfiguration<TimeSlot>
 {
@@ -16,15 +16,8 @@ internal class TimeSlotConfiguration : IEntityTypeConfiguration<TimeSlot>
 
         // Configure foreign key relationship
         builder.HasOne(x => x.CruisePeriod)
-               .WithMany(x => x.TimeSlots)
-               .HasForeignKey(x => x.CruisePeriodId)
-               .OnDelete(DeleteBehavior.Cascade);
-        //    TODO verify onDelete for TimeSlotConfiguration
-
-        builder.HasOne(x => x.CruisePeriod)
-       .WithMany(x => x.TimeSlots)
-       .HasForeignKey(x => x.CruisePeriodId)
-       .OnDelete(DeleteBehavior.Cascade);
+            .WithMany(x => x.TimeSlots)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
