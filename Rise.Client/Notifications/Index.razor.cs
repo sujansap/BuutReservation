@@ -8,8 +8,13 @@ namespace Rise.Client.Notifications
 {
     public partial class Index
     {
+        [Parameter]
+        public int? NotificationId { get; set; }
+        [Inject]
+        public required NavigationManager NavigationManager { get; set; }
         [Inject]
         public required INotificationService NotificationService { get; set; }
+
         private NotificationDto? SelectedNotification { get; set; }
         private IEnumerable<NotificationDto> Notifications { get; set; } = [];
 
@@ -17,12 +22,30 @@ namespace Rise.Client.Notifications
 
         private void HandleNotificationSelected(NotificationDto notification)
         {
-            SelectedNotification = notification;
-            notification.IsRead = true;
+            NavigationManager.NavigateTo($"/notifications/{notification.Id}");
         }
+
         private Task<IEnumerable<NotificationDto>> FetchNotifications()
         {
             return NotificationService.GetUserNotifications();
+        }
+
+        // This method is called when the navigation parameter is set.
+        protected override void OnParametersSet()
+        {
+            SelectNotificationById();
+        }
+        private void SelectNotificationById()
+        {
+            if (NotificationId.HasValue && Notifications.Any())
+            {
+                var notification = Notifications.FirstOrDefault(n => n.Id == NotificationId);
+                if (notification != null)
+                {
+                    SelectedNotification = notification;
+                    notification.IsRead = true;
+                }
+            }
         }
 
     }

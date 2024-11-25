@@ -11,9 +11,11 @@ namespace Rise.Client.Notifications.Components
         public Dictionary<string, object> AdditionalAttributes { get; set; } = new();
         [Parameter, EditorRequired]
         public required IEnumerable<NotificationDto> Notifications { get; set; }
+        [Parameter]
+        public bool Scrollbar { get; set; } = false;
 
         [Parameter]
-        public EventCallback<NotificationDto> OnNotificationSelected { get; set; }
+        public EventCallback<NotificationDto> OnNotificationClick { get; set; }
         [Parameter]
         public NotificationDto? SelectedNotification { get; set; }
     }

@@ -42,9 +42,7 @@ namespace Rise.Client.Tests.Reservations
             };
 
             await MockReservationDetailsApi(reservationDetails);
-            await Page.GotoAsync(UserReservationDetailsUrl);
-
-            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
+            await InitNavigationToUrl(UserReservationDetailsUrl);
 
             await Expect(Page.GetByTestId("reservation-date")).ToContainTextAsync(reservationDetails.Date.ToString("dd/MM/yyyy"));
             await Expect(Page.GetByTestId("reservation-boat")).ToContainTextAsync(reservationDetails.BoatPersonalName);
@@ -57,7 +55,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsNotFoundErrorForNonExistentReservation()
         {
             await MockReservationDetailsApi(null, status: 404);
-            await Page.GotoAsync(InvalidReservationDetailsUrl);
+            await InitNavigationToUrl(UserReservationDetailsUrl);
 
             var errorMessage = Page.Locator("text='Response status code does not indicate success: 404 (Not Found).'");
 

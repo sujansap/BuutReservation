@@ -1,6 +1,7 @@
 ﻿@using MudBlazor
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Layout
+@using Rise.Client.Notifications.Components
 
 @inject IStringLocalizer<LandingPageResource> Localizer
 
@@ -29,7 +30,8 @@
         <MudIconButton Class="mr-2" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End"
             Href="profile" data-testid="nav-desktop-profile" />
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
-            Href="notifications" data-testid="nav-desktop-notifications" />
+            data-testid="nav-desktop-notifications" OnClick="HandleNotificationButtonClicked" />
+        <NotificationPopoverComponent @bind-IsOpen="_notificationPopoverOpen" />
 
         <CultureSelector IsMobile="false" MenuColor="Color.Secondary" />
     </MudHidden>

@@ -25,12 +25,19 @@ namespace Rise.Server.Controllers
         [HttpGet("me")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<NotificationDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetCurrentUserNotifications()
+        public async Task<IActionResult> GetCurrentUserNotifications([FromQuery] int? limit)
         {
+            if (limit.HasValue && limit.Value < 0)
+            {
+                _logger.LogWarning("Invalid limit: {limit} is negative.", [limit.Value]);
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "Limit", [$"The limit cannot contain negative values ({limit})."] }
+                }));
+            }
             try
             {
-                _logger.LogInformation("Fetching notifications for the current user.");
-                var notifications = await _notificationService.GetUserNotifications();
+                var notifications = await _notificationService.GetUserNotifications(limit);
                 return Ok(notifications);
             }
             catch (Exception ex)
