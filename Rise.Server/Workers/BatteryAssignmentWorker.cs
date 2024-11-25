@@ -2,53 +2,38 @@ using Rise.Services.Boats;
 
 namespace Rise.Server.Workers;
 
-public class BatteryAssignmentWorker(
-    IServiceProvider services,
-    ILogger<BatteryAssignmentWorker> logger) : BackgroundService
+public class BatteryAssignmentWorker : BackgroundService
 {
-    private readonly IServiceProvider _services = services;
-    private readonly ILogger<BatteryAssignmentWorker> _logger = logger;
-    private readonly TimeSpan _checkInterval = TimeSpan.FromHours(6);
+    private readonly ILogger<BatteryAssignmentWorker> _logger;
+    private readonly IServiceProvider _services;
+    private const int CheckIntervalMinutes = 15;
+
+    public BatteryAssignmentWorker(
+        ILogger<BatteryAssignmentWorker> logger,
+        IServiceProvider services)
+    {
+        _logger = logger;
+        _services = services;
+    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        try 
-        {
-            _logger.LogInformation("Battery assignment worker starting initial check at {time}", DateTime.Now);
-            await AssignBatteries();
-            _logger.LogInformation("Initial battery assignment completed at {time}", DateTime.Now);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during initial battery assignment");
-        }
-
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                await Task.Delay(_checkInterval, stoppingToken);
-                await AssignBatteries();
-            }
-            catch (OperationCanceledException)
-            {
-                break;
+                using var scope = _services.CreateScope();
+                var batteryService = scope.ServiceProvider.GetRequiredService<BatteryAssignmentService>();
+                await batteryService.AssignBatteriesToUpcomingReservations();
+                
+                _logger.LogInformation("Battery assignment check completed at: {time}", DateTimeOffset.Now);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while assigning batteries to reservations");
+                _logger.LogError(ex, "Error occurred while assigning batteries");
             }
-        }
-    }
 
-    private async Task AssignBatteries()
-    {
-        using var scope = _services.CreateScope();
-        var batteryService = scope.ServiceProvider.GetRequiredService<BatteryAssignmentService>();
-        
-        await batteryService.CleanupCompletedBatteryAssignments();
-        await batteryService.AssignBatteriesToUpcomingReservations();
-        
-        _logger.LogInformation("Completed battery assignment and cleanup at {time}", DateTime.Now);
+            await Task.Delay(TimeSpan.FromMinutes(CheckIntervalMinutes), stoppingToken);
+        }
     }
 }

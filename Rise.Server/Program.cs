@@ -13,6 +13,8 @@ using Serilog.Events;
 using Serilog;
 using Rise.Shared.Users;
 using Rise.Services.Users;
+using Rise.Server.Workers;
+using Rise.Services.Boats;
 
 try
 {
@@ -49,12 +51,16 @@ try
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<BatteryAssignmentService>();
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
     builder.Services.AddFluentValidationAutoValidation();
 
     builder.Services.AddLocalization();
+
+    // Register the battery assignment worker
+    builder.Services.AddHostedService<BatteryAssignmentWorker>();
 
     var app = builder.Build();
 

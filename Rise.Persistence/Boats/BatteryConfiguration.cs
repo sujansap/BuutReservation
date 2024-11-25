@@ -15,6 +15,10 @@ namespace Rise.Persistence.Boats
             base.Configure(builder);
             builder.Property(x => x.Type).HasMaxLength(64);
             builder.Property(x => x.BoatId);
+            builder.Property(x => x.UsageCount)
+                .HasDefaultValue(0);
+            builder.Property(x => x.LastUsedAt)
+                .IsRequired(false);
 
             builder.HasOne(x => x.Boat)
             .WithMany(b => b.Batteries)

@@ -18,7 +18,10 @@ namespace Rise.Domain.Boats
             set => _type = Guard.Against.NullOrWhiteSpace(value, nameof(Type), "Battery type cannot be null or empty");
         }
 
-        // TODO remove boat id
+        public int UsageCount { get; private set; }
+        public DateTime? LastUsedAt { get; private set; }
+
+        // TODO remove boat ids
         public int BoatId { get; set; }
         public required Boat Boat { get; set; }
 
@@ -32,6 +35,8 @@ namespace Rise.Domain.Boats
         {
             Guard.Against.Null(reservation, nameof(reservation));
             _reservations.Add(reservation);
+            UsageCount++;
+            LastUsedAt = DateTime.UtcNow;
         }
 
         internal void RemoveReservation(Reservation reservation)
@@ -43,28 +48,34 @@ namespace Rise.Domain.Boats
         public bool IsAvailableForDate(DateOnly targetDate, TimeOnly targetStart)
         {
             const int ChargingHours = 4;
+            const int ReservationHours = 3;
+            
+            var targetDateTime = targetDate.ToDateTime(targetStart);
+            var targetEnd = targetDateTime.AddHours(ReservationHours);
+            var targetEndWithCharging = targetEnd.AddHours(ChargingHours);
+
+            // Debug information
+            Console.WriteLine($"Checking availability for Battery {Id} for date {targetDate} start {targetStart}");
+            Console.WriteLine($"Target period: {targetDateTime} to {targetEnd} (with charging until {targetEndWithCharging})");
             
             foreach (var reservation in Reservations)
             {
-                // Check reservations within 24 hours
-                if (Math.Abs(reservation.TimeSlot.Date.DayNumber - targetDate.DayNumber) <= 1)
-                {
-                    var reservationDateTime = reservation.TimeSlot.Date.ToDateTime(reservation.TimeSlot.Start);
-                    var reservationEndWithCharging = reservation.TimeSlot.Date.ToDateTime(reservation.TimeSlot.End)
-                        .AddHours(ChargingHours);
-                    var targetDateTime = targetDate.ToDateTime(targetStart);
-                    var targetEndWithCharging = targetDate.ToDateTime(targetStart).AddHours(3) // Assuming 3 hour slots
-                        .AddHours(ChargingHours);
+                var reservationDateTime = reservation.TimeSlot.Date.ToDateTime(reservation.TimeSlot.Start);
+                var reservationEnd = reservationDateTime.AddHours(ReservationHours);
+                var reservationEndWithCharging = reservationEnd.AddHours(ChargingHours);
 
-                    // Check if either the start or end (including charging time) overlaps
-                    if (targetDateTime <= reservationEndWithCharging && 
-                        targetEndWithCharging >= reservationDateTime)
-                    {
-                        return false;
-                    }
+                Console.WriteLine($"Existing reservation: {reservationDateTime} to {reservationEnd} (with charging until {reservationEndWithCharging})");
+
+                // Check if there's any overlap
+                if ((targetDateTime < reservationEndWithCharging && targetEnd > reservationDateTime) ||
+                    (targetEnd < reservationEndWithCharging && targetEndWithCharging > reservationDateTime))
+                {
+                    Console.WriteLine($"Overlap detected - Battery {Id} not available");
+                    return false;
                 }
             }
             
+            Console.WriteLine($"Battery {Id} is available");
             return true;
         }
     }
