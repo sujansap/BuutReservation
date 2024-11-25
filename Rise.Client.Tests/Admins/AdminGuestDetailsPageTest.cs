@@ -135,5 +135,14 @@ namespace Rise.Client.Tests.Admin
             await InitNavigationToUrl($"/admin/guests/{invalidUserId}");
             await Page.GetByTestId("user-details-fetch-error").IsVisibleAsync();
         }
+
+
+        [Test]
+        public async Task DisplaysAllUserFields()
+        {
+            await InitializeWithMockUser(1);
+            await Task.WhenAll(new[] { "name", "email", "address", "phone" }
+                .Select(field => Expect(Page.GetByTestId($"user-details-page-{field}")).ToBeVisibleAsync()));
+        }
     }
 }
