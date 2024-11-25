@@ -56,8 +56,6 @@ namespace Rise.Client.Tests
         {
             await Page.GotoAsync(url);
 
-            await Page.WaitForFunctionAsync("() => window.hasOwnProperty('Blazor')");
-
             await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
         }
 
