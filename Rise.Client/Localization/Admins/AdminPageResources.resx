@@ -39,4 +39,43 @@
 	<data name="ApproveFailure">
 		<value>Gast kon niet worden goedgekeurd: {0}</value>
 	</data>
+	<data name="NameLabel">
+		<value>Naam</value>
+	</data>
+	<data name="EmailLabel">
+		<value>E-mail</value>
+	</data>
+	<data name="AddressLabel">
+		<value>Adres</value>
+	</data>
+	<data name="PhoneLabel">
+		<value>Telefoon</value>
+	</data>
+	<data name="WelcomeToAdminDashboard">
+		<value>Welkom bij het Admin Dashboard</value>
+	</data>
+	<data name="TotalUsers">
+		<value>Totaal Aantal Gebruikers</value>
+	</data>
+	<data name="ActiveProjects">
+		<value>Actieve Projecten</value>
+	</data>
+	<data name="PendingTasks">
+		<value>Openstaande Taken</value>
+	</data>
+	<data name="SystemHealth">
+		<value>Systeemgezondheid</value>
+	</data>
+	<data name="QuickActions">
+		<value>Snelle Acties</value>
+	</data>
+	<data name="CreateNewUser">
+		<value>Nieuwe Gebruiker Aanmaken</value>
+	</data>
+	<data name="SystemSettings">
+		<value>Systeeminstellingen</value>
+	</data>
+	<data name="ViewReports">
+		<value>Rapporten Bekijken</value>
+	</data>
 </root>

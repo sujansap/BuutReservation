@@ -42,4 +42,43 @@
 	<data name="ApproveFailure">
 		<value>Failed to approve guest: {0}</value>
 	</data>
+	<data name="NameLabel">
+		<value>Name</value>
+	</data>
+	<data name="EmailLabel">
+		<value>Email</value>
+	</data>
+	<data name="AddressLabel">
+		<value>Address</value>
+	</data>
+	<data name="PhoneLabel">
+		<value>Phone</value>
+	</data>
+	<data name="WelcomeToAdminDashboard">
+		<value>Welcome to Admin Dashboard</value>
+	</data>
+	<data name="TotalUsers">
+		<value>Total Users</value>
+	</data>
+	<data name="ActiveProjects">
+		<value>Active Projects</value>
+	</data>
+	<data name="PendingTasks">
+		<value>Pending Tasks</value>
+	</data>
+	<data name="SystemHealth">
+		<value>System Health</value>
+	</data>
+	<data name="QuickActions">
+		<value>Quick Actions</value>
+	</data>
+	<data name="CreateNewUser">
+		<value>Create New User</value>
+	</data>
+	<data name="SystemSettings">
+		<value>System Settings</value>
+	</data>
+	<data name="ViewReports">
+		<value>View Reports</value>
+	</data>
 </root>

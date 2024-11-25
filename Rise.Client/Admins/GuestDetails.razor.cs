@@ -12,6 +12,10 @@ namespace Rise.Client.Admins
     {
         [Parameter]
         public int Id { get; set; }
+        private string name = "John Doe";
+        private string email = "johndoe@example.com";
+        private string adres = "123 Street, City";
+        private string phone = "+32 123 456 789";
 
         public required AsyncData<UserDetailDto> AsyncDataRef { get; set; }
         private UserDetailDto? UserDetails { get; set; }
@@ -50,7 +54,7 @@ namespace Rise.Client.Admins
             }
             catch (Exception ex)
             {
-                Snackbar.Add(string.Format(Localizer["ApproveFailure"], ex.Message), Severity.Error);
+                Snackbar.Add(string.Format(AdminPageLocalizer["ApproveFailure"], ex.Message), Severity.Error);
             }
             finally
             {
