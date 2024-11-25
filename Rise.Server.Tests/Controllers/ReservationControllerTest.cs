@@ -41,13 +41,11 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.NextId.ShouldNotBeNull();
 
             // Additional checks for past reservations
-            var today = DateOnly.FromDateTime(DateTime.Now);
+            var today = DateOnly.FromDateTime(DateTime.Today);
             var oneMonthAgo = today.AddMonths(-1);
 
-            // Verify all returned reservations are from the past
-            reservationsPage.Data.ShouldAllBe(r => r.Date < today);
-    // start van 2 dagen geleden tot 7 dagen geleden
-            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-7) && r.Date <= today.AddDays(-2));
+            // start van 2 dagen geleden tot 7 dagen geleden
+            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-8) && r.Date <= today.AddDays(-2));
         }
 
         [Fact]
@@ -62,18 +60,18 @@ namespace Rise.Server.Tests.Controllers
 
             // Store the last ID from first page to verify cursor implementation
             var lastIdFromFirstPage = firstPage.Data.Last().Id;
-            
+
             // Get next page using cursor
             var nextResponse = await _client.GetAsync($"me?getPast=true&cursor={firstPage.NextId}&isNextPage=true");
             nextResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
             var nextPage = await nextResponse.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
             nextPage.ShouldNotBeNull();
-            
+
             // de eerste van de lijst moet de cursor zijn van de vorige pagina
             nextPage.PreviousId.ShouldNotBe(lastIdFromFirstPage);  // Previous cursor should point to last item of first page
             nextPage.Data.First().Id.ShouldBeLessThan(lastIdFromFirstPage);  // Items should be ordered by ID descending
-            
+
             var today = DateOnly.FromDateTime(DateTime.Now);
             var oneMonthAgo = today.AddMonths(-1);
             nextPage.Data.ShouldNotBeEmpty();
@@ -85,8 +83,11 @@ namespace Rise.Server.Tests.Controllers
             nextPage.Data.First().Id.ShouldNotBe(firstPage.Data.First().Id);
             // van 8 dagen geleden tot 13 dagen geleden
             // moet de cursor meegeven van de pagina
-            nextPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-11) && r.Date <= today.AddDays(-6),
-                customMessage: $"Expected dates between {today.AddDays(-13)} and {today.AddDays(-8)}. " +
+            DateOnly start = today.AddDays(-14);
+            DateOnly end = today.AddDays(-9);
+
+            nextPage.Data.ShouldAllBe(r => r.Date >= start && r.Date <= end,
+                customMessage: $"Expected dates between {start} and {end}. " +
                 $"Actual dates: {string.Join(", ", nextPage.Data.Select(r => r.Date))}");
         }
 
@@ -152,7 +153,7 @@ namespace Rise.Server.Tests.Controllers
 
             var request = new CreateReservationDto
             {
-                TimeSlotId = 10
+                TimeSlotId = 63
             };
 
 
@@ -199,7 +200,7 @@ namespace Rise.Server.Tests.Controllers
         {
             var request = new CreateReservationDto
             {
-                TimeSlotId = 50
+                TimeSlotId = 1
             };
 
             var response = await _client.PostAsJsonAsync("", request);

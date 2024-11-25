@@ -3,7 +3,7 @@ using Npgsql;
 using Rise.Domain.Boats;
 using Rise.Domain.Exceptions;
 using Rise.Domain.Reservations;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 using Rise.Domain.Users;
 using Rise.Persistence;
 using Rise.Services.Constants;
@@ -158,7 +158,7 @@ namespace Rise.Services.Reservations
             ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
             //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
-            Battery battery = reservation.Boat.Batteries.FirstOrDefault();
+            Battery battery = reservation.Boat.Batteries[0];
 
 
             return new ReservationDetailsDto
@@ -168,8 +168,8 @@ namespace Rise.Services.Reservations
                 End = reservation.TimeSlot.End,
                 Date = reservation.TimeSlot.Date,
                 BoatPersonalName = reservation.Boat.PersonalName,
-                MentorName = battery?.Mentor?.FamilyName,
-                BatteryType = battery?.Type
+                MentorName = battery.Mentor.FamilyName,
+                BatteryType = battery.Type
 
             };
         }

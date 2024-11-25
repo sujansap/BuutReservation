@@ -15,6 +15,8 @@ using Rise.Shared.Notifications;
 using Rise.Services.Notifications;
 using Rise.Shared.Users;
 using Rise.Services.Users;
+using Rise.Shared.Notifications;
+using Rise.Services.Notifications;
 
 try
 {
@@ -52,6 +54,7 @@ try
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<INotificationService, NotificationService>();
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
