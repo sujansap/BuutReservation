@@ -44,8 +44,6 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationDetailsApi(reservationDetails);
             await InitNavigationToUrl(UserReservationDetailsUrl);
 
-            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
-
             await Expect(Page.GetByTestId("reservation-date")).ToContainTextAsync(reservationDetails.Date.ToString("dd/MM/yyyy"));
             await Expect(Page.GetByTestId("reservation-boat")).ToContainTextAsync(reservationDetails.BoatPersonalName);
             await Expect(Page.GetByTestId("reservation-time")).ToContainTextAsync($"{reservationDetails.Start:HH:mm} - {reservationDetails.End:HH:mm}");
