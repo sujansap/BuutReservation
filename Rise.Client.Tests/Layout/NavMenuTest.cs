@@ -37,10 +37,10 @@ namespace Rise.Client.Tests.Layout
         [TestCase("nav-mobile-notifications", "notifications", "")]
         [TestCase("nav-mobile-profile", "profile", "")]
         [TestCase("nav-mobile-notifications", "notifications", "")]
-        [TestCase("nav-admin-guests", "admin", "")]
-        public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
+        [TestCase("nav-admin-guests", "admin", "", UserRole.Admin)]
+        public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix, UserRole requiredRole = UserRole.Member)
         {
-            await LoginAsync(UserRole.Member);
+            await LoginAsync(requiredRole);
             await Page.SetViewportSizeAsync(959, 1920);
             await InitNavigationToUrl(startSuffix);
             string beginUri = Page.Url;
