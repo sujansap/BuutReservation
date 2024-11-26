@@ -1,4 +1,5 @@
 @page "/reservations"
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.Extensions.Localization
 @using MudBlazor
 @using Heron.MudCalendar
@@ -13,6 +14,7 @@
 @inject IStringLocalizer<ReservationPageResources> Localizer
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
+@attribute [Authorize]
 
 <PageTitle>@Localizer["YourReservations"]</PageTitle>
 

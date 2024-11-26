@@ -7,7 +7,7 @@ using Shouldly;
 namespace Rise.Client.Tests.Reservations
 {
     [TestFixture]
-    public class ReservationPageTest : CustomPageTest
+    public class ReservationPageTest : CustomAuthenticatedPageTest
     {
         private const string universalDateFormat = "yyyy-MM-dd";
 
@@ -119,6 +119,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasTabs()
         {
+            await LoginAsync(UserRole.Test);
             await Page.GotoAsync("/reservations");
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();

@@ -6,7 +6,7 @@ namespace Rise.Client.Tests.Reservations
 {
 
     [TestFixture]
-    public class UserReservationsTest : CustomPageTest
+    public class UserReservationsTest : CustomAuthenticatedPageTest
     {
 
         private const string UserReservationsUrl = "/reservations?CurrentTab=reservations";
