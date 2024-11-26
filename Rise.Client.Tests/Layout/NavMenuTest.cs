@@ -3,7 +3,7 @@ using Shouldly;
 namespace Rise.Client.Tests.Layout
 {
     [TestFixture]
-    public class NavMenuTest : CustomPageTest
+    public class NavMenuTest : CustomAuthenticatedPageTest
     {
         private const int DefaultHeight = 1920;
 
@@ -17,6 +17,7 @@ namespace Rise.Client.Tests.Layout
         [TestCase("nav-desktop-notifications", "/notifications", "")]
         public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix)
         {
+            await LoginAsync(UserRole.Member);
             await Page.SetViewportSizeAsync(961, DefaultHeight);
             await InitNavigationToUrl(startSuffix);
             string beginUri = Page.Url;
@@ -24,6 +25,7 @@ namespace Rise.Client.Tests.Layout
 
             Page.Url.ShouldNotBe(beginUri);
             Page.Url.ShouldContain(resultSuffix);
+            await InitNavigationToUrl("/authentication/logout");
         }
 
         [Test]
@@ -38,6 +40,7 @@ namespace Rise.Client.Tests.Layout
         [TestCase("nav-admin-guests", "admin", "")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
         {
+            await LoginAsync(UserRole.Member);
             await Page.SetViewportSizeAsync(959, 1920);
             await InitNavigationToUrl(startSuffix);
             string beginUri = Page.Url;
@@ -46,6 +49,7 @@ namespace Rise.Client.Tests.Layout
 
             Page.Url.ShouldNotBe(beginUri);
             Page.Url.ShouldContain($"/{resultSuffix}");
+            await InitNavigationToUrl("/authentication/logout");
         }
 
 
