@@ -63,6 +63,7 @@ public partial class Index : ComponentBase
             isLoading = false;
         }
         await Form.ResetAsync();
+        User.Address.Country = "Belgium";
     }
 
     private bool isPasswordShow;

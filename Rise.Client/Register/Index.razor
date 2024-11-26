@@ -75,11 +75,11 @@
                 </MudItem>
                 <MudItem xs="12">
                     <MudTextField @bind-Value="User.Address.Country" Variant="Variant.Outlined" ReadOnly="true" 
-                        For="@(() => User.Address.Country)" Label="Land" Immediate="true" Required="true" MaxLength="100" Text="Belgium" />
+                        For="@(() => User.Address.Country)" Label="Land" Immediate="true" Required="true" MaxLength="100" />
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-end mt-2">
                     <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large"
-                        StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => Form.ResetAsync())" Class="mx-2">
+                        StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => {Form.ResetAsync(); User.Address.Country = "Belgium";})" Class="mx-2">
                         Reset
                     </MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
@@ -87,11 +87,11 @@
                         OnClick="@(async () => await HandleSubmit())">
                         @if (isLoading)
                         {
-                            <MudProgressCircular Indeterminate="true" Size="Size.Small" />
+                                <MudProgressCircular Indeterminate="true" Size="Size.Small" />
                         }
                         else
                         {
-                            @:Register
+                                @:Register
                         }
                     </MudButton>
                 </MudItem>
