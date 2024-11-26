@@ -7,9 +7,22 @@ using Shouldly;
 namespace Rise.Client.Tests.Reservations
 {
     [TestFixture]
-    public class ReservationPageTest : CustomPageTest
+    public class ReservationPageTest : CustomAuthenticatedPageTest
     {
         private const string universalDateFormat = "yyyy-MM-dd";
+
+        [SetUp]
+        public async Task SetUp()
+        {
+            await LoginAsync(UserRole.Test);
+        }
+
+        [TearDown]
+        public new async Task TearDown()
+        {
+            await Page.GotoAsync("/authentication/logout");
+            await base.TearDown();
+        }
 
         private static string DateToCalendarIdentifier(DateOnly date)
         {
