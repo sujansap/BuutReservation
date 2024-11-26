@@ -225,6 +225,23 @@ This setup is very similar to the setup of the [application's database](#databas
 
 `ConnectionStrings__PostgreSQL="connection here"`
 
+#### Add Environment variables for tests to secrets.json of Rise.Server.Tests
+
+```
+"Auth0": {
+    "Authority": "https://rise-gent2.eu.auth0.com",
+    "Audience": "https://api.buut.be",
+    "ApiIdentifier": "https://rise-gent2.eu.auth0.com/api/v2/",
+    "M2MClientId": "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+    "M2MClientSecret": "<secret>",
+    "BlazorClientId": "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+    "BlazorClientSecret": "<secret>"
+  },
+  "ConnectionStrings": {
+    "PostgreSQL": "User ID=postgres;Password=admin;Host=localhost;Port=5432;Database=Hogent.Rise.Test;Connection Lifetime=0;"
+  }
+```
+
 #### Running integration tests
 
 In the `Rise.Server.Tests` project run the following:
