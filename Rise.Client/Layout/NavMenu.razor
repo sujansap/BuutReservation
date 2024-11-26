@@ -26,6 +26,8 @@
             data-testid="nav-desktop-book">
             @Localizer["BookNow"]
         </MudButton>
+        <MudButton Color="Color.Secondary" Href="register" data-testid="nav-desktop-register" Variant="Variant.Filled"
+            Size="Size.Medium">@Localizer["Register"]</MudButton>
         <MudIconButton Class="mr-2" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End"
             Href="profile" data-testid="nav-desktop-profile" />
         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
@@ -66,6 +68,9 @@
         </MudNavGroup>
 
         <MudDivider />
+        <MudNavLink Href="register" data-testid="nav-mobile-register" Icon="@Icons.Material.Filled.FollowTheSigns">
+            @Localizer["Register"]
+        </MudNavLink>
         <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">
             @Localizer["Profile"]
         </MudNavLink>
