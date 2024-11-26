@@ -12,7 +12,7 @@ namespace Rise.Client.Tests.Reservations
         [SetUp]
         public async Task SetUp()
         {
-            await LoginAsync(UserRole.Test);
+            await LoginAsync(UserRole.Member);
         }
 
         [TearDown]
@@ -278,11 +278,11 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task TestTogglePastReservations()
         {
-           
+
             await MockReservationsApi();
             await InitNavigationToUrl(UserReservationsUrl);
 
-     
+
             ILocator upcomingReservation = Page.GetByTestId("reservation-item");
             await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
             await Expect(upcomingReservation).ToHaveCountAsync(1);

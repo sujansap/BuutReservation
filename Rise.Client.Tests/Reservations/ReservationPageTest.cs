@@ -14,7 +14,7 @@ namespace Rise.Client.Tests.Reservations
         [SetUp]
         public async Task SetUp()
         {
-            await LoginAsync(UserRole.Test);
+            await LoginAsync(UserRole.Member);
         }
 
         [TearDown]
