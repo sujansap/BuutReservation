@@ -36,13 +36,7 @@ try
     builder.Services.AddSerilog();
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-    // builder.Services.AddSwaggerGen(options =>
-    // {
-    //     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    //     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    //     options.IncludeXmlComments(xmlPath);
-    //     options.EnableAnnotations();
-    // });
+
     builder.Services.AddSwaggerGen(options =>
     {
         options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
