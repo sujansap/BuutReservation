@@ -34,8 +34,8 @@ namespace Rise.Services.Notifications
             const int userId = 1;
 
             Notification? notification = _dbContext.Users.Include(user => user.Notifications)
-                .Where(user => user.Id == userId)
-                .SelectMany(user => user.Notifications)
+                .First(user => user.Id == userId)
+                .Notifications
                 .FirstOrDefault(notification => notification.Id == id) ?? throw new NotFoundException(id.ToString(), typeof(Notification).ToString());
 
             notification.IsRead = true;
