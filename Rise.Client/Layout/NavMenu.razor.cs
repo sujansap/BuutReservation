@@ -7,6 +7,8 @@ namespace Rise.Client.Layout
     public partial class NavMenu
     {
         private bool _drawerOpen = false;
+        private bool _notificationPopoverOpen = false;
+
         private void ToggleDrawer()
         {
             _drawerOpen = !_drawerOpen;
@@ -17,6 +19,11 @@ namespace Rise.Client.Layout
         public void BeginLogOut()
         {
             Navigation.NavigateToLogout("authentication/logout");
+        }
+
+        private void HandleNotificationButtonClicked()
+        {
+            _notificationPopoverOpen = !_notificationPopoverOpen;
         }
     }
 }

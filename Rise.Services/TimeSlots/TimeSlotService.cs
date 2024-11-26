@@ -98,7 +98,7 @@ namespace Rise.Services.TimeSlots
             var date = new DateOnly(year, month, day);
             var today = DateOnly.FromDateTime(DateTime.Today);
             var minReservationDate = GetMinReservationDate();
-            
+
             // Right now we don't keep the information of whether a boat is available or not
             var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
 

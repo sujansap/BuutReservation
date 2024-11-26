@@ -1,15 +1,12 @@
 
 
-namespace Rise.Domain.Timeslots;
-public class CruisePeriod : Entity, ICruisePeriod
+namespace Rise.Domain.TimeSlots;
+public class CruisePeriod : Entity
 {
 
     private DateTime _start;
     private DateTime _end;
 
-    // TODO make guard clauses for properties of CruisePeriod
-    // TODO make tests for constructors CruisePeriod
-    // Guard clauses for properties of CruisePeriod
     public DateTime Start
     {
         get => _start;
@@ -30,7 +27,25 @@ public class CruisePeriod : Entity, ICruisePeriod
             _end = value;
         }
     }
+    private readonly List<TimeSlot> timeSlots = [];
 
+    public IReadOnlyList<TimeSlot> TimeSlots => timeSlots.AsReadOnly();
 
-    public ICollection<ITimeSlot> TimeSlots { get; set; } = [];
+    /// <summary>
+    /// Adds a time slot to the given cruise period.
+    /// </summary>
+    /// <param name="timeSlot">The time slot to add. This should be a valid time within the allowed range of the cruise period.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the time slot's date and start time are out of the valid range specified by the cruise's start and end time.
+    /// </exception>
+    public void AddTimeSlot(TimeSlot timeSlot)
+    {
+        Guard.Against.OutOfRange(
+            timeSlot.Date.ToDateTime(timeSlot.Start),
+            nameof(AddTimeSlot),
+            Start,
+            End
+        );
+        timeSlots.Add(timeSlot);
+    }
 }

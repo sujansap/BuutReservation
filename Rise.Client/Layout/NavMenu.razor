@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Layout
+@using Rise.Client.Notifications.Components
 
 @inject IStringLocalizer<LandingPageResource> Localizer
 
@@ -49,6 +50,8 @@
                 </NotAuthorized>
             </AuthorizeView>
         </MudStack>
+    
+        <NotificationPopoverComponent @bind-IsOpen="_notificationPopoverOpen" />
 
         <CultureSelector IsMobile="false" MenuColor="Color.Secondary" />
     </MudHidden>

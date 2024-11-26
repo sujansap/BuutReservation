@@ -3,7 +3,7 @@ using Rise.Domain.Users;
 
 namespace Rise.Domain.Boats
 {
-    public class Battery : Entity, IBattery
+    public class Battery : Entity
     {
         /// <summary>
         /// The type of battery
@@ -15,18 +15,9 @@ namespace Rise.Domain.Boats
             get => _type;
             set => _type = Guard.Against.NullOrWhiteSpace(value, nameof(Type), "Battery type cannot be null or empty");
         }
+        public required Boat Boat { get; set; }
 
-        public int BoatId { get; set; }
-        public required IBoat Boat { get; set; }
-
-        public int MentorId { get; set; }
-        public required IUser Mentor { get; set; }
-
-
-        public ICollection<IReservation> Reservations
-        {
-            get;
-        } = [];
+        public required User Mentor { get; set; }
 
     }
 }

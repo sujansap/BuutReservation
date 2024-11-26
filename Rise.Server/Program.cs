@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Rise.Persistence.Triggers;
-
 using Rise.Services.Reservations;
 using Rise.Services.TimeSlots;
 using Rise.Shared.Reservations;
@@ -11,6 +10,8 @@ using FluentValidation.AspNetCore;
 using Rise.Server.Middleware;
 using Serilog.Events;
 using Serilog;
+using Rise.Shared.Notifications;
+using Rise.Services.Notifications;
 using Rise.Shared.Users;
 using Rise.Services.Users;
 using System.Security.Claims;
@@ -106,10 +107,10 @@ try
 
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
+    builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
-
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();

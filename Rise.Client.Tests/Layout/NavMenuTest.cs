@@ -1,3 +1,7 @@
+using System.Text.Json;
+using Microsoft.Playwright;
+using Rise.Client.Tests.Notifications;
+using Rise.Shared.Notifications;
 using Shouldly;
 
 namespace Rise.Client.Tests.Layout
@@ -7,6 +11,31 @@ namespace Rise.Client.Tests.Layout
     {
         private const int DefaultHeight = 1920;
 
+
+        public static readonly List<NotificationDto> Notifications = NotificationPageTest.Notifications;
+        private async Task MockHTTPRequests()
+        {
+            await Page.RouteAsync("*/**/api/Notification/me", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(Notifications)
+                });
+            });
+
+            await Page.RouteAsync("*/**/api/Notification/me?*", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(Notifications.Take(3))
+                });
+            });
+        }
+
         [Test]
         [TestCase("nav-brand-logo", "/home", "/reservations")]
         [TestCase("nav-desktop-home", "/home", "/reservations")]
@@ -14,7 +43,6 @@ namespace Rise.Client.Tests.Layout
         [TestCase("nav-desktop-reservations", "/reservations", "")]
         [TestCase("nav-desktop-book", "/book", "")]
         [TestCase("nav-desktop-profile", "/profile", "")]
-        [TestCase("nav-desktop-notifications", "/notifications", "")]
         public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix)
         {
             await LoginAsync(UserRole.Member);
@@ -26,6 +54,72 @@ namespace Rise.Client.Tests.Layout
             Page.Url.ShouldNotBe(beginUri);
             Page.Url.ShouldContain(resultSuffix);
             await InitNavigationToUrl("/authentication/logout");
+        }
+
+        [Test]
+        public async Task Desktop_NotificationsPopover_ToBeVisible()
+        {
+            await MockHTTPRequests();
+            await Page.SetViewportSizeAsync(961, DefaultHeight);
+            await InitNavigationToUrl("/home");
+
+            ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
+
+            await Expect(notificationButton).ToBeVisibleAsync();
+            await notificationButton.ClickAsync();
+
+            ILocator popover = Page.GetByTestId("notifications-popover");
+            await Expect(popover).ToBeVisibleAsync();
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task Desktop_NotificationsPopover_ToHaveNotifications(int id)
+        {
+            await MockHTTPRequests();
+            await Page.SetViewportSizeAsync(961, DefaultHeight);
+            await InitNavigationToUrl("/home");
+
+            ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
+            await notificationButton.ClickAsync();
+
+            ILocator popoverList = Page.GetByTestId("notifications-popover-list");
+            await Expect(popoverList).ToBeVisibleAsync();
+
+            ILocator notification = Page.GetByTestId($"notification-{id}");
+            await Expect(notification).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task Desktop_NotificationsPopover_Button_ToBeVisible()
+        {
+            await MockHTTPRequests();
+            await Page.SetViewportSizeAsync(961, DefaultHeight);
+            await InitNavigationToUrl("/home");
+
+            ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
+            await notificationButton.ClickAsync();
+
+            ILocator popoverButton = Page.GetByTestId("notifications-popover-button");
+            await Expect(popoverButton).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task Desktop_NotificationsPopover_Button_ToNavigate()
+        {
+            await MockHTTPRequests();
+            await Page.SetViewportSizeAsync(961, DefaultHeight);
+            await InitNavigationToUrl("/home");
+
+            ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
+            await notificationButton.ClickAsync();
+
+            ILocator popoverButton = Page.GetByTestId("notifications-popover-button");
+            await popoverButton.ClickAsync();
+
+            Page.Url.ShouldContain("/notifications");
         }
 
         [Test]

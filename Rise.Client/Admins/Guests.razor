@@ -1,0 +1,35 @@
+﻿@page "/admin/guests"
+@using MudBlazor
+@using Rise.Client.Admins.Components
+@using Rise.Client.Localization.Admins;
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<AdminPageResources> Localizer
+@using static System.Net.WebRequestMethods
+@using Rise.Client.Common
+@using Rise.Shared.Users
+
+@layout AdminLayout
+
+
+<MudPaper Class="pa-2 h-fill" data-testid="user-list">
+    <MudText data-testid="user-details-page-familyname" Typo="Typo.h3" Class="mb-4">@Localizer["GuestUsers"]
+    </MudText>
+    <AsyncData DataFetcher="@FetchUsers" @bind-Data="@Users" T="IEnumerable<UserDto>" @ref="AsyncDataRef"
+        ShowContentWhenError="@false" TestIdPrefix="user-list">
+        @if (!Users.Any())
+        {
+            <MudAlert Severity="Severity.Info" data-testid="users-none">@Localizer["NoUsersAvailable"]</MudAlert>
+        }
+        else
+        {
+            <MudTable Elevation="0" Striped="true" Items="@Users" Dense="true" Hover="true" data-testid="users-table">
+                <HeaderContent>
+                    <MudTh data-testid="users-list-familyName">@Localizer["FamilyName"]</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <GuestUserRow User="@context" />
+                </RowTemplate>
+            </MudTable>
+        }
+    </AsyncData>
+</MudPaper>

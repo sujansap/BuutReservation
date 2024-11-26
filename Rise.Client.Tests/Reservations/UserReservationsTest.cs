@@ -115,8 +115,7 @@ namespace Rise.Client.Tests.Reservations
 
             await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
 
-
-            var viewDetailsButton = Page.GetByTestId("reservation-item").First.Locator("button:has-text('ZIE DETAILS')");
+            var viewDetailsButton = Page.GetByTestId("view-reservation-details-button");
             await viewDetailsButton.ClickAsync();
 
 
@@ -185,7 +184,7 @@ namespace Rise.Client.Tests.Reservations
             var formattedDate = match.Value.Replace("/", "-");
 
 
-            Assert.AreEqual(formattedDate, ValidReservation.Date.ToString("dd-MM-yyyy"));
+            Assert.That(ValidReservation.Date.ToString("dd-MM-yyyy"), Is.EqualTo(formattedDate));
 
 
             var boatNameText = await firstReservation.GetByTestId("reservation-boat-name").TextContentAsync();
