@@ -25,8 +25,7 @@ namespace Rise.Client.Notifications
 
         public Task MarkNotificationAsRead(int notificationId)
         {
-            // unimplemented 
-            return Task.CompletedTask;
+            return _httpClient.PatchAsync($"read/{notificationId}", null);
         }
     }
 

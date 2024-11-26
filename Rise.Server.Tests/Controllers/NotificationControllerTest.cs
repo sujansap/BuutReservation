@@ -24,6 +24,24 @@ namespace Rise.Server.Tests.Controllers
             response.Count().ShouldBe(20);
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        public async Task PATCH_CurrentUser_Notifications_MarkAsRead(int id)
+        {
+            var response = await _client.PatchAsync($"read/{id}", null);
+            response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        }
+
+        [Theory]
+        [InlineData(100)]
+        public async Task PATCH_CurrentUser_Notifications_MarkAsRead_NotFound(int id)
+        {
+            var response = await _client.PatchAsync($"read/{id}", null);
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+
         [Fact]
         public async Task GET_CurrentUser_Notifications_DoesNotGiveNotificationsFromOtherUsers()
         {

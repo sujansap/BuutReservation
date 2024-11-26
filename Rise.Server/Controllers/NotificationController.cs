@@ -1,3 +1,4 @@
+using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.Notifications;
@@ -46,5 +47,44 @@ namespace Rise.Server.Controllers
                 return Problem("An error occurred while fetching notifications for the current user.", statusCode: StatusCodes.Status500InternalServerError);
             }
         }
+
+        /// <summary>
+        /// Marks a notification as read.
+        /// </summary>
+        /// <param name="id">The ID of the notification to mark as read.</param>
+        /// <returns></returns>
+        /// <response code="204">The notification was successfully marked as read.</response>
+        /// <response code="500">An error occurred while marking the notification as read.</response>
+        [HttpPatch("read/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> MarkNotificationAsRead(int id)
+        {
+            if (id <= 0)
+            {
+                _logger.LogWarning("Invalid notification ID: {id} is not a valid ID.", id);
+                return ValidationProblem(new ValidationProblemDetails(new Dictionary<string, string[]>
+                {
+                    { "Id", [$"The notification ID must be a positive integer ({id})."] }
+                }));
+            }
+            try
+            {
+                await _notificationService.MarkNotificationAsRead(id);
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Notification {id} not found.", id);
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while marking notification {id} as read.", id);
+                return Problem("An error occurred while marking the notification as read.", statusCode: StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
 }
