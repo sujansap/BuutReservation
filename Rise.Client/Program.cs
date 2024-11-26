@@ -15,8 +15,6 @@ using Rise.Shared.Notifications;
 using Rise.Client.Notifications;
 using Rise.Shared.Users;
 using Rise.Client.Admins;
-using Rise.Shared.Notifications;
-using Rise.Client.Notifications;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
