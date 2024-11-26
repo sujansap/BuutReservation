@@ -1,4 +1,5 @@
 using System;
+using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Notifications;
 using Rise.Domain.Users;
@@ -31,10 +32,13 @@ namespace Rise.Services.Notifications
         public Task MarkNotificationAsRead(int id)
         {
             const int userId = 1;
-            _dbContext.Users.Include(user => user.Notifications)
+
+            Notification? notification = _dbContext.Users.Include(user => user.Notifications)
                 .Where(user => user.Id == userId)
                 .SelectMany(user => user.Notifications)
-                .First(notification => notification.Id == id).IsRead = true;
+                .FirstOrDefault(notification => notification.Id == id) ?? throw new NotFoundException(id.ToString(), typeof(Notification).ToString());
+
+            notification.IsRead = true;
 
             return _dbContext.SaveChangesAsync();
         }

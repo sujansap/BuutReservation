@@ -1,3 +1,4 @@
+using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.Notifications;
@@ -56,6 +57,7 @@ namespace Rise.Server.Controllers
         /// <response code="500">An error occurred while marking the notification as read.</response>
         [HttpPatch("read/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> MarkNotificationAsRead(int id)
         {
@@ -71,6 +73,11 @@ namespace Rise.Server.Controllers
             {
                 await _notificationService.MarkNotificationAsRead(id);
                 return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Notification {id} not found.", id);
+                return NotFound();
             }
             catch (Exception ex)
             {
