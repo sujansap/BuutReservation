@@ -13,8 +13,9 @@ namespace Rise.Client.Tests
         [OneTimeSetUp]
         public new void GlobalSetup()
         {
-            Configuration = new ConfigurationBuilder().AddUserSecrets<CustomAuthenticatedPageTest>().Build();
-            GlobalSetup();
+            var builder = new ConfigurationBuilder().AddUserSecrets<CustomAuthenticatedPageTest>();
+            Configuration = builder.Build();
+            base.GlobalSetup();
         }
 
         public enum UserRole
@@ -44,8 +45,8 @@ namespace Rise.Client.Tests
 
             await Page.FillAsync("input[name='username']", credentials.Email);
             await Page.FillAsync("input[name='password']", credentials.WW);
-            await Page.ClickAsync("button[type='submit']");
-            await Page.WaitForURLAsync("authentication/callback");
+            await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
+            await Page.WaitForURLAsync("/home");
 
             var sessionStorage = await Page.EvaluateAsync<string>("() => JSON.stringify(sessionStorage)");
             Environment.SetEnvironmentVariable("SESSION_STORAGE", sessionStorage);

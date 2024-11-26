@@ -11,6 +11,19 @@ namespace Rise.Client.Tests.Reservations
     {
         private const string universalDateFormat = "yyyy-MM-dd";
 
+        [SetUp]
+        public async Task SetUp()
+        {
+            await LoginAsync(UserRole.Test);
+        }
+
+        [TearDown]
+        public new async Task TearDown()
+        {
+            await Page.GotoAsync("/authentication/logout");
+            await base.TearDown();
+        }
+
         private static string DateToCalendarIdentifier(DateOnly date)
         {
             return $"[identifier='{date:d/MM/yyyy}']";
@@ -119,7 +132,6 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasTabs()
         {
-            await LoginAsync(UserRole.Test);
             await Page.GotoAsync("/reservations");
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();

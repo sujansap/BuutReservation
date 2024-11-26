@@ -8,6 +8,18 @@ namespace Rise.Client.Tests.Reservations
     [TestFixture]
     public class UserReservationsTest : CustomAuthenticatedPageTest
     {
+        [SetUp]
+        public async Task SetUp()
+        {
+            await LoginAsync(UserRole.Test);
+        }
+
+        [TearDown]
+        public new async Task TearDown()
+        {
+            await Page.GotoAsync("/authentication/logout");
+            await base.TearDown();
+        }
 
         private const string UserReservationsUrl = "/reservations?CurrentTab=reservations";
 
