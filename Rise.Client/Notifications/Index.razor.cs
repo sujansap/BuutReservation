@@ -60,3 +60,4 @@ namespace Rise.Client.Notifications
 
         }
     }
+}
