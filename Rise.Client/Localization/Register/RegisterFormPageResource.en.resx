@@ -1,6 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-    <data name="">
+    <data name="FirstName">
 		<value></value>
+	</data>
+    <data name="FirstNameRequired">
+		<value></value>
+	</data>
+    <data name="FirstNameMinLength">
+		<value></value>
+	</data>
+    <data name="FirstNameMaxLength">
+		<value></value>
+	</data>
+    <data name="FirstNameHelperText">
+		<value></value>
+	</data>
+    <data name="LastName">
+		<value></value>
+	</data>
+    <data name="LastNameRequired">
+		<value></value>
+	</data>
+    <data name="LastNameMinLength">
+		<value></value>
+	</data>
+    <data name="LastNameMaxLength">
+		<value></value>
+	</data>
+    <data name="LastNameHelperText">
+		<value></value>
+	</data>
+    <data name="Email">
+		<value></value>
+	</data>
+    <data name="EmailRequired">
+		<value></value>
+	</data>
+    <data name="EmailMinLength">
+		<value></value>
+	</data>
+    <data name="EmailMaxLength">
+		<value></value>
+	</data>
+    <data name="EmailHelperText">
+		<value></value>
+	</data>
+    <data name="Password">
+		<value></value>
+	</data>
+    <data name="PasswordRequired">
+		<value></value>
+	</data>
+    <data name="PasswordMinLength">
+		<value></value>
+	</data>
+    <data name="PasswordMaxLength">
+		<value></value>
+	</data>
+    <data name="PasswordHelperText">
+		<value></value>
+	</data>
+    <data name="PhoneNumber">
+		<value></value>
+	</data>
+    <data name="PhoneNumberRequired">
+		<value></value>
+	</data>
+    <data name="PhoneNumberMinLength">
+		<value></value>
+	</data>
+    <data name="PhoneNumberMaxLength">
+		<value></value>
+	</data>
+    <data name="PhoneNumberHelperText">
+		<value></value>
+	</data>
+    <data name="DateOfBirth">
+		<value></value>
+	</data>
+    <data name="DateOfBirthRequired">
+		<value></value>
+	</data>
+    <data name="DateOfBirthMinLength">
+		<value></value>
+	</data>
+    <data name="DateOfBirthMaxLength">
+		<value></value>
+	</data>
+    <data name="DateOfBirthHelperText">
+		<value></value>
+	</data>
+    <data name="Street">
+		<value></value>
+	</data>
+    <data name="StreetRequired">
+		<value></value>
+	</data>
+    <data name="StreetMinLength">
+		<value></value>
+	</data>
+    <data name="StreetMaxLength">
+		<value></value>
+	</data>
+    <data name="StreetHelperText">
+		<value></value>
+	</data>
+    <data name="Number">
+		<value></value>
+	</data>
+    <data name="NumberRequired">
+		<value></value>
+	</data>
+    <data name="NumberMinLength">
+		<value></value>
+	</data>
+    <data name="NumberMaxLength">
+		<value></value>
+	</data>
+    <data name="NumberHelperText">
+		<value></value>
+	</data>
+    <data name="City">
+		<value></value>
+	</data>
+    <data name="CityRequired">
+		<value></value>
+	</data>
+    <data name="CityMinLength">
+		<value></value>
+	</data>
+    <data name="CityMaxLength">
+		<value></value>
+	</data>
+    <data name="CityHelperText">
+		<value></value>
+	</data>
+    <data name="PostalCode">
+		<value></value>
+	</data>
+    <data name="PostalCodeRequired">
+		<value></value>
+	</data>
+    <data name="PostalCodeMinLength">
+		<value></value>
+	</data>
+    <data name="PostalCodeMaxLength">
+		<value></value>
+	</data>
+    <data name="PostalCodeHelperText">
+		<value></value>
+	</data>
+    <data name="Country">
+		<value></value>
+	</data>
+    <data name="CountryRequired">
+		<value></value>
+	</data>
+    <data name="CountryMinLength">
+		<value></value>
+	</data>
+    <data name="CountryMaxLength">
+		<value></value>
+	</data>
+    <data name="CountryHelperText">
+		<value></value>
+	</data>
+    <data name="CountryBelgium">
+		<value>Belgium</value>
 	</data>
 </root>
