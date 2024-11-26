@@ -270,7 +270,7 @@ To run authenticated tests, ensure the following configurations are set up:
      "Email": "guest@example.com",
      "WW": "guestpassword"
     },
-    "Test": {
+    "Member": {
      "Email": "test@example.com",
      "WW": "testpassword"
     }

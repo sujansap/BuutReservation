@@ -22,7 +22,7 @@ namespace Rise.Client.Tests
         {
             Admin,
             Guest,
-            Test
+            Member
         }
 
         protected async Task LoginAsync(UserRole role)
@@ -32,7 +32,7 @@ namespace Rise.Client.Tests
             {
                 UserRole.Admin => Configuration.GetSection("Admin").Get<Credentials>(),
                 UserRole.Guest => Configuration.GetSection("Guest").Get<Credentials>(),
-                UserRole.Test => Configuration.GetSection("Test").Get<Credentials>(),
+                UserRole.Member => Configuration.GetSection("Member").Get<Credentials>(),
                 _ => throw new ArgumentOutOfRangeException(role.ToString(), "Unknown role")
             };
 
