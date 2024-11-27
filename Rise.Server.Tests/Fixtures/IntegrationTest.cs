@@ -97,14 +97,8 @@ namespace Rise.Server.Tests.Fixtures
                 Password = testLoginRole.GetPassword(),
             };
 
-            var retries = 0;
-            var retryLimit = 50;
-            var success = false;
-            while (retries <= retryLimit && !success)
-            {
-                success = await SendLoginRequest(tokenRequest);
-                retries++;
-            }
+            var task = SendCreateUserRequest(testLoginRole);
+            await RunTaskWithRetries(async () => await SendLoginRequest(tokenRequest), 50);
         }
 
         private async Task<bool> SendLoginRequest(ResourceOwnerTokenRequest tokenRequest)
@@ -130,26 +124,14 @@ namespace Rise.Server.Tests.Fixtures
         {
             try
             {
-                var retries = 0;
-                var retryLimit = 50;
-                var success = false;
-                while (retries <= retryLimit && !success)
-                {
-                    success = await SendCreateUserRequest(testLoginRole);
-                    retries++;
-                }
+                var task = SendCreateUserRequest(testLoginRole);
+                await RunTaskWithRetries(async () => await SendCreateUserRequest(testLoginRole), 50);
             }
             catch (ErrorApiException)
             {
                 // User already exists
                 return;
             }
-            catch
-            {
-                //Unexpected error
-                return;
-            }
-
         }
 
         private async Task<bool> SendCreateUserRequest(UserRole testLoginRole)
@@ -186,6 +168,17 @@ namespace Rise.Server.Tests.Fixtures
                 //Delay so that auth0 api doesn't throw a rate limit exception
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 return false;
+            }
+        }
+
+        private async Task RunTaskWithRetries(Func<Task<bool>> callback, int retryLimit)
+        {
+            var retries = 0;
+            var success = false;
+            while (retries <= retryLimit && !success)
+            {
+                success = await callback();
+                retries++;
             }
         }
 
