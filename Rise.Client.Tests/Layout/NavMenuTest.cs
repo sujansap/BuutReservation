@@ -53,7 +53,7 @@ namespace Rise.Client.Tests.Layout
 
             Page.Url.ShouldNotBe(beginUri);
             Page.Url.ShouldContain(resultSuffix);
-            await InitNavigationToUrl("/authentication/logout");
+            await LogoutAsync();
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace Rise.Client.Tests.Layout
 
             Page.Url.ShouldNotBe(beginUri);
             Page.Url.ShouldContain($"/{resultSuffix}");
-            await InitNavigationToUrl("/authentication/logout");
+            await LogoutAsync();
         }
 
 
