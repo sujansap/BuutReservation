@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Domain.Users;
@@ -6,8 +7,9 @@ using Rise.Shared.Users;
 
 namespace Rise.Server.Controllers.Users
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger;
@@ -26,6 +28,7 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <returns>List of the guest users</returns>
         [HttpGet("guests")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetGuestUsers()
@@ -55,6 +58,7 @@ namespace Rise.Server.Controllers.Users
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
         [HttpPost("role/member")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
@@ -64,6 +68,18 @@ namespace Rise.Server.Controllers.Users
             return Ok();
         }
 
+        /// <summary>
+        /// Registers a new user
+        /// </summary>
+        /// <param name="request">Dto with id of the user to add member role to</param>
+        /// <returns>Result of the operation</returns>
+        [HttpPost("register")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> RegisterUser([FromBody] UserDto request)
+        {
+            _logger.LogInformation("POST api/User/register");
 
+            return Ok();
+        }
     }
 }
