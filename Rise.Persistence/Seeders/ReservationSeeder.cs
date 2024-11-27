@@ -88,19 +88,63 @@ namespace Rise.Persistence.Seeders
             reservations.Add([
                 // Today + 0 day(s)
                 [
-                    new() { User = UserSeeder.users[0], TimeSlot = weekLongTimeSlots[0][0], Boat = BoatSeeder.boats[0], },
-                    new() { User = UserSeeder.users[2], TimeSlot = weekLongTimeSlots[0][0], Boat = BoatSeeder.boats[1], },
-                    new() { User = UserSeeder.users[5], TimeSlot = weekLongTimeSlots[0][0], Boat = BoatSeeder.boats[2], },
-                    new() { User = UserSeeder.users[0], TimeSlot = weekLongTimeSlots[0][1], Boat = BoatSeeder.boats[0], },
-                    new() { User = UserSeeder.users[3], TimeSlot = weekLongTimeSlots[0][1], Boat = BoatSeeder.boats[1], },
-                    new() { User = UserSeeder.users[0], TimeSlot = weekLongTimeSlots[0][2], Boat = BoatSeeder.boats[2], },
+                    new() { 
+                        User = UserSeeder.users[0], 
+                        TimeSlot = weekLongTimeSlots[0][0], 
+                        Boat = BoatSeeder.boats[0],
+                        Battery = BatterySeeder.batteries[0]
+                    },
+                    new() { 
+                        User = UserSeeder.users[2], 
+                        TimeSlot = weekLongTimeSlots[0][0], 
+                        Boat = BoatSeeder.boats[1],
+                        Battery = BatterySeeder.batteries[3]
+                    },
+                    new() { 
+                        User = UserSeeder.users[5], 
+                        TimeSlot = weekLongTimeSlots[0][0], 
+                        Boat = BoatSeeder.boats[2],
+                        Battery = BatterySeeder.batteries[6]
+                    },
+                    new() { 
+                        User = UserSeeder.users[0], 
+                        TimeSlot = weekLongTimeSlots[0][1], 
+                        Boat = BoatSeeder.boats[0],
+                        Battery = BatterySeeder.batteries[1]
+                    },
+                    new() { 
+                        User = UserSeeder.users[3], 
+                        TimeSlot = weekLongTimeSlots[0][1], 
+                        Boat = BoatSeeder.boats[1],
+                        Battery = BatterySeeder.batteries[4]
+                    },
+                    new() { 
+                        User = UserSeeder.users[0], 
+                        TimeSlot = weekLongTimeSlots[0][2], 
+                        Boat = BoatSeeder.boats[2],
+                        Battery = BatterySeeder.batteries[7]
+                    },
                 ],
                 // Today + 1 day(s)
                 [
-                    new() { User = UserSeeder.users[0], TimeSlot = weekLongTimeSlots[1][0], Boat = BoatSeeder.boats[0], },
-                    new() { User = UserSeeder.users[2], TimeSlot = weekLongTimeSlots[1][0], Boat = BoatSeeder.boats[1], },
-                    new() { User = UserSeeder.users[3], TimeSlot = weekLongTimeSlots[1][0], Boat = BoatSeeder.boats[2], },
-                    new() { User = UserSeeder.users[0], TimeSlot = weekLongTimeSlots[1][1], Boat = BoatSeeder.boats[0], },
+                    new() { 
+                        User = UserSeeder.users[0], 
+                        TimeSlot = weekLongTimeSlots[1][0], 
+                        Boat = BoatSeeder.boats[0],
+                        Battery = BatterySeeder.batteries[0]
+                    },
+                    new() { 
+                        User = UserSeeder.users[2], 
+                        TimeSlot = weekLongTimeSlots[1][0], 
+                        Boat = BoatSeeder.boats[1],
+                        Battery = BatterySeeder.batteries[3]
+                    },
+                    new() { 
+                        User = UserSeeder.users[3], 
+                        TimeSlot = weekLongTimeSlots[1][0], 
+                        Boat = BoatSeeder.boats[2],
+                        Battery = BatterySeeder.batteries[6]
+                    },
                 ],
                 // Today + 2 day(s)
                 [
