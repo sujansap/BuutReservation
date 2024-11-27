@@ -2,6 +2,7 @@ using Microsoft.Playwright;
 using Rise.Shared.Reservations;
 using Rise.Shared.Pagination;
 using System.Text.RegularExpressions;
+using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Reservations
 {

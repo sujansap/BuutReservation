@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.Playwright;
 using Rise.Client.Tests.Notifications;
 using Rise.Shared.Notifications;
+using Rise.Shared.Users;
 using Shouldly;
 
 namespace Rise.Client.Tests.Layout

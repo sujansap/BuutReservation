@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using Rise.Shared.Users;
 
 namespace Rise.Client.Tests
 {
@@ -16,13 +17,6 @@ namespace Rise.Client.Tests
             var builder = new ConfigurationBuilder().AddUserSecrets<CustomAuthenticatedPageTest>();
             Configuration = builder.Build();
             base.GlobalSetup();
-        }
-
-        public enum UserRole
-        {
-            Admin,
-            Guest,
-            Member
         }
 
         protected async Task LoginAsync(UserRole role)

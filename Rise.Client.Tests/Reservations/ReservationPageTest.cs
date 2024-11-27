@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Rise.Shared.TimeSlots;
+using Rise.Shared.Users;
 using Shouldly;
 
 namespace Rise.Client.Tests.Reservations
