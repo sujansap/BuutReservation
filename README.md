@@ -269,16 +269,11 @@ dotnet run
 
 ### Authenticated Tests Configuration
 
-To run authenticated tests, ensure the following configurations are set up:
+This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Client.Tests` project.
 
-1. **Install Microsoft User Secrets Extension**:
+1. **Add User Role and Credentials**:
 
-- Make sure the [Microsoft User Secrets](https://marketplace.visualstudio.com/items?itemName=adrianwilczynski.user-secrets) extension is installed.
-- `dotnet add package Microsoft.Extensions.Configuration.UserSecrets`
-
-2. **Add User Role and Credentials**:
-
-- Add the user role and credentials in the `secrets.json` file of the `Rise.Client.Tests` project. Right-click on the `Rise.Client.Tests.csproj` and select `Manage User Secrets`. Add the following configuration:
+- Right-click on the `Rise.Client.Tests.csproj` and select `Manage User Secrets`, add the user role and credentials in `secrets.json`.
 
   ```json
   {
@@ -297,9 +292,9 @@ To run authenticated tests, ensure the following configurations are set up:
   }
   ```
 
-3. **Configure Auth0 Allowed Callback URLs**:
+2. **Configure Auth0 Allowed Callback URLs**:
 
-- Ensure the URL where the test client is running is added to the allowed callback URLs in your Auth0 configuration.
+- Ensure the domain URL, where the client tests are running, is added to the *Allowed Callback URLs* (don't forget to add ***/authentication/login-callback/*** after the domain) as well as the *Logout* URLs in your Auth0 configuration.
 
 #### Installation of Playwright
 
