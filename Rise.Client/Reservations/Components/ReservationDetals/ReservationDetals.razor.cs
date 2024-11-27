@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using MudBlazor;
 using Rise.Client.Common;
 using Rise.Client.Localization.Reservations;
 using Rise.Shared;
 using Rise.Shared.Reservations;
+using Serilog;
 
 namespace Rise.Client.Reservations.Components.ReservationDetals
 {
@@ -19,10 +21,16 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         public int Id { get; set; }
 
         [Inject]
+        public required ISnackbar SnackbarService { get; set; }
+
+
+        [Inject]
+
+
         public required IReservationService ReservationService { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        public required NavigationManager NavigationManager { get; set; }
 
         protected Task<ReservationDetailsDto> GetReservationDetails()
         {
@@ -36,6 +44,8 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
 
         private async Task CancelReservation()
         {
+            if (ReservationDetails is null)
+                return;
             try
             {
                 await ReservationService.CancelReservationAsync(ReservationDetails.Id);
@@ -47,7 +57,10 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error cancelling reservation: {ex.Message}");
+                Log.Error($"Error cancelling reservation: {ex.Message}");
+                SnackbarService.Add(ex.Message, Severity.Error);
+
+
             }
         }
     }
