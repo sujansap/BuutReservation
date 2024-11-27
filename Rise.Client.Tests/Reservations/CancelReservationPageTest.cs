@@ -38,7 +38,6 @@ public class CancelReservationTest : CustomPageTest
     [Test]
     public async Task CancelReservationSuccessfully()
     {
-        // Arrange: Mock reservation details and cancel API
         var reservationDetails = new ReservationDetailsDto
         {
             Id = 1,
@@ -55,21 +54,16 @@ public class CancelReservationTest : CustomPageTest
         await MockReservationDetailsApi(reservationDetails);
         await MockCancelReservationApi(reservationDetails.Id);
 
-        // Act: Go to reservation details and cancel
         await InitNavigationToUrl(UserReservationDetailsUrl);
         var cancelButton = Page.GetByTestId("cancel-reservation-button");
         await cancelButton.ClickAsync();
 
-        // Assert: Verify redirect and status update in the list
         await Expect(Page).ToHaveURLAsync(ReservationsListUrl);
-        // var reservationStatus = Page.GetByTestId("reservationList-cancelled");
-        // await Expect(reservationStatus).ToHaveTextAsync("Cancelled");
     }
 
     [Test]
     public async Task PreventCancelReservationWithin2Days()
     {
-        // Arrange: Mock reservation details for a non-cancelable reservation
         var reservationDetails = new ReservationDetailsDto
         {
             Id = 2,
@@ -85,14 +79,14 @@ public class CancelReservationTest : CustomPageTest
 
         await MockReservationDetailsApi(reservationDetails);
 
-        // Act: Go to reservation details
+
         await InitNavigationToUrl($"/reservations/{reservationDetails.Id}");
 
-        // Assert: Verify the "Annuleer" button is disabled
+
         var cancelButton = Page.GetByTestId("cancel-reservation-button");
         await cancelButton.ClickAsync();
         await Expect(Page).ToHaveURLAsync($"/reservations/{reservationDetails.Id}");
-        // await Expect(cancelButton).ToBeDisabledAsync();
+
 
     }
 
@@ -115,10 +109,8 @@ public class CancelReservationTest : CustomPageTest
 
         await MockReservationDetailsApi(reservationDetails);
 
-        // Act: 
         await InitNavigationToUrl($"/reservations/{reservationDetails.Id}");
 
-        // Assert:
         var cancelledMessage = Page.GetByTestId("cancel-reservation-geannuleerd");
         await Expect(cancelledMessage).ToBeVisibleAsync();
         await Expect(cancelledMessage).ToHaveTextAsync("Deze reservatie is geannuleerd. Je kan de details niet bekijken.");
