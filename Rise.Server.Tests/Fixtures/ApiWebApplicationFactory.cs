@@ -16,10 +16,10 @@ namespace Rise.Server.Tests.Fixtures
             builder.ConfigureAppConfiguration(config =>
             {
                 Configuration = new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddUserSecrets("d8435739-e257-4e40-b03f-9b9a66bbc18c")
                     .AddEnvironmentVariables("ASPNETCORE_ENVIRONMENT:Testing")
                     .AddEnvironmentVariables()
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
 
                 config.AddConfiguration(Configuration);
