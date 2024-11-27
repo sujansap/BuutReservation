@@ -36,7 +36,7 @@ namespace Rise.Client.Tests
                 _ => throw new ArgumentOutOfRangeException(role.ToString(), "Unknown role")
             };
 
-            await Page.GotoAsync("authentication/login");
+            await InitNavigationToUrl("authentication/login");
 
             if (credentials == null)
             {
