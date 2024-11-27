@@ -67,7 +67,7 @@
                                     <MudItem xs="3" Class="d-flex justify-end align-center">
                                         @if (reservation.IsDeleted)
                                         {
-                                            <MudText Typo="Typo.h6" Style="color: red;" data-testid="reservationList-cancelled">
+                                            <MudText Typo="Typo.h6" Color="Color.Error" data-testid="reservationList-cancelled">
                                                 @Localizer["Cancelled"]
                                             </MudText>
                                         }
@@ -75,6 +75,7 @@
                                         {
                                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
                                                 OnClick="@(() => NavigateTo(reservation.Id))"
+                                                data-testid="view-reservation-details-button"
                                                 Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
                                                 @Localizer["View Details"]
                                             </MudButton>
