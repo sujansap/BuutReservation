@@ -1,13 +1,16 @@
 ﻿
+using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Auth0.Core.Exceptions;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rise.Server.Tests.Utils;
+using Rise.Shared.Users;
+using Shouldly;
 
 namespace Rise.Server.Tests.Fixtures
 {
@@ -72,13 +75,13 @@ namespace Rise.Server.Tests.Fixtures
 
         public async Task InitializeAsync()
         {
-            foreach (TestLoginRole role in Enum.GetValues(typeof(TestLoginRole)))
+            foreach (UserRole role in Enum.GetValues(typeof(UserRole)))
             {
                 await CreateUserWithRole(role);
             }
         }
 
-        protected async Task LoginAsync(TestLoginRole testLoginRole)
+        protected async Task LoginAsync(UserRole testLoginRole)
         {
             var clientId = _factory.Configuration["Auth0:BlazorClientId"];
             var clientSecret = _factory.Configuration["Auth0:BlazorClientSecret"];
@@ -123,7 +126,7 @@ namespace Rise.Server.Tests.Fixtures
             }
         }
 
-        private async Task CreateUserWithRole(TestLoginRole testLoginRole)
+        private async Task CreateUserWithRole(UserRole testLoginRole)
         {
             try
             {
@@ -149,7 +152,7 @@ namespace Rise.Server.Tests.Fixtures
 
         }
 
-        private async Task<bool> SendCreateUserRequest(TestLoginRole testLoginRole)
+        private async Task<bool> SendCreateUserRequest(UserRole testLoginRole)
         {
             try
             {
@@ -189,6 +192,34 @@ namespace Rise.Server.Tests.Fixtures
         protected void Logout()
         {
             _client.DefaultRequestHeaders.Authorization = null;
+        }
+
+        protected async Task TestForbiddenAccessForEndpoint(string url, UserRole testLoginRole, string httpMethod)
+        {
+            await LoginAsync(testLoginRole);
+
+            var response = await GetResponseForRequest(url, httpMethod);
+
+            response?.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+
+            Logout();
+        }
+
+        protected async Task TestUnauthorizedAccessForEndpoint(string url, string httpMethod)
+        {
+            var response = await GetResponseForRequest(url, httpMethod);
+
+            response?.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        }
+
+        private async Task<HttpResponseMessage?> GetResponseForRequest(string url, string httpMethod)
+        {
+            return httpMethod switch
+            {
+                "GET" => await _client.GetAsync(url),
+                "POST" => await _client.PostAsJsonAsync(url, new object()),
+                _ => null,
+            };
         }
     }
 }

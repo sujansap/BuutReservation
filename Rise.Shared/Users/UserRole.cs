@@ -2,7 +2,7 @@ namespace Rise.Shared.Users;
 
 public enum UserRole
 {
-    Admin,
+    Administrator,
     Guest,
     Member
 }

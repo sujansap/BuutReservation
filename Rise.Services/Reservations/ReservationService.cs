@@ -14,19 +14,10 @@ using Rise.Shared.Reservations;
 
 namespace Rise.Services.Reservations
 {
-    public class ReservationService : IReservationService
+    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+        : AuthenticationService(dbContext, authContextProvider), IReservationService
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IAuthContextProvider _authContextProvider;
 
-         public ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        {
-            if (authContextProvider.User is null)
-                throw new ArgumentNullException($"{nameof(ReservationService)} requires a {nameof(authContextProvider)}");
-
-            _dbContext = dbContext;
-            _authContextProvider = authContextProvider;
-        }
 
         /// <summary>
         /// Gets all reservations in the given date range by the current user

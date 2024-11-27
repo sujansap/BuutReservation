@@ -1,7 +1,4 @@
-﻿using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
-using Auth0.ManagementApi;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

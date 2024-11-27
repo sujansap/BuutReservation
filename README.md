@@ -60,6 +60,20 @@ dotnet run --project Rise.Server --environment Production --urls "https://0.0.0.
 
 For more info on running the application in a specifying environment, check out the ASP.NET docs on [Using multiple environments in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-8.0) and the general [`dotnet run`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) commando.
 
+### Add Auth0 environment variables
+
+```
+"Auth0": {
+    "Authority": "https://rise-gent2.eu.auth0.com",
+    "Audience": "https://api.buut.be",
+    "ApiIdentifier": "https://rise-gent2.eu.auth0.com/api/v2/",
+    "M2MClientId": "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+    "M2MClientSecret": "<secret>",
+    "BlazorClientId": "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+    "BlazorClientSecret": "<secret>"
+  },
+```
+
 ## Contribution
 
 ### Branching flow
@@ -219,27 +233,28 @@ This setup is very similar to the setup of the [application's database](#databas
 
 > Powershell
 
-`env:ConnectionStrings__PostgreSQL="connection here"`
+```
+env:ConnectionStrings__PostgreSQL="connection here"
+env:Auth0__Authority= "https://rise-gent2.eu.auth0.com",
+env:Auth0__Audience= "https://api.buut.be",
+env:Auth0__ApiIdentifier= "https://rise-gent2.eu.auth0.com/api/v2/",
+env:Auth0__M2MClientId= "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+env:Auth0__M2MClientSecret= "<secret>",
+env:Auth0__BlazorClientId= "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+env:Auth0__BlazorClientSecret= "<secret>"
+```
 
 > Bash
 
-`ConnectionStrings__PostgreSQL="connection here"`
-
-#### Add Environment variables for tests to secrets.json of Rise.Server.Tests
-
 ```
-"Auth0": {
-    "Authority": "https://rise-gent2.eu.auth0.com",
-    "Audience": "https://api.buut.be",
-    "ApiIdentifier": "https://rise-gent2.eu.auth0.com/api/v2/",
-    "M2MClientId": "h5pei396blZJIqvOSHDfiK5AykyWe63S",
-    "M2MClientSecret": "<secret>",
-    "BlazorClientId": "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
-    "BlazorClientSecret": "<secret>"
-  },
-  "ConnectionStrings": {
-    "PostgreSQL": "User ID=postgres;Password=admin;Host=localhost;Port=5432;Database=Hogent.Rise.Test;Connection Lifetime=0;"
-  }
+ConnectionStrings__PostgreSQL="connection here"
+Auth0__Authority= "https://rise-gent2.eu.auth0.com",
+Auth0__Audience= "https://api.buut.be",
+Auth0__ApiIdentifier= "https://rise-gent2.eu.auth0.com/api/v2/",
+Auth0__M2MClientId= "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+Auth0__M2MClientSecret= "<secret>",
+Auth0__BlazorClientId= "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+Auth0__BlazorClientSecret= "<secret>"
 ```
 
 #### Running integration tests

@@ -12,20 +12,9 @@ using Rise.Domain.Exceptions;
 
 namespace Rise.Services.TimeSlots
 {
-    public class TimeSlotService : ITimeSlotService
+    public class TimeSlotService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+        : AuthenticationService(dbContext, authContextProvider), ITimeSlotService
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IAuthContextProvider _authContextProvider;
-
-        public TimeSlotService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        {
-            if (authContextProvider.User is null)
-                throw new ArgumentNullException($"{nameof(TimeSlotService)} requires a {nameof(authContextProvider)}");
-
-            _dbContext = dbContext;
-            _authContextProvider = authContextProvider;
-        }
-
         internal class DateTimeSlotBoatUse
         {
             /// <summary>

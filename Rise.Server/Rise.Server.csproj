@@ -37,9 +37,4 @@
     <ProjectReference Include="..\Rise.Services\Rise.Services.csproj" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <Folder Include="Auth\" />
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
 </Project>

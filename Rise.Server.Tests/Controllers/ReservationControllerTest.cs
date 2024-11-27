@@ -4,30 +4,19 @@ using System.Net.Http.Json;
 using System.Net;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
-using Rise.Server.Tests.Utils;
+using Rise.Shared.Users;
 
 namespace Rise.Server.Tests.Controllers
 {
     public class ReservationControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture, "Reservation")
     {
         [Theory]
-        [InlineData("me", TestLoginRole.Guest, "GET")]
-        [InlineData("", TestLoginRole.Guest, "POST")]
-        [InlineData("1", TestLoginRole.Guest, "GET")]
-        public async Task Call_ReservationController_Endpoints_ExpectForbidden(string url, TestLoginRole testLoginRole, string httpMethod)
+        [InlineData("me", UserRole.Guest, "GET")]
+        [InlineData("", UserRole.Guest, "POST")]
+        [InlineData("1", UserRole.Guest, "GET")]
+        public async Task Call_ReservationController_Endpoints_ExpectForbidden(string url, UserRole testLoginRole, string httpMethod)
         {
-            await LoginAsync(testLoginRole);
-
-            HttpResponseMessage? response = httpMethod switch
-            {
-                "GET" => await _client.GetAsync(url),
-                "POST" => await _client.PostAsJsonAsync(url, new object()),
-                _ => null,
-            };
-            ;
-            response?.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
-
-            Logout();
+            await TestForbiddenAccessForEndpoint(url, testLoginRole, httpMethod);
         }
 
         [Theory]
@@ -36,21 +25,13 @@ namespace Rise.Server.Tests.Controllers
         [InlineData("1", "GET")]
         public async Task Call_ReservationController_Endpoints_ExpectUnauthorized(string url, string httpMethod)
         {
-
-            HttpResponseMessage? response = httpMethod switch
-            {
-                "GET" => await _client.GetAsync(url),
-                "POST" => await _client.PostAsJsonAsync(url, new object()),
-                _ => null,
-            };
-            ;
-            response?.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            await TestUnauthorizedAccessForEndpoint(url, httpMethod);
         }
 
         [Fact]
         public async Task GET_CurrentUser_UpcomingReservations_WithNoParameters_FirstPage_ExpectOk_5OrLessReservations()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync("me");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -71,7 +52,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_CurrentUser_PastReservations_WithNoParameters_FirstPage_ExpectOk_5OrLessReservations()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync("me?getPast=true");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -98,7 +79,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_CurrentUser_PastReservations_NextPage_ExpectOk_5OrLessReservations()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
             // Get first page
             var firstResponse = await _client.GetAsync("me?getPast=true");
             firstResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -146,7 +127,7 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(15)]
         public async Task GET_CurrentUser_UpcomingReservations_WithVaryingPageSize_ExpectOk_PageSizeAmountOrLessReservations(int pageSize)
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -164,7 +145,7 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(0)]
         public async Task GET_CurrentUser_Reservations_WithInvalidPageSize_ExpectBadRequest(int pageSize)
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -176,7 +157,7 @@ namespace Rise.Server.Tests.Controllers
         [InlineData("invalid")]
         public async Task GET_CurrentUser_Reservations_WithInvalidPageSizeType_ExpectBadRequest(string pageSize)
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -189,7 +170,7 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(-56)]
         public async Task GET_CurrentUser_Reservations_WithInvalidNumber_ExpectBadRequest(int cursor)
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"me?cursor={cursor}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -201,7 +182,7 @@ namespace Rise.Server.Tests.Controllers
         [InlineData("invalid")]
         public async Task GET_CurrentUser_Reservations_WithInvalidType_ExpectBadRequest(string cursor)
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"me?cursor={cursor}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -212,7 +193,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_CurrentUser_Reservations_NextPage_WithValidCursor_IsNextPageNull_ExpectBadRequest()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"me?cursor=17");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -224,7 +205,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithValidTimeSlot_ExpectCreated()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto
             {
@@ -245,7 +226,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithDuplicateTimeSlot_ExpectConflict()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto
             {
@@ -265,7 +246,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithQueryParameters_ExpectBadRequest()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto
             {
@@ -282,7 +263,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithNoAvailableBoats_ExpectConflict()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto
             {
@@ -299,7 +280,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithInvalidTimeSlot_ExpectNotFound()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto
             {
@@ -316,7 +297,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task POST_CreateReservation_WithMissingTimeSlotId_ExpectBadRequest()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto();
 
@@ -330,7 +311,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_ReservationDetails_WithExistingId_ExpectOk()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var existingId = 1;
             var response = await _client.GetAsync($"{existingId}");
@@ -349,7 +330,7 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task GET_ReservationDetails_WithNonExistentId_ExpectNotFound()
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var nonExistentId = 9999;
             var response = await _client.GetAsync($"{nonExistentId}");
@@ -365,7 +346,7 @@ namespace Rise.Server.Tests.Controllers
         [InlineData("@!#")]
         public async Task GET_ReservationDetails_WithInvalidId_ExpectBadRequest(string invalidId)
         {
-            await LoginAsync(TestLoginRole.Member);
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"{invalidId}");
 
