@@ -86,6 +86,24 @@
                         </MudCard>
                     </MudItem>
                 }
+
+                <!-- Pagination Controls -->
+                <MudItem xs="12" Class="d-flex justify-center mt-4">
+                    <MudStack Row="true" Spacing="2" Justify="Justify.Center">
+                        <MudButton OnClick="@LoadPreviousPage" StartIcon="@Icons.Material.Filled.ArrowBack"
+                            Color="Color.Primary" Variant="Variant.Filled"
+                            Disabled="@(ReservationPage?.PreviousId is null || ReservationPage?.IsFirstPage == true)"
+                            data-testid="previous-page" Style="border-radius: 20px;">
+                            @Localizer["Previous"]
+                        </MudButton>
+                        <MudButton OnClick="@(async () => { await LoadNextPage(); await ScrollToTop(); })"
+                            Disabled="@(ReservationPage?.NextId == null)" EndIcon="@Icons.Material.Filled.ArrowForward"
+                            Color="Color.Primary" Variant="Variant.Filled" data-testid="next-page"
+                            Style="border-radius: 20px;">
+                            @Localizer["Next"]
+                        </MudButton>
+                    </MudStack>
+                </MudItem>
             }
             else
             {
@@ -96,18 +114,5 @@
                 </MudItem>
             }
         </MudGrid>
-
-        <!-- Pagination Controls -->
-        <MudItem xs="12" Class="d-flex justify-center mt-4">
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@LoadPreviousPage"
-                data-testid="pagination-previous">
-                <MudIcon Icon="@Icons.Material.Filled.ArrowBack" /> @Localizer["Previous"]
-            </MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@LoadNextPage"
-                data-testid="pagination-next">
-                @Localizer["Next"]
-                <MudIcon Icon="@Icons.Material.Filled.ArrowForward" />
-            </MudButton>
-        </MudItem>
     </AsyncData>
 </MudGrid>
