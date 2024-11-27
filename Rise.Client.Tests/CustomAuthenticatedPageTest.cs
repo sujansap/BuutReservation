@@ -14,7 +14,9 @@ namespace Rise.Client.Tests
         [OneTimeSetUp]
         public new void GlobalSetup()
         {
-            var builder = new ConfigurationBuilder().AddUserSecrets<CustomAuthenticatedPageTest>();
+            var builder = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .AddUserSecrets<CustomAuthenticatedPageTest>();
             Configuration = builder.Build();
             base.GlobalSetup();
         }
