@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+    <data name="Credentials">
+		<value></value>
+	</data>
+    <data name="Details">
+		<value></value>
+	</data>
+    <data name="Address">
+		<value></value>
+	</data>
+    <data name="CountryBelgium">
+		<value>België</value>
+	</data>
     <data name="FirstName">
 		<value></value>
 	</data>
@@ -164,8 +176,5 @@
 	</data>
     <data name="CountryHelperText">
 		<value></value>
-	</data>
-    <data name="CountryBelgium">
-		<value>België</value>
 	</data>
 </root>
