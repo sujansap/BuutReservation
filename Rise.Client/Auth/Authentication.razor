@@ -22,9 +22,7 @@
     </RedirectAlert>
   </CompletingLogOut>
   <LogInFailed>
-    <RedirectAlert data-testid="login-failed" AlertSeverity="Severity.Error">
-      @Localizer["LogInFailed"]
-    </RedirectAlert>
+    <MudAlert Severity="Severity.Error" ata-testid="login-failed">@Localizer["LogInFailed"]</MudAlert>
   </LogInFailed>
   <LogOut>
     <RedirectAlert data-testid="logout-in-progress" AlertSeverity="Severity.Info">
@@ -37,8 +35,6 @@
     </RedirectAlert>
   </LogOutSucceeded>
   <LogOutFailed>
-    <RedirectAlert data-testid="logout-failed" AlertSeverity="Severity.Error">
-      @Localizer["LogOutFailed"]
-    </RedirectAlert>
+    <MudAlert data-testid="logout-failed" AlertSeverity="Severity.Error">@Localizer["LogOutFailed"]</MudAlert>
   </LogOutFailed>
 </RemoteAuthenticatorView>
