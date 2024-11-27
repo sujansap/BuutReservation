@@ -149,17 +149,15 @@ namespace Rise.Services.Reservations
 
         public async Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId)
         {
-            Reservation reservation = (await _dbContext.Reservations
-            .Include(r => r.Boat)
-            .ThenInclude(b => b.Batteries)
-            .ThenInclude(battery => battery.Mentor)
-            .Include(r => r.TimeSlot)
-            .FirstOrDefaultAsync(r => r.Id == reservationId))
-            ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
-
-            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
-            Battery battery = reservation.Boat.Batteries.FirstOrDefault();
-
+            var reservation = await _dbContext.Reservations
+                .Include(r => r.Boat)
+                .Include(r => r.TimeSlot)
+                .Include(r => r.Battery)
+                    .ThenInclude(b => b.CurrentUser)
+                .Include(r => r.Battery)
+                    .ThenInclude(b => b.Mentor)
+                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
             return new ReservationDetailsDto
             {
@@ -168,13 +166,12 @@ namespace Rise.Services.Reservations
                 End = reservation.TimeSlot.End,
                 Date = reservation.TimeSlot.Date,
                 BoatPersonalName = reservation.Boat.PersonalName,
-                MentorName = battery?.Mentor?.FamilyName,
-                BatteryType = battery?.Type,
-                BatteryId = battery?.Id
-
+                MentorName = reservation.Battery?.Mentor?.FamilyName,
+                BatteryType = reservation.Battery?.Type,
+                BatteryId = reservation.Battery?.Id,
+                CurrentBatteryUserName = reservation.Battery?.CurrentUser?.FamilyName,
+                CurrentBatteryUserId = reservation.Battery?.CurrentUserId
             };
         }
     }
-
-
 }

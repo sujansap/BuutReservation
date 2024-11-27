@@ -15,6 +15,11 @@ namespace Rise.Domain.Boats
         private DateTime? _lastUsedAt;
         public DateTime? LastUsedAt => _lastUsedAt;
 
+        private int? _currentUserId;
+        public int? CurrentUserId => _currentUserId;
+
+        public User? CurrentUser { get; private set; }
+
         public string Type
         {
             get => _type;
@@ -74,6 +79,19 @@ namespace Rise.Domain.Boats
             }
 
             return true;
+        }
+
+        public void AssignToUser(User user)
+        {
+            Guard.Against.Null(user, nameof(user));
+            CurrentUser = user;
+            _currentUserId = user.Id;
+        }
+
+        public void UnassignCurrentUser()
+        {
+            CurrentUser = null;
+            _currentUserId = null;
         }
     }
 }

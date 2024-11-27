@@ -29,10 +29,5 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         {
             NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
         }
-
-
-
-
-
     }
 }

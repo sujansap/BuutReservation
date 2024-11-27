@@ -82,6 +82,58 @@ namespace Rise.Client.Tests
             Assert.IsTrue(await errorMessage.IsVisibleAsync());
         }
 
+        [Test]
+        public async Task ShowsCurrentBatteryUserWhenAvailable()
+        {
+            var reservationDetails = new ReservationDetailsDto
+            {
+                Id = 1,
+                Date = DateOnly.Parse("2024/10/30"),
+                Start = TimeOnly.Parse("10:00"),
+                End = TimeOnly.Parse("13:00"),
+                BoatId = 101,
+                BoatPersonalName = "Limba",
+                MentorName = "John Doe",
+                BatteryType = "Lithium-Ion",
+                CurrentBatteryUserId = 42,
+                CurrentBatteryUserName = "Jane Smith"
+            };
+
+            await MockReservationDetailsApi(reservationDetails);
+            await Page.GotoAsync(UserReservationDetailsUrl);
+
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
+
+            var currentUserText = await Page.GetByTestId("reservation-battery-current-user").TextContentAsync();
+            currentUserText.ShouldContain(reservationDetails.CurrentBatteryUserName);
+        }
+
+        [Test]
+        public async Task HidesCurrentBatteryUserWhenNotAvailable()
+        {
+            var reservationDetails = new ReservationDetailsDto
+            {
+                Id = 1,
+                Date = DateOnly.Parse("2024/10/30"),
+                Start = TimeOnly.Parse("10:00"),
+                End = TimeOnly.Parse("13:00"),
+                BoatId = 101,
+                BoatPersonalName = "Limba",
+                MentorName = "John Doe",
+                BatteryType = "Lithium-Ion",
+                CurrentBatteryUserId = null,
+                CurrentBatteryUserName = null
+            };
+
+            await MockReservationDetailsApi(reservationDetails);
+            await Page.GotoAsync(UserReservationDetailsUrl);
+
+            await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
+
+            var currentUserElement = Page.GetByTestId("reservation-battery-current-user");
+            await Expect(currentUserElement).ToHaveCountAsync(0);
+        }
+
 
 
 

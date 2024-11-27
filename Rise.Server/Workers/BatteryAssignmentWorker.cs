@@ -33,7 +33,7 @@ namespace Rise.Server.Workers
                     await batteryService.AssignBatteriesToUpcomingReservations();
                     
                     // Run once per hour
-                    await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+                    await Task.Delay(TimeSpan.FromHours(3), stoppingToken);
                 }
                 catch (Exception ex)
                 {
