@@ -15,7 +15,7 @@ public class CancelReservationTest : CustomPageTest
         {
             await route.FulfillAsync(new()
             {
-                Status = 200,
+                Status = status,
                 ContentType = "application/json",
                 Body = string.Empty
             });
@@ -115,6 +115,43 @@ public class CancelReservationTest : CustomPageTest
         await Expect(cancelledMessage).ToBeVisibleAsync();
         await Expect(cancelledMessage).ToHaveTextAsync("Deze reservatie is geannuleerd. Je kan de details niet bekijken.");
     }
+
+    [Test]
+    public async Task ShowError_WrongCancel()
+    {
+        // Arrange:
+        var reservationDetails = new ReservationDetailsDto
+        {
+            Id = 2,
+            Date = DateOnly.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd")),
+            Start = TimeOnly.Parse("10:00"),
+            End = TimeOnly.Parse("13:00"),
+            BoatId = 2,
+            BoatPersonalName = "Swan",
+            MentorName = "Jane Doe",
+            BatteryType = "Nickel-Cadmium",
+            IsDeleted = false
+        };
+
+
+        // Mock API responses
+        await MockReservationDetailsApi(reservationDetails);
+        await MockCancelReservationApi(reservationDetails.Id, status: 400);
+
+        // Act: Navigate to reservation details page
+        await InitNavigationToUrl($"/reservations/{reservationDetails.Id}");
+
+        // Click the cancel button
+        var cancelButton = Page.GetByTestId("cancel-reservation-button");
+        await cancelButton.ClickAsync();
+
+        // Assert: Verify that the snackbar error message is displayed
+        var errorMessage = Page.GetByTestId("cancel-reservation-error");
+        await Expect(errorMessage).ToBeVisibleAsync();
+        await Expect(errorMessage).ToHaveTextAsync($"Failed to cancel reservation with ID {reservationDetails.Id}. Response: Bad Request");
+    }
+
+
 
 }
 

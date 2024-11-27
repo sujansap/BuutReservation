@@ -42,6 +42,8 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
             NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
         }
 
+
+
         private async Task CancelReservation()
         {
             if (ReservationDetails is null)
@@ -58,9 +60,7 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
             catch (Exception ex)
             {
                 Log.Error($"Error cancelling reservation: {ex.Message}");
-                SnackbarService.Add(ex.Message, Severity.Error);
-
-
+                SnackbarService.Add(RenderErrorMessage(ex.Message), Severity.Error);
             }
         }
     }
