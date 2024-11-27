@@ -277,7 +277,7 @@ This setup is very similar to the setup of the [application's database](#databas
 
   ```json
   {
-    "Admin": {
+    "Administrator": {
      "Email": "admin@example.com",
      "Password": "adminpassword"
     },
