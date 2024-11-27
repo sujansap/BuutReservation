@@ -53,21 +53,22 @@ namespace Rise.Client.Tests
             };
         }
 
-        protected virtual async Task WaitOnHydration()
+        protected async Task Hydration()
         {
             await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
+            await Page.WaitForSelectorAsync("[data-testid=authorization-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
         }
 
         protected async Task NavigateToUrl(string url)
         {
             await Page.GotoAsync(url);
-            await WaitOnHydration();
+            await Hydration();
         }
 
         protected async Task ReloadPage()
         {
             await Page.ReloadAsync();
-            await WaitOnHydration();
+            await Hydration();
         }
 
     }

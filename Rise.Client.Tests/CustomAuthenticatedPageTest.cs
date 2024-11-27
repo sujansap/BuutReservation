@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
 using Rise.Shared.Users;
 
 namespace Rise.Client.Tests

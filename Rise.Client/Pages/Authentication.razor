@@ -1,4 +1,44 @@
 ﻿@page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Auth
+@using Rise.Client.Common
+@inject IStringLocalizer<AuthPageResources> Localizer
 
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView Action="@Action">
+  <LoggingIn>
+    <RedirectAlert data-testid="login-in-progress" AlertSeverity="Severity.Info">
+      @Localizer["LoggingIn"]
+    </RedirectAlert>
+  </LoggingIn>
+  <CompletingLoggingIn>
+    <RedirectAlert data-testid="login-finishing" AlertSeverity="Severity.Success">
+      @Localizer["CompletingLoggingIn"]
+    </RedirectAlert>
+  </CompletingLoggingIn>
+  <CompletingLogOut>
+    <RedirectAlert data-testid="logout-finishing" AlertSeverity="Severity.Success">
+      @Localizer["CompletingLogOut"]
+    </RedirectAlert>
+  </CompletingLogOut>
+  <LogInFailed>
+    <RedirectAlert data-testid="login-failed" AlertSeverity="Severity.Error">
+      @Localizer["LogInFailed"]
+    </RedirectAlert>
+  </LogInFailed>
+  <LogOut>
+    <RedirectAlert data-testid="logout-in-progress" AlertSeverity="Severity.Info">
+      @Localizer["LogOut"]
+    </RedirectAlert>
+  </LogOut>
+  <LogOutSucceeded>
+    <RedirectAlert data-testid="logout-success" AlertSeverity="Severity.Success">
+      @Localizer["LogOutSucceeded"]
+    </RedirectAlert>
+  </LogOutSucceeded>
+  <LogOutFailed>
+    <RedirectAlert data-testid="logout-failed" AlertSeverity="Severity.Error">
+      @Localizer["LogOutFailed"]
+    </RedirectAlert>
+  </LogOutFailed>
+</RemoteAuthenticatorView>
