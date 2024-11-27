@@ -10,7 +10,7 @@ namespace Rise.Client.Tests.Home
         public async Task HasHeroImage()
         {
             //Arrange
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             //Act
             var heroImage = Page.GetByTestId("hero-image");
@@ -23,7 +23,7 @@ namespace Rise.Client.Tests.Home
         public async Task HasHeroTitle()
         {
             //Arrange
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             //Act
             var heroTitle = Page.GetByTestId("hero-title");
@@ -36,7 +36,7 @@ namespace Rise.Client.Tests.Home
         public async Task HasReservationButton()
         {
             //Arrange
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             //Act
             var reservationButton = Page.GetByTestId("reservation-button");
@@ -49,7 +49,7 @@ namespace Rise.Client.Tests.Home
         public async Task ClickReservationButton_ShouldNavigateToReservations()
         {
             //Arrange
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             //Act
             var reservationButton = Page.GetByTestId("reservation-button");
@@ -63,7 +63,7 @@ namespace Rise.Client.Tests.Home
         public async Task HasBoatsSection()
         {
             //Arrange
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             //Act
             var boatsSection = Page.GetByTestId("boats-section");

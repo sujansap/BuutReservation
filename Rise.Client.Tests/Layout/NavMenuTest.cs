@@ -48,7 +48,7 @@ namespace Rise.Client.Tests.Layout
         {
             await LoginAsync(UserRole.Member);
             await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await InitNavigationToUrl(startSuffix);
+            await NavigateToUrl(startSuffix);
             await Page.GetByTestId(testId).ClickAsync();
             await Expect(Page).ToHaveURLAsync(new Regex($"{resultSuffix}$"));
 
@@ -60,7 +60,7 @@ namespace Rise.Client.Tests.Layout
         {
             await MockHTTPRequests();
             await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
 
@@ -79,7 +79,7 @@ namespace Rise.Client.Tests.Layout
         {
             await MockHTTPRequests();
             await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
             await notificationButton.ClickAsync();
@@ -96,7 +96,7 @@ namespace Rise.Client.Tests.Layout
         {
             await MockHTTPRequests();
             await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
             await notificationButton.ClickAsync();
@@ -110,7 +110,7 @@ namespace Rise.Client.Tests.Layout
         {
             await MockHTTPRequests();
             await Page.SetViewportSizeAsync(961, DefaultHeight);
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             ILocator notificationButton = Page.GetByTestId("nav-desktop-notifications");
             await notificationButton.ClickAsync();
@@ -135,7 +135,7 @@ namespace Rise.Client.Tests.Layout
         {
             await LoginAsync(requiredRole);
             await Page.SetViewportSizeAsync(959, 1920);
-            await InitNavigationToUrl(startSuffix);
+            await NavigateToUrl(startSuffix);
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId(testId).ClickAsync();
 
@@ -152,7 +152,7 @@ namespace Rise.Client.Tests.Layout
         public async Task CheckLanguageChangeDesktop()
         {
             await Page.SetViewportSizeAsync(1080, 1920);
-            await InitNavigationToUrl("/");
+            await NavigateToUrl("/");
 
             await Page.GetByTestId("culture-selector-desktop").IsVisibleAsync();
         }
@@ -166,7 +166,7 @@ namespace Rise.Client.Tests.Layout
         public async Task CheckLanguageChangeMobile()
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await InitNavigationToUrl("/");
+            await NavigateToUrl("/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").IsVisibleAsync();
         }
@@ -187,12 +187,12 @@ namespace Rise.Client.Tests.Layout
         public async Task ChangeLanguageBetweenLanguagesDesktop(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(1080, 1920);
-            await InitNavigationToUrl("/");
+            await NavigateToUrl("/");
 
             await Page.GetByTestId("culture-selector-desktop").First.ClickAsync();
             await Expect(Page.GetByTestId(id)).ToContainTextAsync(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
 
@@ -214,12 +214,12 @@ namespace Rise.Client.Tests.Layout
         public async Task ChangeLanguageBetweenLanguagesMobile(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(959, 1920);
-            await InitNavigationToUrl("/");
+            await NavigateToUrl("/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").First.ClickAsync();
             await Expect(Page.GetByTestId(id)).ToContainTextAsync(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
@@ -238,7 +238,7 @@ namespace Rise.Client.Tests.Layout
         public async Task CheckAdminDashBoardDesktop()
         {
             await Page.SetViewportSizeAsync(1080, 1920);
-            await InitNavigationToUrl("/admin");
+            await NavigateToUrl("/admin");
 
             await Page.GetByTestId("nav-desktop-admin").IsVisibleAsync();
         }

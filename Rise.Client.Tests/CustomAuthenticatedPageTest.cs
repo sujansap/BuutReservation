@@ -32,7 +32,7 @@ namespace Rise.Client.Tests
                 _ => throw new ArgumentOutOfRangeException(role.ToString(), "Unknown role")
             };
 
-            await InitNavigationToUrl("/authentication/login");
+            await NavigateToUrl("/authentication/login");
 
             if (credentials == null)
             {
@@ -42,7 +42,7 @@ namespace Rise.Client.Tests
             await Page.FillAsync("input[name='username']", credentials.Email);
             await Page.FillAsync("input[name='password']", credentials.Password);
             await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
-            await InitNavigationToUrl("/home");
+            await NavigateToUrl("/home");
 
             var sessionStorage = await Page.EvaluateAsync<string>("() => JSON.stringify(sessionStorage)");
             Environment.SetEnvironmentVariable("SESSION_STORAGE", sessionStorage);
@@ -66,7 +66,7 @@ namespace Rise.Client.Tests
 
         protected async Task LogoutAsync()
         {
-            await InitNavigationToUrl("/authentication/logout");
+            await NavigateToUrl("/authentication/logout");
             Environment.SetEnvironmentVariable("SESSION_STORAGE", string.Empty);
         }
     }

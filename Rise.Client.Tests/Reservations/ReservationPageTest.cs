@@ -52,7 +52,7 @@ namespace Rise.Client.Tests.Reservations
                     Body = JsonSerializer.Serialize(dto)
                 });
             });
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
 
         }
@@ -115,7 +115,7 @@ namespace Rise.Client.Tests.Reservations
                 });
             });
 
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
 
 
@@ -132,7 +132,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasTabs()
         {
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
         }
@@ -140,14 +140,14 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasCustomCalendarReserveComponent()
         {
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.GetByTestId("custom-calendar-reserve").IsVisibleAsync();
         }
 
         [Test]
         public async Task HasCorrectAmountOfDaysInCalendar()
         {
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             ILocator daysLocator = Page.GetByTestId("calendar-cel");
 
@@ -158,14 +158,14 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasLegendComponent()
         {
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.GetByTestId("custom-calendar-legend").IsVisibleAsync();
         }
 
         [Test]
         public async Task HasYourReservationsCalendarComponent()
         {
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.GetByTestId("calendar-your-reservations").IsVisibleAsync();
         }
 
@@ -181,7 +181,7 @@ namespace Rise.Client.Tests.Reservations
                     Body = "Bad argument!"
                 });
             });
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.GetByTestId("custom-calendar-reserve-fetch-error").IsVisibleAsync();
         }
 
@@ -189,7 +189,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ContainCalendarDataDates()
         {
             await MockAvailableDays();
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             ILocator available = Page.Locator("[data-celtype=available]");
             await Expect(available).ToHaveCountAsync(2);
@@ -207,7 +207,7 @@ namespace Rise.Client.Tests.Reservations
                     Body = JsonSerializer.Serialize(new List<object>())
                 });
             });
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             ILocator booked = Page.Locator("[data-celtype=fully-booked]");
             await Expect(booked).ToHaveCountAsync(35);
@@ -301,7 +301,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingButtons()
         {
 
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             ILocator prev = Page.GetByTestId("calendar-previous");
             await Expect(prev).ToBeDisabledAsync();
         }
@@ -310,7 +310,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShouldNotBeAbleToGoBackToPreviousMonthFromCurrentUsingPicker()
         {
 
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             ILocator monthPicker = Page.Locator(".mud-picker-input-button");
             await monthPicker.ClickAsync();
@@ -331,7 +331,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingButtons()
         {
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             ILocator monthPicker = Page.Locator(".mud-picker-input-button");
             string startMonthText = await monthPicker.InnerTextAsync();
@@ -350,7 +350,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task ShouldBeAbleToGoBackToPreviousMonthFromNextMonthUsingDatePicker()
         {
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             ILocator monthPicker = Page.Locator(".mud-picker-input-button");
             string startMonthText = await monthPicker.InnerTextAsync();
@@ -381,7 +381,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShouldRedirectToThisMonthsCurrentDateWhenNoCurrentDate()
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
             await Expect(Page).ToHaveURLAsync(new Regex($"\\?.*CurrentDate={currentDate}"));
         }
@@ -391,7 +391,7 @@ namespace Rise.Client.Tests.Reservations
         {
             string toEarlyDate = DateTime.Today.AddDays(-1).ToString(universalDateFormat);
             string currentDate = DateTime.Today.ToString(universalDateFormat);
-            await InitNavigationToUrl($"/reservations?CurrentDate={toEarlyDate}");
+            await NavigateToUrl($"/reservations?CurrentDate={toEarlyDate}");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
             await Expect(Page).ToHaveURLAsync(new Regex($"\\?.*CurrentDate={currentDate}"));
         }
@@ -401,7 +401,7 @@ namespace Rise.Client.Tests.Reservations
         {
             DateTime plusOneMonthDate = DateTime.Today.AddMonths(1);
             string plusOneMonthDateFormatted = plusOneMonthDate.ToString(universalDateFormat);
-            await InitNavigationToUrl($"/reservations?CurrentDate={plusOneMonthDateFormatted}");
+            await NavigateToUrl($"/reservations?CurrentDate={plusOneMonthDateFormatted}");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={plusOneMonthDateFormatted}')");
             await Expect(Page).ToHaveURLAsync(new Regex($"\\?.*CurrentDate={plusOneMonthDateFormatted}"));
 
@@ -413,7 +413,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShouldChangeCurrentDateWhenGoingToNextMonth()
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
 
             ILocator next = Page.GetByTestId("calendar-next");
@@ -429,7 +429,7 @@ namespace Rise.Client.Tests.Reservations
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             ILocator timeSlotList = Page.GetByTestId("time-slot-list");
             await Expect(timeSlotList).ToHaveCountAsync(0);
@@ -628,7 +628,7 @@ namespace Rise.Client.Tests.Reservations
             });
 
             // Act
-            await InitNavigationToUrl("/reservations");
+            await NavigateToUrl("/reservations");
 
             // Select the day and time slot
             ILocator day = Page.Locator(DateToCalendarIdentifier(today));

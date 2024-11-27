@@ -37,13 +37,13 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(users);
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl("/admin/guests");
         }
 
         [Test]
         public async Task HasUserList()
         {
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl("/admin/guests");
             await Page.GetByTestId("user-list").IsVisibleAsync();
         }
 
@@ -58,7 +58,7 @@ namespace Rise.Client.Tests.Admin
         public async Task DisplaysNoUsersMessageWhenEmpty()
         {
             await MockUsers(Array.Empty<UserDto>());
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl("/admin/guests");
             await Page.GetByTestId("users-none").IsVisibleAsync();
         }
 
@@ -76,7 +76,7 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl("/admin/guests");
             await Page.GetByTestId("user-list-loading-progress").IsVisibleAsync();
         }
 
@@ -93,7 +93,7 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl("/admin/guests");
             await Page.GetByTestId("user-list-fetch-error").IsVisibleAsync();
         }
 
@@ -127,7 +127,7 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(initialUsers);
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl("/admin/guests");
             await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
 
             // updated state
@@ -137,7 +137,7 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(updatedUsers);
-            await Page.ReloadAsync();
+            await ReloadPage();
             await Expect(Page.GetByText("Johnson")).ToBeVisibleAsync();
             await Expect(Page.GetByText("Smith")).Not.ToBeVisibleAsync();
         }

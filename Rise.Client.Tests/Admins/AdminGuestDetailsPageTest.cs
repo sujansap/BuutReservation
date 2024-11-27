@@ -42,7 +42,7 @@ namespace Rise.Client.Tests.Admin
             };
 
             await MockUserDetails(userId, userDetails, delayMs);
-            await InitNavigationToUrl($"/admin/guests/{userId}");
+            await NavigateToUrl($"/admin/guests/{userId}");
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl($"/admin/guests/{userId}");
+            await NavigateToUrl($"/admin/guests/{userId}");
             await Page.GetByTestId("user-details-fetch-error").IsVisibleAsync();
         }
 
@@ -100,7 +100,7 @@ namespace Rise.Client.Tests.Admin
             };
 
             await MockUserDetails(userId, initialUser);
-            await InitNavigationToUrl($"/admin/guests/{userId}");
+            await NavigateToUrl($"/admin/guests/{userId}");
             await AssertUserDetail("user-details-page-familyname", "Smith");
 
             // updatedUser state
@@ -112,7 +112,7 @@ namespace Rise.Client.Tests.Admin
             };
 
             await MockUserDetails(userId, updatedUser);
-            await Page.ReloadAsync();
+            await ReloadPage();
             await AssertUserDetail("user-details-page-familyname", "Johnson");
         }
 
@@ -130,7 +130,7 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl($"/admin/guests/{invalidUserId}");
+            await NavigateToUrl($"/admin/guests/{invalidUserId}");
             await Page.GetByTestId("user-details-fetch-error").IsVisibleAsync();
         }
 

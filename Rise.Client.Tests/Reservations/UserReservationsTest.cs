@@ -111,7 +111,7 @@ namespace Rise.Client.Tests.Reservations
         {
 
             await MockReservationsApi();
-            await Page.GotoAsync(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
 
             await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
@@ -140,7 +140,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasTabs()
         {
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
         }
@@ -149,7 +149,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task DoesNotHaveLegendComponent()
         {
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
             ILocator legend = Page.GetByTestId("custom-calendar-legend");
             await Expect(legend).ToHaveCountAsync(0);
         }
@@ -159,7 +159,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task HasCorrectAmountOfReservations()
         {
             await MockReservationsApi();
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
 
 
@@ -171,7 +171,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsReservations()
         {
             await MockReservationsApi();
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
@@ -201,7 +201,7 @@ namespace Rise.Client.Tests.Reservations
         {
             await MockReservationsApi();
 
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
 
 
@@ -215,7 +215,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsEmptyStateWhenNoReservations()
         {
             await MockEmptyReservationsApi();
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden, Timeout = 10000 });
             await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible, Timeout = 10000 });
@@ -231,7 +231,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsErrorStateWhenApiReturns400()
         {
             await MockReservationsApiError();
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
             await Page.WaitForSelectorAsync("[data-testid='user-reservations-fetch-error']", new() { State = WaitForSelectorState.Visible });
@@ -246,7 +246,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ShowsPastReservations()
         {
             await MockPastReservationsApi();
-            await InitNavigationToUrl(UserReservationsUrl + "&Past=true");
+            await NavigateToUrl(UserReservationsUrl + "&Past=true");
 
             ILocator locator = Page.GetByTestId("reservation-item");
             await Expect(locator).ToHaveCountAsync(1);
@@ -255,7 +255,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task HasPastTab()
         {
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
             await Page.GetByTestId("tab-past-reservations").IsVisibleAsync();
         }
 
@@ -264,7 +264,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task CheckPastReservations()
         {
             await MockPastReservationsApi();
-            await InitNavigationToUrl(UserReservationsUrl + "&Past=true");
+            await NavigateToUrl(UserReservationsUrl + "&Past=true");
 
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
@@ -280,7 +280,7 @@ namespace Rise.Client.Tests.Reservations
         {
 
             await MockReservationsApi();
-            await InitNavigationToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
 
             ILocator upcomingReservation = Page.GetByTestId("reservation-item");
