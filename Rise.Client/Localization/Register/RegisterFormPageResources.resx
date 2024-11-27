@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+	<data name="PageTitle">
+		<value>Registreren</value>
+	</data>
     <data name="Credentials">
-		<value></value>
+		<value>Authenticatiegegevens</value>
 	</data>
     <data name="Details">
-		<value></value>
+		<value>Persoonlijke gegevens</value>
 	</data>
     <data name="Address">
-		<value></value>
+		<value>Adres</value>
 	</data>
     <data name="CountryBelgium">
-		<value>Belgium</value>
+		<value>België</value>
 	</data>
     <data name="FirstName">
-		<value></value>
+		<value>Voornaam</value>
 	</data>
     <data name="FirstNameRequired">
 		<value></value>
@@ -28,7 +31,7 @@
 		<value></value>
 	</data>
     <data name="LastName">
-		<value></value>
+		<value>Naam</value>
 	</data>
     <data name="LastNameRequired">
 		<value></value>
@@ -43,7 +46,7 @@
 		<value></value>
 	</data>
     <data name="Email">
-		<value></value>
+		<value>E-mail</value>
 	</data>
     <data name="EmailRequired">
 		<value></value>
@@ -58,7 +61,7 @@
 		<value></value>
 	</data>
     <data name="Password">
-		<value></value>
+		<value>Wachtwoord</value>
 	</data>
     <data name="PasswordRequired">
 		<value></value>
@@ -72,8 +75,23 @@
     <data name="PasswordHelperText">
 		<value></value>
 	</data>
-    <data name="PhoneNumber">
+	<data name="PasswordRepeat">
+		<value>Herhaal wachtwoord</value>
+	</data>
+    <data name="PasswordRepeatRequired">
 		<value></value>
+	</data>
+    <data name="PasswordRepeatMinLength">
+		<value></value>
+	</data>
+    <data name="PasswordRepeatMaxLength">
+		<value></value>
+	</data>
+    <data name="PasswordRepeatHelperText">
+		<value></value>
+	</data>
+    <data name="PhoneNumber">
+		<value>Telefoonnummer</value>
 	</data>
     <data name="PhoneNumberRequired">
 		<value></value>
@@ -88,7 +106,7 @@
 		<value></value>
 	</data>
     <data name="DateOfBirth">
-		<value></value>
+		<value>Geboortedatum</value>
 	</data>
     <data name="DateOfBirthRequired">
 		<value></value>
@@ -103,7 +121,7 @@
 		<value></value>
 	</data>
     <data name="Street">
-		<value></value>
+		<value>Straat</value>
 	</data>
     <data name="StreetRequired">
 		<value></value>
@@ -118,7 +136,7 @@
 		<value></value>
 	</data>
     <data name="Number">
-		<value></value>
+		<value>Nummer</value>
 	</data>
     <data name="NumberRequired">
 		<value></value>
@@ -133,7 +151,7 @@
 		<value></value>
 	</data>
     <data name="City">
-		<value></value>
+		<value>Stad</value>
 	</data>
     <data name="CityRequired">
 		<value></value>
@@ -148,7 +166,7 @@
 		<value></value>
 	</data>
     <data name="PostalCode">
-		<value></value>
+		<value>Postcode</value>
 	</data>
     <data name="PostalCodeRequired">
 		<value></value>
@@ -163,7 +181,7 @@
 		<value></value>
 	</data>
     <data name="Country">
-		<value></value>
+		<value>Land</value>
 	</data>
     <data name="CountryRequired">
 		<value></value>

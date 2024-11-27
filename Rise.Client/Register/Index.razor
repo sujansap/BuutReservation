@@ -1,14 +1,14 @@
 @page "/register"
 @using MudBlazor
 @using FluentValidation
+@inject IStringLocalizer<RegisterFormPageResources> Localizer
 @* TODO how to handle plaint text password transport to backend?? + add localisation *@
-<PageTitle>Register</PageTitle>
+<PageTitle>@Localizer["PageTitle"]</PageTitle>
 
 <MudText Typo="Typo.h4" GutterBottom Align="Align.Center">Register</MudText>
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4 rounded">
     <MudPaper Class="pa-4">
-        <MudForm Model="@User" @ref="@Form" @bind-IsValid="@isSuccess" Validation="@(validator.ValidateValue)"
-            ValidationDelay="0">
+        <MudForm Model="@User" @ref="@Form" @bind-IsValid="@isSuccess" Validation="@(validator.ValidateValue)" ValidationDelay="0">
             <MudGrid Spacing="2">
                 <MudItem xs="12">
                     <MudText Typo="Typo.h5">Credentials</MudText>
