@@ -60,7 +60,7 @@ dotnet run --project Rise.Server --environment Production --urls "https://0.0.0.
 
 For more info on running the application in a specifying environment, check out the ASP.NET docs on [Using multiple environments in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-8.0) and the general [`dotnet run`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) commando.
 
-### Add Auth0 environment variables
+### Add Auth0 environment variables to appsettings.json and secrets to secrets.json
 
 ```
 "Auth0": {
@@ -277,6 +277,13 @@ ConnectionStrings__PostgreSQL="connection here" dotnet run
 
 ```ps1
 $env:ConnectionStrings__PostgreSQL="connection here"
+$env:Auth0__Authority= "https://rise-gent2.eu.auth0.com",
+$env:Auth0__Audience= "https://api.buut.be",
+$env:Auth0__ApiIdentifier= "https://rise-gent2.eu.auth0.com/api/v2/",
+$env:Auth0__M2MClientId= "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+$env:Auth0__M2MClientSecret= "<secret>",
+$env:Auth0__BlazorClientId= "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+$env:Auth0__BlazorClientSecret= "<secret>"
 dotnet run
 ```
 
