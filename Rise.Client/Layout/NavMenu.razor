@@ -19,9 +19,14 @@
         <MudStack Row="true" AlignItems="AlignItems.Center">
             <MudNavLink Href="home" data-testid="nav-desktop-home">@Localizer["Home"]</MudNavLink>
             <MudNavLink Href="about" data-testid="nav-desktop-about">@Localizer["About"]</MudNavLink>
-            <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]</MudNavLink>
-            @*TODO: make only visible for admin*@
-            <MudNavLink Href="admin"> @Localizer["Admin"]</MudNavLink>
+            <AuthorizeView>
+                <Authorized>
+                    <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]</MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+            <AuthorizeView Roles="Administrator">
+                <MudNavLink Href="admin" data-testid="nav-desktop-admin">@Localizer["Admin"]</MudNavLink>
+            </AuthorizeView>
         </MudStack>
         <MudSpacer></MudSpacer>
         <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
@@ -32,10 +37,8 @@
             StretchItems="StretchItems.Start">
             <AuthorizeView>
                 <Authorized>
-                    <MudButton Href="profile" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Person"
-                        Color="Color.Inherit" data-testid="nav-desktop-profile">
-                        @context.User.Identity?.Name
-                    </MudButton>
+                    <MudIconButton Href="profile" Edge="Edge.End" Icon="@Icons.Material.Filled.Person"
+                        Color="Color.Inherit" data-testid="nav-desktop-profile" />
                     <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
                         Href="notifications" data-testid="nav-desktop-notifications" />
                     <MudNavLink OnClick="BeginLogOut" data-testid="nav-desktop-logout"
