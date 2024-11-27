@@ -18,7 +18,7 @@ namespace Rise.Client.Tests.Reservations
         [TearDown]
         public new async Task TearDown()
         {
-            await Page.GotoAsync("/authentication/logout");
+            await LogoutAsync();
             await base.TearDown();
         }
 

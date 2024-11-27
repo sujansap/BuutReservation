@@ -36,7 +36,7 @@ namespace Rise.Client.Tests
                 _ => throw new ArgumentOutOfRangeException(role.ToString(), "Unknown role")
             };
 
-            await InitNavigationToUrl("authentication/login");
+            await InitNavigationToUrl("/authentication/login");
 
             if (credentials == null)
             {
@@ -65,7 +65,13 @@ namespace Rise.Client.Tests
         private class Credentials
         {
             public required string Email { get; set; }
-            public required string WW { get; set; }
+            public required string Password { get; set; }
+        }
+
+        protected async Task LogoutAsync()
+        {
+            await InitNavigationToUrl("/authentication/logout");
+            Environment.SetEnvironmentVariable("SESSION_STORAGE", string.Empty);
         }
     }
 }

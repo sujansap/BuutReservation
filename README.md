@@ -266,36 +266,40 @@ dotnet run
 ```
 
 ### E2E Tests
+
 ### Authenticated Tests Configuration
 
 To run authenticated tests, ensure the following configurations are set up:
 
 1. **Install Microsoft User Secrets Extension**:
-  - Make sure the [Microsoft User Secrets](https://marketplace.visualstudio.com/items?itemName=adrianwilczynski.user-secrets) extension is installed.
-  - `dotnet add package Microsoft.Extensions.Configuration.UserSecrets`
+
+- Make sure the [Microsoft User Secrets](https://marketplace.visualstudio.com/items?itemName=adrianwilczynski.user-secrets) extension is installed.
+- `dotnet add package Microsoft.Extensions.Configuration.UserSecrets`
 
 2. **Add User Role and Credentials**:
-  - Add the user role and credentials in the `secrets.json` file of the `Rise.Client.Tests` project. Right-click on the `Rise.Client.Tests.csproj` and select `Manage User Secrets`. Add the following configuration:
+
+- Add the user role and credentials in the `secrets.json` file of the `Rise.Client.Tests` project. Right-click on the `Rise.Client.Tests.csproj` and select `Manage User Secrets`. Add the following configuration:
 
   ```json
   {
     "Admin": {
      "Email": "admin@example.com",
-     "WW": "adminpassword"
+     "Password": "adminpassword"
     },
     "Guest": {
      "Email": "guest@example.com",
-     "WW": "guestpassword"
+     "Password": "guestpassword"
     },
     "Member": {
      "Email": "test@example.com",
-     "WW": "testpassword"
+     "Password": "testpassword"
     }
   }
   ```
 
 3. **Configure Auth0 Allowed Callback URLs**:
-  - Ensure the URL where the test client is running is added to the allowed callback URLs in your Auth0 configuration.
+
+- Ensure the URL where the test client is running is added to the allowed callback URLs in your Auth0 configuration.
 
 #### Installation of Playwright
 
@@ -316,6 +320,7 @@ This can be done by starting the project from the root via:
 ```bash
 dotnet run --project Rise.Client
 ```
+
 > Optionally you can use the `Rise.Server` project but you will need to specify the base url for tests, see further.
 
 Running the tests can be done executing following command in the `Rise.Client.Tests` project:
