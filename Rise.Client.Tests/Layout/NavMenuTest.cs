@@ -1,9 +1,9 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Rise.Client.Tests.Notifications;
 using Rise.Shared.Notifications;
 using Rise.Shared.Users;
-using Shouldly;
 
 namespace Rise.Client.Tests.Layout
 {
@@ -49,11 +49,9 @@ namespace Rise.Client.Tests.Layout
             await LoginAsync(UserRole.Member);
             await Page.SetViewportSizeAsync(961, DefaultHeight);
             await InitNavigationToUrl(startSuffix);
-            string beginUri = Page.Url;
             await Page.GetByTestId(testId).ClickAsync();
+            await Expect(Page).ToHaveURLAsync(new Regex($"{resultSuffix}$"));
 
-            Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldContain(resultSuffix);
             await LogoutAsync();
         }
 
@@ -120,7 +118,7 @@ namespace Rise.Client.Tests.Layout
             ILocator popoverButton = Page.GetByTestId("notifications-popover-button");
             await popoverButton.ClickAsync();
 
-            Page.Url.ShouldContain("/notifications");
+            await Expect(Page).ToHaveURLAsync(new Regex("/notifications$"));
         }
 
         [Test]
@@ -138,12 +136,10 @@ namespace Rise.Client.Tests.Layout
             await LoginAsync(requiredRole);
             await Page.SetViewportSizeAsync(959, 1920);
             await InitNavigationToUrl(startSuffix);
-            string beginUri = Page.Url;
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId(testId).ClickAsync();
 
-            Page.Url.ShouldNotBe(beginUri);
-            Page.Url.ShouldContain($"/{resultSuffix}");
+            await Expect(Page).ToHaveURLAsync(new Regex($"{resultSuffix}$"));
             await LogoutAsync();
         }
 
@@ -194,14 +190,13 @@ namespace Rise.Client.Tests.Layout
             await InitNavigationToUrl("/");
 
             await Page.GetByTestId("culture-selector-desktop").First.ClickAsync();
-            (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
+            await Expect(Page.GetByTestId(id)).ToContainTextAsync(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
-            await Page.GotoAsync("/reservations");
+            await InitNavigationToUrl("/reservations");
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
 
-            (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(english);
-
+            await Expect(Page.GetByTestId(id)).ToContainTextAsync(english);
         }
 
 
@@ -222,17 +217,16 @@ namespace Rise.Client.Tests.Layout
             await InitNavigationToUrl("/");
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").First.ClickAsync();
-            (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(dutch);
-
+            await Expect(Page.GetByTestId(id)).ToContainTextAsync(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
-
-            await Page.GotoAsync("/reservations");
+            await InitNavigationToUrl("/reservations");
 
             await Page.GetByTestId("tab-reserve").IsVisibleAsync();
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
 
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
-            (await Page.GetByTestId(id).TextContentAsync()).ShouldBe(english);
+            await Expect(Page.GetByTestId(id)).ToContainTextAsync(english);
+
 
         }
 

@@ -1,7 +1,4 @@
-using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.Playwright;
-using Shouldly;
 
 namespace Rise.Client.Tests.Home
 {
@@ -59,9 +56,7 @@ namespace Rise.Client.Tests.Home
             await reservationButton.ClickAsync();
 
             //Assert
-            var url = Page.Url;
-            var baseUrl = string.Join("/", url.Split('/').Take(3));
-            url.ShouldContain($"{baseUrl}/reservations");
+            await Expect(Page).ToHaveURLAsync(new Regex("/reservations\\?.*$"));
         }
 
         [Test]

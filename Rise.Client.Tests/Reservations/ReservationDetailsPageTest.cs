@@ -1,8 +1,6 @@
-﻿using System.Net.Mail;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using Rise.Shared.Reservations;
-using Shouldly;
 
 namespace Rise.Client.Tests.Reservations
 {

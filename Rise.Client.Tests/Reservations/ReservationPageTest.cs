@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Rise.Shared.TimeSlots;
 using Rise.Shared.Users;
-using Shouldly;
 
 namespace Rise.Client.Tests.Reservations
 {
@@ -384,7 +383,7 @@ namespace Rise.Client.Tests.Reservations
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await InitNavigationToUrl("/reservations");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
-            Page.Url.ShouldContain($"CurrentDate={currentDate}");
+            await Expect(Page).ToHaveURLAsync(new Regex($"\\?.*CurrentDate={currentDate}"));
         }
 
         [Test]
@@ -394,7 +393,7 @@ namespace Rise.Client.Tests.Reservations
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await InitNavigationToUrl($"/reservations?CurrentDate={toEarlyDate}");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
-            Page.Url.ShouldContain($"CurrentDate={currentDate}");
+            await Expect(Page).ToHaveURLAsync(new Regex($"\\?.*CurrentDate={currentDate}"));
         }
 
         [Test]
@@ -404,7 +403,7 @@ namespace Rise.Client.Tests.Reservations
             string plusOneMonthDateFormatted = plusOneMonthDate.ToString(universalDateFormat);
             await InitNavigationToUrl($"/reservations?CurrentDate={plusOneMonthDateFormatted}");
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={plusOneMonthDateFormatted}')");
-            Page.Url.ShouldContain($"CurrentDate={plusOneMonthDateFormatted}");
+            await Expect(Page).ToHaveURLAsync(new Regex($"\\?.*CurrentDate={plusOneMonthDateFormatted}"));
 
             ILocator date = Page.Locator(DateToCalendarIdentifier(DateOnly.FromDateTime(plusOneMonthDate)));
             await Expect(date).ToHaveCountAsync(1);
@@ -421,7 +420,7 @@ namespace Rise.Client.Tests.Reservations
             await next.ClickAsync();
             string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);
             await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={nextMonthDate}')");
-            Page.Url.ShouldContain($"CurrentDate={nextMonthDate}");
+            await Expect(Page).ToHaveURLAsync(new Regex($"\\?.*CurrentDate={nextMonthDate}"));
         }
 
 
@@ -486,12 +485,10 @@ namespace Rise.Client.Tests.Reservations
 
             // Assert
             var dialogPaymentContent = Page.GetByTestId("dialog-payment-content");
-            dialogPaymentContent.ShouldNotBeNull();
-            var isPaymentVisable = await dialogPaymentContent.IsVisibleAsync();
-            isPaymentVisable.ShouldBeTrue();
+            await Expect(dialogPaymentContent).ToBeVisibleAsync();
 
             ILocator dialogSuccessContent = Page.GetByTestId("dialog-success-content");
-            await Expect(dialogSuccessContent).ToBeVisibleAsync(new() { Timeout = 15000 });
+            await Expect(dialogSuccessContent).ToBeVisibleAsync();
         }
 
         [Test]
