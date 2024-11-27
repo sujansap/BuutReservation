@@ -24,7 +24,7 @@ namespace Rise.Client.Tests
 
             var credentials = role switch
             {
-                UserRole.Administrator => Configuration.GetSection("Admin").Get<Credentials>(),
+                UserRole.Admin => Configuration.GetSection("Administrator").Get<Credentials>(),
                 UserRole.Guest => Configuration.GetSection("Guest").Get<Credentials>(),
                 UserRole.Member => Configuration.GetSection("Member").Get<Credentials>(),
                 _ => throw new ArgumentOutOfRangeException(role.ToString(), "Unknown role")
