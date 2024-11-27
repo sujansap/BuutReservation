@@ -44,7 +44,7 @@ namespace Rise.Client.Tests
             }
 
             await Page.FillAsync("input[name='username']", credentials.Email);
-            await Page.FillAsync("input[name='password']", credentials.WW);
+            await Page.FillAsync("input[name='password']", credentials.Password);
             await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
             await InitNavigationToUrl("/home");
 
