@@ -19,7 +19,7 @@
 		<value>First name</value>
 	</data>
     <data name="FirstNameRequired">
-		<value></value>
+		<value>Please provide your first name.</value>
 	</data>
     <data name="FirstNameMinLength">
 		<value></value>

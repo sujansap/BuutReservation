@@ -13,6 +13,8 @@ using Serilog.Events;
 using Serilog;
 using Rise.Shared.Users;
 using Rise.Services.Users;
+using Rise.Shared.Localization;
+using Rise.Client.Localization.Register;
 
 try
 {
@@ -49,6 +51,7 @@ try
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IValidatorLocalizer, RegisterFormPageResources>();
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();

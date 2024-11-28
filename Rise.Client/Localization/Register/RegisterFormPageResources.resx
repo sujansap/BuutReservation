@@ -19,7 +19,7 @@
 		<value>Voornaam</value>
 	</data>
     <data name="FirstNameRequired">
-		<value></value>
+		<value>Voer uw voornaam in.</value>
 	</data>
     <data name="FirstNameMinLength">
 		<value></value>

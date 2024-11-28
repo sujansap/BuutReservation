@@ -13,6 +13,8 @@ using Serilog.Core;
 using Serilog;
 using Rise.Shared.Users;
 using Rise.Client.Admins;
+using Rise.Client.Localization.Register;
+using Rise.Shared.Localization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -50,6 +52,8 @@ builder.Services.AddHttpClient<IUserService, UserService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
 });
+
+builder.Services.AddScoped<IValidatorLocalizer, RegisterFormPageResources>();
 
 var host = builder.Build();
 

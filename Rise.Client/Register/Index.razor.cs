@@ -6,9 +6,19 @@ using Rise.Shared.Users;
 using FluentValidation;
 using FluentValidation.Results;
 using MudBlazor;
+using Microsoft.Extensions.Localization;
+using Rise.Client.Localization.Register;
+using static Rise.Shared.Users.UserRegistrationModelDto;
+using Rise.Shared.Localization;
 
 public partial class Index : ComponentBase
 {
+    [Inject]
+    private IStringLocalizer<RegisterFormPageResources> Localizer { get; set; } = default!;
+
+    [Inject]
+    private IValidatorLocalizer ValidatorLocalizer { get; set; } = default!;
+
     private UserRegistrationModelDto User = new()
     {
         FirstName = string.Empty,
@@ -31,7 +41,12 @@ public partial class Index : ComponentBase
     private bool isSuccess;
 
     private MudForm Form = null!;
-    private UserRegistrationModelDtoValidator validator = new UserRegistrationModelDtoValidator();
+    private UserRegistrationModelDtoValidator validator = null!;
+
+    protected override void OnInitialized()
+    {
+        validator = new UserRegistrationModelDtoValidator(ValidatorLocalizer);
+    }
 
     private string CheckPasswordMatch(string passwordRepeat)
     {
