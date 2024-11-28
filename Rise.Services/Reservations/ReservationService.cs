@@ -49,8 +49,8 @@ namespace Rise.Services.Reservations
             return await PaginationService.GetPaginatedResultsAsync<Reservation, ReservationDto>(
                 queryableDbSet: _dbContext.Reservations.AsQueryable(),
                 filterLambda: r => (r.UserId == userId) && (getPast ?
-                   r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
-                   r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
+                    r.TimeSlot.Date < DateOnly.FromDateTime(DateTime.Now) :
+                    r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now)),
                 orderingExpressions: [
                     new OrderingExpression<Reservation, object>
                     {
@@ -70,6 +70,7 @@ namespace Rise.Services.Reservations
                     End = r.TimeSlot.End,
                     Date = r.TimeSlot.Date,
                     BoatId = r.BoatId,
+                    IsDeleted = r.IsDeleted,
                     BoatPersonalName = r.Boat.PersonalName
                 },
                 cursor: cursor,
@@ -149,13 +150,13 @@ namespace Rise.Services.Reservations
 
         public async Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId)
         {
-            Reservation reservation = (await _dbContext.Reservations
-            .Include(r => r.Boat)
-            .ThenInclude(b => b.Batteries)
-            .ThenInclude(battery => battery.Mentor)
-            .Include(r => r.TimeSlot)
-            .FirstOrDefaultAsync(r => r.Id == reservationId))
-            ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
+            var reservation = await _dbContext.Reservations
+                .Include(r => r.Boat)
+                .ThenInclude(b => b.Batteries)
+                .ThenInclude(battery => battery.Mentor)
+                .Include(r => r.TimeSlot)
+                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
             //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
             Battery battery = reservation.Boat.Batteries[0];
@@ -167,13 +168,27 @@ namespace Rise.Services.Reservations
                 Start = reservation.TimeSlot.Start,
                 End = reservation.TimeSlot.End,
                 Date = reservation.TimeSlot.Date,
+                IsDeleted = reservation.IsDeleted,
                 BoatPersonalName = reservation.Boat.PersonalName,
                 MentorName = battery.Mentor.FamilyName,
                 BatteryType = battery.Type
 
             };
         }
+        public async Task CancelReservationAsync(int reservationId)
+        {
+            var reservation = await _dbContext.Reservations
+                .Include(r => r.TimeSlot)
+                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
+
+            reservation.Cancel();
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
-
-
 }
+
+
+
+
