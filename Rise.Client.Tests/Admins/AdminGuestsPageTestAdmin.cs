@@ -4,9 +4,24 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Admin
 {
+
     [TestFixture]
-    public class AdminGuestsPageTest : CustomPageTest
+    public class AdminGuestsPageTestAdmin : CustomAuthenticatedPageTest
     {
+        [SetUp]
+        public async Task SetUpAsync()
+
+        {
+            await LoginAsync(UserRole.Administrator);
+        }
+
+        [TearDown]
+        public async Task TearDownAsync()
+
+        {
+            await LogoutAsync();
+        }
+
         private async Task MockUsers(UserDto[] users)
         {
             await Page.RouteAsync("*/**/api/User/guests", async route =>
@@ -44,22 +59,22 @@ namespace Rise.Client.Tests.Admin
         public async Task HasUserList()
         {
             await NavigateToUrl("/admin/guests");
-            await Page.GetByTestId("user-list").IsVisibleAsync();
+            await Expect(Page.GetByTestId("user-list")).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task DisplaysUsersTable()
         {
             await InitializeWithMockUsers();
-            await Page.GetByTestId("users-table").IsVisibleAsync();
+            await Expect(Page.GetByTestId("users-table")).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task DisplaysNoUsersMessageWhenEmpty()
         {
-            await MockUsers(Array.Empty<UserDto>());
+            await MockUsers([]);
             await NavigateToUrl("/admin/guests");
-            await Page.GetByTestId("users-none").IsVisibleAsync();
+            await Expect(Page.GetByTestId("users-none")).ToBeVisibleAsync();
         }
 
         [Test]
@@ -77,7 +92,7 @@ namespace Rise.Client.Tests.Admin
             });
 
             await NavigateToUrl("/admin/guests");
-            await Page.GetByTestId("user-list-loading-progress").IsVisibleAsync();
+            await Expect(Page.GetByTestId("user-list-loading-progress")).ToBeVisibleAsync();
         }
 
         [Test]
@@ -94,7 +109,7 @@ namespace Rise.Client.Tests.Admin
             });
 
             await NavigateToUrl("/admin/guests");
-            await Page.GetByTestId("user-list-fetch-error").IsVisibleAsync();
+            await Expect(Page.GetByTestId("user-list-fetch-error")).ToBeVisibleAsync();
         }
 
         [Test]
