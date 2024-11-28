@@ -15,10 +15,10 @@ namespace Rise.Domain.Boats
         private DateTime? _lastUsedAt;
         public DateTime? LastUsedAt => _lastUsedAt;
 
-        private int? _currentUserId;
-        public int? CurrentUserId => _currentUserId;
+        private int? _currentHolderId;
+        public int? CurrentHolderId => _currentHolderId;
 
-        public User? CurrentUser { get; private set; }
+        public User? CurrentHolder { get; private set; }
 
         public string Type
         {
@@ -81,17 +81,36 @@ namespace Rise.Domain.Boats
             return true;
         }
 
-        public void AssignToUser(User user)
+        public void AssignToHolder(User user)
         {
             Guard.Against.Null(user, nameof(user));
-            CurrentUser = user;
-            _currentUserId = user.Id;
+            CurrentHolder = user;
+            _currentHolderId = user.Id;
         }
 
-        public void UnassignCurrentUser()
+        public bool HasSufficientChargingTime(DateTime currentTime)
         {
-            CurrentUser = null;
-            _currentUserId = null;
+            if (LastUsedAt == null) return true;
+            
+            var hoursSinceLastUse = (currentTime - LastUsedAt.Value).TotalHours;
+            return hoursSinceLastUse >= 4;
+        }
+
+        public static Battery? GetBestAvailableBattery(IEnumerable<Battery> batteries, DateOnly date, TimeOnly startTime, TimeOnly endTime, DateTime currentTime)
+        {
+            // Filter batteries that are available for the given time slot
+            var availableBatteries = batteries
+                .Where(b => b.IsAvailableForDate(date, startTime, endTime))
+                .Where(b => b.HasSufficientChargingTime(currentTime))
+                .ToList();
+
+            if (!availableBatteries.Any())
+                return null;
+
+            // Among available batteries, select the one with lowest usage count
+            return availableBatteries
+                .OrderBy(b => b.UsageCount)
+                .First();
         }
     }
 }

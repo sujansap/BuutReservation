@@ -23,28 +23,6 @@ namespace Rise.Services.Boats
         {
             var now = DateTime.UtcNow;
             
-            // Unassign completed reservations
-            var completedReservations = await _dbContext.Reservations
-                .Include(r => r.Battery)
-                .Include(r => r.User)
-                .Where(r => 
-                    r.Battery != null && 
-                    r.TimeSlot.Date == DateOnly.FromDateTime(now.Date) &&
-                    r.TimeSlot.End < TimeOnly.FromDateTime(now))
-                .ToListAsync();
-
-            foreach (var reservation in completedReservations)
-            {
-                if (reservation.Battery != null)
-                {
-                    reservation.Battery.UnassignCurrentUser();
-                    _logger.LogInformation(
-                        "Unassigned battery {BatteryId} from user {UserId} after completed reservation",
-                        reservation.Battery.Id,
-                        reservation.UserId);
-                }
-            }
-
             // Assign batteries for upcoming reservations
             var upcomingReservations = await _dbContext.Reservations
                 .Include(r => r.Battery)
@@ -60,7 +38,7 @@ namespace Rise.Services.Boats
             {
                 if (reservation.Battery != null)
                 {
-                    reservation.Battery.AssignToUser(reservation.User);
+                    reservation.Battery.AssignToHolder(reservation.User);
                     _logger.LogInformation(
                         "Assigned battery {BatteryId} to user {UserId} for active reservation",
                         reservation.Battery.Id,

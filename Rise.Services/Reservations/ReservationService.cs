@@ -153,7 +153,7 @@ namespace Rise.Services.Reservations
                 .Include(r => r.Boat)
                 .Include(r => r.TimeSlot)
                 .Include(r => r.Battery)
-                    .ThenInclude(b => b.CurrentUser)
+                    .ThenInclude(b => b.CurrentHolder)
                 .Include(r => r.Battery)
                     .ThenInclude(b => b.Mentor)
                 .FirstOrDefaultAsync(r => r.Id == reservationId)
@@ -169,8 +169,8 @@ namespace Rise.Services.Reservations
                 MentorName = reservation.Battery?.Mentor?.FamilyName,
                 BatteryType = reservation.Battery?.Type,
                 BatteryId = reservation.Battery?.Id,
-                CurrentBatteryUserName = reservation.Battery?.CurrentUser?.FamilyName,
-                CurrentBatteryUserId = reservation.Battery?.CurrentUserId
+                CurrentBatteryUserName = reservation.Battery?.CurrentHolder.FamilyName,
+                CurrentBatteryUserId = reservation.Battery?.CurrentHolderId
             };
         }
     }

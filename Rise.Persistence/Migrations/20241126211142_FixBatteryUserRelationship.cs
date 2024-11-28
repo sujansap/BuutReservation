@@ -11,20 +11,20 @@ namespace Rise.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "CurrentUserId1",
+                name: "CurrentHolderId",
                 table: "Battery",
                 type: "integer",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Battery_CurrentUserId1",
+                name: "IX_Battery_CurrentHolderId",
                 table: "Battery",
-                column: "CurrentUserId1");
+                column: "CurrentHolderId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Battery_User_CurrentUserId1",
+                name: "FK_Battery_User_CurrentHolderId",
                 table: "Battery",
-                column: "CurrentUserId1",
+                column: "CurrentHolderId",
                 principalTable: "User",
                 principalColumn: "Id");
         }
@@ -33,15 +33,15 @@ namespace Rise.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Battery_User_CurrentUserId1",
+                name: "FK_Battery_User_CurrentHolderId",
                 table: "Battery");
 
             migrationBuilder.DropIndex(
-                name: "IX_Battery_CurrentUserId1",
+                name: "IX_Battery_CurrentHolderId",
                 table: "Battery");
 
             migrationBuilder.DropColumn(
-                name: "CurrentUserId1",
+                name: "CurrentHolderId",
                 table: "Battery");
         }
     }

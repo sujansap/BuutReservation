@@ -41,7 +41,7 @@ namespace Rise.Persistence.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("NOW()");
 
-                    b.Property<int?>("CurrentUserId1")
+                    b.Property<int?>("CurrentHolderId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
@@ -74,7 +74,7 @@ namespace Rise.Persistence.Migrations
 
                     b.HasIndex("BoatId");
 
-                    b.HasIndex("CurrentUserId1");
+                    b.HasIndex("CurrentHolderId");
 
                     b.HasIndex("MentorId")
                         .IsUnique();
@@ -272,9 +272,9 @@ namespace Rise.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Rise.Domain.Users.User", "CurrentUser")
+                    b.HasOne("Rise.Domain.Users.User", "CurrentHolder")
                         .WithMany()
-                        .HasForeignKey("CurrentUserId1");
+                        .HasForeignKey("CurrentHolderId");
 
                     b.HasOne("Rise.Domain.Users.User", "Mentor")
                         .WithOne()
@@ -284,7 +284,7 @@ namespace Rise.Persistence.Migrations
 
                     b.Navigation("Boat");
 
-                    b.Navigation("CurrentUser");
+                    b.Navigation("CurrentHolder");
 
                     b.Navigation("Mentor");
                 });

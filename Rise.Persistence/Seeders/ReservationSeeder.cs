@@ -69,11 +69,13 @@ namespace Rise.Persistence.Seeders
                         Boat = BoatSeeder.boats[0],
                         TimeSlot = item[0],
                         User = UserSeeder.users[0],
+                        Battery = BatterySeeder.batteries[0]
                     },
                     new Reservation(){
                         Boat = BoatSeeder.boats[1],
                         TimeSlot = item[1],
                         User = UserSeeder.users[1],
+                        Battery = BatterySeeder.batteries[3]
                     }
                 ]);
             }
@@ -131,19 +133,19 @@ namespace Rise.Persistence.Seeders
                         User = UserSeeder.users[0], 
                         TimeSlot = weekLongTimeSlots[1][0], 
                         Boat = BoatSeeder.boats[0],
-                        Battery = BatterySeeder.batteries[0]
+                        Battery = BatterySeeder.batteries[2]
                     },
                     new() { 
                         User = UserSeeder.users[2], 
                         TimeSlot = weekLongTimeSlots[1][0], 
                         Boat = BoatSeeder.boats[1],
-                        Battery = BatterySeeder.batteries[3]
+                        Battery = BatterySeeder.batteries[5]
                     },
                     new() { 
                         User = UserSeeder.users[3], 
                         TimeSlot = weekLongTimeSlots[1][0], 
                         Boat = BoatSeeder.boats[2],
-                        Battery = BatterySeeder.batteries[6]
+                        Battery = BatterySeeder.batteries[8]
                     },
                 ],
                 // Today + 2 day(s)
