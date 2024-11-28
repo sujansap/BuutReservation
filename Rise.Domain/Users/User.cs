@@ -23,7 +23,7 @@ namespace Rise.Domain.Users
             set
             {
                 Guard.Against.NullOrWhiteSpace(value, nameof(Email));
-                Guard.Against.LengthOutOfRange(value, 0, 100);
+                Guard.Against.LengthOutOfRange(value, 1, 100);
                 Guard.Against.InvalidFormat(value, nameof(Email), "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
                 value = value.Trim();
                 _email = value;
@@ -36,7 +36,7 @@ namespace Rise.Domain.Users
             set
             {
                 Guard.Against.NullOrWhiteSpace(value, nameof(FirstName));
-                Guard.Against.LengthOutOfRange(value, 0, 100, nameof(FirstName));
+                Guard.Against.LengthOutOfRange(value, 1, 100, nameof(FirstName));
                 value = value.Trim();
                 _firstName = value;
             }
@@ -47,7 +47,7 @@ namespace Rise.Domain.Users
             set
             {
                 Guard.Against.NullOrWhiteSpace(value, nameof(FamilyName));
-                Guard.Against.LengthOutOfRange(value, 0, 100, nameof(FamilyName));
+                Guard.Against.LengthOutOfRange(value, 1, 100, nameof(FamilyName));
                 value = value.Trim();
                 _familyName = value;
             }
@@ -58,7 +58,7 @@ namespace Rise.Domain.Users
             set
             {
                 Guard.Against.NullOrWhiteSpace(value, nameof(PhoneNumber));
-                Guard.Against.LengthOutOfRange(value, 0, 100, nameof(PhoneNumber));
+                Guard.Against.LengthOutOfRange(value, 1, 100, nameof(PhoneNumber));
                 Guard.Against.InvalidFormat(value, nameof(PhoneNumber), "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
                 value = value.Trim();
                 _phoneNumber = value;
@@ -71,19 +71,19 @@ namespace Rise.Domain.Users
             set
             {
                 Guard.Against.NullOrWhiteSpace(value.Street, nameof(value.Street));
-                Guard.Against.LengthOutOfRange(value.Street, 0, 200, nameof(value.Street));
+                Guard.Against.LengthOutOfRange(value.Street, 1, 200, nameof(value.Street));
 
                 Guard.Against.NullOrWhiteSpace(value.Number, nameof(value.Number));
-                Guard.Against.LengthOutOfRange(value.Number, 0, 200, nameof(value.Number));
+                Guard.Against.LengthOutOfRange(value.Number, 1, 200, nameof(value.Number));
 
                 Guard.Against.NullOrWhiteSpace(value.City, nameof(value.City));
-                Guard.Against.LengthOutOfRange(value.City, 0, 200, nameof(value.City));
+                Guard.Against.LengthOutOfRange(value.City, 1, 200, nameof(value.City));
 
                 Guard.Against.NullOrWhiteSpace(value.PostalCode, nameof(value.PostalCode));
-                Guard.Against.LengthOutOfRange(value.PostalCode, 0, 100, nameof(value.PostalCode));
+                Guard.Against.LengthOutOfRange(value.PostalCode, 1, 100, nameof(value.PostalCode));
 
                 Guard.Against.NullOrWhiteSpace(value.Country, nameof(value.Country));
-                Guard.Against.LengthOutOfRange(value.Country, 0, 100, nameof(value.Country));
+                Guard.Against.LengthOutOfRange(value.Country, 1, 100, nameof(value.Country));
                 _address = value;
             }
         }

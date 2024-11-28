@@ -12,10 +12,10 @@ namespace Rise.Server.Controllers.Users
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly ILogger<ReservationController> _logger;
+        private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
 
-        public UserController(ILogger<ReservationController> logger, IUserService userService)
+        public UserController(ILogger<UserController> logger, IUserService userService)
         {
             _logger = logger;
             _userService = userService;
@@ -74,7 +74,9 @@ namespace Rise.Server.Controllers.Users
         /// <param name="userDto">Dto with required user imformation for registration</param>
         /// <returns>Result of the operation</returns>
         [HttpPost("register")]
-        [Authorize(Roles = "Administrator")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userDto)
         {
             _logger.LogInformation("POST api/User/register");

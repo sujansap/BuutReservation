@@ -8,13 +8,15 @@ using Auth0.ManagementApi.Models;
 using Npgsql;
 using Rise.Services.Constants;
 using Auth0.Core.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace Rise.Services.Users;
 
-public class UserService(ApplicationDbContext dbContext, IManagementApiClient managementApiClient) : IUserService
+public class UserService(ApplicationDbContext dbContext, IManagementApiClient managementApiClient, ILogger<UserService> logger) : IUserService
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
     private readonly IManagementApiClient _managementApiClient = managementApiClient;
+    private readonly ILogger<UserService> _logger = logger;
 
     public async Task<IEnumerable<UserDto>> GetGuestUsers()
     {
@@ -110,16 +112,19 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             }
             );
 
-            var guestRole = (await _managementApiClient.Roles.GetAsync(nameof(UserRole.Guest)))
-                ?? throw new RoleNotFoundException(nameof(UserRole.Guest));
+            var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = nameof(UserRole.Guest) });
+            var role = roles.FirstOrDefault() ?? throw new RoleNotFoundException(nameof(UserRole.Guest));
             await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
             {
-                Roles = [guestRole.Id]
+                Roles = [role.Id]
             });
         }
-        catch (ErrorApiException)
+        catch (ErrorApiException ex)
         {
-            throw new UniqueConstraintViolationException(ErrorMessages.User.EmailAlreadyExists);
+            _logger.LogError(ex, "Auth0 error");
+            if (ex.Message.Contains("already exists"))
+                throw new UniqueConstraintViolationException(ErrorMessages.User.EmailAlreadyExists);
+            throw new ApplicationException(ex.Message);
         }
     }
 
