@@ -9,6 +9,15 @@ namespace Rise.Client.Services
     public class ReservationService(HttpClient httpClient) : IReservationService
     {
         private readonly HttpClient _httpClient = httpClient;
+        public async Task CancelReservationAsync(int reservationId)
+        {
+            var response = await _httpClient.PatchAsync($"cancel/{reservationId}", null);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to cancel reservation with ID {reservationId}. Response: {response.ReasonPhrase}");
+            }
+        }
 
         public async Task<int> CreateReservation(CreateReservationDto reservationDto)
         {

@@ -24,5 +24,7 @@ namespace Rise.Shared.Reservations
 
         Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId);
 
+        Task CancelReservationAsync(int reservationId);
+
     }
 }

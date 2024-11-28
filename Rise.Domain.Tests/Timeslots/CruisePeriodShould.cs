@@ -76,8 +76,8 @@ namespace Rise.Domain.Tests.TimeSlots
         [Theory]
         [InlineData(-2)]
         [InlineData(-1)]
-        [InlineData(2)]
-        [InlineData(3)]
+        [InlineData(25)]
+        [InlineData(26)]
         public void NotBeAbleToAddInvalidTimeSlot(int amountDays)
         {
             CruisePeriod period = new CruisePeriodBuilder().Build();

@@ -81,4 +81,10 @@
 	<data name="NoReservationsFound" xml:space="preserve">
 		<value>No reservations found.</value>
 	</data>
+	<data name="Cancel Reservation" xml:space="preserve">
+  	<value>Cancel reservation</value>
+	</data>
+	<data name="DetailsDenied" xml:space="preserve">
+	<value>This reservation is canceled. You cannot view the details.</value>
+	</data>
 </root>
