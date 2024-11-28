@@ -54,7 +54,7 @@ public class CancelReservationTest : CustomPageTest
         await MockReservationDetailsApi(reservationDetails);
         await MockCancelReservationApi(reservationDetails.Id);
 
-        await InitNavigationToUrl(UserReservationDetailsUrl);
+        await NavigateToUrl(UserReservationDetailsUrl);
         var cancelButton = Page.GetByTestId("cancel-reservation-button");
         await cancelButton.ClickAsync();
 
@@ -80,7 +80,7 @@ public class CancelReservationTest : CustomPageTest
         await MockReservationDetailsApi(reservationDetails);
 
 
-        await InitNavigationToUrl($"/reservations/{reservationDetails.Id}");
+        await NavigateToUrl($"/reservations/{reservationDetails.Id}");
 
 
         var cancelButton = Page.GetByTestId("cancel-reservation-button");
@@ -109,7 +109,7 @@ public class CancelReservationTest : CustomPageTest
 
         await MockReservationDetailsApi(reservationDetails);
 
-        await InitNavigationToUrl($"/reservations/{reservationDetails.Id}");
+        await NavigateToUrl($"/reservations/{reservationDetails.Id}");
 
         var cancelledMessage = Page.GetByTestId("cancel-reservation-geannuleerd");
         await Expect(cancelledMessage).ToBeVisibleAsync();
@@ -139,7 +139,7 @@ public class CancelReservationTest : CustomPageTest
         await MockCancelReservationApi(reservationDetails.Id, status: 400);
 
         // Act: Navigate to reservation details page
-        await InitNavigationToUrl($"/reservations/{reservationDetails.Id}");
+        await NavigateToUrl($"/reservations/{reservationDetails.Id}");
 
         // Click the cancel button
         var cancelButton = Page.GetByTestId("cancel-reservation-button");
