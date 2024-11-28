@@ -26,8 +26,10 @@ namespace Rise.Services.Reservations
         {
             public DateOnly Date { get; set; }
         }
-        public async Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
+        public async Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate)
         {
+            int userId = (int)_authContextProvider.GetUserId()!;
+
             ISet<DateOnly> reservations = new HashSet<DateOnly>();
 
             List<ReservationTemp> allReservationsDuringRange = await _dbContext.Reservations.Where(
@@ -46,8 +48,9 @@ namespace Rise.Services.Reservations
             return new ReservationsRangeDto(allReservationsDuringRange.Select(reservation => reservation.Date));
         }
 
-        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
+        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
+            int userId = (int)_authContextProvider.GetUserId()!;
             return await PaginationService.GetPaginatedResultsAsync<Reservation, ReservationDto>(
                 queryableDbSet: _dbContext.Reservations.AsQueryable(),
                 filterLambda: r => (r.UserId == userId) && (getPast ?
@@ -92,7 +95,8 @@ namespace Rise.Services.Reservations
         /// <exception cref="ReservationCreationFailedException"></exception>
         public async Task<int> CreateReservation(CreateReservationDto reservationDto)
         {
-            int userId = 2; //get this from session or token later
+            int userId = (int)_authContextProvider.GetUserId()!;
+
 
             User user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(User), userId);
 
@@ -179,8 +183,12 @@ namespace Rise.Services.Reservations
         }
         public async Task CancelReservationAsync(int reservationId)
         {
+            int userId = (int)_authContextProvider.GetUserId()!;
+
             var reservation = await _dbContext.Reservations
                 .Include(r => r.TimeSlot)
+                .Include(r => r.User)
+                .Where(r => r.UserId == userId)
                 .FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 

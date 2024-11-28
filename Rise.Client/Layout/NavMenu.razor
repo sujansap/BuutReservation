@@ -22,13 +22,14 @@
             <AuthorizeView>
                 <Authorized>
                     <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]</MudNavLink>
+                    @if (context.User.IsInRole("Administrator"))
+                    {
+                        <MudNavLink Href="admin" data-testid="nav-desktop-admin">@Localizer["Admin"]</MudNavLink>
+                    }
                 </Authorized>
             </AuthorizeView>
-            <AuthorizeView Roles="Administrator">
-                <MudNavLink Href="admin" data-testid="nav-desktop-admin">@Localizer["Admin"]</MudNavLink>
-            </AuthorizeView>
         </MudStack>
-        <MudSpacer></MudSpacer>
+        <MudSpacer />
         <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
             data-testid="nav-desktop-book">
             @Localizer["BookNow"]
@@ -41,7 +42,7 @@
                         Color="Color.Inherit" data-testid="nav-desktop-profile" />
                     <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
             data-testid="nav-desktop-notifications" OnClick="HandleNotificationButtonClicked" />
-                    <MudNavLink Href="authentication/logout" data-testid="nav-desktop-logout"
+                    <MudNavLink OnClick="@BeginLogOut" data-testid="nav-desktop-logout"
                         Icon="@Icons.Material.Filled.Logout" IconColor="Color.Inherit">
                         Log out
                     </MudNavLink>
@@ -99,11 +100,11 @@
         <AuthorizeView>
             <Authorized>
                     <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">@Localizer["Reserve"]</MudNavLink>
-                    @if (context.User.IsInRole("Admin"))
+                    @if (context.User.IsInRole("Administrator"))
                 {
                     <MudNavGroup Title="ADMIN" Expanded="true">
-                                <AdminMenu />
-                            </MudNavGroup>
+                        <AdminMenu />
+                    </MudNavGroup>
                 }
                 <MudDivider />
                 <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">
@@ -112,7 +113,7 @@
                 <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
                     Icon="@Icons.Material.Filled.Notifications">@Localizer["Notifications"]</MudNavLink>
                     <MudDivider />
-                    <MudNavLink Href="authentication/logout" data-testid="nav-mobile-logout"
+                    <MudNavLink OnClick="@BeginLogOut" data-testid="nav-mobile-logout"
                         Icon="@Icons.Material.Filled.Logout">
                     Log out</MudNavLink>
                 </Authorized>

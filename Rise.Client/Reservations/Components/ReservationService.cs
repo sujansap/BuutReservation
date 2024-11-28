@@ -25,7 +25,7 @@ namespace Rise.Client.Services
             return await result.Content.ReadFromJsonAsync<int>();
         }
 
-        public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
+        public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate)
         {
             throw new NotImplementedException();
         }
@@ -38,7 +38,7 @@ namespace Rise.Client.Services
             return result;
         }
 
-        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
+        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
             Dictionary<string, string?> queries = new()
             {

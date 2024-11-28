@@ -35,9 +35,6 @@ namespace Rise.Server.Controllers
             DateOnly endDate
             )
         {
-
-            var fakeUserId = 2;
-
             _logger.LogInformation("GET range?startDate={startDate}&endDay={endDay}", [startDate, endDate]);
             _logger.LogDebug("Checking if {startDate} becomes before {endDay} ", [startDate, endDate]);
             if (startDate > endDate)
@@ -56,7 +53,7 @@ namespace Rise.Server.Controllers
 
 
             _logger.LogDebug("Getting reservations between range {startDate} and {endDay} from service layer", [startDate, endDate]);
-            ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate, fakeUserId);
+            ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate);
             _logger.LogDebug("Returning {reservationCount} reservations from {startDate} to {endDay}", [reservationsRangeDto.Reservations.Count(), startDate, endDate]);
 
 
