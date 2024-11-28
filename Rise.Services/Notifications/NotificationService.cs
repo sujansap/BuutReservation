@@ -1,23 +1,22 @@
-using System;
 using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Notifications;
-using Rise.Domain.Users;
 using Rise.Persistence;
+using Rise.Services.Auth;
 using Rise.Shared.Notifications;
 
 namespace Rise.Services.Notifications
 {
 
-    public class NotificationService(ApplicationDbContext dbContext) : INotificationService
+    public class NotificationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+        : AuthenticationService(dbContext, authContextProvider), INotificationService
     {
-        private readonly ApplicationDbContext _dbContext = dbContext;
-
         public async Task<IEnumerable<NotificationDto>> GetUserNotifications(int? limit)
         {
-            const int userId = 1;
+            int userId = (int)_authContextProvider.GetUserId()!;
+
             IEnumerable<NotificationDto> notifications = (await _dbContext.Users.Include(user => user.Notifications)
-                .FirstAsync(user => user.Id == userId))
+                    .FirstAsync(user => user.Id == userId))
                 .Notifications.OrderByDescending(notification => notification.CreatedAt)
                 .Select(MapNotificationToDto);
 
@@ -31,7 +30,7 @@ namespace Rise.Services.Notifications
 
         public Task MarkNotificationAsRead(int id)
         {
-            const int userId = 1;
+            int userId = (int)_authContextProvider.GetUserId()!;
 
             Notification? notification = _dbContext.Users.Include(user => user.Notifications)
                 .First(user => user.Id == userId)
