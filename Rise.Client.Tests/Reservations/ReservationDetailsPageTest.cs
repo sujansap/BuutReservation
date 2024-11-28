@@ -7,6 +7,7 @@ namespace Rise.Client.Tests.Reservations
     [TestFixture]
     public class ReservationDetailsPageTest : CustomPageTest
     {
+        // TODO: auth all reservation urls
         private const string UserReservationDetailsUrl = "/reservations/1";
         private const string InvalidReservationDetailsUrl = "/reservations/100";
 
