@@ -1,13 +1,21 @@
 using System.Text.Json;
 using Microsoft.Playwright;
 using Rise.Shared.Users;
-using Shouldly;
 
 namespace Rise.Client.Tests.Admin
 {
+
     [TestFixture]
-    public class AdminGuestsPageTest : CustomPageTest
+    public class AdminGuestsPageTestAdmin : CustomAuthenticatedPageTest
     {
+        protected const string baseSuffix = "/admin/guests";
+
+        [SetUp]
+        public async Task SetUpAsync()
+        {
+            await LoginAsync(UserRole.Administrator);
+        }
+
         private async Task MockUsers(UserDto[] users)
         {
             await Page.RouteAsync("*/**/api/User/guests", async route =>
@@ -38,29 +46,29 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(users);
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
         }
 
         [Test]
         public async Task HasUserList()
         {
-            await InitNavigationToUrl("/admin/guests");
-            await Page.GetByTestId("user-list").IsVisibleAsync();
+            await NavigateToUrl(baseSuffix);
+            await Expect(Page.GetByTestId("user-list")).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task DisplaysUsersTable()
         {
             await InitializeWithMockUsers();
-            await Page.GetByTestId("users-table").IsVisibleAsync();
+            await Expect(Page.GetByTestId("users-table")).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task DisplaysNoUsersMessageWhenEmpty()
         {
-            await MockUsers(Array.Empty<UserDto>());
-            await InitNavigationToUrl("/admin/guests");
-            await Page.GetByTestId("users-none").IsVisibleAsync();
+            await MockUsers([]);
+            await NavigateToUrl(baseSuffix);
+            await Expect(Page.GetByTestId("users-none")).ToBeVisibleAsync();
         }
 
         [Test]
@@ -77,8 +85,8 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl("/admin/guests");
-            await Page.GetByTestId("user-list-loading-progress").IsVisibleAsync();
+            await NavigateToUrl(baseSuffix);
+            await Expect(Page.GetByTestId("user-list-loading-progress")).ToBeVisibleAsync();
         }
 
         [Test]
@@ -94,8 +102,8 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl("/admin/guests");
-            await Page.GetByTestId("user-list-fetch-error").IsVisibleAsync();
+            await NavigateToUrl(baseSuffix);
+            await Expect(Page.GetByTestId("user-list-fetch-error")).ToBeVisibleAsync();
         }
 
         [Test]
@@ -128,7 +136,7 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(initialUsers);
-            await InitNavigationToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
             await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
 
             // updated state
@@ -138,7 +146,7 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(updatedUsers);
-            await Page.ReloadAsync();
+            await ReloadPage();
             await Expect(Page.GetByText("Johnson")).ToBeVisibleAsync();
             await Expect(Page.GetByText("Smith")).Not.ToBeVisibleAsync();
         }

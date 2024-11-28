@@ -7,15 +7,17 @@ using Rise.Domain.TimeSlots;
 using Rise.Domain.Users;
 using Rise.Persistence;
 using Rise.Services.Constants;
+using Rise.Services.Auth;
 using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 
 namespace Rise.Services.Reservations
 {
-    public class ReservationService(ApplicationDbContext dbContext) : IReservationService
+    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+        : AuthenticationService(dbContext, authContextProvider), IReservationService
     {
-        private readonly ApplicationDbContext _dbContext = dbContext;
+
 
         /// <summary>
         /// Gets all reservations in the given date range by the current user

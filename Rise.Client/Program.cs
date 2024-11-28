@@ -9,12 +9,14 @@ using Rise.Client.Services;
 using MudBlazor;
 using System.Globalization;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Serilog.Core;
 using Serilog;
 using Rise.Shared.Notifications;
 using Rise.Client.Notifications;
 using Rise.Shared.Users;
 using Rise.Client.Admins;
+using Rise.Client.Auth;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -39,27 +41,35 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddMudPopoverService();
 
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddOidcAuthentication(options =>
+{
+    builder.Configuration.Bind("Auth0", options.ProviderOptions);
+    options.ProviderOptions.ResponseType = "code";
+    options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress;
+    options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]!);
+}).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>(
+);
+
 builder.Services.AddHttpClient<ITimeSlotService, TimeSlotService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/TimeSlot/");
-});
+}).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
-});
+}).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
 builder.Services.AddHttpClient<INotificationService, NotificationService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Notification/");
-});
+}).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
 builder.Services.AddHttpClient<IUserService, UserService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
-});
-builder.Services.AddHttpClient<INotificationService, NotificationService>(client =>
-{
-    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Notification/");
-});
+}).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 var host = builder.Build();
 

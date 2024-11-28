@@ -3,13 +3,12 @@
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<AdminPageResources> Localizer
 @inherits LayoutComponentBase
-
 @*MainLayout has Width*@
 @layout EmptyLayout
 
 <PageTitle>@Localizer["DashbordPageTitle"]</PageTitle>
 
-<MudLayout Class="d-inline-flex py-3" Style="min-height: calc(100vh - 56px)">
+<MudLayout Class="d-inline-flex py-3" elevation="0" Style="min-height: calc(100vh - 56px)">
 
     @* Hide this for mobile *@
     <MudHidden Breakpoint="Breakpoint.SmAndDown">

@@ -4,6 +4,7 @@
 @using Rise.Shared.Reservations
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Common
+@attribute [Authorize(Roles = "Member, Administrator")]
 
 @inject IStringLocalizer<ReservationPageResources> Localizer
 

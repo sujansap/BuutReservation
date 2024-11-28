@@ -1,5 +1,9 @@
-﻿@using MudBlazor
+﻿@using Microsoft.Extensions.Localization
+@using MudBlazor
+@using Rise.Client.Localization.Auth
 @using Rise.Client.Themes
+@using Rise.Client.Common
+@inject IStringLocalizer<AuthPageResources> Localizer
 
 @* Required *@
 <MudThemeProvider Theme="MainTheme.CustomTheme" />
@@ -14,7 +18,23 @@
 
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <NotAuthorized>
+                @if (context.User.Identity?.IsAuthenticated != true)
+                {
+                    <RedirectToLogin />
+                }
+                else
+                {
+                    <MudAlert Severity="Severity.Error" data-testid="unauthorized">You are not authorized to access this resource.</MudAlert>
+                }
+            </NotAuthorized>
+            <Authorizing>
+                <RedirectAlert data-testid="authorization-loader" AlertSeverity="Severity.Info">
+                    @Localizer["Authorizing"]...
+                </RedirectAlert>
+            </Authorizing>
+        </AuthorizeRouteView>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>

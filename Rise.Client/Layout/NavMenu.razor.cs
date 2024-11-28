@@ -1,5 +1,3 @@
-using System;
-
 namespace Rise.Client.Layout
 {
     public partial class NavMenu
@@ -16,6 +14,5 @@ namespace Rise.Client.Layout
         {
             _notificationPopoverOpen = !_notificationPopoverOpen;
         }
-
     }
 }

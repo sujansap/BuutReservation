@@ -3,8 +3,8 @@
 @using Rise.Client.Localization.Admins;
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<AdminPageResources> Localizer
-
 @layout AdminLayout
+@attribute [Authorize(Roles = "Administrator")]
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
     <MudText Typo="Typo.h3" Class="mb-4">@Localizer["WelcomeToBoatDashboard"]</MudText>

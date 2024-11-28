@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Server.Common.Filters;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
-using FluentValidation;
 using Rise.Domain.Exceptions;
 namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Member")]
     public class ReservationController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger;
@@ -40,6 +40,8 @@ namespace Rise.Server.Controllers
         [HttpGet("me")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetCurrentUserReservations(
             [FromQuery] int? cursor,
             [FromQuery] bool? isNextPage,
@@ -84,6 +86,8 @@ namespace Rise.Server.Controllers
         /// <returns>The deatils of the created reservation</returns>
         [HttpPost]
         [NoQueryParameters]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto reservationDto)
         {
             var reservationId = await _reservationService.CreateReservation(reservationDto);
@@ -104,6 +108,8 @@ namespace Rise.Server.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservationDetailsDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetReservationDetails(int id)
         {
             try

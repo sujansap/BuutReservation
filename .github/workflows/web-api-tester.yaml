@@ -67,6 +67,8 @@ jobs:
       - name: Run Integration Tests
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
+          Auth0__M2MClientSecret: ${{ secrets.M2MCLIENTSECRET }}
+          Auth0__BlazorClientSecret: ${{ secrets.BLAZORCLIENTSECRET }}
         run: dotnet test Rise.Server.Tests
 
       - name: Run Playwright E2E
@@ -91,7 +93,14 @@ jobs:
 
       - name: Run E2E Tests
         env:
-          PLAYWRIGHT_IGNORE_HTTPS_ERRORS: 'true'  # Voeg deze regel toe om SSL-fouten te negeren      
+          PLAYWRIGHT_IGNORE_HTTPS_ERRORS: 'true'  # Voeg deze regel toe om SSL-fouten te negeren
+          Auth0__Audience: https://api.buut.be
+          Administrator__Email: ${{ secrets.ADMINISTRATOR__EMAIL }}
+          Administrator__Password: ${{ secrets.ADMINISTRATOR__PASSWORD }}
+          Guest__Email: ${{ secrets.GUEST__EMAIL }}
+          Guest__Password: ${{ secrets.GUEST__PASSWORD }}
+          Member__Email: ${{ secrets.MEMBER__EMAIL }}
+          Member__Password: ${{ secrets.MEMBER__PASSWORD }}
         run: dotnet test Rise.Client.Tests
 
       - name: Check test result
