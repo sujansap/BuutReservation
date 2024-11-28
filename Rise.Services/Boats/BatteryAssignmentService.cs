@@ -19,216 +19,95 @@ namespace Rise.Services.Boats
             _logger = logger;
         }
 
-        private async Task HandleBatteryAssignments()
+        public async Task AssignAndOptimizeBatteries()
         {
             var now = DateTime.UtcNow;
             var today = DateOnly.FromDateTime(now);
-            
-            // Get active reservations first
-            var activeReservations = await _dbContext.Reservations
+            var threeDaysFromNow = today.AddDays(3);
+            var currentTime = TimeOnly.FromDateTime(now);
+
+            // First handle unassigning batteries from completed reservations
+            var completedReservations = await _dbContext.Reservations
                 .Include(r => r.Battery)
-                .ThenInclude(b => b.Mentor)
                 .Include(r => r.User)
                 .Include(r => r.TimeSlot)
                 .Where(r => 
                     r.Battery != null && 
-                    r.TimeSlot.Date == today &&
-                    r.TimeSlot.Start <= TimeOnly.FromDateTime(now) &&
-                    r.TimeSlot.End > TimeOnly.FromDateTime(now))
+                    (r.TimeSlot.Date < today || 
+                     (r.TimeSlot.Date == today && r.TimeSlot.End <= currentTime)))
                 .ToListAsync();
 
-            // Get all batteries with their current holders and mentors
-            var allBatteries = await _dbContext.Batteries
-                .Include(b => b.CurrentHolder)
-                .Include(b => b.Mentor)
-                .ToListAsync();
-
-            // For batteries not in active reservations, assign mentor as holder
-            foreach (var battery in allBatteries)
+            foreach (var reservation in completedReservations)
             {
-                if (!activeReservations.Any(r => r.Battery == battery))
-                {
-                    battery.AssignToHolder(null); // This will set mentor as holder
-                }
+                var lastUser = reservation.User;
+                var battery = reservation.Battery!;
+                reservation.Battery = null;
+                battery.AssignToHolder(lastUser);
             }
 
-            // Assign holders for active reservations
-            foreach (var reservation in activeReservations)
-            {
-                if (reservation.Battery != null)
-                {
-                    reservation.Battery.AssignToHolder(reservation.User);
-                    _logger.LogInformation(
-                        "Assigned battery {BatteryId} to user {UserId} for active reservation",
-                        reservation.Battery.Id,
-                        reservation.UserId);
-                }
-            }
-
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task AssignBatteriesToUpcomingReservations()
-        {
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var twoDaysFromNow = today.AddDays(2);
-            
-            var reservationsNeedingBatteries = await _dbContext.Reservations
+            // Get all upcoming reservations, including those with batteries
+            var upcomingReservations = await _dbContext.Reservations
                 .Include(r => r.Boat)
                 .ThenInclude(b => b.Batteries)
                 .Include(r => r.TimeSlot)
-                .Where(r => 
-                    (r.TimeSlot.Date == today || r.TimeSlot.Date == twoDaysFromNow) && 
-                    r.Battery == null)
-                .OrderBy(r => r.TimeSlot.Start)
-                .ToListAsync();
-
-            _logger.LogInformation(
-                "Found {Count} reservations needing battery assignment for today and {Date}", 
-                reservationsNeedingBatteries.Count, 
-                twoDaysFromNow);
-
-            var reservationsByBoat = reservationsNeedingBatteries.GroupBy(r => r.BoatId);
-            
-            foreach (var boatGroup in reservationsByBoat)
-            {
-                var reservations = boatGroup.OrderBy(r => r.TimeSlot.Start).ToList();
-                
-                foreach (var reservation in reservations)
-                {
-                    try
-                    {
-                        var availableBattery = reservation.Boat.GetAvailableBatteryForDate(
-                            reservation.TimeSlot.Date,
-                            reservation.TimeSlot.Start,
-                            reservation.TimeSlot.End
-                        );
-
-                        if (availableBattery != null)
-                        {
-                            reservation.Battery = availableBattery;
-                            
-                            _logger.LogInformation(
-                                "Assigned battery {BatteryId} to reservation {ReservationId} for boat {BoatId} at {StartTime}-{EndTime}",
-                                availableBattery.Id,
-                                reservation.Id,
-                                reservation.BoatId,
-                                reservation.TimeSlot.Start,
-                                reservation.TimeSlot.End);
-                        }
-                        else
-                        {
-                            _logger.LogWarning(
-                                "No available battery found for reservation {ReservationId} on boat {BoatId} at {StartTime}-{EndTime}",
-                                reservation.Id,
-                                reservation.BoatId,
-                                reservation.TimeSlot.Start,
-                                reservation.TimeSlot.End);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(
-                            ex,
-                            "Error assigning battery to reservation {ReservationId}",
-                            reservation.Id);
-                    }
-                }
-            }
-
-            await HandleBatteryAssignments();
-        }
-
-        public async Task OptimizeBatteryAssignments()
-        {
-            var now = DateTime.UtcNow;
-            var today = DateOnly.FromDateTime(now);
-            var twoDaysFromNow = today.AddDays(2);
-            
-            // First, get all reservations that need batteries
-            var reservations = await _dbContext.Reservations
+                .Include(r => r.User)
                 .Include(r => r.Battery)
-                .Include(r => r.TimeSlot)
                 .Where(r => 
                     r.TimeSlot.Date >= today && 
-                    r.TimeSlot.Date <= twoDaysFromNow &&
+                    r.TimeSlot.Date <= threeDaysFromNow &&
                     (r.TimeSlot.Date > today || 
-                     (r.TimeSlot.Date == today && 
-                      r.TimeSlot.End > TimeOnly.FromDateTime(now)))
-                )
+                     (r.TimeSlot.Date == today && r.TimeSlot.Start > currentTime)))
                 .OrderBy(r => r.TimeSlot.Date)
                 .ThenBy(r => r.TimeSlot.Start)
                 .ToListAsync();
 
-            // Get all batteries directly from the Battery table
+            // Get all batteries with their usage info
             var allBatteries = await _dbContext.Batteries
+                .Include(b => b.Reservations)
                 .Include(b => b.CurrentHolder)
                 .OrderBy(b => b.UsageCount)
                 .ToListAsync();
 
-            // Clear all existing battery assignments first
-            foreach (var reservation in reservations)
-            {
-                if (reservation.Battery != null)
-                {
-                    _logger.LogInformation(
-                        "Clearing battery {BatteryId} from reservation {ReservationId}",
-                        reservation.Battery.Id,
-                        reservation.Id);
-                    reservation.Battery = null;
-                }
-            }
+            // Group reservations by date for priority assignment
+            var reservationsByDate = upcomingReservations
+                .GroupBy(r => r.TimeSlot.Date)
+                .OrderBy(g => g.Key);
 
-            // Group reservations by date
-            var reservationsByDate = reservations.GroupBy(r => r.TimeSlot.Date);
-            
             foreach (var dateGroup in reservationsByDate)
             {
-                var dateReservations = dateGroup.OrderBy(r => r.TimeSlot.Start).ToList();
-                var usedBatteriesForDate = new HashSet<int>();
-
-                foreach (var reservation in dateReservations)
+                foreach (var reservation in dateGroup.OrderBy(r => r.TimeSlot.Start))
                 {
-                    // Find an available battery that belongs to the boat and hasn't been used today
-                    var availableBattery = allBatteries
-                        .Where(b => 
-                            b.BoatId == reservation.BoatId && 
-                            !usedBatteriesForDate.Contains(b.Id))
-                        .OrderBy(b => b.Reservations.Count(r => 
-                            r.TimeSlot.Date >= today && 
-                            r.TimeSlot.Date <= twoDaysFromNow))
-                        .ThenBy(b => b.UsageCount)
-                        .FirstOrDefault();
+                    if (reservation.Battery == null)
+                    {
+                        // Get compatible batteries for this boat
+                        var compatibleBatteries = allBatteries
+                            .Where(b => b.BoatId == reservation.BoatId)
+                            .OrderBy(b => b.UsageCount)
+                            .ToList();
 
-                    if (availableBattery != null)
-                    {
-                        reservation.Battery = availableBattery;
-                        usedBatteriesForDate.Add(availableBattery.Id);
-                        
-                        _logger.LogInformation(
-                            "Assigned battery {BatteryId} to reservation {ReservationId} for boat {BoatId} at {Date} {StartTime}-{EndTime}",
-                            availableBattery.Id,
-                            reservation.Id,
-                            reservation.BoatId,
-                            reservation.TimeSlot.Date,
-                            reservation.TimeSlot.Start,
-                            reservation.TimeSlot.End);
+                        // Find an available battery
+                        var availableBattery = compatibleBatteries
+                            .FirstOrDefault(b => b.IsAvailableFor(
+                                reservation.TimeSlot.Date,
+                                reservation.TimeSlot.Start,
+                                reservation.TimeSlot.End,
+                                now));
+
+                        if (availableBattery != null)
+                        {
+                            reservation.Battery = availableBattery;
+                        }
                     }
-                    else
+
+                    // Always update the current holder if there's a battery assigned
+                    if (reservation.Battery != null)
                     {
-                        _logger.LogWarning(
-                            "No available battery found for reservation {ReservationId} on boat {BoatId} at {Date} {StartTime}-{EndTime}",
-                            reservation.Id,
-                            reservation.BoatId,
-                            reservation.TimeSlot.Date,
-                            reservation.TimeSlot.Start,
-                            reservation.TimeSlot.End);
+                        reservation.Battery.AssignToHolder(reservation.User);
                     }
                 }
             }
 
             await _dbContext.SaveChangesAsync();
-            await HandleBatteryAssignments();
         }
 
         public async Task ResetAllBatteryAssignments()
@@ -238,6 +117,7 @@ namespace Rise.Services.Boats
             // Get all batteries
             var allBatteries = await _dbContext.Batteries
                 .Include(b => b.CurrentHolder)
+                .Include(b => b.Mentor)
                 .ToListAsync();
 
             // Reset all current holders

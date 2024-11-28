@@ -15,10 +15,11 @@ namespace Rise.Domain.Boats
         private DateTime? _lastUsedAt;
         public DateTime? LastUsedAt => _lastUsedAt;
 
-        private int? _currentHolderId;
-        public int? CurrentHolderId => _currentHolderId;
-
+        public int? CurrentHolderId { get; private set; }
         public User? CurrentHolder { get; private set; }
+
+        public int MentorId { get; set; }
+        public User Mentor { get; set; } = null!;
 
         public string Type
         {
@@ -28,9 +29,6 @@ namespace Rise.Domain.Boats
 
         public int BoatId { get; set; }
         public required Boat Boat { get; set; }
-
-        public int MentorId { get; set; }
-        public required User Mentor { get; set; }
 
         public IReadOnlyCollection<Reservation> Reservations => _reservations.AsReadOnly();
 
@@ -86,13 +84,13 @@ namespace Rise.Domain.Boats
             if (user == null)
             {
                 CurrentHolder = Mentor;
-                _currentHolderId = Mentor.Id;
+                CurrentHolderId = Mentor.Id;
                 return;
             }
 
             Guard.Against.Null(user, nameof(user));
             CurrentHolder = user;
-            _currentHolderId = user.Id;
+            CurrentHolderId = user.Id;
         }
 
         public bool HasSufficientChargingTime(DateTime currentTime)

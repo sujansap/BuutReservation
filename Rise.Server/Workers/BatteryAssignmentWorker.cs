@@ -35,14 +35,14 @@ namespace Rise.Server.Workers
                     if (!_initialAssignmentDone)
                     {
                         _logger.LogInformation("Performing initial battery assignment reset and optimization");
-                        await ResetAndReassignBatteries(batteryService);
+                        // await ResetAndReassignBatteries(batteryService);
                         _initialAssignmentDone = true;
                     }
                     
-                    await batteryService.OptimizeBatteryAssignments();
+                    await batteryService.AssignAndOptimizeBatteries();
                     
                     // Run every hour
-                    await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+                    await Task.Delay(TimeSpan.FromHours(2), stoppingToken);
                 }
                 catch (Exception ex)
                 {
@@ -52,9 +52,9 @@ namespace Rise.Server.Workers
             }
         }
 
-        private async Task ResetAndReassignBatteries(BatteryAssignmentService batteryService)
-        {
-            await batteryService.OptimizeBatteryAssignments();
-        }
+        // private async Task ResetAndReassignBatteries(BatteryAssignmentService batteryService)
+        // {
+        //     await batteryService.AssignAndOptimizeBatteries();
+        // }
     }
 }
