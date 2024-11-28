@@ -92,11 +92,16 @@ namespace Rise.Client.Tests
             SessionStorage = null;
         }
 
+        protected async Task CheckRedirectedToLogin()
+        {
+            await Expect(Page.GetByText("Log in to Buut")).ToBeVisibleAsync();
+
+        }
+
         protected async Task TestRedirectWhenNotLoggedIn(string url)
         {
             await NavigateToUrl(url);
-
-            await Expect(Page.GetByText("Log in to Buut")).ToBeVisibleAsync();
+            await CheckRedirectedToLogin();
         }
         protected async Task TestNotAuthorized(string url, UserRole role)
         {
