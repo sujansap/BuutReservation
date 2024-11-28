@@ -8,18 +8,12 @@ namespace Rise.Client.Tests.Admin
     [TestFixture]
     public class AdminGuestsPageTestAdmin : CustomAuthenticatedPageTest
     {
+        protected const string baseSuffix = "/admin/guests";
+
         [SetUp]
         public async Task SetUpAsync()
-
         {
             await LoginAsync(UserRole.Administrator);
-        }
-
-        [TearDown]
-        public async Task TearDownAsync()
-
-        {
-            await LogoutAsync();
         }
 
         private async Task MockUsers(UserDto[] users)
@@ -52,13 +46,13 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(users);
-            await NavigateToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
         }
 
         [Test]
         public async Task HasUserList()
         {
-            await NavigateToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
             await Expect(Page.GetByTestId("user-list")).ToBeVisibleAsync();
         }
 
@@ -73,7 +67,7 @@ namespace Rise.Client.Tests.Admin
         public async Task DisplaysNoUsersMessageWhenEmpty()
         {
             await MockUsers([]);
-            await NavigateToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
             await Expect(Page.GetByTestId("users-none")).ToBeVisibleAsync();
         }
 
@@ -91,7 +85,7 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await NavigateToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
             await Expect(Page.GetByTestId("user-list-loading-progress")).ToBeVisibleAsync();
         }
 
@@ -108,7 +102,7 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await NavigateToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
             await Expect(Page.GetByTestId("user-list-fetch-error")).ToBeVisibleAsync();
         }
 
@@ -142,7 +136,7 @@ namespace Rise.Client.Tests.Admin
             ];
 
             await MockUsers(initialUsers);
-            await NavigateToUrl("/admin/guests");
+            await NavigateToUrl(baseSuffix);
             await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
 
             // updated state

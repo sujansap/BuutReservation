@@ -3,9 +3,9 @@ using Rise.Shared.Users;
 namespace Rise.Client.Tests.Admin
 {
     [TestFixture]
-    public class AdminGuestsPageTestAll : CustomAuthenticatedPageTest
+    public class AdminGuestDetailsPageTestAll : CustomAuthenticatedPageTest
     {
-        protected const string baseSuffix = "/admin/guests";
+        private const string baseSuffix = "/admin/guests/1";
 
         [Test]
         public async Task RedirectWhenNotLoggedIn()
