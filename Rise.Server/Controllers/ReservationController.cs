@@ -76,7 +76,7 @@ namespace Rise.Server.Controllers
                 }));
             }
 
-            var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);
+            var reservations = await _reservationService.GetUserReservations(cursor, isNextPage, getPast, pageSize);
             return Ok(reservations);
         }
         /// <summary>
