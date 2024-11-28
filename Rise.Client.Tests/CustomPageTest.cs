@@ -3,12 +3,12 @@ using Microsoft.Playwright.NUnit;
 
 namespace Rise.Client.Tests
 {
-    [Parallelizable(ParallelScope.Self)]
+    [Parallelizable(ParallelScope.Fixtures)]
     [TestFixture]
     public class CustomPageTest : PageTest
     {
         [OneTimeSetUp]
-        public void GlobalSetup()
+        public virtual void GlobalSetUp()
         {
             SetDefaultExpectTimeout(10_000);
         }
