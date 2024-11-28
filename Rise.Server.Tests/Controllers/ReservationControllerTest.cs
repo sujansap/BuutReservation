@@ -358,14 +358,12 @@ namespace Rise.Server.Tests.Controllers
         [Fact]
         public async Task PATCH_CancelReservation_WithValidId_ExpectOk()
         {
+            await LoginAsync(UserRole.Member);
 
             var validReservationId = 80;
 
 
             var response = await _client.PatchAsync($"cancel/{validReservationId}", null);
-
-
-
 
             var reservationDetailsResponse = await _client.GetAsync($"{validReservationId}");
             reservationDetailsResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -374,13 +372,15 @@ namespace Rise.Server.Tests.Controllers
             reservationDetails.ShouldNotBeNull();
             reservationDetails.Id.ShouldBe(validReservationId);
             reservationDetails.IsDeleted.ShouldBeTrue();
+
+            Logout();
         }
 
 
         [Fact]
         public async Task PATCH_CancelReservation_WithNonExistentId_ExpectNotFound()
         {
-
+            await LoginAsync(UserRole.Member);
             var nonExistentReservationId = 9999;
 
 
@@ -388,11 +388,12 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            Logout();
         }
         [Fact]
         public async Task PATCH_CancelReservation_AlreadyCancelledReservation_ExpectBadRequest()
         {
-
+            await LoginAsync(UserRole.Member);
             var cancelledReservationId = 38;
 
 
@@ -400,12 +401,13 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            Logout();
         }
 
         [Fact]
         public async Task PATCH_CancelReservation_WithinTwoDaysOfReservation_ExpectBadRequest()
         {
-
+            await LoginAsync(UserRole.Member);
             var reservationIdWithinTwoDays = 2;
 
 
@@ -413,6 +415,7 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            Logout();
         }
     }
 }
