@@ -93,7 +93,7 @@
 	<data name="Cancel Reservation" xml:space="preserve">
   <value>Annuleer reservatie</value>
 </data>
-<data name="Deze reservatie is geannuleerd. Je kan de details niet bekijken." xml:space="preserve">
+<data name="DetailsDenied" xml:space="preserve">
   <value>Deze reservatie is geannuleerd. Je kan de details niet bekijken.</value>
 </data>
 </root>
