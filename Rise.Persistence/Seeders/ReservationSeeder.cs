@@ -101,19 +101,23 @@ namespace Rise.Persistence.Seeders
                 pastMonthLongReservations.Add(dayReservations);
             }
 
-            // Set the last used dates for batteries based on their final usage
+            // Set the current holders based on last usage
             foreach (var kvp in batteryLastUse)
             {
                 var battery = kvp.Key;
                 var lastReservation = kvp.Value;
                 
-                // This will set LastUsedAt through the AddReservation method
                 battery.AddReservation(lastReservation);
                 
                 // Set current holder for batteries used in the most recent past reservations
                 if (lastReservation.TimeSlot.Date == pastMonthLongTimeSlots.Last()[0].Date)
                 {
                     battery.AssignToHolder(lastReservation.User);
+                }
+                else
+                {
+                    // For older reservations, set mentor as current holder
+                    battery.AssignToHolder(null);
                 }
             }
 

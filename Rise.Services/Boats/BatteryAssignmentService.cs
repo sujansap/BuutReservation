@@ -27,6 +27,7 @@ namespace Rise.Services.Boats
             // Get active reservations first
             var activeReservations = await _dbContext.Reservations
                 .Include(r => r.Battery)
+                .ThenInclude(b => b.Mentor)
                 .Include(r => r.User)
                 .Include(r => r.TimeSlot)
                 .Where(r => 
@@ -36,17 +37,18 @@ namespace Rise.Services.Boats
                     r.TimeSlot.End > TimeOnly.FromDateTime(now))
                 .ToListAsync();
 
-            // Get all batteries with their current holders
+            // Get all batteries with their current holders and mentors
             var allBatteries = await _dbContext.Batteries
                 .Include(b => b.CurrentHolder)
+                .Include(b => b.Mentor)
                 .ToListAsync();
 
-            // Clear holders only for batteries not in active reservations
+            // For batteries not in active reservations, assign mentor as holder
             foreach (var battery in allBatteries)
             {
                 if (!activeReservations.Any(r => r.Battery == battery))
                 {
-                    battery.AssignToHolder(null);
+                    battery.AssignToHolder(null); // This will set mentor as holder
                 }
             }
 

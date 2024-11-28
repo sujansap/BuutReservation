@@ -85,8 +85,8 @@ namespace Rise.Domain.Boats
         {
             if (user == null)
             {
-                CurrentHolder = null;
-                _currentHolderId = null;
+                CurrentHolder = Mentor;
+                _currentHolderId = Mentor.Id;
                 return;
             }
 
