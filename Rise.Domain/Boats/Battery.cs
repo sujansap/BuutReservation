@@ -81,8 +81,15 @@ namespace Rise.Domain.Boats
             return true;
         }
 
-        public void AssignToHolder(User user)
+        public void AssignToHolder(User? user)
         {
+            if (user == null)
+            {
+                CurrentHolder = null;
+                _currentHolderId = null;
+                return;
+            }
+
             Guard.Against.Null(user, nameof(user));
             CurrentHolder = user;
             _currentHolderId = user.Id;
@@ -96,21 +103,14 @@ namespace Rise.Domain.Boats
             return hoursSinceLastUse >= 4;
         }
 
-        public static Battery? GetBestAvailableBattery(IEnumerable<Battery> batteries, DateOnly date, TimeOnly startTime, TimeOnly endTime, DateTime currentTime)
+        public bool IsAvailableFor(DateOnly date, TimeOnly startTime, TimeOnly endTime, DateTime currentTime)
         {
-            // Filter batteries that are available for the given time slot
-            var availableBatteries = batteries
-                .Where(b => b.IsAvailableForDate(date, startTime, endTime))
-                .Where(b => b.HasSufficientChargingTime(currentTime))
-                .ToList();
+            // First check if battery has sufficient charging time
+            if (!HasSufficientChargingTime(currentTime))
+                return false;
 
-            if (!availableBatteries.Any())
-                return null;
-
-            // Among available batteries, select the one with lowest usage count
-            return availableBatteries
-                .OrderBy(b => b.UsageCount)
-                .First();
+            // Then check if battery is available for the specific time slot
+            return IsAvailableForDate(date, startTime, endTime);
         }
     }
 }

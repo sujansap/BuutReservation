@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Reservations;
 using Rise.Domain.Timeslots;
+using Rise.Domain.Boats;
 
 namespace Rise.Persistence.Seeders
 {
@@ -59,25 +60,61 @@ namespace Rise.Persistence.Seeders
         private static void AddPastMonthLongCruisePeriodItems()
         {
             List<List<TimeSlot>> pastMonthLongTimeSlots = TimeSlotSeeder.timeSlots[0];
-
             List<List<Reservation>> pastMonthLongReservations = [];
 
-            foreach (List<TimeSlot> item in pastMonthLongTimeSlots)
+            // Create a dictionary to track battery usage
+            var batteryLastUse = new Dictionary<Battery, Reservation>();
+
+            foreach (List<TimeSlot> daySlots in pastMonthLongTimeSlots)
             {
-                pastMonthLongReservations.Add([
-                    new Reservation(){
+                var dayReservations = new List<Reservation>
+                {
+                    new() {
                         Boat = BoatSeeder.boats[0],
-                        TimeSlot = item[0],
+                        TimeSlot = daySlots[0],
                         User = UserSeeder.users[0],
                         Battery = BatterySeeder.batteries[0]
                     },
-                    new Reservation(){
+                    new() {
                         Boat = BoatSeeder.boats[1],
-                        TimeSlot = item[1],
+                        TimeSlot = daySlots[1],
                         User = UserSeeder.users[1],
                         Battery = BatterySeeder.batteries[3]
+                    },
+                    new() {
+                        Boat = BoatSeeder.boats[2],
+                        TimeSlot = daySlots[2],
+                        User = UserSeeder.users[2],
+                        Battery = BatterySeeder.batteries[6]
                     }
-                ]);
+                };
+
+                // Track the last use of each battery
+                foreach (var reservation in dayReservations)
+                {
+                    if (reservation.Battery != null)
+                    {
+                        batteryLastUse[reservation.Battery] = reservation;
+                    }
+                }
+
+                pastMonthLongReservations.Add(dayReservations);
+            }
+
+            // Set the last used dates for batteries based on their final usage
+            foreach (var kvp in batteryLastUse)
+            {
+                var battery = kvp.Key;
+                var lastReservation = kvp.Value;
+                
+                // This will set LastUsedAt through the AddReservation method
+                battery.AddReservation(lastReservation);
+                
+                // Set current holder for batteries used in the most recent past reservations
+                if (lastReservation.TimeSlot.Date == pastMonthLongTimeSlots.Last()[0].Date)
+                {
+                    battery.AssignToHolder(lastReservation.User);
+                }
             }
 
             reservations.Add(pastMonthLongReservations);
@@ -150,9 +187,24 @@ namespace Rise.Persistence.Seeders
                 ],
                 // Today + 2 day(s)
                 [
-                    new() { User = UserSeeder.users[0], TimeSlot = weekLongTimeSlots[2][0], Boat = BoatSeeder.boats[0], },
-                    new() { User = UserSeeder.users[2], TimeSlot = weekLongTimeSlots[2][1], Boat = BoatSeeder.boats[1], },
-                    new() { User = UserSeeder.users[2], TimeSlot = weekLongTimeSlots[2][2], Boat = BoatSeeder.boats[2], },
+                    new() { 
+                        User = UserSeeder.users[0], 
+                        TimeSlot = weekLongTimeSlots[2][0], 
+                        Boat = BoatSeeder.boats[0],
+                        Battery = BatterySeeder.batteries[0]
+                    },
+                    new() { 
+                        User = UserSeeder.users[2], 
+                        TimeSlot = weekLongTimeSlots[2][1], 
+                        Boat = BoatSeeder.boats[1],
+                        Battery = BatterySeeder.batteries[3]
+                    },
+                    new() { 
+                        User = UserSeeder.users[2], 
+                        TimeSlot = weekLongTimeSlots[2][2], 
+                        Boat = BoatSeeder.boats[2],
+                        Battery = BatterySeeder.batteries[6]
+                    },
                 ],
                 // Today + 5 day(s)
                 [

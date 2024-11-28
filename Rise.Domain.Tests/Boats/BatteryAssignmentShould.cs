@@ -36,4 +36,22 @@ public class BatteryAssignmentShould
         battery.Reservations.Count.ShouldBe(1);
         battery.Reservations.ShouldContain(reservation);
     }
+
+    [Fact]
+    public void CheckBatteryAvailabilityCorrectly()
+    {
+        // Arrange
+        var boat = new BoatBuilder().Build();
+        var battery = new BatteryBuilder().WithBoat(boat).Build();
+        var date = DateOnly.FromDateTime(DateTime.UtcNow);
+        var startTime = new TimeOnly(10, 0);
+        var endTime = new TimeOnly(13, 0);
+        var currentTime = DateTime.UtcNow;
+
+        // Act
+        var isAvailable = battery.IsAvailableFor(date, startTime, endTime, currentTime);
+
+        // Assert
+        isAvailable.ShouldBeTrue();
+    }
 } 

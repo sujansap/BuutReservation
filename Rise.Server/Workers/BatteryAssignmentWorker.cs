@@ -12,6 +12,7 @@ namespace Rise.Server.Workers
     {
         private readonly IServiceProvider _services;
         private readonly ILogger<BatteryAssignmentWorker> _logger;
+        private bool _initialAssignmentDone;
 
         public BatteryAssignmentWorker(
             IServiceProvider services,
@@ -19,6 +20,7 @@ namespace Rise.Server.Workers
         {
             _services = services;
             _logger = logger;
+            _initialAssignmentDone = false;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,10 +32,17 @@ namespace Rise.Server.Workers
                     using var scope = _services.CreateScope();
                     var batteryService = scope.ServiceProvider.GetRequiredService<BatteryAssignmentService>();
                     
-                    await batteryService.AssignBatteriesToUpcomingReservations();
+                    if (!_initialAssignmentDone)
+                    {
+                        _logger.LogInformation("Performing initial battery assignment reset and optimization");
+                        await ResetAndReassignBatteries(batteryService);
+                        _initialAssignmentDone = true;
+                    }
                     
-                    // Run once per hour
-                    await Task.Delay(TimeSpan.FromHours(3), stoppingToken);
+                    await batteryService.OptimizeBatteryAssignments();
+                    
+                    // Run every hour
+                    await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
                 }
                 catch (Exception ex)
                 {
@@ -41,6 +50,11 @@ namespace Rise.Server.Workers
                     await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
                 }
             }
+        }
+
+        private async Task ResetAndReassignBatteries(BatteryAssignmentService batteryService)
+        {
+            await batteryService.OptimizeBatteryAssignments();
         }
     }
 }
