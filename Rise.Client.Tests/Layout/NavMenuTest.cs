@@ -50,7 +50,7 @@ namespace Rise.Client.Tests.Layout
             await Page.SetViewportSizeAsync(961, DefaultHeight);
             await NavigateToUrl(startSuffix);
             await Page.GetByTestId(testId).ClickAsync();
-            await Expect(Page).ToHaveURLAsync(new Regex($"{resultSuffix}$"));
+            await Expect(Page).ToHaveURLAsync(new Regex($"{resultSuffix}\\?.*$"));
 
             await LogoutAsync();
         }
