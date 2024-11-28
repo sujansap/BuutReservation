@@ -5,13 +5,12 @@ namespace Rise.Client.Tests.Admin
     [TestFixture]
     public class AdminGuestsPageTestAll : CustomAuthenticatedPageTest
     {
+        private const string baseSuffix = "/admin/guests";
 
         [Test]
         public async Task RedirectWhenNotLoggedIn()
         {
-            await NavigateToUrl("/admin/guests");
-
-            await Expect(Page.GetByTestId("login-in-progress")).ToBeVisibleAsync();
+            await TestRedirectWhenNotLoggedIn(baseSuffix);
         }
 
         [Test]
@@ -19,10 +18,7 @@ namespace Rise.Client.Tests.Admin
         [TestCase(UserRole.Member)]
         public async Task NotAuthorized(UserRole role)
         {
-            await LoginAsync(role);
-            await NavigateToUrl("/admin/guests");
-            await Expect(Page.GetByTestId("unauthorized")).ToBeVisibleAsync();
-            await LogoutAsync();
+            await TestNotAuthorized(baseSuffix, role);
         }
     }
 }

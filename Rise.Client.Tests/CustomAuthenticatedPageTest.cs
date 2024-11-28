@@ -91,5 +91,19 @@ namespace Rise.Client.Tests
             await NavigateToUrl("/authentication/logout");
             SessionStorage = null;
         }
+
+        protected async Task TestRedirectWhenNotLoggedIn(string url)
+        {
+            await NavigateToUrl(url);
+
+            await Expect(Page.GetByText("Log in to Buut")).ToBeVisibleAsync();
+        }
+        protected async Task TestNotAuthorized(string url, UserRole role)
+        {
+            await LoginAsync(role);
+            await NavigateToUrl(url);
+            await Expect(Page.GetByTestId("unauthorized")).ToBeVisibleAsync();
+            await LogoutAsync();
+        }
     }
 }
