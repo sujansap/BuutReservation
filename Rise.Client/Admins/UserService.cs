@@ -30,4 +30,26 @@ public class UserService : IUserService
         await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
     }
 
+    public async Task<int> RegisterUser(RegisterUserDto userDto)
+    {
+        var result = await _httpClient.PostAsJsonAsync("register", new RegisterUserDto
+        {
+            Email = "",
+            FirstName = "",
+            FamilyName = "",
+            PhoneNumber = "",
+            Password = "",
+            Address = new()
+            {
+                City = "",
+                Country = "",
+                Number = "",
+                PostalCode = "",
+                Street = ""
+            }
+        }
+        );
+
+        return 1;
+    }
 }

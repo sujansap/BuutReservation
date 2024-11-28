@@ -71,15 +71,16 @@ namespace Rise.Server.Controllers.Users
         /// <summary>
         /// Registers a new user
         /// </summary>
-        /// <param name="request">Dto with id of the user to add member role to</param>
+        /// <param name="userDto">Dto with required user imformation for registration</param>
         /// <returns>Result of the operation</returns>
         [HttpPost("register")]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> RegisterUser([FromBody] UserDto request)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userDto)
         {
             _logger.LogInformation("POST api/User/register");
-
-            return Ok();
+            var userId = await _userService.RegisterUser(userDto);
+            return CreatedAtAction(nameof(RegisterUser), userId);
         }
+
     }
 }

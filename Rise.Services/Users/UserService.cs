@@ -5,6 +5,9 @@ using DomainUser = Rise.Domain.Users.User;
 using Rise.Domain.Exceptions;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
+using Npgsql;
+using Rise.Services.Constants;
+using Auth0.Core.Exceptions;
 
 namespace Rise.Services.Users;
 
@@ -26,7 +29,6 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
     public async Task<UserDetailDto> GetUserDetails(int userId)
     {
-
         /*IS THIS IT?*/
         DomainUser user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
 
@@ -40,22 +42,98 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
     public async Task AddMemberRole(int userId)
     {
-       DomainUser user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
+        DomainUser user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
         /**TODO: Implement adding role to user using management api (AUTH0)**/
     }
 
-    public async Task RegisterUser(RegisterUserDto userDto)
+    public async Task<int> RegisterUser(RegisterUserDto userDto)
     {
-        
-        await _managementApiClient.Users.CreateAsync(new UserCreateRequest
+        using var transaction = _dbContext.Database.BeginTransaction();
+
+        transaction.CreateSavepoint("BeforeSavingUser");
+
+        var user = await CreateUserInDatabase(userDto);
+
+        await RegisterUserInAuth0(userDto, user.Id);
+
+        transaction.Commit(); //Commit transaction after user is registered in auth0 so if it fails, user is rolled back in our db.
+
+        return user.Id;
+    }
+
+    private async Task<DomainUser> CreateUserInDatabase(RegisterUserDto userDto)
+    {
+        var address = userDto.Address;
+        DomainUser user = new()
         {
-            UserName = userDto.Email,
             Email = userDto.Email,
-            Connection = "Username-Password-Authentication",
-            Password = userDto.Password,
-            AppMetadata = new Dictionary<string, object> { }
+            FirstName = userDto.FirstName,
+            FamilyName = userDto.FamilyName,
+            PhoneNumber = userDto.PhoneNumber,
+            Address = new()
+            {
+                City = address.City,
+                Country = address.Country,
+                Number = address.Number,
+                PostalCode = address.PostalCode,
+                Street = address.Street
+            }
+        };
+
+        try
+        {
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            HandleDbUpdateException(ex);
+            throw new UserCreationFailedException(ErrorMessages.User.UnexpectedError);
         }
 
-        );
+        return user;
+    }
+
+    private async Task RegisterUserInAuth0(RegisterUserDto userDto, int userId)
+    {
+        try
+        {
+            var auth0User = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
+            {
+                UserName = userDto.Email,
+                Email = userDto.Email,
+                Connection = "Username-Password-Authentication",
+                Password = userDto.Password,
+                AppMetadata = new Dictionary<string, object> {
+                     { "buutUserId", userId },
+                }
+            }
+            );
+
+            var guestRole = (await _managementApiClient.Roles.GetAsync(nameof(UserRole.Guest)))
+                ?? throw new RoleNotFoundException(nameof(UserRole.Guest));
+            await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
+            {
+                Roles = [guestRole.Id]
+            });
+        }
+        catch (ErrorApiException)
+        {
+            throw new UniqueConstraintViolationException(ErrorMessages.User.EmailAlreadyExists);
+        }
+    }
+
+    private static void HandleDbUpdateException(DbUpdateException ex)
+    {
+        if (ex.InnerException is PostgresException pgEx)
+        {
+            string message = pgEx.ConstraintName switch
+            {
+                DatabaseConstraints.UniqueUserEmail => ErrorMessages.User.EmailAlreadyExists,
+                _ => ErrorMessages.User.UnexpectedError
+            };
+
+            throw new UniqueConstraintViolationException(message);
+        }
     }
 }

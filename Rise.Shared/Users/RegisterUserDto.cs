@@ -44,8 +44,10 @@ public class RegisterUserDto
             .WithMessage("Family name is required")
             .MaximumLength(lastNameMaxLength).WithMessage($"Family name can't be longer than {lastNameMaxLength} characters");
 
+            var phoneNumberMaxLength = 100;
             RuleFor(x => x.PhoneNumber).NotEmpty()
             .WithMessage("Phone number is required")
+            .MaximumLength(phoneNumberMaxLength).WithMessage($"Phone number name can't be longer than {phoneNumberMaxLength} characters")
             .Matches("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$")
             .WithMessage("Phone number is invalid");
 
