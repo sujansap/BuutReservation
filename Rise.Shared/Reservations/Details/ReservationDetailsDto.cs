@@ -1,6 +1,6 @@
 ﻿namespace Rise.Shared.Reservations;
 
-public class ReservationDetailsDto : BaseDto
+public record ReservationDetailsDto : BaseDto
 {
     public TimeOnly Start { get; set; }
     public TimeOnly End { get; set; }

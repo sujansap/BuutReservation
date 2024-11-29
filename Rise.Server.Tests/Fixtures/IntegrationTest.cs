@@ -8,6 +8,7 @@ using Auth0.Core.Exceptions;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Rise.Domain.Users;
 using Rise.Server.Tests.Utils;
 using Rise.Shared.Users;
 using Shouldly;
@@ -164,14 +165,14 @@ namespace Rise.Server.Tests.Fixtures
             catch (RateLimitApiException ex)
             {
                 Console.WriteLine(ex.ToString());
-                Console.WriteLine($"Rate limit exceeded. Retrying after 1 seconds...");
+                Console.WriteLine($"Rate limit exceeded. Retrying after 2 seconds...");
                 //Delay so that auth0 api doesn't throw a rate limit exception
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(2));
                 return false;
             }
         }
 
-        private async Task RunTaskWithRetries(Func<Task<bool>> callback, int retryLimit)
+        private static async Task RunTaskWithRetries(Func<Task<bool>> callback, int retryLimit)
         {
             var retries = 0;
             var success = false;
@@ -182,11 +183,6 @@ namespace Rise.Server.Tests.Fixtures
             }
         }
 
-        protected void Logout()
-        {
-            _client.DefaultRequestHeaders.Authorization = null;
-        }
-
         protected async Task TestForbiddenAccessForEndpoint(string url, UserRole testLoginRole, string httpMethod)
         {
             await LoginAsync(testLoginRole);
@@ -194,8 +190,6 @@ namespace Rise.Server.Tests.Fixtures
             var response = await GetResponseForRequest(url, httpMethod);
 
             response?.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
-
-            Logout();
         }
 
         protected async Task TestUnauthorizedAccessForEndpoint(string url, string httpMethod)
@@ -205,14 +199,52 @@ namespace Rise.Server.Tests.Fixtures
             response?.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
         }
 
-        private async Task<HttpResponseMessage?> GetResponseForRequest(string url, string httpMethod)
+        private async Task<HttpResponseMessage?> GetResponseForRequest(string url, string httpMethod) => httpMethod switch
         {
-            return httpMethod switch
+            "GET" => await _client.GetAsync(url),
+            "POST" => await _client.PostAsJsonAsync(url, new object()),
+            "PTACH" => await _client.PatchAsJsonAsync(url, new object()),
+            _ => null,
+        };
+
+        private async Task<Auth0.ManagementApi.Models.User?> FindUserByBuutUserId(int buutUserId)
+        {
+            var users = await _managementApiClient.Users.GetAllAsync(new GetUsersRequest() { Query = $"app_metadata.buutUserId:{buutUserId}" });
+            return users.FirstOrDefault();
+        }
+
+        public async Task DeleteAuth0UserByBuutUserId(int buutUserId)
+        {
+            try
             {
-                "GET" => await _client.GetAsync(url),
-                "POST" => await _client.PostAsJsonAsync(url, new object()),
-                _ => null,
-            };
+                await RunTaskWithRetries(async () => await SendDeleteAuth0UserRequest(buutUserId), 50);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Delete request failed.", ex);
+            }
+        }
+
+        private async Task<bool> SendDeleteAuth0UserRequest(int buutUserId)
+        {
+            try
+            {
+                var user = await FindUserByBuutUserId(buutUserId);
+                if (user != null)
+                {
+                    await _managementApiClient.Users.DeleteAsync(user.UserId);
+                    return true;
+                }
+                return false;
+            }
+            catch (RateLimitApiException ex)
+            {
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine($"Rate limit exceeded. Retrying after 2 seconds...");
+                //Delay so that auth0 api doesn't throw a rate limit exception
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                return false;
+            }
         }
     }
 }

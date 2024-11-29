@@ -10,18 +10,10 @@ namespace Rise.Server.Controllers.Users
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class UserController : ControllerBase
+    public class UserController(ILogger<UserController> logger, IUserService userService) : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
-
-        public UserController(ILogger<UserController> logger, IUserService userService)
-        {
-            _logger = logger;
-            _userService = userService;
-        }
-
-
+        private readonly ILogger<UserController> _logger = logger;
+        private readonly IUserService _userService = userService;
 
         /// <summary>
         /// Get all the guest users
@@ -57,7 +49,7 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
-        [HttpPost("role/member")]
+        [HttpPatch("role/member")]
         [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -77,6 +69,7 @@ namespace Rise.Server.Controllers.Users
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userDto)
         {
             _logger.LogInformation("POST api/User/register");

@@ -13,7 +13,7 @@ namespace Rise.Persistence.Users
         {
             base.Configure(builder);
 
-            builder.Property(x => x.Email).HasMaxLength(100).IsRequired();
+            builder.Property(x => x.Email).HasMaxLength(69).IsRequired();
             builder.HasIndex(x => x.Email).IsUnique().HasDatabaseName("IX_Unique_User_Email");
 
             builder.Property(x => x.FirstName).HasMaxLength(100).IsRequired();

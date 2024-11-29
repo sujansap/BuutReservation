@@ -23,7 +23,7 @@ namespace Rise.Domain.Users
             set
             {
                 Guard.Against.NullOrWhiteSpace(value, nameof(Email));
-                Guard.Against.LengthOutOfRange(value, 1, 100);
+                Guard.Against.LengthOutOfRange(value, 1, 69);
                 Guard.Against.InvalidFormat(value, nameof(Email), "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
                 value = value.Trim();
                 _email = value;
@@ -59,7 +59,7 @@ namespace Rise.Domain.Users
             {
                 Guard.Against.NullOrWhiteSpace(value, nameof(PhoneNumber));
                 Guard.Against.LengthOutOfRange(value, 1, 100, nameof(PhoneNumber));
-                Guard.Against.InvalidFormat(value, nameof(PhoneNumber), "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
+                Guard.Against.InvalidFormat(value, nameof(PhoneNumber), "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$");
                 value = value.Trim();
                 _phoneNumber = value;
             }

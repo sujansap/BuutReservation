@@ -1,7 +1,7 @@
 using FluentValidation;
 
 namespace Rise.Shared.Users;
-public class RegisterUserDto
+public record RegisterUserDto
 {
     public required string Email { get; set; }
     public required string Password { get; set; }
@@ -10,7 +10,7 @@ public class RegisterUserDto
     public required string PhoneNumber { get; set; }
     public required AddressDto Address { get; set; }
 
-    public class AddressDto
+    public record AddressDto
     {
         public required string Street { get; set; }
         public required string Number { get; set; }
@@ -23,7 +23,7 @@ public class RegisterUserDto
     {
         public Validator()
         {
-            var emailMaxLength = 100;
+            var emailMaxLength = 69;
             RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required")
             .MaximumLength(emailMaxLength).WithMessage($"Email can't be longer than {emailMaxLength} characters")
@@ -32,7 +32,17 @@ public class RegisterUserDto
             var passwordMaxLength = 64;
             RuleFor(x => x.Password).NotEmpty()
             .WithMessage("Password is required")
-            .MaximumLength(passwordMaxLength).WithMessage($"Password can't be longer than {passwordMaxLength} characters");
+            .MaximumLength(passwordMaxLength).WithMessage($"Password can't be longer than {passwordMaxLength} characters")
+            .Matches(".*[!@#$%^&*].*")
+            .WithMessage("Password requires at least one special character: !@#$%^&*")
+            .Matches(".*[a-z].*")
+            .WithMessage("Password requires at least one lower case letter")
+            .Matches(".*[A-Z].*")
+            .WithMessage("Password requires at least one upper case letter")
+            .Matches(".*[0-9].*")
+            .WithMessage("Password requires at least one number")
+            .Matches(".{8,}")
+            .WithMessage("Password requires at least 8 characters");
 
             var firstNameMaxLength = 100;
             RuleFor(x => x.FirstName).NotEmpty()
@@ -48,7 +58,7 @@ public class RegisterUserDto
             RuleFor(x => x.PhoneNumber).NotEmpty()
             .WithMessage("Phone number is required")
             .MaximumLength(phoneNumberMaxLength).WithMessage($"Phone number name can't be longer than {phoneNumberMaxLength} characters")
-            .Matches("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$")
+            .Matches("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$")
             .WithMessage("Phone number is invalid");
 
             var streetMaxLength = 200;

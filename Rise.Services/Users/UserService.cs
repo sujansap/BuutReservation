@@ -100,35 +100,69 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     {
         try
         {
-            var auth0User = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
-            {
-                UserName = userDto.Email,
-                Email = userDto.Email,
-                Connection = "Username-Password-Authentication",
-                Password = userDto.Password,
-                AppMetadata = new Dictionary<string, object> {
-                     { "buutUserId", userId },
-                }
-            }
-            );
-
-            var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = nameof(UserRole.Guest) });
-            var role = roles.FirstOrDefault() ?? throw new RoleNotFoundException(nameof(UserRole.Guest));
-            await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
-            {
-                Roles = [role.Id]
-            });
+            await SendRegisterUserInAuth0Request(userDto, userId);
         }
         catch (ErrorApiException ex)
         {
             _logger.LogError(ex, "Auth0 error");
             if (ex.Message.Contains("already exists"))
                 throw new UniqueConstraintViolationException(ErrorMessages.User.EmailAlreadyExists);
-            throw new ApplicationException(ex.Message);
+            throw new UserCreationFailedException(ex.Message);
+        }
+        catch (RateLimitApiException)
+        {
+            await RetryRegisterUserInAuth0(userDto, userId);
         }
     }
 
-    private static void HandleDbUpdateException(DbUpdateException ex)
+    private async Task SendRegisterUserInAuth0Request(RegisterUserDto userDto, int userId)
+    {
+        var auth0User = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
+        {
+            UserName = userDto.Email,
+            Email = userDto.Email,
+            Connection = "Username-Password-Authentication",
+            Password = userDto.Password,
+            AppMetadata = new Dictionary<string, object> {
+                     { "buutUserId", userId },
+                }
+        }
+           );
+
+        var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = nameof(UserRole.Guest) });
+        var role = roles.FirstOrDefault() ?? throw new RoleNotFoundException(nameof(UserRole.Guest));
+        await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
+        {
+            Roles = [role.Id]
+        });
+    }
+
+    private async Task RetryRegisterUserInAuth0(RegisterUserDto userDto, int userId)
+    {
+        var retries = 0;
+        var success = false;
+        while (retries <= 20 && !success)
+        {
+            try
+            {
+                await SendRegisterUserInAuth0Request(userDto, userId);
+                success = true;
+            }
+            catch (RateLimitApiException)
+            {
+                //Delay so that auth0 api doesn't throw a rate limit exception
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                retries++;
+            }
+        }
+
+        if (!success)
+        {
+            throw new UserCreationFailedException("Unexpected error");
+        }
+    }
+
+    private void HandleDbUpdateException(DbUpdateException ex)
     {
         if (ex.InnerException is PostgresException pgEx)
         {
@@ -137,7 +171,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 DatabaseConstraints.UniqueUserEmail => ErrorMessages.User.EmailAlreadyExists,
                 _ => ErrorMessages.User.UnexpectedError
             };
-
+            _logger.LogError(pgEx, "Unexpected error");
             throw new UniqueConstraintViolationException(message);
         }
     }
