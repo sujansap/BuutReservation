@@ -41,7 +41,7 @@ namespace Rise.Server.Workers
                     
                     await batteryService.AssignAndOptimizeBatteries();
                     
-                    // Run every hour
+                    // Run every 2 hour
                     await Task.Delay(TimeSpan.FromHours(2), stoppingToken);
                 }
                 catch (Exception ex)

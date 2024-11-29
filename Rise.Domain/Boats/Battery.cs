@@ -6,7 +6,7 @@ namespace Rise.Domain.Boats
     public class Battery : Entity
     {
         private string _type = default!;
-        private readonly List<Reservation> _reservations = new();
+        private readonly List<Reservation> _reservations = [];
         private int _usageCount;
         private DateTime? _lastUsedAt;
 
@@ -52,7 +52,7 @@ namespace Rise.Domain.Boats
                 .OrderBy(r => r.TimeSlot.Start)
                 .ToList();
 
-            if (!reservationsOnDate.Any())
+            if (reservationsOnDate.Count == 0)
                 return true;
 
             foreach (var reservation in reservationsOnDate)
@@ -71,7 +71,7 @@ namespace Rise.Domain.Boats
 
         public void AssignToHolder(User? user)
         {
-            if (user == null)
+            if (user is null)
             {
                 CurrentHolder = Mentor;
                 CurrentHolderId = Mentor.Id;
@@ -122,6 +122,53 @@ namespace Rise.Domain.Boats
                 .FirstOrDefault(b => 
                     b.HasSufficientChargingTime(currentTime) && 
                     b.IsAvailableForDate(date, start, end)));
+        }
+
+        public static async Task AssignBatteriesToReservationsAsync(
+            IEnumerable<Reservation> reservations,
+            IEnumerable<Battery> batteries,
+            TimeInfo timeInfo)
+        {
+            var reservationsByDate = reservations
+                .GroupBy(r => r.TimeSlot.Date)
+                .OrderBy(g => g.Key);
+
+            foreach (var dateGroup in reservationsByDate)
+            {
+                foreach (var reservation in dateGroup.OrderBy(r => r.TimeSlot.Start))
+                {
+                    if (reservation.Battery is null)
+                    {
+                        var compatibleBatteries = GetCompatibleBatteriesForBoat(
+                            batteries, reservation.BoatId);
+
+                        var availableBattery = await FindAvailableBatteryAsync(
+                            compatibleBatteries,
+                            reservation.TimeSlot.Date,
+                            reservation.TimeSlot.Start,
+                            reservation.TimeSlot.End,
+                            timeInfo.Now);
+
+                        if (availableBattery is not null)
+                        {
+                            reservation.Battery = availableBattery;
+                            availableBattery.AssignToHolder(reservation.User);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void HandleCompletedReservations(
+            IEnumerable<Reservation> completedReservations)
+        {
+            foreach (var reservation in completedReservations)
+            {
+                var lastUser = reservation.User;
+                var battery = reservation.Battery!;
+                reservation.Battery = null;
+                battery.AssignToHolder(lastUser);
+            }
         }
     }
 }

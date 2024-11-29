@@ -153,9 +153,9 @@ namespace Rise.Services.Reservations
                 .Include(r => r.Boat)
                 .Include(r => r.TimeSlot)
                 .Include(r => r.Battery)
-                    .ThenInclude(b => b.CurrentHolder)
+                    .ThenInclude(b => b!.CurrentHolder)
                 .Include(r => r.Battery)
-                    .ThenInclude(b => b.Mentor)
+                    .ThenInclude(b => b!.Mentor)
                 .FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
@@ -169,7 +169,7 @@ namespace Rise.Services.Reservations
                 MentorName = reservation.Battery?.Mentor?.FamilyName,
                 BatteryType = reservation.Battery?.Type,
                 BatteryId = reservation.Battery?.Id,
-                CurrentBatteryUserName = reservation.Battery?.CurrentHolder.FamilyName,
+                CurrentBatteryUserName = reservation.Battery?.CurrentHolder?.FamilyName,
                 CurrentBatteryUserId = reservation.Battery?.CurrentHolderId
             };
         }
