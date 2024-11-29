@@ -47,9 +47,9 @@ public record class UserRegistrationModelDto
             RuleFor(x => x.Address.Street).NotEmpty().WithMessage("Please provide your street address.")
                 .MaximumLength(200).WithMessage("Your street address should not exceed 100 characters.");
             RuleFor(x => x.Address.Number).NotEmpty().WithMessage("Please provide your house number.")
-                .MaximumLength(200).WithMessage("Your house number should not exceed 10 characters.");
+                .MaximumLength(10).WithMessage("Your house number should not exceed 10 characters.");
             RuleFor(x => x.Address.City).NotEmpty().WithMessage("Please provide your city.")
-                .MaximumLength(200).WithMessage("Your city should not exceed 50 characters.");
+                .MaximumLength(200).WithMessage("Your city should not exceed 200 characters.");
             RuleFor(x => x.Address.PostalCode).NotEmpty().WithMessage("Please provide your postal code.")
                 .MaximumLength(100).WithMessage("Your postal code should not exceed 100 characters.");
             RuleFor(x => x.Address.Country).NotEmpty().WithMessage("Please provide your country.")
@@ -62,11 +62,11 @@ public record class UserRegistrationModelDto
         }
 
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-            {
-                var result = await ValidateAsync(ValidationContext<UserRegistrationModelDto>.CreateWithOptions((UserRegistrationModelDto)model, x => x.IncludeProperties(propertyName)));
-                if (result.IsValid)
-                    return Array.Empty<string>();
-                return result.Errors.Select(e => e.ErrorMessage);
-            };
+        {
+            var result = await ValidateAsync(ValidationContext<UserRegistrationModelDto>.CreateWithOptions((UserRegistrationModelDto)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
     }
 }

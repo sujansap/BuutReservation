@@ -4,89 +4,88 @@
 @* TODO how to handle plaint text password transport to backend?? + add localisation *@
 <PageTitle>@Localizer["PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h4" GutterBottom Align="Align.Center">@Localizer["PageTitle"]</MudText>
-<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4 rounded">
-    <MudPaper Class="pa-4">
-        <MudForm Model="@User" @ref="@Form" @bind-IsValid="@isSuccess" Validation="@(validator.ValidateValue)" ValidationDelay="0">
+<MudText Typo="Typo.h4" GutterBottom Align="Align.Center" data-testid="page-title">@Localizer["PageTitle"]</MudText>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4 rounded" data-testid="register-container">
+    <MudPaper Class="pa-4" data-testid="register-paper">
+        <MudForm Model="@User" @ref="@Form" @bind-IsValid="@isSuccess" Validation="@(validator.ValidateValue)" ValidationDelay="0" data-testid="register-form">
             <MudGrid Spacing="2">
                 <MudItem xs="12">
-                    <MudText Typo="Typo.h5">Credentials</MudText>
+                    <MudText Typo="Typo.h5" data-testid="credentials-title">Credentials</MudText>
                 </MudItem>
                 <MudItem xs="12">
                     <MudTextField @bind-Value="User.Email" Variant="Variant.Outlined" For="@(() => User.Email)"
-                        Label="Email" Immediate="true" Required="true" HelperText="Enter your email address" MaxLength="100" />
+                        Label="Email" Immediate="true" Required="true" HelperText="Enter your email address" MaxLength="100" data-testid="email-field" />
                 </MudItem>
                 <MudItem xs="12">
                     <MudTextField @bind-Value="User.Password" Variant="Variant.Outlined" For="@(() => User.Password)"
                         Label="Wachtwoord" InputType="@PasswordInputType" Immediate="true" Required="true"
                         Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon"
-                        OnAdornmentClick="TogglePasswordIcon" AdornmentAriaLabel="Show Password" HelperText="Enter a strong password" MaxLength="64" />
+                        OnAdornmentClick="TogglePasswordIcon" AdornmentAriaLabel="Show Password" HelperText="Enter a strong password" MaxLength="64" data-testid="password-field" />
                 </MudItem>
                 <MudItem xs="12">
                     <MudTextField T="string" Variant="Variant.Outlined" Label="Herhaal Wachtwoord"
                         InputType="@PasswordInputType" Required="true" Immediate="true"
-                        Validation="@(new Func<string, string>(CheckPasswordMatch))" HelperText="Repeat your password" MaxLength="64" />
+                        Validation="@(new Func<string, string>(CheckPasswordMatch))" HelperText="Repeat your password" MaxLength="64" data-testid="repeat-password-field" />
                 </MudItem>
             </MudGrid>
             <MudDivider DividerType="DividerType.Middle" Class="mt-8 mb-8" />
             <MudGrid Spacing="2">
                 <MudItem xs="12">
-                    <MudText Typo="Typo.h5">Details</MudText>
+                    <MudText Typo="Typo.h5" data-testid="details-title">Details</MudText>
                 </MudItem>
                 <MudItem xs="12" sm="6">
                     <MudTextField @bind-Value="User.FirstName" Variant="Variant.Outlined" For="@(() => User.FirstName)"
-                        Label="Voornaam" Immediate="true" Required="true" HelperText="Enter your first name" MaxLength="100" />
+                        Label="Voornaam" Immediate="true" Required="true" HelperText="Enter your first name" MaxLength="100" data-testid="first-name-field" />
                 </MudItem>
                 <MudItem xs="12" sm="6">
                     <MudTextField @bind-Value="User.LastName" Variant="Variant.Outlined" For="@(() => User.LastName)"
-                        Label="Naam" Immediate="true" Required="true" HelperText="Enter your last name" MaxLength="100" />
+                        Label="Naam" Immediate="true" Required="true" HelperText="Enter your last name" MaxLength="100" data-testid="last-name-field" />
                 </MudItem>
                 <MudItem xs="12" sm="4">
                     <MudDatePicker @bind-Date="User.DateOfBirth" Editable="false" Variant="Variant.Outlined"
                         Label="Geboortedatum" MaxDate="@(DateTime.Today.AddYears(-18))" Required="true"
-                        OpenTo="OpenTo.Year" For="@(() => User.DateOfBirth)" HelperText="Select your date of birth" />
+                        OpenTo="OpenTo.Year" For="@(() => User.DateOfBirth)" HelperText="Select your date of birth" data-testid="date-of-birth-picker" />
                 </MudItem>
                 <MudItem xs="12" sm="8">
                     <MudTextField @bind-Value="User.PhoneNumber" Variant="Variant.Outlined"
-                        For="@(() => User.PhoneNumber)" Label="GSM Nummer" Immediate="true" Required="true" HelperText="Enter your phone number starting with '00' and then the country code" MaxLength="25" />
-                </MudItem>
-            </MudGrid>
+                        For="@(() => User.PhoneNumber)" Label="GSM Nummer" Immediate="true" Required="true" HelperText="Enter your phone number starting with '00' and then the country code" MaxLength="25" data-testid="phone-number-field" />
+                </MudGrid>
             <MudDivider DividerType="DividerType.Middle" Class="mt-8 mb-8" />
             <MudGrid Spacing="2">
                 <MudItem xs="12">
-                    <MudText Typo="Typo.h5">Address</MudText>
+                    <MudText Typo="Typo.h5" data-testid="address-title">Address</MudText>
                 </MudItem>
                 <MudItem xs="12" sm="8">
                     <MudTextField @bind-Value="User.Address.Street" Variant="Variant.Outlined"
-                        For="@(() => User.Address.Street)" Label="Straat" Immediate="true" Required="true" HelperText="Enter your street name" MaxLength="200" />
+                        For="@(() => User.Address.Street)" Label="Straat" Immediate="true" Required="true" HelperText="Enter your street name" MaxLength="200" data-testid="street-field" />
                 </MudItem>
                 <MudItem xs="12" sm="4">
                     <MudTextField @bind-Value="User.Address.Number" Variant="Variant.Outlined"
-                        For="@(() => User.Address.Number)" Label="Nummer" Immediate="true" Required="true" HelperText="Enter your house number" MaxLength="200" />
+                        For="@(() => User.Address.Number)" Label="Nummer" Immediate="true" Required="true" HelperText="Enter your house number" MaxLength="10" data-testid="house-number-field" />
                 </MudItem>
                 <MudItem xs="12" sm="8">
                     <MudTextField @bind-Value="User.Address.City" Variant="Variant.Outlined"
-                        For="@(() => User.Address.City)" Label="Stad" Immediate="true" Required="true" HelperText="Enter your city" MaxLength="200" />
+                        For="@(() => User.Address.City)" Label="Stad" Immediate="true" Required="true" HelperText="Enter your city" MaxLength="200" data-testid="city-field" />
                 </MudItem>
                 <MudItem xs="12" sm="4">
                     <MudTextField @bind-Value="User.Address.PostalCode" Variant="Variant.Outlined"
-                        For="@(() => User.Address.PostalCode)" Label="Postcode" Immediate="true" Required="true" HelperText="Enter your postal code" MaxLength="100" />
+                        For="@(() => User.Address.PostalCode)" Label="Postcode" Immediate="true" Required="true" HelperText="Enter your postal code" MaxLength="100" data-testid="postal-code-field" />
                 </MudItem>
                 <MudItem xs="12">
                     <MudTextField @bind-Value="User.Address.Country" Variant="Variant.Outlined" ReadOnly="true" 
-                        For="@(() => User.Address.Country)" Label="Land" Immediate="true" Required="true" MaxLength="100" />
+                        For="@(() => User.Address.Country)" Label="Land" Immediate="true" Required="true" MaxLength="100" data-testid="country-field" />
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-end mt-2">
                     <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large"
-                        StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => {Form.ResetAsync(); User.Address.Country = "Belgium";})" Class="mx-2">
+                        StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => {Form.ResetAsync(); User.Address.Country = "Belgium";})" Class="mx-2" data-testid="reset-button">
                         Reset
                     </MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
                         EndIcon="@Icons.Material.Filled.Send" Disabled="@(!isSuccess || isLoading)"
-                        OnClick="@(async () => await HandleSubmit())">
+                        OnClick="@(async () => await HandleSubmit())" data-testid="register-button">
                         @if (isLoading)
                         {
-                                <MudProgressCircular Indeterminate="true" Size="Size.Small" />
+                                <MudProgressCircular Indeterminate="true" Size="Size.Small" data-testid="loading-indicator" />
                         }
                         else
                         {
