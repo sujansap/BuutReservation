@@ -337,8 +337,6 @@ namespace Rise.Server.Tests.Controllers
             reservationDetails.ShouldNotBeNull();
             reservationDetails.Id.ShouldBe(validReservationId);
             reservationDetails.IsDeleted.ShouldBeTrue();
-
-            Logout();
         }
 
 
@@ -353,7 +351,6 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-            Logout();
         }
         [Fact]
         public async Task PATCH_CancelReservation_AlreadyCancelledReservation_ExpectBadRequest()
@@ -366,7 +363,6 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-            Logout();
         }
 
         [Fact]
@@ -380,7 +376,6 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-            Logout();
         }
     }
 }
