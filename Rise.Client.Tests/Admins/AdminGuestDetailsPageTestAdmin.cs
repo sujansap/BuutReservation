@@ -1,13 +1,20 @@
 using System.Text.Json;
-using Microsoft.Playwright;
 using Rise.Shared.Users;
-using Shouldly;
 
 namespace Rise.Client.Tests.Admin
 {
     [TestFixture]
-    public class AdminGuestDetailsPageTest : CustomPageTest
+    public class AdminGuestDetailsPageTestAdmin : CustomAuthenticatedPageTest
     {
+        protected const string baseSuffix = "/admin/guests";
+
+        private readonly static string[] fieldNames = ["name", "email", "address", "phone"];
+
+        [SetUp]
+        public async Task SetUpAsync()
+        {
+            await LoginAsync(UserRole.Administrator);
+        }
 
         private async Task AssertUserDetail(string testId, string expectedValue)
         {
@@ -44,7 +51,7 @@ namespace Rise.Client.Tests.Admin
             };
 
             await MockUserDetails(userId, userDetails, delayMs);
-            await InitNavigationToUrl($"/admin/guests/{userId}");
+            await NavigateToUrl($"{baseSuffix}/{userId}");
         }
 
         [Test]
@@ -59,7 +66,7 @@ namespace Rise.Client.Tests.Admin
         public async Task ShowsLoadingStateWhileFetchingDetails()
         {
             await InitializeWithMockUser(1, 2000);
-            await Page.GetByTestId("user-details-loading-progress").IsVisibleAsync();
+            await Expect(Page.GetByTestId("user-details-loading-progress")).ToBeVisibleAsync();
         }
 
         [Test]
@@ -76,8 +83,8 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl($"/admin/guests/{userId}");
-            await Page.GetByTestId("user-details-fetch-error").IsVisibleAsync();
+            await NavigateToUrl($"{baseSuffix}/{userId}");
+            await Expect(Page.GetByTestId("user-details-fetch-error")).ToBeVisibleAsync();
         }
 
         [Test]
@@ -86,7 +93,7 @@ namespace Rise.Client.Tests.Admin
             await InitializeWithMockUser(1);
 
             await Page.GetByTestId("back-to-guests-list-button").ClickAsync();
-            await Expect(Page).ToHaveURLAsync("/admin/guests");
+            await Expect(Page).ToHaveURLAsync(baseSuffix);
         }
 
         [Test]
@@ -102,7 +109,7 @@ namespace Rise.Client.Tests.Admin
             };
 
             await MockUserDetails(userId, initialUser);
-            await InitNavigationToUrl($"/admin/guests/{userId}");
+            await NavigateToUrl($"{baseSuffix}/{userId}");
             await AssertUserDetail("user-details-page-familyname", "Smith");
 
             // updatedUser state
@@ -114,7 +121,7 @@ namespace Rise.Client.Tests.Admin
             };
 
             await MockUserDetails(userId, updatedUser);
-            await Page.ReloadAsync();
+            await ReloadPage();
             await AssertUserDetail("user-details-page-familyname", "Johnson");
         }
 
@@ -132,8 +139,8 @@ namespace Rise.Client.Tests.Admin
                 });
             });
 
-            await InitNavigationToUrl($"/admin/guests/{invalidUserId}");
-            await Page.GetByTestId("user-details-fetch-error").IsVisibleAsync();
+            await NavigateToUrl($"{baseSuffix}/{invalidUserId}");
+            await Expect(Page.GetByTestId("user-details-fetch-error")).ToBeVisibleAsync();
         }
 
 
@@ -141,7 +148,7 @@ namespace Rise.Client.Tests.Admin
         public async Task DisplaysAllUserFields()
         {
             await InitializeWithMockUser(1);
-            await Task.WhenAll(new[] { "name", "email", "address", "phone" }
+            await Task.WhenAll(fieldNames
                 .Select(field => Expect(Page.GetByTestId($"user-details-page-{field}")).ToBeVisibleAsync()));
         }
     }

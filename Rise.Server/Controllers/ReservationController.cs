@@ -76,7 +76,7 @@ namespace Rise.Server.Controllers
                 }));
             }
 
-            var reservations = await _reservationService.GetUserReservations(1, cursor, isNextPage, getPast, pageSize);
+            var reservations = await _reservationService.GetUserReservations(cursor, isNextPage, getPast, pageSize);
             return Ok(reservations);
         }
         /// <summary>
@@ -126,6 +126,25 @@ namespace Rise.Server.Controllers
             {
                 _logger.LogError(ex, "Error retrieving reservation details for id {id}", id);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the reservation details.");
+            }
+        }
+
+        [HttpPatch("cancel/{id}")]
+        public async Task<IActionResult> CancelReservation(int id)
+        {
+            try
+            {
+                await _reservationService.CancelReservationAsync(id);
+                return NoContent();
+            }
+            catch (EntityNotFoundException)
+            {
+                _logger.LogWarning("Reservation with id {id} not found.", id);
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

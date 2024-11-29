@@ -13,6 +13,7 @@
 @inject IStringLocalizer<ReservationPageResources> Localizer
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
+@attribute [Authorize]
 
 <PageTitle>@Localizer["YourReservations"]</PageTitle>
 
@@ -20,7 +21,11 @@
     <MudTabPanel Text="@Localizer["Reserve"]" data-testid="tab-reserve">
         <TimeSlotOverview />
     </MudTabPanel>
-    <MudTabPanel Text="@Localizer["YourReservations"]" data-testid="tab-your-reservations">
-        <UserReservations Past="@Past" />
-    </MudTabPanel>
+    <AuthorizeView Roles="Member">
+        <Authorized>
+            <MudTabPanel Text="@Localizer["YourReservations"]" data-testid="tab-your-reservations">
+                <UserReservations Past="@Past" />
+            </MudTabPanel>
+        </Authorized>
+    </AuthorizeView>
 </MudTabs>

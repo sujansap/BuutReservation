@@ -6,8 +6,8 @@
 @using Microsoft.Extensions.Localization
 @using Rise.Shared.Users
 @inject IStringLocalizer<AdminPageResources> Localizer
-
 @layout AdminLayout
+@attribute [Authorize(Roles = "Administrator")]
 
 <BackButton Href="/admin/guests" data-testid="back-to-guests-list-button" />
 

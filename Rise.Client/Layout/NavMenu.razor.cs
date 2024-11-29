@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
@@ -9,21 +8,22 @@ namespace Rise.Client.Layout
         private bool _drawerOpen = false;
         private bool _notificationPopoverOpen = false;
 
+        [Inject]
+        public required NavigationManager Navigation { get; set; }
+
         private void ToggleDrawer()
         {
             _drawerOpen = !_drawerOpen;
         }
 
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
+        private void HandleNotificationButtonClicked()
+        {
+            _notificationPopoverOpen = !_notificationPopoverOpen;
+        }
 
         public void BeginLogOut()
         {
             Navigation.NavigateToLogout("authentication/logout");
-        }
-
-        private void HandleNotificationButtonClicked()
-        {
-            _notificationPopoverOpen = !_notificationPopoverOpen;
         }
     }
 }

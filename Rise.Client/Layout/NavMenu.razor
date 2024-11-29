@@ -22,13 +22,14 @@
             <AuthorizeView>
                 <Authorized>
                     <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]</MudNavLink>
+                    @if (context.User.IsInRole("Administrator"))
+                    {
+                        <MudNavLink Href="admin" data-testid="nav-desktop-admin">@Localizer["Admin"]</MudNavLink>
+                    }
                 </Authorized>
             </AuthorizeView>
-            <AuthorizeView Roles="Administrator">
-                <MudNavLink Href="admin" data-testid="nav-desktop-admin">@Localizer["Admin"]</MudNavLink>
-            </AuthorizeView>
         </MudStack>
-        <MudSpacer></MudSpacer>
+        <MudSpacer />
         <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
             data-testid="nav-desktop-book">
             @Localizer["BookNow"]
@@ -40,8 +41,8 @@
                     <MudIconButton Href="profile" Edge="Edge.End" Icon="@Icons.Material.Filled.Person"
                         Color="Color.Inherit" data-testid="nav-desktop-profile" />
                     <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
-                        Href="notifications" data-testid="nav-desktop-notifications" />
-                    <MudNavLink OnClick="BeginLogOut" data-testid="nav-desktop-logout"
+            data-testid="nav-desktop-notifications" OnClick="HandleNotificationButtonClicked" />
+                    <MudNavLink OnClick="@BeginLogOut" data-testid="nav-desktop-logout"
                         Icon="@Icons.Material.Filled.Logout" IconColor="Color.Inherit">
                         Log out
                     </MudNavLink>
@@ -95,24 +96,27 @@
         <MudNavLink Href="home" data-testid="nav-mobile-home" Match="NavLinkMatch.All">@Localizer["Home"]
         </MudNavLink>
         <MudNavLink Href="about" data-testid="nav-mobile-about">@Localizer["About"]</MudNavLink>
-        <MudNavLink Href="book" data-testid="nav-mobile-book">@Localizer["BookNow"]</MudNavLink>
-        <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">@Localizer["Reserve"]</MudNavLink>
+            <MudNavLink Href="book" data-testid="nav-mobile-book">@Localizer["BookNow"]</MudNavLink>
         <AuthorizeView>
             <Authorized>
-                <MudNavGroup Title="ADMIN" Expanded="true">
-                    <AdminMenu />
-                </MudNavGroup>
+                    <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">@Localizer["Reserve"]</MudNavLink>
+                    @if (context.User.IsInRole("Administrator"))
+                {
+                    <MudNavGroup Title="ADMIN" Expanded="true">
+                        <AdminMenu />
+                    </MudNavGroup>
+                }
                 <MudDivider />
                 <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">
                     @Localizer["Profile"]
                 </MudNavLink>
                 <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
                     Icon="@Icons.Material.Filled.Notifications">@Localizer["Notifications"]</MudNavLink>
-                <MudNavLink OnClick="BeginLogOut" data-testid="nav-mobile-logout" Icon="@Icons.Material.Filled.Logout">
+                    <MudDivider />
+                    <MudNavLink OnClick="@BeginLogOut" data-testid="nav-mobile-logout"
+                        Icon="@Icons.Material.Filled.Logout">
                     Log out</MudNavLink>
-            </Authorized>
-            <NotAuthorized>
-            </NotAuthorized>
+                </Authorized>
         </AuthorizeView>
     </MudNavMenu>
     <MudDivider />

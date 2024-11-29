@@ -217,7 +217,7 @@ namespace Rise.Client.Tests.Notifications
         public async Task HasNotificationsList()
         {
             await MockHTTPRequests();
-            await InitNavigationToUrl("/notifications");
+            await NavigateToUrl("/notifications");
             await Page.GetByTestId("notifications-list").IsVisibleAsync();
         }
 
@@ -225,7 +225,7 @@ namespace Rise.Client.Tests.Notifications
         public async Task HasNotificationDetails()
         {
             await MockHTTPRequests();
-            await InitNavigationToUrl("/notifications");
+            await NavigateToUrl("/notifications");
             await Page.GetByTestId("notification-details").IsVisibleAsync();
         }
 
@@ -234,7 +234,7 @@ namespace Rise.Client.Tests.Notifications
         public async Task HasNotificationComponentWithCorrectData(int id)
         {
             await MockHTTPRequests();
-            await InitNavigationToUrl("/notifications");
+            await NavigateToUrl("/notifications");
 
             DateTime timeStamp = Notifications.First(n => n.Id == id).CreatedAt;
 
@@ -260,7 +260,7 @@ namespace Rise.Client.Tests.Notifications
         public async Task HasNoUnreadIndicatorWhenNotificationIsRead(int id)
         {
             await MockHTTPRequests();
-            await InitNavigationToUrl("/notifications");
+            await NavigateToUrl("/notifications");
 
             // Assert is-unread indicator is visible
             var isReadElement = Page.GetByTestId($"notification-is-unread-badge-{id}");
@@ -279,7 +279,7 @@ namespace Rise.Client.Tests.Notifications
         public async Task HasNotificationDetailsWhenNotificationClicked(int id)
         {
             await MockHTTPRequests();
-            await InitNavigationToUrl("/notifications");
+            await NavigateToUrl("/notifications");
 
             // Click on the notification
             var notificationElement = Page.GetByTestId($"notification-{id}");
@@ -306,7 +306,7 @@ namespace Rise.Client.Tests.Notifications
         public async Task HasNoUnreadIndicatorWhenUnreadNotificationIsClicked(int id1, int id2)
         {
             await MockHTTPRequests();
-            await InitNavigationToUrl("/notifications");
+            await NavigateToUrl("/notifications");
 
             // Assert is-unread indicator is visible
             var isReadElementBadge = Page.GetByTestId($"notification-is-unread-badge-{id1}");

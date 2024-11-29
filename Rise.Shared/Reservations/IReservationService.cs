@@ -4,14 +4,14 @@ namespace Rise.Shared.Reservations
 {
     public interface IReservationService
     {
-        Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId);
+        Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate);
 
         /// <summary>
         /// Gets all the upcoming reservations for the current user
         /// </summary>
         /// <returns>All the reservations</returns>
 
-        Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5);
+        Task<ItemsPageDto<ReservationDto>> GetUserReservations(int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5);
 
 
         /// <summary>
@@ -23,6 +23,8 @@ namespace Rise.Shared.Reservations
 
 
         Task<ReservationDetailsDto> GetReservationDetailsAsync(int reservationId);
+
+        Task CancelReservationAsync(int reservationId);
 
     }
 }

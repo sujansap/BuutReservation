@@ -3,12 +3,12 @@ using Microsoft.Playwright.NUnit;
 
 namespace Rise.Client.Tests
 {
-    [Parallelizable(ParallelScope.Self)]
+    [Parallelizable(ParallelScope.Fixtures)]
     [TestFixture]
     public class CustomPageTest : PageTest
     {
         [OneTimeSetUp]
-        public void GlobalSetup()
+        public virtual void GlobalSetUp()
         {
             SetDefaultExpectTimeout(10_000);
         }
@@ -53,11 +53,22 @@ namespace Rise.Client.Tests
             };
         }
 
-        protected async Task InitNavigationToUrl(string url)
+        protected async Task Hydration()
+        {
+            await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
+            await Page.WaitForSelectorAsync("[data-testid=authorization-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
+        }
+
+        protected async Task NavigateToUrl(string url)
         {
             await Page.GotoAsync(url);
+            await Hydration();
+        }
 
-            await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
+        protected async Task ReloadPage()
+        {
+            await Page.ReloadAsync();
+            await Hydration();
         }
 
     }

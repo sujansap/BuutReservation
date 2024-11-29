@@ -7,6 +7,7 @@
 @using Rise.Client.Localization.Notifications;
 @using Microsoft.Extensions.Localization;
 @inject IStringLocalizer<NotificationsPageResources> Localizer
+@attribute [Authorize]
 
 <MudContainer>
     <MudText Typo="Typo.h4" Class="pb-8">@Localizer["Notifications"]</MudText>

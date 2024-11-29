@@ -1,51 +1,75 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
 using Rise.Shared.Users;
 
 namespace Rise.Client.Tests
 {
-    [Parallelizable(ParallelScope.Self)]
     [TestFixture]
     public class CustomAuthenticatedPageTest : CustomPageTest
     {
         protected IConfiguration Configuration { get; private set; } = default!;
 
-        [OneTimeSetUp]
-        public new void GlobalSetup()
+        private string? SessionStorage
         {
-            var builder = new ConfigurationBuilder().AddUserSecrets<CustomAuthenticatedPageTest>();
+            get;
+            set;
+        }
+
+        [OneTimeSetUp]
+        public override void GlobalSetUp()
+        {
+            var builder = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .AddUserSecrets<CustomAuthenticatedPageTest>();
             Configuration = builder.Build();
-            base.GlobalSetup();
+
+
+            base.GlobalSetUp();
         }
 
         protected async Task LoginAsync(UserRole role)
         {
+            if (IsLoggedIn())
+            {
+                await InjectSessionStorage();
+                return;
+            }
 
-            var credentials = role switch
+            Credentials? credentials = role switch
             {
                 UserRole.Administrator => Configuration.GetSection("Administrator").Get<Credentials>(),
                 UserRole.Guest => Configuration.GetSection("Guest").Get<Credentials>(),
                 UserRole.Member => Configuration.GetSection("Member").Get<Credentials>(),
-                _ => throw new ArgumentOutOfRangeException(role.ToString(), "Unknown role")
-            };
+                _ => null
+            } ?? throw new InvalidOperationException("Credentials cannot be null");
 
-            await InitNavigationToUrl("/authentication/login");
+            await LoginUsingCredentials(credentials);
+        }
 
-            if (credentials == null)
-            {
-                throw new InvalidOperationException("Credentials cannot be null");
-            }
+        private async Task LoginUsingCredentials(Credentials credentials)
+        {
+            await NavigateToUrl("/authentication/login");
 
             await Page.FillAsync("input[name='username']", credentials.Email);
             await Page.FillAsync("input[name='password']", credentials.Password);
             await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
-            await InitNavigationToUrl("/home");
 
-            var sessionStorage = await Page.EvaluateAsync<string>("() => JSON.stringify(sessionStorage)");
-            Environment.SetEnvironmentVariable("SESSION_STORAGE", sessionStorage);
+            await SaveSessionStorage();
+            await NavigateToUrl("/home");
+        }
 
-            var loadedSessionStorage = Environment.GetEnvironmentVariable("SESSION_STORAGE");
+        private async Task SaveSessionStorage()
+        {
+            string sessionStorage = await Page.EvaluateAsync<string>("() => JSON.stringify(sessionStorage)");
+            SessionStorage = sessionStorage;
+        }
+
+        private bool IsLoggedIn()
+        {
+            return SessionStorage?.Contains("oidc.user:https://rise-gent2.eu.auth0.com:8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l") ?? false;
+        }
+
+        private async Task InjectSessionStorage()
+        {
             await Context.AddInitScriptAsync(@"(storage => {
                 if (window.location.hostname === 'localhost') {
                     const entries = JSON.parse(storage);
@@ -53,7 +77,7 @@ namespace Rise.Client.Tests
                         window.sessionStorage.setItem(key, value);
                     }
                 }
-            })('" + loadedSessionStorage + "')");
+            })('" + SessionStorage + "')");
         }
 
         private class Credentials
@@ -64,8 +88,27 @@ namespace Rise.Client.Tests
 
         protected async Task LogoutAsync()
         {
-            await InitNavigationToUrl("/authentication/logout");
-            Environment.SetEnvironmentVariable("SESSION_STORAGE", string.Empty);
+            await NavigateToUrl("/authentication/logout");
+            SessionStorage = null;
+        }
+
+        protected async Task CheckRedirectedToLogin()
+        {
+            await Expect(Page.GetByText("Log in to Buut")).ToBeVisibleAsync();
+
+        }
+
+        protected async Task TestRedirectWhenNotLoggedIn(string url)
+        {
+            await NavigateToUrl(url);
+            await CheckRedirectedToLogin();
+        }
+        protected async Task TestNotAuthorized(string url, UserRole role)
+        {
+            await LoginAsync(role);
+            await NavigateToUrl(url);
+            await Expect(Page.GetByTestId("unauthorized")).ToBeVisibleAsync();
+            await LogoutAsync();
         }
     }
 }

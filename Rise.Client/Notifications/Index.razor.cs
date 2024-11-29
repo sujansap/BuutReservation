@@ -1,6 +1,4 @@
-using System;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 using Rise.Client.Common;
 using Rise.Shared.Notifications;
 
@@ -50,7 +48,7 @@ namespace Rise.Client.Notifications
                         {
                             NotificationService.MarkNotificationAsRead(notification.Id);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             notification.IsRead = false;
                         }
