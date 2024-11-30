@@ -1,3 +1,4 @@
+
 using Rise.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Rise.Shared.Users;
@@ -9,6 +10,7 @@ using Npgsql;
 using Rise.Services.Constants;
 using Auth0.Core.Exceptions;
 using Microsoft.Extensions.Logging;
+using Auth0.ManagementApi.Paging;
 
 namespace Rise.Services.Users;
 
@@ -18,16 +20,86 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     private readonly IManagementApiClient _managementApiClient = managementApiClient;
     private readonly ILogger<UserService> _logger = logger;
 
-    public async Task<IEnumerable<UserDto>> GetUsersByRole(string role)
+    private async Task<Role> GetAuth0RoleByName(UserRole userRole)
     {
-        return await _dbContext.Users
-        .Select(user => new UserDto()
-        {
-            Id = user.Id,
-            FamilyName = user.FamilyName
-        }).ToListAsync();
-
+        var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = userRole.ToString() });
+        return roles.FirstOrDefault() ?? throw new RoleNotFoundException($"Role '{userRole}' not found in Auth0.");
     }
+
+    public async Task<UsersPagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
+    {
+        try
+        {
+            var auth0Role = await GetAuth0RoleByName(role);
+
+            // Get paginated users from Auth0
+            //page-1 because Auth0 uses 0-based indexing
+            var assignedUsers = await _managementApiClient.Roles.GetUsersAsync(auth0Role.Id,
+                new PaginationInfo(page - 1, pageSize, includeTotals: true));
+
+            if (!assignedUsers.Any())
+            {
+                _logger.LogInformation("No users found for role {Role}", role);
+                return new UsersPagination<UserDto>
+                {
+                    Items = [],
+                    TotalCount = 0,
+                    Page = page,
+                    PageSize = pageSize
+                };
+            }
+
+            var auth0Users = await Task.WhenAll(assignedUsers.Select(user =>
+                _managementApiClient.Users.GetAsync(user.UserId)));
+
+            var buutUserIds = auth0Users
+                .Select(auth0User => auth0User.AppMetadata?["buutUserId"]?.ToString())
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
+                .ToList();
+
+            if (!buutUserIds.Any())
+            {
+                _logger.LogWarning("No valid buutUserId found in Auth0 users for role {Role}", role);
+                return new UsersPagination<UserDto>
+                {
+                    Items = [],
+                    TotalCount = 0,
+                    Page = page,
+                    PageSize = pageSize
+                };
+            }
+
+            // Get users from our database matching the paginated Auth0 users
+            var userDtos = await _dbContext.Users
+                .Where(user => buutUserIds.Contains(user.Id.ToString()))
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    FamilyName = u.FamilyName
+                })
+                .ToListAsync();
+
+
+            return new UsersPagination<UserDto>
+            {
+                Items = userDtos,
+                TotalCount = assignedUsers.Paging.Total,
+                Page = page,
+                PageSize = pageSize
+            };
+        }
+        catch (RoleNotFoundException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while fetching users by role {Role}", role);
+            throw new ApplicationException($"Failed to retrieve users for role '{role}'.", ex);
+        }
+    }
+
 
     public async Task<UserDetailDto> GetUserDetails(int userId)
     {
@@ -176,3 +248,5 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
     }
 }
+
+

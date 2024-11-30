@@ -8,17 +8,25 @@ namespace Rise.Client.Admins
 {
     public partial class Guests : ComponentBase
     {
+        public required AsyncData<UsersPagination<UserDto>> AsyncDataRef { get; set; }
+        private UsersPagination<UserDto> Users { get; set; } = new();
 
-        public required AsyncData<IEnumerable<UserDto>> AsyncDataRef { get; set; }
-        private IEnumerable<UserDto> Users { get; set; } = [];
+        private int CurrentPage = 1;
+        private const int PageSize = 2;
+        private int TotalPages => (int)Math.Ceiling(Users.TotalCount / (double)PageSize);
 
         [Inject]
         public required IUserService UserService { get; set; }
 
-
-        private Task<IEnumerable<UserDto>> FetchUsers()
+        private async Task<UsersPagination<UserDto>> FetchUsers()
         {
-            return UserService.GetUsersByRole("Guest");
+            return await UserService.GetUsersByRole(UserRole.Guest, CurrentPage, PageSize);
+        }
+
+        private async Task OnPageChanged(int page)
+        {
+            CurrentPage = page;
+            await AsyncDataRef.FetchData();
         }
 
 

@@ -1,10 +1,8 @@
-using System;
-
 namespace Rise.Shared.Users;
 
 public interface IUserService
 {
-    Task<IEnumerable<UserDto>> GetUsersByRole(string role);
+    Task<UsersPagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10);
     Task<UserDetailDto> GetUserDetails(int userId);
     Task AddMemberRole(int userId);
     Task<int> RegisterUser(RegisterUserDto userDto);

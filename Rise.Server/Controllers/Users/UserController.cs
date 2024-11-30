@@ -18,29 +18,21 @@ namespace Rise.Server.Controllers.Users
         /// <summary>
         /// Get users by role
         /// </summary>
-        /// <param name="role">Role to filter users by (Administrator, Member, Guest). If not specified, returns all users.</param>
+        /// <param name="role">Role to filter users by (Administrator, Member, Guest).</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Number of items per page</param>
         /// <returns>List of users matching the specified role</returns>
         [HttpGet]
         [Authorize(Roles = "Administrator")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UsersPagination<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetUsersByRole([FromQuery] string? role = null)
+        public async Task<IActionResult> GetUsersByRole([FromQuery] UserRole role, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            _logger.LogInformation("GET api/User/users?role={Role}", role);
+            _logger.LogInformation("GET api/User/users?role={Role}&page={Page}&pageSize={PageSize}", role, page, pageSize);
 
             try
             {
-                IEnumerable<UserDto> users = new List<UserDto>();
-
-                if (string.IsNullOrEmpty(role))
-                {
-                    return BadRequest("Can't get users without specifying a role");
-                }
-                else
-                {
-                    users = await _userService.GetUsersByRole(role);
-                }
-
+                var users = await _userService.GetUsersByRole(role, page, pageSize);
                 return Ok(users);
             }
             catch (Exception ex)
