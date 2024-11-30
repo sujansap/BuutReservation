@@ -44,8 +44,6 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.PreviousId.ShouldBeNull();
             reservationsPage.NextId.ShouldNotBeNull();
             reservationsPage.Data.ShouldAllBe(r => r.Date >= DateOnly.FromDateTime(DateTime.Now));
-
-            Logout();
         }
 
         // baken zelf de range af van de reservations van een maand geleden + 5
@@ -73,7 +71,6 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.Data.ShouldAllBe(r => r.Date < today);
             // start van 2 dagen geleden tot 7 dagen geleden
             reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-8) && r.Date <= today.AddDays(-2));
-            Logout();
         }
 
         [Fact]
@@ -118,8 +115,6 @@ namespace Rise.Server.Tests.Controllers
             nextPage.Data.ShouldAllBe(r => r.Date >= start && r.Date <= end,
                 customMessage: $"Expected dates between {start} and {end}. " +
                 $"Actual dates: {string.Join(", ", nextPage.Data.Select(r => r.Date))}");
-
-            Logout();
         }
 
         [Theory]
@@ -136,8 +131,6 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.ShouldNotBeNull();
             reservationsPage.Data.ShouldNotBeEmpty();
             reservationsPage.Data.Count().ShouldBeLessThanOrEqualTo(pageSize);
-
-            Logout();
         }
 
         [Theory]
@@ -149,8 +142,6 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Theory]
@@ -161,8 +152,6 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Theory]
@@ -174,8 +163,6 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.GetAsync($"me?cursor={cursor}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Theory]
@@ -186,8 +173,6 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.GetAsync($"me?cursor={cursor}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Fact]
@@ -197,8 +182,6 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.GetAsync($"me?cursor=17");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
 
@@ -218,8 +201,6 @@ namespace Rise.Server.Tests.Controllers
             response.StatusCode.ShouldBe(HttpStatusCode.Created);
             var reservationId = await response.Content.ReadFromJsonAsync<int>();
             reservationId.ShouldBeGreaterThan(0);
-
-            Logout();
         }
 
 
@@ -238,8 +219,6 @@ namespace Rise.Server.Tests.Controllers
             response1.StatusCode.ShouldBe(HttpStatusCode.Created);
             var response2 = await _client.PostAsJsonAsync("", request);
             response2.StatusCode.ShouldBe(HttpStatusCode.Conflict);
-
-            Logout();
         }
 
 
@@ -256,8 +235,6 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.PostAsJsonAsync("?badrequest=true", request);
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Fact]
@@ -273,8 +250,6 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.PostAsJsonAsync("", request);
 
             response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
-
-            Logout();
         }
 
         [Fact]
@@ -290,8 +265,6 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.PostAsJsonAsync("", request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Fact]
@@ -304,8 +277,6 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.PostAsJsonAsync("", request);
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Fact]
@@ -323,8 +294,6 @@ namespace Rise.Server.Tests.Controllers
             var reservationDetails = await response.Content.ReadFromJsonAsync<ReservationDetailsDto>();
             reservationDetails.ShouldNotBeNull();
             reservationDetails.Id.ShouldBe(existingId);
-
-            Logout();
         }
 
         [Fact]
@@ -336,8 +305,6 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.GetAsync($"{nonExistentId}");
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-
-            Logout();
         }
 
         [Theory]
@@ -351,8 +318,6 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.GetAsync($"{invalidId}");
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            Logout();
         }
 
         [Fact]
@@ -372,8 +337,6 @@ namespace Rise.Server.Tests.Controllers
             reservationDetails.ShouldNotBeNull();
             reservationDetails.Id.ShouldBe(validReservationId);
             reservationDetails.IsDeleted.ShouldBeTrue();
-
-            Logout();
         }
 
 
@@ -388,7 +351,6 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-            Logout();
         }
         [Fact]
         public async Task PATCH_CancelReservation_AlreadyCancelledReservation_ExpectBadRequest()
@@ -401,7 +363,6 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-            Logout();
         }
 
         [Fact]
@@ -415,7 +376,6 @@ namespace Rise.Server.Tests.Controllers
 
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-            Logout();
         }
     }
 }

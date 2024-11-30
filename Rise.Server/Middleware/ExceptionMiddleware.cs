@@ -39,6 +39,8 @@ public class ExceptionMiddleware
             NoBoatAvailableException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
             UniqueConstraintViolationException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
             UserInvalidClaimStructureException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
+            UserCreationFailedException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
+            RoleNotFoundException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
 
             ApplicationException ex => new ErrorDetails(ex.Message),
             _ => new ErrorDetails(exception.Message)

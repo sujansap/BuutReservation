@@ -58,7 +58,6 @@ namespace Rise.Server.Tests.Controllers
                 new(startDate.AddDays(7), false, true, true),
             ]);
 
-            Logout();
         }
 
         [Theory]
@@ -77,7 +76,6 @@ namespace Rise.Server.Tests.Controllers
                 new(defaultDay, false, false),
             ]);
 
-            Logout();
         }
 
         [Fact]
@@ -94,7 +92,6 @@ namespace Rise.Server.Tests.Controllers
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("startDate");
 
-            Logout();
         }
 
         [Fact]
@@ -111,7 +108,6 @@ namespace Rise.Server.Tests.Controllers
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("endDate");
 
-            Logout();
         }
 
         [Fact]
@@ -128,7 +124,6 @@ namespace Rise.Server.Tests.Controllers
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("DateRange");
 
-            Logout();
         }
 
         [Fact]
@@ -152,7 +147,6 @@ namespace Rise.Server.Tests.Controllers
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("13:00:00")) && ts.End.Equals(TimeOnly.Parse("14:00:00")));
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("16:30:00")) && ts.End.Equals(TimeOnly.Parse("18:45:00")));
 
-            Logout();
         }
 
 
@@ -175,7 +169,6 @@ namespace Rise.Server.Tests.Controllers
             response.ShouldBeEmpty();
             response.Count.ShouldBe(0);
 
-            Logout();
         }
 
         [Fact]
@@ -192,7 +185,6 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.GetAsync($"{year}/{month}/{day}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-            Logout();
         }
     }
 }

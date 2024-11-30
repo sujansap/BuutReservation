@@ -2,7 +2,7 @@
 
 ## Team Members
 
-- Bram Rampelberg - [MEMBER1_EMAIL] - [MEMBER1_GITHUB_USERNAME]
+- Bram Rampelberg - <bram.rampelberg@student.hogent.be> - BramRampelberg
 - Xan Pinson - <xan.pinson@student.hogent.be> - Snowyxa
 - Pushwant Sagoo - <pushwant.sagoo@student.hogent.be> - PushwantSagoo
 - Sujan Sapkota - <sujan.sapkota@student.hogent.be> - sujansapkota2

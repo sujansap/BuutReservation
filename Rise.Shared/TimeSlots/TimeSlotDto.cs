@@ -1,6 +1,6 @@
 namespace Rise.Shared.TimeSlots
 {
-    public class TimeSlotDto
+    public record TimeSlotDto
     {
         public int Id { get; set; }
         public TimeOnly Start { get; set; }

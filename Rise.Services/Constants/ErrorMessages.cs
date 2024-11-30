@@ -10,4 +10,10 @@ public static class ErrorMessages
         public const string UserAlreadyBooked = "You already have a booking for this time slot.";
         public const string UnexpectedError = "An unexpected error occurred while creating the reservation.";
     }
+
+    public static class User
+    {
+        public const string EmailAlreadyExists = "This email is already in use.";
+        public const string UnexpectedError = "An unexpected error ocurred while creating the user.";
+    }
 }

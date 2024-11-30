@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Domain.Users;
@@ -6,26 +7,20 @@ using Rise.Shared.Users;
 
 namespace Rise.Server.Controllers.Users
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    [Route("api/[controller]")]
+    [Authorize]
+    public class UserController(ILogger<UserController> logger, IUserService userService) : ControllerBase
     {
-        private readonly ILogger<ReservationController> _logger;
-        private readonly IUserService _userService;
-
-        public UserController(ILogger<ReservationController> logger, IUserService userService)
-        {
-            _logger = logger;
-            _userService = userService;
-        }
-
-
+        private readonly ILogger<UserController> _logger = logger;
+        private readonly IUserService _userService = userService;
 
         /// <summary>
         /// Get all the guest users
         /// </summary>
         /// <returns>List of the guest users</returns>
         [HttpGet("guests")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetGuestUsers()
@@ -54,7 +49,8 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
-        [HttpPost("role/member")]
+        [HttpPatch("role/member")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
@@ -64,6 +60,22 @@ namespace Rise.Server.Controllers.Users
             return Ok();
         }
 
+        /// <summary>
+        /// Registers a new user
+        /// </summary>
+        /// <param name="userDto">Dto with required user imformation for registration</param>
+        /// <returns>Result of the operation</returns>
+        [HttpPost("register")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userDto)
+        {
+            _logger.LogInformation("POST api/User/register");
+            var userId = await _userService.RegisterUser(userDto);
+            return CreatedAtAction(nameof(RegisterUser), userId);
+        }
 
     }
 }
