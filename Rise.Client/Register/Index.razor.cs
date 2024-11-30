@@ -11,6 +11,7 @@ using Rise.Client.Localization.Register;
 using static Rise.Shared.Users.UserRegistrationModelDto;
 using Rise.Shared.Localization;
 
+
 public partial class Index : ComponentBase
 {
     [Inject]
@@ -18,6 +19,10 @@ public partial class Index : ComponentBase
 
     [Inject]
     private IValidatorLocalizer ValidatorLocalizer { get; set; } = default!;
+
+    [Inject]
+    private ISnackbar SnackbarService { get; set; } = default!;
+
 
     private UserRegistrationModelDto User = new()
     {
@@ -76,9 +81,10 @@ public partial class Index : ComponentBase
             // }
 
             isLoading = false;
+            await Form.ResetAsync();
+            User.Address.Country = "Belgium";
+            SnackbarService.Add("Successfully registered! Check your email for further instruction.", MudBlazor.Severity.Success, config => { config.VisibleStateDuration = 5000; });
         }
-        await Form.ResetAsync();
-        User.Address.Country = "Belgium";
     }
 
     private bool isPasswordShow;
