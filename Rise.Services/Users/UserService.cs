@@ -11,6 +11,7 @@ using Rise.Services.Constants;
 using Auth0.Core.Exceptions;
 using Microsoft.Extensions.Logging;
 using Auth0.ManagementApi.Paging;
+using static Rise.Shared.Users.RegisterUserDto;
 
 namespace Rise.Services.Users;
 
@@ -103,13 +104,26 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
     public async Task<UserDetailDto> GetUserDetails(int userId)
     {
-        /*IS THIS IT?*/
-        DomainUser user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
+        DomainUser user = await _dbContext.Users
+            .Include(u => u.Address)
+            .FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
 
-        return new UserDetailDto()
+        return new UserDetailDto
         {
             Id = user.Id,
-            FamilyName = user.FamilyName
+            FirstName = user.FirstName,
+            FamilyName = user.FamilyName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            Address = new AddressDto
+            {
+                Street = user.Address.Street,
+                Number = user.Address.Number,
+                City = user.Address.City,
+                PostalCode = user.Address.PostalCode,
+                Country = user.Address.Country
+            }
         };
 
     }

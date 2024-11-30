@@ -14,22 +14,23 @@
 <AsyncData DataFetcher="@FetchUserDetails" @bind-Data="@UserDetails" T="UserDetailDto" @ref="@AsyncDataRef"
     TestIdPrefix="user-details">
     <MudPaper Class="pa-4">
-        <MudText data-testid="user-details-page-familyname" Typo="Typo.h3" Class="mb-4">@UserDetails?.FamilyName
+        <MudText data-testid="user-details-page-familyname" Typo="Typo.h3" Class="mb-4">
+            @($"{UserDetails?.FirstName} {UserDetails?.FamilyName}")
         </MudText>
 
         <MudGrid>
             <MudItem xs="12" sm="6">
                 <MudField Label="@Localizer["NameLabel"]" Variant="Variant.Text" data-testid="user-details-page-name"
-                    Class="mb-4">@name</MudField>
+                    Class="mb-4">@($"{UserDetails?.FirstName} {UserDetails?.FamilyName}")</MudField>
                 <MudField Label="@Localizer["EmailLabel"]" Variant="Variant.Text" data-testid="user-details-page-email"
-                    Class="mb-4">@email</MudField>
+                    Class="mb-4">@UserDetails?.Email</MudField>
             </MudItem>
 
             <MudItem xs="12" sm="6">
                 <MudField Label="@Localizer["AddressLabel"]" Variant="Variant.Text"
-                    data-testid="user-details-page-address" Class="mb-4">@adres</MudField>
+                    data-testid="user-details-page-address" Class="mb-4">@FormattedAddress</MudField>
                 <MudField Label="@Localizer["PhoneLabel"]" Variant="Variant.Text" data-testid="user-details-page-phone"
-                    Class="mb-4">@phone</MudField>
+                    Class="mb-4">@UserDetails?.PhoneNumber</MudField>
             </MudItem>
         </MudGrid>
 

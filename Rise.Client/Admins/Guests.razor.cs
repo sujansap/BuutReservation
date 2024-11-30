@@ -12,7 +12,7 @@ namespace Rise.Client.Admins
         private UsersPagination<UserDto> Users { get; set; } = new();
 
         private int CurrentPage = 1;
-        private const int PageSize = 2;
+        private const int PageSize = 10;
         private int TotalPages => (int)Math.Ceiling(Users.TotalCount / (double)PageSize);
 
         [Inject]
