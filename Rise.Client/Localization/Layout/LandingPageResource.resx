@@ -28,6 +28,9 @@
 	<data name="Admin">
 		<value>ADMIN</value>
 	</data>
+	<data name="Dashboard">
+		<value>Dashbord</value>
+	</data>
 	<!--navmenu-->
 	<!--footer-->
 	<data name="GeneralTerms">

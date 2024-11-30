@@ -24,4 +24,10 @@ public class UserService : IUserService
         var result = await _httpClient.GetFromJsonAsync<UserDetailDto>(userId.ToString());
         return result ?? throw new Exception("Failed to get user details for user");
     }
+
+    public async Task AddMemberRole(int userId)
+    {
+        await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
+    }
+
 }

@@ -1,8 +1,8 @@
 using Rise.Domain.Tests.TestUtilities;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 using Shouldly;
 
-namespace Rise.Domain.Tests.Timeslots
+namespace Rise.Domain.Tests.TimeSlots
 {
     public class TimeSlotShould
     {
@@ -85,7 +85,7 @@ namespace Rise.Domain.Tests.Timeslots
         public void NotBeCreatedWithDateOutsideCruisePeriod()
         {
             // Arrange
-            DateTime endDate = DateTime.Today.AddDays(5);
+            DateTime endDate = DateTime.Today.AddDays(25);
 
             // Act
             Action act = () =>
@@ -140,7 +140,7 @@ namespace Rise.Domain.Tests.Timeslots
         public void NotBeChangedToHaveDateOutsideCruisePeriod()
         {
             // Arrange
-            DateTime endDate = DateTime.Today.AddDays(5);
+            DateTime endDate = DateTime.Today.AddDays(25);
             TimeSlot timeSlot = new TimeSlotBuilder()
                 .WithCruisePeriod(
                     new CruisePeriodBuilder()

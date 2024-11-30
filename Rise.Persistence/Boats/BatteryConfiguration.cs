@@ -14,16 +14,13 @@ namespace Rise.Persistence.Boats
         {
             base.Configure(builder);
             builder.Property(x => x.Type).HasMaxLength(64);
-            builder.Property(x => x.BoatId);
 
             builder.HasOne(x => x.Boat)
             .WithMany(b => b.Batteries)
-            .HasForeignKey(b => b.BoatId)
             .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Mentor)
-            .WithOne()
-            .HasForeignKey<Battery>(x => x.MentorId)
+            .WithMany(u => u.GuardedBatteries)
             .OnDelete(DeleteBehavior.SetNull);
         }
     }

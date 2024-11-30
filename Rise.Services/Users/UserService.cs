@@ -2,6 +2,7 @@ using Rise.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Rise.Shared.Users;
 using Rise.Domain.Users;
+using Rise.Domain.Exceptions;
 
 namespace Rise.Services.Users;
 
@@ -32,5 +33,11 @@ public class UserService(ApplicationDbContext dbContext) : IUserService
             FamilyName = user.FamilyName
         };
 
+    }
+
+    public async Task AddMemberRole(int userId)
+    {
+        User user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(User), userId);
+        /**TODO: Implement adding role to user using management api (AUTH0)**/
     }
 }

@@ -30,4 +30,68 @@
 	<data name="Admin">
 		<value>ADMIN</value>
 	</data>
+	<data name="Approve">
+		<value>Approve</value>
+	</data>
+	<data name="Processing">
+		<value>Processing</value>
+	</data>
+	<data name="ApproveSuccess">
+		<value>Guest successfully approved as a member!</value>
+	</data>
+	<data name="ApproveFailure">
+		<value>Failed to approve guest: {0}</value>
+	</data>
+	<data name="NameLabel">
+		<value>Name</value>
+	</data>
+	<data name="EmailLabel">
+		<value>Email</value>
+	</data>
+	<data name="AddressLabel">
+		<value>Address</value>
+	</data>
+	<data name="PhoneLabel">
+		<value>Phone</value>
+	</data>
+	<data name="WelcomeToAdminDashboard">
+		<value>Welcome to Admin Dashboard</value>
+	</data>
+	<data name="TotalUsers">
+		<value>Total Users</value>
+	</data>
+	<data name="CreateNewUser">
+		<value>Create New User</value>
+	</data>
+	<data name="WelcomeToBoatDashboard">
+		<value>Welcome to the Boats Dashboard</value>
+	</data>
+	<data name="TotalBoats">
+		<value>Total Boats</value>
+	</data>
+	<data name="TodaysReservations">
+		<value>Today's Reservations</value>
+	</data>
+	<data name="ActiveMembers">
+		<value>Active Members</value>
+	</data>
+	<data name="QuickActions">
+		<value>Quick Actions</value>
+	</data>
+	<data name="NewReservation">
+		<value>New Reservation</value>
+	</data>
+	<data name="ManageMembers">
+		<value>Manage Members</value>
+	</data>
+	<data name="ViewBoatStatus">
+		<value>View Boat Status</value>
+	</data>
+	<data name="BoatLocation">
+		<value>Boat Location</value>
+	</data>
+	<data name="BoatLocationDescription">
+		<value>The boats are permanently moored at the lowered quay in Terneuzenlaan. Sailing area:
+			from Meulestedebrug to Keizerspark.</value>
+	</data>
 </root>

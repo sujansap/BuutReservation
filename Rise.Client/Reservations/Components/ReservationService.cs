@@ -9,6 +9,15 @@ namespace Rise.Client.Services
     public class ReservationService(HttpClient httpClient) : IReservationService
     {
         private readonly HttpClient _httpClient = httpClient;
+        public async Task CancelReservationAsync(int reservationId)
+        {
+            var response = await _httpClient.PatchAsync($"cancel/{reservationId}", null);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to cancel reservation with ID {reservationId}. Response: {response.ReasonPhrase}");
+            }
+        }
 
         public async Task<int> CreateReservation(CreateReservationDto reservationDto)
         {
@@ -16,7 +25,7 @@ namespace Rise.Client.Services
             return await result.Content.ReadFromJsonAsync<int>();
         }
 
-        public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate, int userId)
+        public Task<ReservationsRangeDto> GetAllReservationsInRangeByCurrentUser(DateOnly startDate, DateOnly endDate)
         {
             throw new NotImplementedException();
         }
@@ -29,7 +38,7 @@ namespace Rise.Client.Services
             return result;
         }
 
-        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int userId, int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
+        public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
             Dictionary<string, string?> queries = new()
             {

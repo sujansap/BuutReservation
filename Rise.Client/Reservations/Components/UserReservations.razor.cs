@@ -60,7 +60,6 @@ public class UserReservationsBase : ComponentBase
         IsFirstPage = cursor == null;
 
         return ReservationService.GetUserReservations(
-            1,
             cursor,
             cursor != null ? IsNextPage : null,
             ShowPastReservations,
@@ -124,5 +123,7 @@ public class UserReservationsBase : ComponentBase
             await FetchAndResetScroll();
         }
     }
+
+
 
 }

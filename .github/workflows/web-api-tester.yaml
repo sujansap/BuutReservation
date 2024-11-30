@@ -6,7 +6,6 @@ on:
       - staging
       - main
       - production
-
 jobs:
   build:
     name: dotnet-run-all-tests
@@ -40,45 +39,9 @@ jobs:
           export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
           dotnet tool install --global dotnet-ef
 
-      - name: Run database migrations
-        env:
-          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: |
-          export PATH="$HOME/.dotnet/tools:$PATH"  # Zorg ervoor dat dotnet-tools in de PATH staat
-          dotnet ef database update --project Rise.Persistence --startup-project Rise.Server --configuration Release
-
-      - name: Run the web-api application
-        env:
-          ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
-        run: |
-          dotnet run --project Rise.Server --configuration Release &  
- 
-      - name: Wait for the web-api-application to be ready on port http 5000
-        run: |
-          for i in {1..30}; do
-            response=$(curl -s -k -o /dev/null -w "%{http_code}" http://localhost:5000 || echo "connection_error")
-            
-            if [ "$response" -eq 200 ]; then
-              echo "Application is ready! HTTP status code: $response"
-              break
-            elif [ "$response" == "connection_error" ]; then
-              echo "Connection failed. Application might not be running yet."
-            else
-              echo "Received HTTP status code: $response. Waiting for the application to be ready..."
-            fi
-            sleep 2
-          done
-
-      # New steps for setting up and running Playwright tests------------------------------------------------------
-      - name: Create Playwright test project
-        run: |
-          dotnet new nunit -n PlaywrightTests
-          cd PlaywrightTests
-          dotnet add package Microsoft.Playwright.NUnit
-
       - name: Build Playwright test project
         run: |
-          cd PlaywrightTests
+          cd Rise.Client.Tests
           dotnet build
 
       - name: Install PowerShell
@@ -92,12 +55,11 @@ jobs:
         run: |
           sudo apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
               libdrm2 libxcb1 libxkbcommon0 libx11-6 libxcomposite1 libxdamage1 libxext6 \
-              libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2 libatspi2.0-0
-
-
+              libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2 libatspi2.0-0 \
+              libx11-xcb1 libxcursor1 libxi6 libgtk-3-0 ibpangocairo-1.0-0 libcairo-gobject2 libgdk-pixbuf2.0-0 
       - name: Install Playwright browsers
         run: |
-          pwsh PlaywrightTests/bin/Debug/net8.0/playwright.ps1 install
+          pwsh Rise.Client.Tests/bin/Debug/net8.0/playwright.ps1 install
 
       - name: Run Unit Tests
         run: dotnet test Rise.Domain.Tests
@@ -105,6 +67,8 @@ jobs:
       - name: Run Integration Tests
         env:
           ConnectionStrings__PostgreSQL: "User ID=user;Password=password;Host=localhost;Port=5432;Database=Hogent.Rise;Connection Lifetime=0;"
+          Auth0__M2MClientSecret: ${{ secrets.M2MCLIENTSECRET }}
+          Auth0__BlazorClientSecret: ${{ secrets.BLAZORCLIENTSECRET }}
         run: dotnet test Rise.Server.Tests
 
       - name: Run Playwright E2E
@@ -125,11 +89,18 @@ jobs:
               echo "Received HTTP status code: $response. Waiting for the application to be ready..."
             fi
             sleep 2
-          done    
+          done
 
       - name: Run E2E Tests
         env:
-          PLAYWRIGHT_IGNORE_HTTPS_ERRORS: 'true'  # Voeg deze regel toe om SSL-fouten te negeren      
+          PLAYWRIGHT_IGNORE_HTTPS_ERRORS: 'true'  # Voeg deze regel toe om SSL-fouten te negeren
+          Auth0__Audience: https://api.buut.be
+          Administrator__Email: ${{ secrets.ADMINISTRATOR__EMAIL }}
+          Administrator__Password: ${{ secrets.ADMINISTRATOR__PASSWORD }}
+          Guest__Email: ${{ secrets.GUEST__EMAIL }}
+          Guest__Password: ${{ secrets.GUEST__PASSWORD }}
+          Member__Email: ${{ secrets.MEMBER__EMAIL }}
+          Member__Password: ${{ secrets.MEMBER__PASSWORD }}
         run: dotnet test Rise.Client.Tests
 
       - name: Check test result

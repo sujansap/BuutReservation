@@ -10,4 +10,5 @@
     <ProjectReference Include="..\Rise.Shared\Rise.Shared.csproj" />
     <ProjectReference Include="..\Rise.Persistence\Rise.Persistence.csproj" />
   </ItemGroup>
+
 </Project>

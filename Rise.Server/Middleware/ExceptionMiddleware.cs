@@ -38,6 +38,7 @@ public class ExceptionMiddleware
             ReservationCreationFailedException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
             NoBoatAvailableException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
             UniqueConstraintViolationException ex => new ErrorDetails(ex.Message, HttpStatusCode.Conflict),
+            UserInvalidClaimStructureException ex => new ErrorDetails(ex.Message, HttpStatusCode.BadRequest),
 
             ApplicationException ex => new ErrorDetails(ex.Message),
             _ => new ErrorDetails(exception.Message)
