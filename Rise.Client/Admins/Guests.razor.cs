@@ -18,7 +18,7 @@ namespace Rise.Client.Admins
 
         private Task<IEnumerable<UserDto>> FetchUsers()
         {
-            return UserService.GetGuestUsers();
+            return UserService.GetUsersByRole("Guest");
         }
 
 

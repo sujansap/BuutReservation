@@ -13,9 +13,10 @@ public class UserService : IUserService
         _httpClient = httpClient;
     }
 
-    public async Task<IEnumerable<UserDto>> GetGuestUsers()
+    public async Task<IEnumerable<UserDto>> GetUsersByRole(string role)
     {
-        var result = await _httpClient.GetFromJsonAsync<IEnumerable<UserDto>>("guests");
+        var result = await _httpClient.GetFromJsonAsync<IEnumerable<UserDto>>($"?role={role}");
+
         return result ?? Enumerable.Empty<UserDto>();
     }
 

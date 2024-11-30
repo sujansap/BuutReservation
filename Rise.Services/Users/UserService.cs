@@ -18,7 +18,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     private readonly IManagementApiClient _managementApiClient = managementApiClient;
     private readonly ILogger<UserService> _logger = logger;
 
-    public async Task<IEnumerable<UserDto>> GetGuestUsers()
+    public async Task<IEnumerable<UserDto>> GetUsersByRole(string role)
     {
         return await _dbContext.Users
         .Select(user => new UserDto()

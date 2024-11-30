@@ -16,18 +16,38 @@ namespace Rise.Server.Controllers.Users
         private readonly IUserService _userService = userService;
 
         /// <summary>
-        /// Get all the guest users
+        /// Get users by role
         /// </summary>
-        /// <returns>List of the guest users</returns>
-        [HttpGet("guests")]
+        /// <param name="role">Role to filter users by (Administrator, Member, Guest). If not specified, returns all users.</param>
+        /// <returns>List of users matching the specified role</returns>
+        [HttpGet]
         [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetGuestUsers()
+        public async Task<IActionResult> GetUsersByRole([FromQuery] string? role = null)
         {
-            _logger.LogInformation("GET api/User/guests");
-            var users = await _userService.GetGuestUsers();
-            return Ok(users);
+            _logger.LogInformation("GET api/User/users?role={Role}", role);
+
+            try
+            {
+                IEnumerable<UserDto> users = new List<UserDto>();
+
+                if (string.IsNullOrEmpty(role))
+                {
+                    return BadRequest("Can't get users without specifying a role");
+                }
+                else
+                {
+                    users = await _userService.GetUsersByRole(role);
+                }
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving users for role: {Role}", role);
+                return BadRequest("Error retrieving users");
+            }
         }
 
         /// <summary>
