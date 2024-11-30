@@ -13,25 +13,41 @@ public class BatteryAssignmentTests
     {
         // Arrange
         var validBoatId = 1;
+        var boat = new BoatBuilder().Build();
+        var timeSlot = new TimeSlotBuilder().Build();
+        var user = new UserBuilder().Build();
+        
         var reservations = new List<Reservation>
         {
-            new Reservation 
+            new() 
             { 
                 BoatId = validBoatId,
-                // ... other properties
+                Boat = boat,
+                TimeSlot = timeSlot,
+                User = user,
+                TimeSlotId = timeSlot.Id,
+                UserId = user.Id
             }
         };
 
         var batteries = new List<Battery>
         {
-            new Battery 
+            new() 
             { 
                 BoatId = validBoatId,
-                // ... other properties
+                Boat = boat,
+                Type = "Lithium-Ion",
+                Mentor = new UserBuilder().Build()
             }
         };
 
-        var timeInfo = new TimeInfo(DateTime.UtcNow);
+        var now = DateTime.UtcNow;
+        var timeInfo = new TimeInfo(
+            Now: now,
+            Today: DateOnly.FromDateTime(now),
+            CurrentTime: TimeOnly.FromDateTime(now),
+            ThreeDaysFromNow: DateOnly.FromDateTime(now).AddDays(3)
+        );
 
         // Act
         await Battery.AssignBatteriesToReservationsAsync(reservations, batteries, timeInfo);
@@ -117,8 +133,8 @@ public class BatteryAssignmentTests
     public void GetCompatibleBatteries_ShouldReturnCorrectBatteries()
     {
         // Arrange
-        var boat1 = new BoatBuilder().Build();
-        var boat2 = new BoatBuilder().Build();
+        var boat1 = new BoatBuilder().WithId(1).Build();
+        var boat2 = new BoatBuilder().WithId(2).Build();
         
         var battery1 = new BatteryBuilder().WithBoat(boat1).Build();
         var battery2 = new BatteryBuilder().WithBoat(boat1).Build();
