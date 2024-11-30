@@ -70,7 +70,7 @@ namespace Rise.Server.Controllers.Users
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto userDto)
+        public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationModelDto userDto)
         {
             _logger.LogInformation("POST api/User/register");
             var userId = await _userService.RegisterUser(userDto);

@@ -1,19 +1,18 @@
 using FluentValidation;
-using Rise.Shared.Localization;
 
 namespace Rise.Shared.Users;
 
 public record class UserRegistrationModelDto
 {
-    public required string FirstName { get; set; }
-    public required string LastName { get; set; }
     public required string Email { get; set; }
     public required string Password { get; set; }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
     public required string PhoneNumber { get; set; }
     public required DateTime? DateOfBirth { get; set; }
     public required AddressModel Address { get; set; }
 
-    public class AddressModel
+    public record class AddressModel
     {
         public required string Street { get; set; }
         public required string Number { get; set; }
@@ -22,38 +21,87 @@ public record class UserRegistrationModelDto
         public required string Country { get; set; }
     }
 
-
-    public class UserRegistrationModelDtoValidator : AbstractValidator<UserRegistrationModelDto>
+    public class Validator : AbstractValidator<UserRegistrationModelDto>
     {
-        public UserRegistrationModelDtoValidator(IValidatorLocalizer Localizer)
-        {
-            RuleFor(x => x.FirstName).NotEmpty().WithMessage(Localizer["FirstNameRequired"])
-               .MaximumLength(100).WithMessage("Your first name should not exceed 100 characters.");
-            RuleFor(x => x.LastName).NotEmpty().WithMessage("Please provide your last name.")
-                .MaximumLength(100).WithMessage("Your last name should not exceed 100 characters.");
-            RuleFor(x => x.Email).NotEmpty().WithMessage("Please provide your email address.")
-                .EmailAddress().WithMessage("The email address provided is not valid.")
-                .MaximumLength(100).WithMessage("Your email address should not exceed 100 characters.");
-            RuleFor(x => x.Password).NotEmpty().WithMessage("Please provide a password.")
-                .MinimumLength(8).WithMessage("Your password must be at least 8 characters long.")
-                .MaximumLength(64).WithMessage("Your password should not exceed 64 characters.");
-            RuleFor(x => x.PhoneNumber).NotEmpty().WithMessage("Please provide your phone number.")
-                .Matches(@"^00[1-9][0-9]{7,14}$").WithMessage("The phone number provided is not valid.")
-                .MaximumLength(25).WithMessage("Your phone number should not exceed 25 characters.");
-            RuleFor(x => x.DateOfBirth)
-                .NotEmpty().WithMessage("Please provide your date of birth.")
-                .Must(BeAtLeast18YearsOld).WithMessage("You must be at least 18 years old to register.");
+        public static readonly int emailMaxLength = 69;
+        public static readonly int passwordMaxLength = 64;
+        public static readonly int firstNameMaxLength = 100;
+        public static readonly int lastNameMaxLength = 100;
+        public static readonly int phoneNumberMaxLength = 35;
+        public static readonly int streetMaxLength = 200;
+        public static readonly int numberMaxLength = 25;
+        public static readonly int cityMaxLength = 200;
+        public static readonly int postalCodeMaxLength = 100;
+        public static readonly int countryMaxLength = 100;
 
-            RuleFor(x => x.Address.Street).NotEmpty().WithMessage("Please provide your street address.")
-                .MaximumLength(200).WithMessage("Your street address should not exceed 100 characters.");
-            RuleFor(x => x.Address.Number).NotEmpty().WithMessage("Please provide your house number.")
-                .MaximumLength(10).WithMessage("Your house number should not exceed 10 characters.");
-            RuleFor(x => x.Address.City).NotEmpty().WithMessage("Please provide your city.")
-                .MaximumLength(200).WithMessage("Your city should not exceed 200 characters.");
-            RuleFor(x => x.Address.PostalCode).NotEmpty().WithMessage("Please provide your postal code.")
-                .MaximumLength(100).WithMessage("Your postal code should not exceed 100 characters.");
-            RuleFor(x => x.Address.Country).NotEmpty().WithMessage("Please provide your country.")
-                .MaximumLength(100).WithMessage("Your country should not exceed 100 characters.");
+        public Validator()
+        {
+
+            RuleFor(x => x.Email)
+            .NotEmpty().WithMessage("Please provide your email address")
+            .MaximumLength(emailMaxLength).WithMessage($"Email can't be longer than {emailMaxLength} characters")
+            .EmailAddress().WithMessage("The email address provided is not valid");
+
+
+            RuleFor(x => x.Password).NotEmpty()
+            .WithMessage("Please provide a password.")
+            .MaximumLength(passwordMaxLength).WithMessage($"Password can't be longer than {passwordMaxLength} characters.")
+            .Matches(".*[!@#$%^&*].*")
+            .WithMessage("Password requires at least one special character: !@#$%^&*")
+            .Matches(".*[a-z].*")
+            .WithMessage("Password requires at least one lower case letter")
+            .Matches(".*[A-Z].*")
+            .WithMessage("Password requires at least one upper case letter")
+            .Matches(".*[0-9].*")
+            .WithMessage("Password requires at least one number")
+            .Matches(".{8,}")
+            .WithMessage("Password requires at least 8 characters");
+
+
+            RuleFor(x => x.FirstName).NotEmpty()
+            .WithMessage("Please provide your first name")
+            .MaximumLength(firstNameMaxLength).WithMessage($"First name can't be longer than {firstNameMaxLength} characters");
+
+
+            RuleFor(x => x.LastName).NotEmpty()
+            .WithMessage("Please provide your last name")
+            .MaximumLength(lastNameMaxLength).WithMessage($"Last name can't be longer than {lastNameMaxLength} characters");
+
+
+            RuleFor(x => x.PhoneNumber).NotEmpty()
+            .WithMessage("Please provide your phone number")
+            .MaximumLength(phoneNumberMaxLength).WithMessage($"Phone number name can't be longer than {phoneNumberMaxLength} characters")
+            .Matches("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$")
+            .WithMessage("The phone number provided is not valid");
+
+            RuleFor(x => x.DateOfBirth)
+            .NotEmpty().WithMessage("Please provide your date of birth.")
+            .Must(BeAtLeast18YearsOld).WithMessage("You must be at least 18 years old to register.");
+
+
+            RuleFor(x => x.Address.Street).NotEmpty()
+            .WithMessage("Please provide your street address")
+            .MaximumLength(streetMaxLength).WithMessage($"Street name can't be longer than {streetMaxLength} characters");
+
+
+            RuleFor(x => x.Address.Number).NotEmpty()
+            .WithMessage("Please provide your house number")
+            .MaximumLength(numberMaxLength).WithMessage($"Your house number can't be longer than {numberMaxLength} characters");
+
+
+            RuleFor(x => x.Address.City).NotEmpty()
+            .WithMessage("Please provide your city")
+            .MaximumLength(cityMaxLength).WithMessage($"City name can't be longer than {cityMaxLength} characters");
+
+
+            RuleFor(x => x.Address.PostalCode).NotEmpty()
+            .WithMessage("Please provide your postal code")
+            .MaximumLength(postalCodeMaxLength).WithMessage($"Postal code can't be longer than {postalCodeMaxLength} characters");
+
+
+            RuleFor(x => x.Address.Country).NotEmpty()
+            .WithMessage("Please provide your country")
+            .MaximumLength(countryMaxLength).WithMessage($"Country name can't be longer than {countryMaxLength} characters");
         }
 
         private bool BeAtLeast18YearsOld(DateTime? dateOfBirth)

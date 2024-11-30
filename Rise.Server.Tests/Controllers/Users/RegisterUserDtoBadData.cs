@@ -10,13 +10,14 @@ public class RegisterUserDtoBadData : IEnumerable<object[]>
     public IEnumerator<object[]> GetEnumerator()
     {
         // Valid data to use as a baseline
-        var validData = new RegisterUserDto
+        var validData = new UserRegistrationModelDto
         {
             Email = "john.doe@example.com",
-            FamilyName = "Doe",
+            LastName = "Doe",
             FirstName = "John",
             Password = "SecureP@ssw0rd",
             PhoneNumber = "+123456789",
+            DateOfBirth = new DateTime(2005, 1, 1),
             Address = new()
             {
                 City = "Gent",
@@ -59,13 +60,13 @@ public class RegisterUserDtoBadData : IEnumerable<object[]>
         // Invalid FamilyName: Empty
         yield return new object[]
         {
-            validData with { FamilyName = "" }
+            validData with { LastName = "" }
         };
 
         // Invalid FamilyName: Exceeds max length
         yield return new object[]
         {
-            validData with { FamilyName = new string('a', 101) }
+            validData with { LastName = new string('a', 101) }
         };
 
         // Invalid Password: Empty

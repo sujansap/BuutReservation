@@ -14,8 +14,6 @@ using Rise.Shared.Notifications;
 using Rise.Services.Notifications;
 using Rise.Shared.Users;
 using Rise.Services.Users;
-using Rise.Shared.Localization;
-using Rise.Client.Localization.Register;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -109,7 +107,6 @@ try
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserService, UserService>();
-    builder.Services.AddScoped<IValidatorLocalizer, RegisterFormPageResources>(); // to be removed when localization is refactored to Shared
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
 

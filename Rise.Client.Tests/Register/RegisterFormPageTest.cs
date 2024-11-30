@@ -101,9 +101,9 @@ namespace Rise.Client.Tests.Register
             var emailField = Page.GetByTestId("email-field");
             await emailField.FillAsync("Test@test.com");
             var passwordField = Page.GetByTestId("password-field");
-            await passwordField.FillAsync("12345678");
+            await passwordField.FillAsync("P@ssw0rd123");
             var repeatPasswordField = Page.GetByTestId("repeat-password-field");
-            await repeatPasswordField.FillAsync("12345678");
+            await repeatPasswordField.FillAsync("P@ssw0rd123");
             var firstNameField = Page.GetByTestId("first-name-field");
             await firstNameField.FillAsync("test");
             var lastNameField = Page.GetByTestId("last-name-field");

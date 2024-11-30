@@ -48,7 +48,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         /**TODO: Implement adding role to user using management api (AUTH0)**/
     }
 
-    public async Task<int> RegisterUser(RegisterUserDto userDto)
+    public async Task<int> RegisterUser(UserRegistrationModelDto userDto)
     {
         using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -63,14 +63,14 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         return user.Id;
     }
 
-    private async Task<DomainUser> CreateUserInDatabase(RegisterUserDto userDto)
+    private async Task<DomainUser> CreateUserInDatabase(UserRegistrationModelDto userDto)
     {
         var address = userDto.Address;
         DomainUser user = new()
         {
             Email = userDto.Email,
             FirstName = userDto.FirstName,
-            FamilyName = userDto.FamilyName,
+            FamilyName = userDto.LastName,
             PhoneNumber = userDto.PhoneNumber,
             Address = new()
             {
@@ -96,7 +96,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         return user;
     }
 
-    private async Task RegisterUserInAuth0(RegisterUserDto userDto, int userId)
+    private async Task RegisterUserInAuth0(UserRegistrationModelDto userDto, int userId)
     {
         try
         {
@@ -115,7 +115,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
     }
 
-    private async Task SendRegisterUserInAuth0Request(RegisterUserDto userDto, int userId)
+    private async Task SendRegisterUserInAuth0Request(UserRegistrationModelDto userDto, int userId)
     {
         var auth0User = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
         {
@@ -137,7 +137,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         });
     }
 
-    private async Task RetryRegisterUserInAuth0(RegisterUserDto userDto, int userId)
+    private async Task RetryRegisterUserInAuth0(UserRegistrationModelDto userDto, int userId)
     {
         var retries = 0;
         var success = false;

@@ -17,7 +17,6 @@ using Rise.Client.Notifications;
 using Rise.Shared.Users;
 using Rise.Client.Admins;
 using Rise.Client.Localization.Register;
-using Rise.Shared.Localization;
 using Rise.Client.Auth;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -72,8 +71,6 @@ builder.Services.AddHttpClient<IUserService, UserService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
-
-builder.Services.AddScoped<IValidatorLocalizer, RegisterFormPageResources>();
 
 var host = builder.Build();
 
