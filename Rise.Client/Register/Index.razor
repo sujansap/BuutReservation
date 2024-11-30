@@ -12,17 +12,17 @@
                 <MudItem xs="12">
                     <MudText Typo="Typo.h5" data-testid="credentials-title">Credentials</MudText>
                 </MudItem>
-                <MudItem xs="12">
+                <MudItem xs="12" data-testid="item-email-field">
                     <MudTextField @bind-Value="User.Email" Variant="Variant.Outlined" For="@(() => User.Email)"
                         Label="Email" Immediate="true" Required="true" HelperText="Enter your email address" MaxLength="100" data-testid="email-field" />
                 </MudItem>
-                <MudItem xs="12">
+                <MudItem xs="12" data-testid="item-password-field">
                     <MudTextField @bind-Value="User.Password" Variant="Variant.Outlined" For="@(() => User.Password)"
                         Label="Wachtwoord" InputType="@PasswordInputType" Immediate="true" Required="true"
                         Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon"
                         OnAdornmentClick="TogglePasswordIcon" AdornmentAriaLabel="Show Password" HelperText="Enter a strong password" MaxLength="64" data-testid="password-field" />
                 </MudItem>
-                <MudItem xs="12">
+                <MudItem xs="12" data-testid="item-repeat-password-field">
                     <MudTextField T="string" Variant="Variant.Outlined" Label="Herhaal Wachtwoord"
                         InputType="@PasswordInputType" Required="true" Immediate="true"
                         Validation="@(new Func<string, string>(CheckPasswordMatch))" HelperText="Repeat your password" MaxLength="64" data-testid="repeat-password-field" />
@@ -33,20 +33,20 @@
                 <MudItem xs="12">
                     <MudText Typo="Typo.h5" data-testid="details-title">Details</MudText>
                 </MudItem>
-                <MudItem xs="12" sm="6">
+                <MudItem xs="12" sm="6" data-testid="item-first-name-field">
                     <MudTextField @bind-Value="User.FirstName" Variant="Variant.Outlined" For="@(() => User.FirstName)"
                         Label="Voornaam" Immediate="true" Required="true" HelperText="Enter your first name" MaxLength="100" data-testid="first-name-field" />
                 </MudItem>
-                <MudItem xs="12" sm="6">
+                <MudItem xs="12" sm="6" data-testid="item-last-name-field">
                     <MudTextField @bind-Value="User.LastName" Variant="Variant.Outlined" For="@(() => User.LastName)"
                         Label="Naam" Immediate="true" Required="true" HelperText="Enter your last name" MaxLength="100" data-testid="last-name-field" />
                 </MudItem>
-                <MudItem xs="12" sm="4">
+                <MudItem xs="12" sm="4" data-testid="item-date-of-birth-picker">
                     <MudDatePicker @bind-Date="User.DateOfBirth" Editable="true" Variant="Variant.Outlined"
                         Label="Geboortedatum" MaxDate="@(DateTime.Today.AddYears(-18))" Required="true"
-                        OpenTo="OpenTo.Year" For="@(() => User.DateOfBirth)" HelperText="Select your date of birth" data-testid="date-of-birth-picker" />
+                        OpenTo="OpenTo.Year" For="@(() => User.DateOfBirth)" HelperText="Select or write your date of birth (dd/MM/YYYY)" data-testid="date-of-birth-picker" />
                 </MudItem>
-                <MudItem xs="12" sm="8">
+                <MudItem xs="12" sm="8" data-testid="item-phone-number-field">
                     <MudTextField @bind-Value="User.PhoneNumber" Variant="Variant.Outlined"
                         For="@(() => User.PhoneNumber)" Label="GSM Nummer" Immediate="true" Required="true" HelperText="Enter your phone number starting with '00' and then the country code" MaxLength="25" data-testid="phone-number-field" />
                 </MudItem>
@@ -56,23 +56,23 @@
                 <MudItem xs="12">
                     <MudText Typo="Typo.h5" data-testid="address-title">Address</MudText>
                 </MudItem>
-                <MudItem xs="12" sm="8">
+                <MudItem xs="12" sm="8" data-testid="item-street-field">
                     <MudTextField @bind-Value="User.Address.Street" Variant="Variant.Outlined"
                         For="@(() => User.Address.Street)" Label="Straat" Immediate="true" Required="true" HelperText="Enter your street name" MaxLength="200" data-testid="street-field" />
                 </MudItem>
-                <MudItem xs="12" sm="4">
+                <MudItem xs="12" sm="4" data-testid="item-house-number-field">
                     <MudTextField @bind-Value="User.Address.Number" Variant="Variant.Outlined"
                         For="@(() => User.Address.Number)" Label="Nummer" Immediate="true" Required="true" HelperText="Enter your house number" MaxLength="10" data-testid="house-number-field" />
                 </MudItem>
-                <MudItem xs="12" sm="8">
+                <MudItem xs="12" sm="8" data-testid="item-city-field">
                     <MudTextField @bind-Value="User.Address.City" Variant="Variant.Outlined"
                         For="@(() => User.Address.City)" Label="Stad" Immediate="true" Required="true" HelperText="Enter your city" MaxLength="200" data-testid="city-field" />
                 </MudItem>
-                <MudItem xs="12" sm="4">
+                <MudItem xs="12" sm="4" data-testid="item-postal-code-field">
                     <MudTextField @bind-Value="User.Address.PostalCode" Variant="Variant.Outlined"
                         For="@(() => User.Address.PostalCode)" Label="Postcode" Immediate="true" Required="true" HelperText="Enter your postal code" MaxLength="100" data-testid="postal-code-field" />
                 </MudItem>
-                <MudItem xs="12">
+                <MudItem xs="12" data-testid="item-country-field">
                     <MudTextField @bind-Value="User.Address.Country" Variant="Variant.Outlined" ReadOnly="true" 
                         For="@(() => User.Address.Country)" Label="Land" Immediate="true" Required="true" MaxLength="100" data-testid="country-field" />
                 </MudItem>

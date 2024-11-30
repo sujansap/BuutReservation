@@ -109,7 +109,7 @@ namespace Rise.Client.Tests.Register
             var lastNameField = Page.GetByTestId("last-name-field");
             await lastNameField.FillAsync("test");
             var dateOfBirthField = Page.GetByTestId("date-of-birth-picker");
-            await dateOfBirthField.FillAsync("2005/01/01");
+            await dateOfBirthField.FillAsync("01/01/2005");
             var phoneNumberField = Page.GetByTestId("phone-number-field");
             await phoneNumberField.FillAsync("003212345678");
 
@@ -130,7 +130,7 @@ namespace Rise.Client.Tests.Register
             await Expect(resetButton).ToBeEnabledAsync();
 
             await submitButton.ClickAsync();
-            await Expect(Page.Locator("div.mud-snackbar.mud-snackbar-success")).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Alert)).ToBeVisibleAsync();
 
             await Expect(emailField).ToBeEmptyAsync();
             await Expect(passwordField).ToBeEmptyAsync();
@@ -155,56 +155,65 @@ namespace Rise.Client.Tests.Register
             await Page.GotoAsync("/register");
 
             var emailField = Page.GetByTestId("email-field");
+            var emailFieldItem = Page.GetByTestId("item-email-field");
             var passwordField = Page.GetByTestId("password-field");
+            var passwordFieldItem = Page.GetByTestId("item-password-field");
             var repeatPasswordField = Page.GetByTestId("repeat-password-field");
+            var repeatPasswordFieldItem = Page.GetByTestId("item-repeat-password-field");
             var firstNameField = Page.GetByTestId("first-name-field");
+            var firstNameFieldItem = Page.GetByTestId("item-first-name-field");
             var lastNameField = Page.GetByTestId("last-name-field");
+            var lastNameFieldItem = Page.GetByTestId("item-last-name-field");
             var phoneNumberField = Page.GetByTestId("phone-number-field");
-
+            var phoneNumberFieldItem = Page.GetByTestId("item-phone-number-field");
             var streetField = Page.GetByTestId("street-field");
+            var streetFieldItem = Page.GetByTestId("item-street-field");
             var houseNumberField = Page.GetByTestId("house-number-field");
+            var houseNumberFieldItem = Page.GetByTestId("item-house-number-field");
             var cityField = Page.GetByTestId("city-field");
+            var cityFieldItem = Page.GetByTestId("item-city-field");
             var postalCodeField = Page.GetByTestId("postal-code-field");
+            var postalCodeFieldItem = Page.GetByTestId("item-postal-code-field");
 
             await emailField.FillAsync("invalid-email");
             await emailField.PressAsync("Tab");
-            await Expect(emailField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(emailFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await passwordField.FillAsync("short");
             await passwordField.PressAsync("Tab");
-            await Expect(passwordField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(passwordFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await repeatPasswordField.FillAsync("different");
             await repeatPasswordField.PressAsync("Tab");
-            await Expect(repeatPasswordField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(repeatPasswordFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await firstNameField.FillAsync("");
             await firstNameField.PressAsync("Tab");
-            await Expect(firstNameField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(firstNameFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await lastNameField.FillAsync("");
             await lastNameField.PressAsync("Tab");
-            await Expect(lastNameField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(lastNameFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await phoneNumberField.FillAsync("invalid-phone");
             await phoneNumberField.PressAsync("Tab");
-            await Expect(phoneNumberField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(phoneNumberFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await streetField.FillAsync("");
             await streetField.PressAsync("Tab");
-            await Expect(streetField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(streetFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await houseNumberField.FillAsync("");
             await houseNumberField.PressAsync("Tab");
-            await Expect(houseNumberField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(houseNumberFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await cityField.FillAsync("");
             await cityField.PressAsync("Tab");
-            await Expect(cityField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(cityFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
 
             await postalCodeField.FillAsync("");
             await postalCodeField.PressAsync("Tab");
-            await Expect(postalCodeField.Locator("xpath=following-sibling::div[contains(@class, 'mud-input-control-helper-container')]//div[contains(@class, 'mud-input-helper-text') and contains(@class, 'mud-input-error')]")).ToBeVisibleAsync();
+            await Expect(postalCodeFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
         }
     }
 }
