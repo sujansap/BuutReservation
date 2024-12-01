@@ -166,14 +166,15 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         };
 
     }
-
+    private async Task<Auth0.ManagementApi.Models.User?> FindUserByBuutUserId(int buutUserId)
+    {
+        // Fetch Auth0 by buutUserId in app_metadata
+        var users = await _managementApiClient.Users.GetAllAsync(new GetUsersRequest() { Query = $"app_metadata.buutUserId:{buutUserId}" });
+        return users.FirstOrDefault();
+    }
     public async Task AddMemberRole(int userId)
     {
-        DomainUser user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
-
-        // Fetch Auth0 user details
-        var auth0Users = await _managementApiClient.Users.GetUsersByEmailAsync(user.Email);
-        var auth0User = auth0Users.FirstOrDefault() ?? throw new EntityNotFoundException("Auth0 user", user.Email);
+        var auth0User = await FindUserByBuutUserId(userId) ?? throw new EntityNotFoundException("Auth0 user", userId);
 
         await RemoveRoleFromUser(auth0User, await GetAuth0RoleByName(UserRole.Guest));
         await AssignRoleToUser(auth0User, await GetAuth0RoleByName(UserRole.Member));

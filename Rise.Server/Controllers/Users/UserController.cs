@@ -28,7 +28,7 @@ namespace Rise.Server.Controllers.Users
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUsersByRole([FromQuery] UserRole role, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            _logger.LogInformation("GET api/User/users?role={Role}&page={Page}&pageSize={PageSize}", role, page, pageSize);
+            _logger.LogInformation("GET api/User?role={Role}&page={Page}&pageSize={PageSize}", role, page, pageSize);
 
             try
             {

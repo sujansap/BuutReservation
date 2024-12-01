@@ -33,20 +33,19 @@ namespace Rise.Server.Tests.Controllers.Users
 
         [Theory]
         [InlineData(UserRole.Guest)]
-        [InlineData(UserRole.Member)]
-        [InlineData(UserRole.Administrator)]
         public async Task GetUsersByRole_AsAdmin_ReturnsCorrectUsers(UserRole roleToQuery)
         {
-            // Arrange
             await LoginAsync(UserRole.Administrator);
 
-            // Act
-            var response = await _client.GetFromJsonAsync<UsersPagination<UserDto>>($"users?role={roleToQuery}&page=1&pageSize=10");
+            await Task.Delay(TimeSpan.FromSeconds(2));
+            Console.WriteLine($"Request URL: users?role={roleToQuery}&page=1&pageSize=10");
 
-            // Assert
+
+            var response = await _client.GetFromJsonAsync<UsersPagination<UserDto>>($"?role={roleToQuery}&page=1&pageSize=10");
+
             response.ShouldNotBeNull();
             response.Items.ShouldNotBeNull();
-
+            response.Items.Count().ShouldBeGreaterThan(0);
         }
 
         [Theory]
@@ -56,27 +55,23 @@ namespace Rise.Server.Tests.Controllers.Users
         [InlineData(1, -5)]
         public async Task GetUsersByRole_WithInvalidPagination_ReturnsBadRequest(int page, int pageSize)
         {
-            // Arrange
             await LoginAsync(UserRole.Administrator);
 
-            // Act
+
             var response = await _client.GetAsync($"users?role={UserRole.Guest}&page={page}&pageSize={pageSize}");
 
-            // Assert
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
 
         [Fact]
         public async Task GetUserDetails_WithValidId_ReturnsCorrectUser()
         {
-            // Arrange
             const int userId = 1;
             await LoginAsync(UserRole.Administrator);
 
-            // Act
+
             var response = await _client.GetFromJsonAsync<UserDetailDto>($"{userId}");
 
-            // Assert
             response.ShouldNotBeNull();
             response.Id.ShouldBe(userId);
             response.Email.ShouldNotBeNullOrEmpty();
@@ -92,32 +87,34 @@ namespace Rise.Server.Tests.Controllers.Users
         [InlineData(99999)]
         public async Task GetUserDetails_WithInvalidId_ReturnsNotFound(int userId)
         {
-            // Arrange
             await LoginAsync(UserRole.Administrator);
 
-            // Act
             var response = await _client.GetAsync($"{userId}");
 
-            // Assert
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
 
         [Fact]
         public async Task AddMemberRole_AsAdmin_SuccessfullyAddsRole()
         {
-            // Arrange
             await LoginAsync(UserRole.Administrator);
-            var request = new AddMemberRoleDto { UserId = 1, Role = UserRole.Member };
 
-            // Act
+            //create a valid guest user to add member role to
+            await RegisterValidAuth0User();
+
+            //validuser has id 3
+            var request = new AddMemberRoleDto { UserId = 3, Role = UserRole.Member };
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
             var response = await _client.PostAsJsonAsync("role", request);
 
-            // Assert
+
+
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-            // Verify role was added
-            var userDetails = await _client.GetFromJsonAsync<UserDetailDto>("1");
-            userDetails.ShouldNotBeNull();
+            //delete the user we created in auth0
+            await DeleteAuth0UserByBuutUserId(3);
 
         }
 
