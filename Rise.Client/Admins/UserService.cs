@@ -26,7 +26,7 @@ public class UserService : IUserService
 
     public async Task AddMemberRole(int userId)
     {
-        await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
+        await _httpClient.PostAsJsonAsync("role", new AddMemberRoleDto { UserId = userId, Role = UserRole.Member });
     }
 
     public async Task<int> RegisterUser(RegisterUserDto userDto)

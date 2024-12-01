@@ -27,6 +27,21 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         return roles.FirstOrDefault() ?? throw new RoleNotFoundException($"Role '{userRole}' not found in Auth0.");
     }
 
+    private async Task RemoveRoleFromUser(User auth0User, Role role)
+    {
+        await _managementApiClient.Users.RemoveRolesAsync(auth0User.UserId, new AssignRolesRequest
+        {
+            Roles = new[] { role.Id }
+        });
+    }
+
+    private async Task AssignRoleToUser(User auth0User, Role role)
+    {
+        await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
+        {
+            Roles = new[] { role.Id }
+        });
+    }
     public async Task<UsersPagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
     {
         try
@@ -41,13 +56,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             if (!assignedUsers.Any())
             {
                 _logger.LogInformation("No users found for role {Role}", role);
-                return new UsersPagination<UserDto>
-                {
-                    Items = [],
-                    TotalCount = 0,
-                    Page = page,
-                    PageSize = pageSize
-                };
+                return CreateEmptyPaginationResult(page, pageSize);
             }
 
             var auth0Users = await Task.WhenAll(assignedUsers.Select(user =>
@@ -62,13 +71,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             if (!buutUserIds.Any())
             {
                 _logger.LogWarning("No valid buutUserId found in Auth0 users for role {Role}", role);
-                return new UsersPagination<UserDto>
-                {
-                    Items = [],
-                    TotalCount = 0,
-                    Page = page,
-                    PageSize = pageSize
-                };
+                return CreateEmptyPaginationResult(page, pageSize);
             }
 
             // Get users from our database matching the paginated Auth0 users
@@ -101,6 +104,16 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
     }
 
+    private UsersPagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)
+    {
+        return new UsersPagination<UserDto>
+        {
+            Items = new List<UserDto>(),
+            TotalCount = 0,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
 
     public async Task<UserDetailDto> GetUserDetails(int userId)
     {
@@ -109,8 +122,10 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             .FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
 
+
         return new UserDetailDto
         {
+            AuthId = "",
             Id = user.Id,
             FirstName = user.FirstName,
             FamilyName = user.FamilyName,
@@ -131,7 +146,13 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     public async Task AddMemberRole(int userId)
     {
         DomainUser user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
-        /**TODO: Implement adding role to user using management api (AUTH0)**/
+
+        // Fetch Auth0 user details
+        var auth0Users = await _managementApiClient.Users.GetUsersByEmailAsync(user.Email);
+        var auth0User = auth0Users.FirstOrDefault() ?? throw new EntityNotFoundException("Auth0 user", user.Email);
+
+        await RemoveRoleFromUser(auth0User, await GetAuth0RoleByName(UserRole.Guest));
+        await AssignRoleToUser(auth0User, await GetAuth0RoleByName(UserRole.Member));
     }
 
     public async Task<int> RegisterUser(RegisterUserDto userDto)

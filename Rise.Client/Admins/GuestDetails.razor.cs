@@ -35,15 +35,21 @@ namespace Rise.Client.Admins
 
         private bool isProcessing = false;
 
-        protected void NavigateToListPage()
+        protected async void NavigateToListPage()
         {
+
+            await Task.Delay(1000);
             NavigationManager.NavigateTo("/admin/guests");
+
         }
 
         private async Task ApproveGuest()
         {
             try
             {
+
+
+                Console.WriteLine(UserDetails?.AuthId);
                 isProcessing = true;
                 StateHasChanged();
 

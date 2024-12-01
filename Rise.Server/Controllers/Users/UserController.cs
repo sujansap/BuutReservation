@@ -61,13 +61,19 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
-        [HttpPatch("role/member")]
+        [HttpPost("role")]
         [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
         {
             _logger.LogInformation("POST api/User/role for userId: {userId}", request.UserId);
+            if (request.Role != UserRole.Member)
+            {
+                // Only members can be added
+                //adding other roles not implemented yet
+                return BadRequest("Role must be Member");
+            }
             await _userService.AddMemberRole(request.UserId);
             return Ok();
         }
