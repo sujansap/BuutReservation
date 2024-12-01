@@ -7,7 +7,7 @@
 @using static System.Net.WebRequestMethods
 @using Rise.Client.Common
 @using Rise.Shared.Users
-@attribute [Authorize(Roles = "Administrator")]
+@attribute [Authorize(Roles = nameof(UserRole.Administrator))]
 
 @layout AdminLayout
 

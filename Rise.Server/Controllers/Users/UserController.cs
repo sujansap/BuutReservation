@@ -9,7 +9,6 @@ namespace Rise.Server.Controllers.Users
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class UserController(ILogger<UserController> logger, IUserService userService) : ControllerBase
     {
         private readonly ILogger<UserController> _logger = logger;
@@ -20,7 +19,7 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <returns>List of the guest users</returns>
         [HttpGet("guests")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetGuestUsers()
@@ -50,7 +49,7 @@ namespace Rise.Server.Controllers.Users
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
         [HttpPatch("role/member")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
