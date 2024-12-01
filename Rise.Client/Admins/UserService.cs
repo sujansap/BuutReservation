@@ -30,8 +30,15 @@ public class UserService : IUserService
         await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
     }
 
-    public Task<int> RegisterUser(UserRegistrationModelDto userDto)
+    public async Task<int> RegisterUser(UserRegistrationModelDto userDto)
     {
-        throw new NotImplementedException();
+        var result = await _httpClient.PostAsJsonAsync("register", userDto);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            throw new Exception($"Failed to register user. Response: {result.ReasonPhrase}");
+        }
+
+        return await result.Content.ReadFromJsonAsync<int>();
     }
 }

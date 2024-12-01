@@ -73,10 +73,10 @@ builder.Services.AddHttpClient<IUserService, UserService>(client =>
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddHttpClient<IUserService, UserRegisterService>(client =>
-{
-    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
-}).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+// builder.Services.AddHttpClient<IUserService, UserRegisterService>(client =>
+// {
+//     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
+// }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 var host = builder.Build();
 
