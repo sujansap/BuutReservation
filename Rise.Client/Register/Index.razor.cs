@@ -13,11 +13,13 @@ using static Rise.Shared.Users.UserRegistrationModelDto;
 public partial class Index : ComponentBase
 {
     [Inject]
-    private IStringLocalizer<RegisterFormPageResources> Localizer { get; set; } = default!;
+    public required IStringLocalizer<RegisterFormPageResources> Localizer { get; set; }
 
     [Inject]
-    private ISnackbar SnackbarService { get; set; } = default!;
+    public required ISnackbar SnackbarService { get; set; }
 
+    [Inject]
+    public required IUserService UserRegisterService { get; set; }
 
     private UserRegistrationModelDto User = new()
     {
@@ -56,24 +58,30 @@ public partial class Index : ComponentBase
     {
         isLoading = true;
         await Form.Validate();
-        if (Form.IsValid)
-        {
-            await Task.Delay(1000);
-            Log.Information(System.Text.Json.JsonSerializer.Serialize(User));
-            // var response = await Http.PostAsJsonAsync("api/register", user);
-            // if (response.IsSuccessStatusCode)
-            // {
-            isSuccess = true;
-            // }
-            // else
-            // {
-            //     errorMessage = await response.Content.ReadAsStringAsync();
-            // }
 
+        try
+        {
+            if (Form.IsValid)
+            {
+                await UserRegisterService.RegisterUser(User);
+                isSuccess = true;
+                SnackbarService.Add("Successfully registered! Check your email for further instruction.", MudBlazor.Severity.Success);
+            }
+            else
+            {
+                SnackbarService.Add("Please correct the errors before submitting the form.", MudBlazor.Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Error registering user: {ex.Message}");
+            SnackbarService.Add($"An error occured while trying to register: {ex.Message}", MudBlazor.Severity.Error);
+        }
+        finally
+        {
             isLoading = false;
             await Form.ResetAsync();
             User.Address.Country = "Belgium";
-            SnackbarService.Add("Successfully registered! Check your email for further instruction.", MudBlazor.Severity.Success, config => { config.VisibleStateDuration = 5000; });
         }
     }
 

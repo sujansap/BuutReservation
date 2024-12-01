@@ -30,27 +30,8 @@ public class UserService : IUserService
         await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
     }
 
-    public async Task<int> RegisterUser(UserRegistrationModelDto userDto)
+    public Task<int> RegisterUser(UserRegistrationModelDto userDto)
     {
-        var result = await _httpClient.PostAsJsonAsync("register", new UserRegistrationModelDto
-        {
-            Email = "",
-            FirstName = "",
-            FamilyName = "",
-            PhoneNumber = "",
-            Password = "",
-            DateOfBirth = null,
-            Address = new()
-            {
-                City = "",
-                Country = "",
-                Number = "",
-                PostalCode = "",
-                Street = ""
-            }
-        }
-        );
-
-        return 1;
+        throw new NotImplementedException();
     }
 }
