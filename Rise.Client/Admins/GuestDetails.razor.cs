@@ -21,7 +21,7 @@ namespace Rise.Client.Admins
         private UserDetailDto? UserDetails { get; set; }
 
         [Inject]
-        public required IUserService UserService { get; set; }
+        public required IUserAdminService UserService { get; set; }
 
         [Inject]
         public required NavigationManager NavigationManager { get; set; }

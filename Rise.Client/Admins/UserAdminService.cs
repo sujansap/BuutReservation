@@ -4,11 +4,11 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Admins;
 
-public class UserService : IUserService
+public class UserAdminService : IUserAdminService
 {
     private readonly HttpClient _httpClient;
 
-    public UserService(HttpClient httpClient)
+    public UserAdminService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
@@ -30,15 +30,8 @@ public class UserService : IUserService
         await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
     }
 
-    public async Task<int> RegisterUser(UserRegistrationModelDto userDto)
+    public Task<int> RegisterUser(UserRegistrationModelDto userDto)
     {
-        var result = await _httpClient.PostAsJsonAsync("register", userDto);
-
-        if (!result.IsSuccessStatusCode)
-        {
-            throw new Exception($"Failed to register user. Response: {result.ReasonPhrase}");
-        }
-
-        return await result.Content.ReadFromJsonAsync<int>();
+        throw new NotImplementedException();
     }
 }

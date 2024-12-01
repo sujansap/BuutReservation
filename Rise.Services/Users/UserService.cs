@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Rise.Services.Users;
 
-public class UserService(ApplicationDbContext dbContext, IManagementApiClient managementApiClient, ILogger<UserService> logger) : IUserService
+public class UserService(ApplicationDbContext dbContext, IManagementApiClient managementApiClient, ILogger<UserService> logger) : IUserAdminService, IUserRegisterService
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
     private readonly IManagementApiClient _managementApiClient = managementApiClient;

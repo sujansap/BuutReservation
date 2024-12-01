@@ -19,7 +19,7 @@ public partial class Index : ComponentBase
     public required ISnackbar SnackbarService { get; set; }
 
     [Inject]
-    public required IUserService UserRegisterService { get; set; }
+    public required IUserRegisterService UserRegisterService { get; set; }
 
     private UserRegistrationModelDto User = new()
     {
@@ -66,6 +66,9 @@ public partial class Index : ComponentBase
                 await UserRegisterService.RegisterUser(User);
                 isSuccess = true;
                 SnackbarService.Add("Successfully registered! Check your email for further instruction.", MudBlazor.Severity.Success);
+
+                await Form.ResetAsync();
+                User.Address.Country = "Belgium";
             }
             else
             {
@@ -74,14 +77,12 @@ public partial class Index : ComponentBase
         }
         catch (Exception ex)
         {
-            Log.Error($"Error registering user: {ex.Message}");
-            SnackbarService.Add($"An error occured while trying to register: {ex.Message}", MudBlazor.Severity.Error);
+            Log.Error($"Error registering user:\n{ex.Message}");
+            SnackbarService.Add($"An error occured while trying to register:\n{ex.Message}", MudBlazor.Severity.Error);
         }
         finally
         {
             isLoading = false;
-            await Form.ResetAsync();
-            User.Address.Country = "Belgium";
         }
     }
 

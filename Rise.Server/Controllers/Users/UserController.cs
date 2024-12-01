@@ -10,10 +10,10 @@ namespace Rise.Server.Controllers.Users
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class UserController(ILogger<UserController> logger, IUserService userService) : ControllerBase
+    public class UserController(ILogger<UserController> logger, IUserAdminService userService) : ControllerBase
     {
         private readonly ILogger<UserController> _logger = logger;
-        private readonly IUserService _userService = userService;
+        private readonly IUserAdminService _userService = userService;
 
         /// <summary>
         /// Get all the guest users

@@ -68,15 +68,15 @@ builder.Services.AddHttpClient<INotificationService, NotificationService>(client
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Notification/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddHttpClient<IUserService, UserService>(client =>
+builder.Services.AddHttpClient<IUserAdminService, UserAdminService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-// builder.Services.AddHttpClient<IUserService, UserRegisterService>(client =>
-// {
-//     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
-// }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+builder.Services.AddHttpClient<IUserRegisterService, UserRegisterService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/register");
+});
 
 var host = builder.Build();
 
