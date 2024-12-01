@@ -47,6 +47,7 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <returns>The details of a user</returns>
         [HttpGet("{userId}")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDetailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserDetails(int userId)

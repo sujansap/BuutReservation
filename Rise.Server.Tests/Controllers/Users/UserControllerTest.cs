@@ -3,108 +3,138 @@ using Shouldly;
 using Rise.Shared.Users;
 using System.Net.Http.Json;
 using System.Net;
+using Auth0.ManagementApi.Models;
 
 namespace Rise.Server.Tests.Controllers.Users
 {
     public class UserControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture, "User")
     {
         [Theory]
-        [InlineData("guests", UserRole.Guest, "GET")]
-        [InlineData("guests", UserRole.Member, "GET")]
-        [InlineData("role/member", UserRole.Guest, "PATCH")]
-        [InlineData("role/member", UserRole.Member, "PATCH")]
-        public async Task CallUserController_Endpoints_ExpectForbidden(string url, UserRole testLoginRole, string httpMethod)
+        [InlineData("users?role=Guest", UserRole.Guest)]
+        [InlineData("users?role=Member", UserRole.Guest)]
+        [InlineData("users?role=Administrator", UserRole.Member)]
+        [InlineData("users?role=Guest", UserRole.Member)]
+        public async Task GetUsersByRole_WithNonAdminRole_ReturnsForbidden(string url, UserRole testLoginRole)
         {
-            await TestForbiddenAccessForEndpoint(url, testLoginRole, httpMethod);
+            await LoginAsync(testLoginRole);
+            var response = await _client.GetAsync(url);
+            response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
         }
 
         [Theory]
-        [InlineData("guests", "GET")]
-        [InlineData("1", "GET")]
-        [InlineData("role/member", "PATCH")]
-        public async Task Call_UserController_Endpoints_ExpectUnauthorized(string url, string httpMethod)
+        [InlineData("users?role=Guest")]
+        [InlineData("users?role=Member")]
+        [InlineData("1")]
+        public async Task UserEndpoints_WithoutAuthentication_ReturnsUnauthorized(string url)
         {
-            await TestUnauthorizedAccessForEndpoint(url, httpMethod);
+            var response = await _client.GetAsync(url);
+            response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
         }
 
-
-        [Fact]
-        public async Task GET_GuestUsers_ReturnsGuestList()
+        [Theory]
+        [InlineData(UserRole.Guest)]
+        [InlineData(UserRole.Member)]
+        [InlineData(UserRole.Administrator)]
+        public async Task GetUsersByRole_AsAdmin_ReturnsCorrectUsers(UserRole roleToQuery)
         {
+            // Arrange
             await LoginAsync(UserRole.Administrator);
 
-            var response = await _client.GetFromJsonAsync<List<UserDto>>("guests");
+            // Act
+            var response = await _client.GetFromJsonAsync<UsersPagination<UserDto>>($"users?role={roleToQuery}&page=1&pageSize=10");
 
+            // Assert
             response.ShouldNotBeNull();
-            response.ShouldNotBeEmpty();
+            response.Items.ShouldNotBeNull();
 
         }
 
-        [Fact]
-        public async Task GET_GuestUsers_ContainsExpectedFields()
+        [Theory]
+        [InlineData(0, 10)]
+        [InlineData(1, 0)]
+        [InlineData(-1, 5)]
+        [InlineData(1, -5)]
+        public async Task GetUsersByRole_WithInvalidPagination_ReturnsBadRequest(int page, int pageSize)
         {
+            // Arrange
             await LoginAsync(UserRole.Administrator);
 
-            var response = await _client.GetFromJsonAsync<List<UserDto>>("guests");
+            // Act
+            var response = await _client.GetAsync($"users?role={UserRole.Guest}&page={page}&pageSize={pageSize}");
 
-
-            response.ShouldNotBeNull();
-            var firstUser = response.First();
-
-            firstUser.Id.ShouldNotBe(default);
-            firstUser.FamilyName.ShouldNotBeNull();
-
+            // Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
 
         [Fact]
-        public async Task GET_GuestUsers_ReturnsSuccessStatusCode()
+        public async Task GetUserDetails_WithValidId_ReturnsCorrectUser()
         {
+            // Arrange
+            const int userId = 1;
             await LoginAsync(UserRole.Administrator);
 
-            var response = await _client.GetAsync("guests");
+            // Act
+            var response = await _client.GetFromJsonAsync<UserDetailDto>($"{userId}");
 
-            response.StatusCode.ShouldBe(HttpStatusCode.OK);
-            response.IsSuccessStatusCode.ShouldBeTrue();
-        }
-
-        [Fact]
-        public async Task GET_GuestUsers_ValidatesResponseFormat()
-        {
-            await LoginAsync(UserRole.Administrator);
-
-            var response = await _client.GetFromJsonAsync<List<UserDto>>("guests");
-
-
+            // Assert
             response.ShouldNotBeNull();
-            foreach (var user in response)
-            {
-                user.FamilyName.ShouldNotBeNullOrWhiteSpace();
-            }
-        }
-
-        [Fact]
-        public async Task GET_UserDetails_ReturnsUserDetails()
-        {
-            await LoginAsync(UserRole.Guest);
-
-            var response = await _client.GetFromJsonAsync<UserDetailDto>("1");
-
-            response.ShouldNotBeNull();
-            response.Id.ShouldBe(1);
-            response.FamilyName.ShouldNotBeNull();
+            response.Id.ShouldBe(userId);
+            response.Email.ShouldNotBeNullOrEmpty();
+            response.FirstName.ShouldNotBeNullOrEmpty();
+            response.FamilyName.ShouldNotBeNullOrEmpty();
+            response.PhoneNumber.ShouldNotBeNullOrEmpty();
+            response.Address.ShouldNotBeNull();
         }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         [InlineData(99999)]
-        public async Task GET_UserDetails_FailsForInvalidUserId(int userId)
+        public async Task GetUserDetails_WithInvalidId_ReturnsNotFound(int userId)
         {
-            await LoginAsync(UserRole.Guest);
+            // Arrange
+            await LoginAsync(UserRole.Administrator);
 
-            var response = await _client.GetAsync(userId.ToString());
+            // Act
+            var response = await _client.GetAsync($"{userId}");
 
+            // Assert
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task AddMemberRole_AsAdmin_SuccessfullyAddsRole()
+        {
+            // Arrange
+            await LoginAsync(UserRole.Administrator);
+            var request = new AddMemberRoleDto { UserId = 1, Role = UserRole.Member };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("role", request);
+
+            // Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            // Verify role was added
+            var userDetails = await _client.GetFromJsonAsync<UserDetailDto>("1");
+            userDetails.ShouldNotBeNull();
+
+        }
+
+        [Theory]
+        [InlineData(UserRole.Administrator)]
+        [InlineData(UserRole.Guest)]
+        public async Task AddMemberRole_WithNonMemberRole_ReturnsBadRequest(UserRole roleToAdd)
+        {
+            // Arrange
+            await LoginAsync(UserRole.Administrator);
+            var request = new AddMemberRoleDto { UserId = 1, Role = roleToAdd };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("role", request);
+
+            // Assert
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
 
         [Theory]
