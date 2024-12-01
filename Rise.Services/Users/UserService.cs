@@ -49,17 +49,15 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             var auth0Role = await GetAuth0RoleByName(role);
 
             // Get paginated users from Auth0
-            //page-1 because Auth0 uses 0-based indexing
-            var assignedUsers = await _managementApiClient.Roles.GetUsersAsync(auth0Role.Id,
-                new PaginationInfo(page - 1, pageSize, includeTotals: true));
+            var assignedUsersPage = await GetAuth0UsersWithRetry(auth0Role.Id, page, pageSize);
 
-            if (!assignedUsers.Any())
+            if (!assignedUsersPage.Any())
             {
                 _logger.LogInformation("No users found for role {Role}", role);
                 return CreateEmptyPaginationResult(page, pageSize);
             }
 
-            var auth0Users = await Task.WhenAll(assignedUsers.Select(user =>
+            var auth0Users = await Task.WhenAll(assignedUsersPage.Select(user =>
                 _managementApiClient.Users.GetAsync(user.UserId)));
 
             var buutUserIds = auth0Users
@@ -84,11 +82,10 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 })
                 .ToListAsync();
 
-
             return new UsersPagination<UserDto>
             {
                 Items = userDtos,
-                TotalCount = assignedUsers.Paging.Total,
+                TotalCount = assignedUsersPage.Paging.Total,
                 Page = page,
                 PageSize = pageSize
             };
@@ -102,6 +99,33 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             _logger.LogError(ex, "Error occurred while fetching users by role {Role}", role);
             throw new ApplicationException($"Failed to retrieve users for role '{role}'.", ex);
         }
+    }
+
+    private async Task<IPagedList<AssignedUser>> GetAuth0UsersWithRetry(string roleId, int page, int pageSize)
+    {
+        const int maxRetries = 2;
+        const int retryDelayInMilliseconds = 2000;
+
+        for (int attempt = 0; attempt <= maxRetries; attempt++)
+        {
+            try
+            {
+                // Auth0 uses 0-based indexing for pages
+                var assignedUsersPage = await _managementApiClient.Roles.GetUsersAsync(roleId,
+                    new PaginationInfo(page - 1, pageSize, includeTotals: true));
+
+                return assignedUsersPage;
+            }
+            catch (RateLimitApiException ex) when (attempt < maxRetries)
+            {
+                _logger.LogWarning(ex, "Rate limit exceeded while fetching users for role {RoleId}. Retrying in {RetryDelay}s...",
+                    roleId, retryDelayInMilliseconds / 1000);
+
+                await Task.Delay(retryDelayInMilliseconds);
+            }
+        }
+
+        throw new ApplicationException($"Failed to fetch users for role '{roleId}' after {maxRetries + 1} attempts due to rate-limiting.");
     }
 
     private UsersPagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)

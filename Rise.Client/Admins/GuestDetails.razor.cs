@@ -35,10 +35,9 @@ namespace Rise.Client.Admins
 
         private bool isProcessing = false;
 
-        protected async void NavigateToListPage()
+        protected void NavigateToListPage()
         {
 
-            await Task.Delay(1000);
             NavigationManager.NavigateTo("/admin/guests");
 
         }
