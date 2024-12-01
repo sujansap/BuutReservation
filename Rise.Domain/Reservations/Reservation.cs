@@ -1,5 +1,5 @@
 using Rise.Domain.Boats;
-using Rise.Domain.Timeslots;
+using Rise.Domain.TimeSlots;
 using Rise.Domain.Users;
 
 namespace Rise.Domain.Reservations
@@ -8,15 +8,12 @@ namespace Rise.Domain.Reservations
     {
         public readonly static int MinDaysBetweenReservation = 2;
 
-        // TODO remove boat id
         public int BoatId { get; set; }
         public required Boat Boat { get; set; }
 
-        // TODO remove time slot id
         public int TimeSlotId { get; set; }
         public required TimeSlot TimeSlot { get; set; }
 
-        // TODO remove user id
         public int UserId { get; set; }
         public required User User { get; set; }
 
@@ -41,5 +38,21 @@ namespace Rise.Domain.Reservations
         }
         
         public int? BatteryId { get; private set; }
+        // TODO: een andmin kan wel aanpassen tot net voor de reservatie
+        public void Cancel()
+        {
+            if (IsDeleted)
+            {
+                throw new InvalidOperationException("The reservation is already canceled.");
+            }
+
+            DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
+            if ((TimeSlot.Date.ToDateTime(TimeOnly.MinValue) - currentDate.ToDateTime(TimeOnly.MinValue)).TotalDays < MinDaysBetweenReservation)
+            {
+                throw new InvalidOperationException("Reservations can only be canceled at least 2 days before the reservation date.");
+            }
+
+            IsDeleted = true;
+        }
     }
 }

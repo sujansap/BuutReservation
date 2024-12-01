@@ -11,4 +11,5 @@
     <ProjectReference Include="..\Rise.Persistence\Rise.Persistence.csproj" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
+
 </Project>

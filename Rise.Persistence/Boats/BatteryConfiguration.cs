@@ -22,12 +22,10 @@ namespace Rise.Persistence.Boats
 
             builder.HasOne(x => x.Boat)
             .WithMany(b => b.Batteries)
-            .HasForeignKey(b => b.BoatId)
             .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Mentor)
-            .WithOne()
-            .HasForeignKey<Battery>(x => x.MentorId)
+            .WithMany(u => u.GuardedBatteries)
             .OnDelete(DeleteBehavior.SetNull);
         }
     }

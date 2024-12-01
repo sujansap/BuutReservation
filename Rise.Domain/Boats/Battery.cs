@@ -14,7 +14,6 @@ namespace Rise.Domain.Boats
         public DateTime? LastUsedAt => _lastUsedAt;
         public int? CurrentHolderId { get; private set; }
         public User? CurrentHolder { get; private set; }
-        public int MentorId { get; set; }
         public User Mentor { get; set; } = null!;
         public int BoatId { get; set; }
         public required Boat Boat { get; set; }

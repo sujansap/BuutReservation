@@ -4,14 +4,35 @@ using System.Net.Http.Json;
 using System.Net;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
+using Rise.Shared.Users;
 
 namespace Rise.Server.Tests.Controllers
 {
     public class ReservationControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture, "Reservation")
     {
+        [Theory]
+        [InlineData("me", UserRole.Guest, "GET")]
+        [InlineData("", UserRole.Guest, "POST")]
+        [InlineData("1", UserRole.Guest, "GET")]
+        public async Task Call_ReservationController_Endpoints_ExpectForbidden(string url, UserRole testLoginRole, string httpMethod)
+        {
+            await TestForbiddenAccessForEndpoint(url, testLoginRole, httpMethod);
+        }
+
+        [Theory]
+        [InlineData("me", "GET")]
+        [InlineData("", "POST")]
+        [InlineData("1", "GET")]
+        public async Task Call_ReservationController_Endpoints_ExpectUnauthorized(string url, string httpMethod)
+        {
+            await TestUnauthorizedAccessForEndpoint(url, httpMethod);
+        }
+
         [Fact]
         public async Task GET_CurrentUser_UpcomingReservations_WithNoParameters_FirstPage_ExpectOk_5OrLessReservations()
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync("me");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -23,12 +44,16 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.PreviousId.ShouldBeNull();
             reservationsPage.NextId.ShouldNotBeNull();
             reservationsPage.Data.ShouldAllBe(r => r.Date >= DateOnly.FromDateTime(DateTime.Now));
+
+            Logout();
         }
 
         // baken zelf de range af van de reservations van een maand geleden + 5
         [Fact]
         public async Task GET_CurrentUser_PastReservations_WithNoParameters_FirstPage_ExpectOk_5OrLessReservations()
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync("me?getPast=true");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -41,18 +66,20 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.NextId.ShouldNotBeNull();
 
             // Additional checks for past reservations
-            var today = DateOnly.FromDateTime(DateTime.Now);
+            var today = DateOnly.FromDateTime(DateTime.Today);
             var oneMonthAgo = today.AddMonths(-1);
 
             // Verify all returned reservations are from the past
             reservationsPage.Data.ShouldAllBe(r => r.Date < today);
-    // start van 2 dagen geleden tot 7 dagen geleden
-            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-7) && r.Date <= today.AddDays(-2));
+            // start van 2 dagen geleden tot 7 dagen geleden
+            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-8) && r.Date <= today.AddDays(-2));
+            Logout();
         }
 
         [Fact]
         public async Task GET_CurrentUser_PastReservations_NextPage_ExpectOk_5OrLessReservations()
         {
+            await LoginAsync(UserRole.Member);
             // Get first page
             var firstResponse = await _client.GetAsync("me?getPast=true");
             firstResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -62,18 +89,18 @@ namespace Rise.Server.Tests.Controllers
 
             // Store the last ID from first page to verify cursor implementation
             var lastIdFromFirstPage = firstPage.Data.Last().Id;
-            
+
             // Get next page using cursor
             var nextResponse = await _client.GetAsync($"me?getPast=true&cursor={firstPage.NextId}&isNextPage=true");
             nextResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
 
             var nextPage = await nextResponse.Content.ReadFromJsonAsync<ItemsPageDto<ReservationDto>>();
             nextPage.ShouldNotBeNull();
-            
+
             // de eerste van de lijst moet de cursor zijn van de vorige pagina
             nextPage.PreviousId.ShouldNotBe(lastIdFromFirstPage);  // Previous cursor should point to last item of first page
             nextPage.Data.First().Id.ShouldBeLessThan(lastIdFromFirstPage);  // Items should be ordered by ID descending
-            
+
             var today = DateOnly.FromDateTime(DateTime.Now);
             var oneMonthAgo = today.AddMonths(-1);
             nextPage.Data.ShouldNotBeEmpty();
@@ -85,9 +112,14 @@ namespace Rise.Server.Tests.Controllers
             nextPage.Data.First().Id.ShouldNotBe(firstPage.Data.First().Id);
             // van 8 dagen geleden tot 13 dagen geleden
             // moet de cursor meegeven van de pagina
-            nextPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-11) && r.Date <= today.AddDays(-6),
-                customMessage: $"Expected dates between {today.AddDays(-13)} and {today.AddDays(-8)}. " +
+            DateOnly start = today.AddDays(-14);
+            DateOnly end = today.AddDays(-9);
+
+            nextPage.Data.ShouldAllBe(r => r.Date >= start && r.Date <= end,
+                customMessage: $"Expected dates between {start} and {end}. " +
                 $"Actual dates: {string.Join(", ", nextPage.Data.Select(r => r.Date))}");
+
+            Logout();
         }
 
         [Theory]
@@ -95,6 +127,8 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(15)]
         public async Task GET_CurrentUser_UpcomingReservations_WithVaryingPageSize_ExpectOk_PageSizeAmountOrLessReservations(int pageSize)
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -102,6 +136,8 @@ namespace Rise.Server.Tests.Controllers
             reservationsPage.ShouldNotBeNull();
             reservationsPage.Data.ShouldNotBeEmpty();
             reservationsPage.Data.Count().ShouldBeLessThanOrEqualTo(pageSize);
+
+            Logout();
         }
 
         [Theory]
@@ -109,16 +145,24 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(0)]
         public async Task GET_CurrentUser_Reservations_WithInvalidPageSize_ExpectBadRequest(int pageSize)
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
         [Theory]
         [InlineData("invalid")]
         public async Task GET_CurrentUser_Reservations_WithInvalidPageSizeType_ExpectBadRequest(string pageSize)
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync($"me?pageSize={pageSize}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
         [Theory]
@@ -126,33 +170,46 @@ namespace Rise.Server.Tests.Controllers
         [InlineData(-56)]
         public async Task GET_CurrentUser_Reservations_WithInvalidNumber_ExpectBadRequest(int cursor)
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync($"me?cursor={cursor}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
         [Theory]
         [InlineData("invalid")]
         public async Task GET_CurrentUser_Reservations_WithInvalidType_ExpectBadRequest(string cursor)
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync($"me?cursor={cursor}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_CurrentUser_Reservations_NextPage_WithValidCursor_IsNextPageNull_ExpectBadRequest()
         {
+            await LoginAsync(UserRole.Member);
+
             var response = await _client.GetAsync($"me?cursor=17");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
 
         [Fact]
         public async Task POST_CreateReservation_WithValidTimeSlot_ExpectCreated()
         {
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto
             {
-                TimeSlotId = 10
+                TimeSlotId = 63
             };
 
 
@@ -161,12 +218,15 @@ namespace Rise.Server.Tests.Controllers
             response.StatusCode.ShouldBe(HttpStatusCode.Created);
             var reservationId = await response.Content.ReadFromJsonAsync<int>();
             reservationId.ShouldBeGreaterThan(0);
+
+            Logout();
         }
 
 
         [Fact]
         public async Task POST_CreateReservation_WithDuplicateTimeSlot_ExpectConflict()
         {
+            await LoginAsync(UserRole.Member);
 
             var request = new CreateReservationDto
             {
@@ -178,12 +238,16 @@ namespace Rise.Server.Tests.Controllers
             response1.StatusCode.ShouldBe(HttpStatusCode.Created);
             var response2 = await _client.PostAsJsonAsync("", request);
             response2.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+
+            Logout();
         }
 
 
         [Fact]
         public async Task POST_CreateReservation_WithQueryParameters_ExpectBadRequest()
         {
+            await LoginAsync(UserRole.Member);
+
             var request = new CreateReservationDto
             {
                 TimeSlotId = 1
@@ -192,24 +256,32 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.PostAsJsonAsync("?badrequest=true", request);
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
         [Fact]
         public async Task POST_CreateReservation_WithNoAvailableBoats_ExpectConflict()
         {
+            await LoginAsync(UserRole.Member);
+
             var request = new CreateReservationDto
             {
-                TimeSlotId = 50
+                TimeSlotId = 1
             };
 
             var response = await _client.PostAsJsonAsync("", request);
 
             response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+
+            Logout();
         }
 
         [Fact]
         public async Task POST_CreateReservation_WithInvalidTimeSlot_ExpectNotFound()
         {
+            await LoginAsync(UserRole.Member);
+
             var request = new CreateReservationDto
             {
                 TimeSlotId = -1
@@ -218,21 +290,28 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.PostAsJsonAsync("", request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
         [Fact]
         public async Task POST_CreateReservation_WithMissingTimeSlotId_ExpectBadRequest()
         {
+            await LoginAsync(UserRole.Member);
+
             var request = new CreateReservationDto();
 
             var response = await _client.PostAsJsonAsync("", request);
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_ReservationDetails_WithExistingId_ExpectOk()
         {
+            await LoginAsync(UserRole.Member);
 
             var existingId = 1;
             var response = await _client.GetAsync($"{existingId}");
@@ -244,17 +323,21 @@ namespace Rise.Server.Tests.Controllers
             var reservationDetails = await response.Content.ReadFromJsonAsync<ReservationDetailsDto>();
             reservationDetails.ShouldNotBeNull();
             reservationDetails.Id.ShouldBe(existingId);
+
+            Logout();
         }
 
         [Fact]
         public async Task GET_ReservationDetails_WithNonExistentId_ExpectNotFound()
         {
+            await LoginAsync(UserRole.Member);
 
             var nonExistentId = 9999;
             var response = await _client.GetAsync($"{nonExistentId}");
 
-
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+            Logout();
         }
 
         [Theory]
@@ -263,11 +346,76 @@ namespace Rise.Server.Tests.Controllers
         [InlineData("@!#")]
         public async Task GET_ReservationDetails_WithInvalidId_ExpectBadRequest(string invalidId)
         {
+            await LoginAsync(UserRole.Member);
 
             var response = await _client.GetAsync($"{invalidId}");
 
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            Logout();
+        }
+
+        [Fact]
+        public async Task PATCH_CancelReservation_WithValidId_ExpectOk()
+        {
+            await LoginAsync(UserRole.Member);
+
+            var validReservationId = 80;
+
+
+            var response = await _client.PatchAsync($"cancel/{validReservationId}", null);
+
+            var reservationDetailsResponse = await _client.GetAsync($"{validReservationId}");
+            reservationDetailsResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var reservationDetails = await reservationDetailsResponse.Content.ReadFromJsonAsync<ReservationDetailsDto>();
+            reservationDetails.ShouldNotBeNull();
+            reservationDetails.Id.ShouldBe(validReservationId);
+            reservationDetails.IsDeleted.ShouldBeTrue();
+
+            Logout();
+        }
+
+
+        [Fact]
+        public async Task PATCH_CancelReservation_WithNonExistentId_ExpectNotFound()
+        {
+            await LoginAsync(UserRole.Member);
+            var nonExistentReservationId = 9999;
+
+
+            var response = await _client.PatchAsync($"cancel/{nonExistentReservationId}", null);
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            Logout();
+        }
+        [Fact]
+        public async Task PATCH_CancelReservation_AlreadyCancelledReservation_ExpectBadRequest()
+        {
+            await LoginAsync(UserRole.Member);
+            var cancelledReservationId = 38;
+
+
+            var response = await _client.PatchAsync($"cancel/{cancelledReservationId}", null);
+
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            Logout();
+        }
+
+        [Fact]
+        public async Task PATCH_CancelReservation_WithinTwoDaysOfReservation_ExpectBadRequest()
+        {
+            await LoginAsync(UserRole.Member);
+            var reservationIdWithinTwoDays = 2;
+
+
+            var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);
+
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            Logout();
         }
     }
 }

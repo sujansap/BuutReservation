@@ -3,11 +3,13 @@ using Rise.Shared.TimeSlots;
 using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
 using Rise.Shared.Reservations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Guest,Member")]
     public class TimeSlotController(ITimeSlotService timeSlotService, IReservationService reservationsService, ILogger<TimeSlotController> logger) : ControllerBase
     {
         private readonly ILogger _logger = logger;
@@ -24,6 +26,8 @@ namespace Rise.Server.Controllers
         [HttpGet("range")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotRangeInfoDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetAvailableTimeSlotsInMonth(
             [FromQuery, SwaggerParameter(Required = true)]
             DateOnly startDate,
@@ -31,9 +35,6 @@ namespace Rise.Server.Controllers
             DateOnly endDate
             )
         {
-
-            var fakeUserId = 2;
-
             _logger.LogInformation("GET range?startDate={startDate}&endDay={endDay}", [startDate, endDate]);
             _logger.LogDebug("Checking if {startDate} becomes before {endDay} ", [startDate, endDate]);
             if (startDate > endDate)
@@ -52,7 +53,7 @@ namespace Rise.Server.Controllers
 
 
             _logger.LogDebug("Getting reservations between range {startDate} and {endDay} from service layer", [startDate, endDate]);
-            ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate, fakeUserId);
+            ReservationsRangeDto reservationsRangeDto = await _reservationsService.GetAllReservationsInRangeByCurrentUser(startDate, endDate);
             _logger.LogDebug("Returning {reservationCount} reservations from {startDate} to {endDay}", [reservationsRangeDto.Reservations.Count(), startDate, endDate]);
 
 
@@ -72,6 +73,9 @@ namespace Rise.Server.Controllers
         [HttpGet("{year}/{month}/{day}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TimeSlotDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
         public async Task<IActionResult> GetTimeSlotsByDate(
             [FromRoute]
             [Range(1, 9999, ErrorMessage = "Year must be between 1 and 9999")]

@@ -54,6 +54,7 @@ namespace Rise.Client.Reservations
         {
             if (CurrentTab is not null)
             {
+                // TODO fix so that incase missing tabs doesn't crash (ex. guests can brows to this page and crash it)
                 CurrentTab = CurrentTab.ToLower();
                 int index = tabNames.IndexOf(CurrentTab);
                 TabIndex = index < 0 ? 0 : index;

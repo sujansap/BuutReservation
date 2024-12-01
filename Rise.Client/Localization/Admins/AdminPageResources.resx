@@ -21,4 +21,74 @@
 	<data name="Actions">
 		<value>Acties</value>
 	</data>
+	<data name="ViewDetails">
+		<value>Zie Details</value>
+	</data>
+	<data name="Back">
+		<value>Terug</value>
+	</data>
+	<data name="Approve">
+		<value>Aanvaarden</value>
+	</data>
+	<data name="Verwerken">
+		<value>Verwerken</value>
+	</data>
+	<data name="ApproveSuccess">
+		<value>Gast is succesvol goedgekeurd als lid!</value>
+	</data>
+	<data name="ApproveFailure">
+		<value>Gast kon niet worden goedgekeurd: {0}</value>
+	</data>
+	<data name="NameLabel">
+		<value>Naam</value>
+	</data>
+	<data name="EmailLabel">
+		<value>E-mail</value>
+	</data>
+	<data name="AddressLabel">
+		<value>Adres</value>
+	</data>
+	<data name="PhoneLabel">
+		<value>Telefoon</value>
+	</data>
+	<data name="WelcomeToAdminDashboard">
+		<value>Welkom bij de Admin Dashboard</value>
+	</data>
+	<data name="TotalUsers">
+		<value>Totaal Aantal Gebruikers</value>
+	</data>
+	<data name="QuickActions">
+		<value>Snelle Acties</value>
+	</data>
+	<data name="CreateNewUser">
+		<value>Nieuwe Gebruiker Aanmaken</value>
+	</data>
+	<data name="WelcomeToBoatDashboard">
+		<value>Welkom bij het Boten Dashboard</value>
+	</data>
+	<data name="TotalBoats">
+		<value>Totaal Aantal Boten</value>
+	</data>
+	<data name="TodaysReservations">
+		<value>Reserveringen Vandaag</value>
+	</data>
+	<data name="ActiveMembers">
+		<value>Actieve Leden</value>
+	</data>
+	<data name="NewReservation">
+		<value>Nieuwe Reservering</value>
+	</data>
+	<data name="ManageMembers">
+		<value>Ledenbeheer</value>
+	</data>
+	<data name="ViewBoatStatus">
+		<value>Bootstatus Bekijken</value>
+	</data>
+	<data name="BoatLocation">
+		<value>Bootlocatie</value>
+	</data>
+	<data name="BoatLocationDescription">
+		<value>De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
+			Vaargebied: van de Meulestedebrug tot aan het Keizerspark.</value>
+	</data>
 </root>

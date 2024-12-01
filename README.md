@@ -60,6 +60,20 @@ dotnet run --project Rise.Server --environment Production --urls "https://0.0.0.
 
 For more info on running the application in a specifying environment, check out the ASP.NET docs on [Using multiple environments in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-8.0) and the general [`dotnet run`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run) commando.
 
+### Add Auth0 environment variables to appsettings.json and secrets to secrets.json
+
+```
+"Auth0": {
+    "Authority": "https://rise-gent2.eu.auth0.com",
+    "Audience": "https://api.buut.be",
+    "ApiIdentifier": "https://rise-gent2.eu.auth0.com/api/v2/",
+    "M2MClientId": "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+    "M2MClientSecret": "<secret>",
+    "BlazorClientId": "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+    "BlazorClientSecret": "<secret>"
+  },
+```
+
 ## Contribution
 
 ### Branching flow
@@ -219,11 +233,29 @@ This setup is very similar to the setup of the [application's database](#databas
 
 > Powershell
 
-`env:ConnectionStrings__PostgreSQL="connection here"`
+```
+env:ConnectionStrings__PostgreSQL="connection here"
+env:Auth0__Authority= "https://rise-gent2.eu.auth0.com",
+env:Auth0__Audience= "https://api.buut.be",
+env:Auth0__ApiIdentifier= "https://rise-gent2.eu.auth0.com/api/v2/",
+env:Auth0__M2MClientId= "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+env:Auth0__M2MClientSecret= "<secret>",
+env:Auth0__BlazorClientId= "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+env:Auth0__BlazorClientSecret= "<secret>"
+```
 
 > Bash
 
-`ConnectionStrings__PostgreSQL="connection here"`
+```
+ConnectionStrings__PostgreSQL="connection here"
+Auth0__Authority= "https://rise-gent2.eu.auth0.com",
+Auth0__Audience= "https://api.buut.be",
+Auth0__ApiIdentifier= "https://rise-gent2.eu.auth0.com/api/v2/",
+Auth0__M2MClientId= "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+Auth0__M2MClientSecret= "<secret>",
+Auth0__BlazorClientId= "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+Auth0__BlazorClientSecret= "<secret>"
+```
 
 #### Running integration tests
 
@@ -245,10 +277,46 @@ ConnectionStrings__PostgreSQL="connection here" dotnet run
 
 ```ps1
 $env:ConnectionStrings__PostgreSQL="connection here"
+$env:Auth0__Authority= "https://rise-gent2.eu.auth0.com",
+$env:Auth0__Audience= "https://api.buut.be",
+$env:Auth0__ApiIdentifier= "https://rise-gent2.eu.auth0.com/api/v2/",
+$env:Auth0__M2MClientId= "h5pei396blZJIqvOSHDfiK5AykyWe63S",
+$env:Auth0__M2MClientSecret= "<secret>",
+$env:Auth0__BlazorClientId= "8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l",
+$env:Auth0__BlazorClientSecret= "<secret>"
 dotnet run
 ```
 
 ### E2E Tests
+
+### Authenticated Tests Configuration
+
+This setup is very similar to the setup of the [application's database](#database-connection). Only difference is that the secrets need to be added to the `Rise.Client.Tests` project.
+
+1. **Add User Role and Credentials**:
+
+- Right-click on the `Rise.Client.Tests.csproj` and select `Manage User Secrets`, add the user role and credentials in `secrets.json`.
+
+  ```json
+  {
+    "Administrator": {
+     "Email": "admin@example.com",
+     "Password": "adminpassword"
+    },
+    "Guest": {
+     "Email": "guest@example.com",
+     "Password": "guestpassword"
+    },
+    "Member": {
+     "Email": "test@example.com",
+     "Password": "testpassword"
+    }
+  }
+  ```
+
+2. **Configure Auth0 Allowed Callback URLs**:
+
+- Ensure the domain URL, where the client tests are running, is added to the *Allowed Callback URLs* (don't forget to add ***/authentication/login-callback/*** after the domain) as well as the *Logout* URLs in your Auth0 configuration.
 
 #### Installation of Playwright
 
@@ -269,6 +337,7 @@ This can be done by starting the project from the root via:
 ```bash
 dotnet run --project Rise.Client
 ```
+
 > Optionally you can use the `Rise.Server` project but you will need to specify the base url for tests, see further.
 
 Running the tests can be done executing following command in the `Rise.Client.Tests` project:

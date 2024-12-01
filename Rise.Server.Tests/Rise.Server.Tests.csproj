@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rise.Server\Rise.Server.csproj" />
+    <None Include="..\Rise.Server\appsettings.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

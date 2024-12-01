@@ -11,31 +11,32 @@ namespace Rise.Domain.Boats
             get => _personalName;
             set => _personalName = Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName)).Trim();
         }
+        private readonly List<Reservation> reservations = [];
+        public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 
-        private readonly List<Battery> _batteries = new();
-        private readonly List<Reservation> _reservations = new();
+        private readonly List<Battery> batteries = [];
 
-        public IReadOnlyCollection<Battery> Batteries => _batteries.AsReadOnly();
-        public IReadOnlyCollection<Reservation> Reservations => _reservations.AsReadOnly();
+        public IReadOnlyList<Battery> Batteries => batteries.AsReadOnly();
 
         public Battery? GetAvailableBatteryForDate(DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
-            return _batteries
+            return batteries
                 .OrderBy(b => b.UsageCount)
                 .ThenBy(b => b.LastUsedAt ?? DateTime.MinValue)
                 .FirstOrDefault(b => b.IsAvailableForDate(date, startTime, endTime));
         }
 
-        internal void AddBattery(Battery battery)
-        {
-            Guard.Against.Null(battery, nameof(battery));
-            _batteries.Add(battery);
-        }
-
-        internal void AddReservation(Reservation reservation)
+        public void AddReservation(Reservation reservation)
         {
             Guard.Against.Null(reservation, nameof(reservation));
-            _reservations.Add(reservation);
+            reservations.Add(reservation);
         }
+
+        public void AddBattery(Battery battery)
+        {
+            Guard.Against.Null(battery, nameof(battery));
+            batteries.Add(battery);
+        }
+
     }
 }

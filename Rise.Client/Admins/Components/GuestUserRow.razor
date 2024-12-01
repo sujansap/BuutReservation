@@ -1,4 +1,6 @@
 ﻿@using Rise.Shared.Users
+@using MudBlazor
+@using Rise.Client.Common.Buttons
 @using Rise.Client.Localization.Admins
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<AdminPageResources> Localizer
@@ -6,6 +8,7 @@
 <MudTd DataLabel="@Localizer["FamilyName"]">@User.FamilyName</MudTd>
 <MudTd>
     <MudStack Row="true">
-        @*can add ac cept for next feature*@
+        @*TODO:make this a common component*@
+        <DetailsButton data-testid="view-guest-details-button" Href="@($"admin/guests/{User.Id}")" />
     </MudStack>
 </MudTd>

@@ -7,7 +7,11 @@ public class ReservationDetailsDto : BaseDto
     public DateOnly Date { get; set; }
     public int BoatId { get; set; }
     public string BoatPersonalName { get; set; } = default!;
+
     public string? MentorName { get; set; }
+
+    public bool IsDeleted { get; set; }
+
     public string? BatteryType { get; set; }
     public int? BatteryId { get; set; }
     public string? CurrentBatteryUserName { get; set; }

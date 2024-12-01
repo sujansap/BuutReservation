@@ -73,8 +73,7 @@ namespace Rise.Persistence.Migrations
 
                     b.HasIndex("CurrentHolderId");
 
-                    b.HasIndex("MentorId")
-                        .IsUnique();
+                    b.HasIndex("MentorId");
 
                     b.ToTable("Battery", (string)null);
                 });
@@ -110,6 +109,55 @@ namespace Rise.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Boat", (string)null);
+                });
+
+            modelBuilder.Entity("Rise.Domain.Notifications.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notification", (string)null);
                 });
 
             modelBuilder.Entity("Rise.Domain.Reservations.Reservation", b =>
@@ -274,8 +322,8 @@ namespace Rise.Persistence.Migrations
                         .HasForeignKey("CurrentHolderId");
 
                     b.HasOne("Rise.Domain.Users.User", "Mentor")
-                        .WithOne()
-                        .HasForeignKey("Rise.Domain.Boats.Battery", "MentorId")
+                        .WithMany("ResponsibleBatteries")
+                        .HasForeignKey("MentorId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
@@ -284,6 +332,17 @@ namespace Rise.Persistence.Migrations
                     b.Navigation("CurrentHolder");
 
                     b.Navigation("Mentor");
+                });
+
+            modelBuilder.Entity("Rise.Domain.Notifications.Notification", b =>
+                {
+                    b.HasOne("Rise.Domain.Users.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Rise.Domain.Reservations.Reservation", b =>
@@ -354,7 +413,11 @@ namespace Rise.Persistence.Migrations
 
             modelBuilder.Entity("Rise.Domain.Users.User", b =>
                 {
+                    b.Navigation("Notifications");
+
                     b.Navigation("Reservations");
+
+                    b.Navigation("ResponsibleBatteries");
                 });
 #pragma warning restore 612, 618
         }

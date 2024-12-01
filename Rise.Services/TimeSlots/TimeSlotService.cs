@@ -5,13 +5,16 @@ using Rise.Persistence;
 using Rise.Shared.TimeSlots;
 using System.Data;
 using Rise.Domain.Users;
+using Rise.Services.Auth;
+using System.Text.Json;
+using System.Security.Claims;
+using Rise.Domain.Exceptions;
 
 namespace Rise.Services.TimeSlots
 {
-    public class TimeSlotService(ApplicationDbContext dbContext) : ITimeSlotService
+    public class TimeSlotService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+        : AuthenticationService(dbContext, authContextProvider), ITimeSlotService
     {
-        private readonly ApplicationDbContext _dbContext = dbContext;
-
         internal class DateTimeSlotBoatUse
         {
             /// <summary>
@@ -79,12 +82,12 @@ namespace Rise.Services.TimeSlots
 
         public async Task<IEnumerable<TimeSlotDto>> GetTimeSlotsByDate(int year, int month, int day)
         {
-            int userId = 2; // This should be the current user id
+            int userId = (int)_authContextProvider.GetUserId()!;
 
             var date = new DateOnly(year, month, day);
             var today = DateOnly.FromDateTime(DateTime.Today);
             var minReservationDate = GetMinReservationDate();
-            
+
             // Right now we don't keep the information of whether a boat is available or not
             var amountOfAvailableBoats = await _dbContext.Boats.CountAsync();
 

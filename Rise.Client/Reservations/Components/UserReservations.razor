@@ -4,7 +4,7 @@
 @using Rise.Client.Common
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Reservations
-
+@using Rise.Client.Common.Buttons
 @inject IStringLocalizer<ReservationPageResources> Localizer
 
 
@@ -16,24 +16,15 @@
         @ref="@AsyncDataRef" TestIdPrefix="user-reservations" ShowContentWhenError="false">
         <!-- Toggle Button -->
         <MudItem xs="12" Style="padding: 36px 0 24px 0;">
-            <MudPaper Elevation="0" 
-                      Class="pa-1 hover-container" 
-                      Style="background-color: #f5f5f5; border-radius: 16px;">
-                <MudButton 
-                    Variant="Variant.Text"
-                    Color="Color.Primary"
-                    FullWidth="true"
-                    Class="d-flex justify-start py-1 px-3" 
-                    Style="border-radius: 16px;" 
-                    OnClick="@TogglePastReservations"
-                    data-testid="reservation-toggle-button">
-                    <MudToggleIconButton 
-                        Toggled="ShowPastReservations"
+            <MudPaper Elevation="0" Class="pa-1 hover-container"
+                Style="background-color: #f5f5f5; border-radius: 16px;">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" FullWidth="true"
+                    Class="d-flex justify-start py-1 px-3" Style="border-radius: 16px;"
+                    OnClick="@TogglePastReservations" data-testid="reservation-toggle-button">
+                    <MudToggleIconButton Toggled="ShowPastReservations"
                         ToggledChanged="((bool toggled) => TogglePastReservations(toggled))"
-                        Icon="@Icons.Material.Filled.Today" 
-                        ToggledIcon="@Icons.Material.Filled.History"
-                        Color="Color.Primary"
-                        data-testid="reservation-toggle" />
+                        Icon="@Icons.Material.Filled.Today" ToggledIcon="@Icons.Material.Filled.History"
+                        Color="Color.Primary" data-testid="reservation-toggle" />
                     <MudText Class="ml-3 d-flex align-center">
                         @(ShowPastReservations ? @Localizer["Past"] : @Localizer["Upcoming"])
                         <MudIcon Icon="@Icons.Material.Filled.SwapHoriz" Class="ml-2" Size="Size.Small" />
@@ -48,19 +39,21 @@
                 @foreach (var reservation in ReservationPage.Data)
                 {
                     <MudItem xs="12" data-testid="reservation-item">
-                        <MudCard Elevation="6" Class="mb-6" Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+                        <MudCard Elevation="6" Class="mb-6" Style="@(reservation.IsDeleted ? "opacity: 0.5;" : "")">
                             <MudCardContent>
                                 <MudGrid>
                                     <!-- Icon Section -->
                                     <MudItem xs="2" Class="d-flex justify-center align-center" Style="height: 100%;">
                                         <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
-                                            Style="width: 70px; height: 70px; color: #01f8df;" />
+                                            Style="width: 70px; height: 70px; color: #40e0d0;" />
                                     </MudItem>
-                                    
+
                                     <!-- Text Content Section -->
                                     <MudItem xs="7" Class="d-flex flex-column" Style="padding-left: 20px;">
-                                        <MudText Typo="Typo.h5" Class="mb-2" Style="color: #333;" data-testid="reservation-date">
-                                            @Localizer["ReservationFor"] <strong>@reservation.Date.ToString("dd/MM/yyyy")</strong>
+                                        <MudText Typo="Typo.h5" Class="mb-2" Style="color: #333;"
+                                            data-testid="reservation-date">
+                                            @Localizer["ReservationFor"]
+                                            <strong>@reservation.Date.ToString("dd/MM/yyyy")</strong>
                                         </MudText>
                                         <MudText data-testid="reservation-boat-name" Style="color: #777;">
                                             <strong>@Localizer["Boat"]:</strong> @reservation.BoatPersonalName
@@ -69,15 +62,24 @@
                                             <strong>@Localizer["Time"]:</strong> @reservation.Start - @reservation.End
                                         </MudText>
                                     </MudItem>
-                                    
-                                    <!-- View Details Button -->
+
+                                    <!-- View Details or Status -->
                                     <MudItem xs="3" Class="d-flex justify-end align-center">
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                            OnClick="@(() => NavigateTo(reservation.Id))"
-                                            Style="background-color: #09edd6; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
-                                            data-testid="view-details-button">
-                                            @Localizer["ViewDetails"]
-                                        </MudButton>
+                                        @if (reservation.IsDeleted)
+                                        {
+                                            <MudText Typo="Typo.h6" Color="Color.Error" data-testid="reservationList-cancelled">
+                                                @Localizer["Cancelled"]
+                                            </MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                                OnClick="@(() => NavigateTo(reservation.Id))"
+                                                data-testid="view-reservation-details-button"
+                                                Style="background-color: #40e0d0; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;">
+                                                @Localizer["View Details"]
+                                            </MudButton>
+                                        }
                                     </MudItem>
                                 </MudGrid>
                             </MudCardContent>
@@ -88,21 +90,15 @@
                 <!-- Pagination Controls -->
                 <MudItem xs="12" Class="d-flex justify-center mt-4">
                     <MudStack Row="true" Spacing="2" Justify="Justify.Center">
-                        <MudButton OnClick="@LoadPreviousPage" 
-                            StartIcon="@Icons.Material.Filled.ArrowBack" 
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
+                        <MudButton OnClick="@LoadPreviousPage" StartIcon="@Icons.Material.Filled.ArrowBack"
+                            Color="Color.Primary" Variant="Variant.Filled"
                             Disabled="@(ReservationPage?.PreviousId is null || ReservationPage?.IsFirstPage == true)"
-                            data-testid="previous-page" 
-                            Style="border-radius: 20px;">
+                            data-testid="previous-page" Style="border-radius: 20px;">
                             @Localizer["Previous"]
                         </MudButton>
                         <MudButton OnClick="@(async () => { await LoadNextPage(); await ScrollToTop(); })"
-                            Disabled="@(ReservationPage?.NextId == null)"
-                            EndIcon="@Icons.Material.Filled.ArrowForward" 
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            data-testid="next-page" 
+                            Disabled="@(ReservationPage?.NextId == null)" EndIcon="@Icons.Material.Filled.ArrowForward"
+                            Color="Color.Primary" Variant="Variant.Filled" data-testid="next-page"
                             Style="border-radius: 20px;">
                             @Localizer["Next"]
                         </MudButton>
