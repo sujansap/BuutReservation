@@ -22,7 +22,7 @@ public partial class Index : ComponentBase
     private UserRegistrationModelDto User = new()
     {
         FirstName = string.Empty,
-        LastName = string.Empty,
+        FamilyName = string.Empty,
         Email = string.Empty,
         Password = string.Empty,
         PhoneNumber = string.Empty,

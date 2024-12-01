@@ -15,6 +15,7 @@ namespace Rise.Domain.Users
         private string _firstName = default!;
         private string _familyName = default!;
         private string _phoneNumber = default!;
+        private DateTime? _dateOfBirth = default!;
         private UserAddress _address = default!;
 
         public required string Email
@@ -62,6 +63,18 @@ namespace Rise.Domain.Users
                 Guard.Against.InvalidFormat(value, nameof(PhoneNumber), "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$");
                 value = value.Trim();
                 _phoneNumber = value;
+            }
+        }
+
+        public required DateTime? DateOfBirth
+        {
+            get => _dateOfBirth;
+            set
+            {
+                Guard.Against.Null(value, nameof(DateOfBirth));
+                Guard.Against.OutOfSQLDateRange(value.Value, nameof(DateOfBirth));
+                Guard.Against.Expression((x) => x > DateTime.Today.AddYears(-18), value.Value, nameof(DateOfBirth));
+                _dateOfBirth = value;
             }
         }
 

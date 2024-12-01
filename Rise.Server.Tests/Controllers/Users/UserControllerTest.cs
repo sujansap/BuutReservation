@@ -142,7 +142,7 @@ namespace Rise.Server.Tests.Controllers.Users
                 Email = "rand.om@example.com",
                 Password = "SecureP@ssw0rd123",
                 FirstName = "John",
-                LastName = "Doe",
+                FamilyName = "Doe",
                 PhoneNumber = "+32471123456",
                 DateOfBirth = new DateTime(2005, 1, 1),
                 Address = new()

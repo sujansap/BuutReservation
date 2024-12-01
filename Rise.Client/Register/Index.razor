@@ -40,7 +40,7 @@
                         Label="Voornaam" Immediate="true" Required="true" HelperText="Enter your first name" MaxLength="@UserRegistrationModelDto.Validator.firstNameMaxLength" data-testid="first-name-field" />
                 </MudItem>
                 <MudItem xs="12" sm="6" data-testid="item-last-name-field">
-                    <MudTextField @bind-Value="User.LastName" Variant="Variant.Outlined" For="@(() => User.LastName)"
+                    <MudTextField @bind-Value="User.FamilyName" Variant="Variant.Outlined" For="@(() => User.FamilyName)"
                         Label="Naam" Immediate="true" Required="true" HelperText="Enter your last name" MaxLength="@UserRegistrationModelDto.Validator.lastNameMaxLength" data-testid="last-name-field" />
                 </MudItem>
                 <MudItem xs="12" sm="4" data-testid="item-date-of-birth-picker">
@@ -50,7 +50,7 @@
                 </MudItem>
                 <MudItem xs="12" sm="8" data-testid="item-phone-number-field">
                     <MudTextField @bind-Value="User.PhoneNumber" Variant="Variant.Outlined"
-                        For="@(() => User.PhoneNumber)" Label="GSM Nummer" Immediate="true" Required="true" HelperText="Enter your phone number with 0 for local numbers or with a '+' and the country code" MaxLength="@UserRegistrationModelDto.Validator.phoneNumberMaxLength" data-testid="phone-number-field" />
+                        For="@(() => User.PhoneNumber)" Label="GSM Nummer" Immediate="true" Required="true" HelperText="Enter your phone number starting with 0 for local numbers or with a '+' and the country code" MaxLength="@UserRegistrationModelDto.Validator.phoneNumberMaxLength" data-testid="phone-number-field" />
                 </MudItem>
                 </MudGrid>
             <MudDivider DividerType="DividerType.Middle" Class="mt-8 mb-8" />

@@ -13,7 +13,7 @@ public class RegisterUserDtoBadData : IEnumerable<object[]>
         var validData = new UserRegistrationModelDto
         {
             Email = "john.doe@example.com",
-            LastName = "Doe",
+            FamilyName = "Doe",
             FirstName = "John",
             Password = "SecureP@ssw0rd",
             PhoneNumber = "+123456789",
@@ -60,13 +60,13 @@ public class RegisterUserDtoBadData : IEnumerable<object[]>
         // Invalid FamilyName: Empty
         yield return new object[]
         {
-            validData with { LastName = "" }
+            validData with { FamilyName = "" }
         };
 
         // Invalid FamilyName: Exceeds max length
         yield return new object[]
         {
-            validData with { LastName = new string('a', 101) }
+            validData with { FamilyName = new string('a', 101) }
         };
 
         // Invalid Password: Empty

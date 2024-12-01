@@ -70,8 +70,9 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         {
             Email = userDto.Email,
             FirstName = userDto.FirstName,
-            FamilyName = userDto.LastName,
+            FamilyName = userDto.FamilyName,
             PhoneNumber = userDto.PhoneNumber,
+            DateOfBirth = userDto.DateOfBirth,
             Address = new()
             {
                 City = address.City,

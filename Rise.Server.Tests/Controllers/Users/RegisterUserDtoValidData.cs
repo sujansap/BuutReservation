@@ -18,7 +18,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
                 Email = "a@b.co", // Minimal valid email
                 Password = string.Concat(Enumerable.Repeat("pA0!", 16)), // Max-length password
                 FirstName = new string('F', 100), // Max-length first name
-                LastName = new string('L', 100), // Max-length family name
+                FamilyName = new string('L', 100), // Max-length family name
                 PhoneNumber = "+1234567890", // Valid phone number
                 DateOfBirth = new DateTime(2005, 1, 1),
                 Address = new AddressModel
@@ -38,7 +38,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
                 Email= string.Concat(["a.",new string('a', 62),"@b.co"]) , // Max-length email
                 Password= "P@ssw0rd123", // Complex valid password
                 FirstName= "Anne-Marie", // Name with a hyphen
-                LastName= "O'Connor", // Name with an apostrophe
+                FamilyName= "O'Connor", // Name with an apostrophe
                 PhoneNumber= "(123) 456-7890", // Valid US-style phone number
                 DateOfBirth = new DateTime(2005, 1, 1),
                 Address= new AddressModel(){
@@ -58,7 +58,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
                 Email = "aa@b.co",
                 Password = "SecurePassword123!", // Complex valid password
                 FirstName = "Zoë", // Name with special character
-                LastName = "D'Angelo", // Name with apostrophe
+                FamilyName = "D'Angelo", // Name with apostrophe
                 PhoneNumber = "911",
                 DateOfBirth = new DateTime(2005, 1, 1),
                 Address = new AddressModel
@@ -78,7 +78,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
                 Email = "john.doe@example.com",
                 Password = "SecureP@ssw0rd123",
                 FirstName = "John",
-                LastName = "Doe",
+                FamilyName = "Doe",
                 PhoneNumber = "+32471123456",
                 DateOfBirth = new DateTime(2005, 1, 1),
                 Address = new()

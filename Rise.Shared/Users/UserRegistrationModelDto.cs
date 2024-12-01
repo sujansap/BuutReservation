@@ -7,7 +7,7 @@ public record class UserRegistrationModelDto
     public required string Email { get; set; }
     public required string Password { get; set; }
     public required string FirstName { get; set; }
-    public required string LastName { get; set; }
+    public required string FamilyName { get; set; }
     public required string PhoneNumber { get; set; }
     public required DateTime? DateOfBirth { get; set; }
     public required AddressModel Address { get; set; }
@@ -23,16 +23,16 @@ public record class UserRegistrationModelDto
 
     public class Validator : AbstractValidator<UserRegistrationModelDto>
     {
-        public static readonly int emailMaxLength = 69;
-        public static readonly int passwordMaxLength = 64;
-        public static readonly int firstNameMaxLength = 100;
-        public static readonly int lastNameMaxLength = 100;
-        public static readonly int phoneNumberMaxLength = 35;
-        public static readonly int streetMaxLength = 200;
-        public static readonly int numberMaxLength = 25;
-        public static readonly int cityMaxLength = 200;
-        public static readonly int postalCodeMaxLength = 100;
-        public static readonly int countryMaxLength = 100;
+        public const int emailMaxLength = 69;
+        public const int passwordMaxLength = 64;
+        public const int firstNameMaxLength = 100;
+        public const int lastNameMaxLength = 100;
+        public const int phoneNumberMaxLength = 35;
+        public const int streetMaxLength = 200;
+        public const int numberMaxLength = 25;
+        public const int cityMaxLength = 200;
+        public const int postalCodeMaxLength = 100;
+        public const int countryMaxLength = 100;
 
         public Validator()
         {
@@ -63,7 +63,7 @@ public record class UserRegistrationModelDto
             .MaximumLength(firstNameMaxLength).WithMessage($"First name can't be longer than {firstNameMaxLength} characters");
 
 
-            RuleFor(x => x.LastName).NotEmpty()
+            RuleFor(x => x.FamilyName).NotEmpty()
             .WithMessage("Please provide your last name")
             .MaximumLength(lastNameMaxLength).WithMessage($"Last name can't be longer than {lastNameMaxLength} characters");
 

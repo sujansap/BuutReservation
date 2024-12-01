@@ -28,7 +28,7 @@ public record class UserRegistrationModelDtoDeprecated
         {
             RuleFor(x => x.FirstName).NotEmpty().WithMessage("FirstNameRequired")
                .MaximumLength(100).WithMessage("Your first name should not exceed 100 characters.");
-            RuleFor(x => x.LastName).NotEmpty().WithMessage("Please provide your last name.")
+            RuleFor(x => x.FamilyName).NotEmpty().WithMessage("Please provide your last name.")
                 .MaximumLength(100).WithMessage("Your last name should not exceed 100 characters.");
             RuleFor(x => x.Email).NotEmpty().WithMessage("Please provide your email address.")
                 .EmailAddress().WithMessage("The email address provided is not valid.")

@@ -9,6 +9,8 @@ namespace Rise.Domain.Tests.TestUtilities
         public const string ValidFamilyName = "Her De Gaver";
         public const string ValidPhoneNumber = "04584475263";
 
+        public static readonly DateTime ValidDateOfBirth = new(2005, 1, 1);
+
         public static readonly User.UserAddress ValidAddress = new()
         {
             City = "Gent",
@@ -18,10 +20,12 @@ namespace Rise.Domain.Tests.TestUtilities
             PostalCode = "9000"
         };
 
-        private string email =  ValidEmail;
-        private string firstName =  ValidFirstName;
-        private string familyName =  ValidFamilyName;
-        private string phoneNumber =  ValidPhoneNumber;
+        private string email = ValidEmail;
+        private string firstName = ValidFirstName;
+        private string familyName = ValidFamilyName;
+        private string phoneNumber = ValidPhoneNumber;
+
+        private DateTime dateOfBirth = ValidDateOfBirth;
         private User.UserAddress address = ValidAddress;
 
         public UserBuilder WithEmail(string email)
@@ -45,6 +49,12 @@ namespace Rise.Domain.Tests.TestUtilities
             return this;
         }
 
+        public UserBuilder WithDateOfBirth(DateTime date)
+        {
+            this.dateOfBirth = date;
+            return this;
+        }
+
         public UserBuilder WithAddress(User.UserAddress address)
         {
             this.address = address;
@@ -59,6 +69,7 @@ namespace Rise.Domain.Tests.TestUtilities
                 FirstName = firstName,
                 FamilyName = familyName,
                 PhoneNumber = phoneNumber,
+                DateOfBirth = dateOfBirth,
                 Address = address,
             };
         }

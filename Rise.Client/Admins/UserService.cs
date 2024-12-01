@@ -36,7 +36,7 @@ public class UserService : IUserService
         {
             Email = "",
             FirstName = "",
-            LastName = "",
+            FamilyName = "",
             PhoneNumber = "",
             Password = "",
             DateOfBirth = null,
