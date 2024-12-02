@@ -183,4 +183,74 @@ public class BatteryAssignmentTests
         act.ShouldThrow<ArgumentException>()
             .ParamName.ShouldBe("Type");
     }
+
+    [Fact]
+    public void Battery_UsageCount_ShouldIncrementCorrectly()
+    {
+        // Arrange
+        var boat = new BoatBuilder().Build();
+        var battery = new BatteryBuilder().WithBoat(boat).Build();
+        var initialCount = battery.UsageCount;
+        
+        // Act
+        for (int i = 0; i < 3; i++)
+        {
+            var reservation = new ReservationBuilder()
+                .WithBoat(boat)
+                .Build();
+            battery.AddReservation(reservation);
+            battery.UpdateUsageStats();
+        }
+
+        // Assert
+        battery.UsageCount.ShouldBe(initialCount + 3);
+    }
+
+    [Fact]
+    public void Battery_CurrentHolder_ShouldUpdateCorrectly()
+    {
+        // Arrange
+        var boat = new BoatBuilder().Build();
+        var battery = new BatteryBuilder().WithBoat(boat).Build();
+        var user1 = new UserBuilder().Build();
+        var user2 = new UserBuilder().Build();
+
+        // Act
+        battery.AssignToHolder(user1);
+        var firstHolder = battery.CurrentHolder;
+        
+        battery.AssignToHolder(user2);
+        var secondHolder = battery.CurrentHolder;
+
+        // Assert
+        firstHolder.ShouldBe(user1);
+        secondHolder.ShouldBe(user2);
+        battery.CurrentHolderId.ShouldBe(user2.Id);
+    }
+
+    [Fact]
+    public void HandleCompletedReservations_ShouldUpdateUsageStats()
+    {
+        // Arrange
+        var boat = new BoatBuilder().Build();
+        var battery = new BatteryBuilder().WithBoat(boat).Build();
+        var initialUsageCount = battery.UsageCount;
+        var user = new UserBuilder().Build();
+        
+        var reservation = new ReservationBuilder()
+            .WithBoat(boat)
+            .WithUser(user)
+            .Build();
+        
+        reservation.Battery = battery;
+        var completedReservations = new List<Reservation> { reservation };
+
+        // Act
+        Battery.HandleCompletedReservations(completedReservations);
+
+        // Assert
+        battery.UsageCount.ShouldBe(initialUsageCount + 1);
+        battery.LastUsedAt.ShouldNotBeNull();
+        battery.CurrentHolder.ShouldBe(user);
+    }
 }
