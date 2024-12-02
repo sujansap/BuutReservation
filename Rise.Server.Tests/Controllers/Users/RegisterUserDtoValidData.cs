@@ -24,7 +24,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
                 Address = new AddressModel
                 {
                     Street = new string('S', 200), // Max-length street name
-                    Number = new string('N', 200), // Max-length house number
+                    Number = new string('N', 25), // Max-length house number
                     City = new string('C', 200), // Max-length city name
                     PostalCode = new string('9', 100), // Max-length postal code
                     Country = new string('X', 100) // Max-length country name

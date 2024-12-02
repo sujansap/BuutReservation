@@ -3,6 +3,7 @@ using Shouldly;
 using Rise.Shared.Users;
 using System.Net.Http.Json;
 using System.Net;
+using static Rise.Shared.Users.UserRegistrationModelDto;
 
 namespace Rise.Server.Tests.Controllers.Users
 {
@@ -112,6 +113,7 @@ namespace Rise.Server.Tests.Controllers.Users
         public async Task POST_RegisterUser_ReturnsUserId(UserRegistrationModelDto userDto)
         {
             await Task.Delay(TimeSpan.FromSeconds(2));
+
 
             var response = await _client.PostAsJsonAsync("register", userDto);
 
