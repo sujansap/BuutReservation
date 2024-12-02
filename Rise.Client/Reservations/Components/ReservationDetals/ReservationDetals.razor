@@ -62,12 +62,18 @@
                             </MudGrid>
                         </MudCardContent>
                         <MudCardActions Class="d-flex justify-end">
-                            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
-                                OnClick="CancelReservation" data-testid="cancel-reservation-button"
-                                Style="background-color: #e06540; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
-                                Disabled="@ReservationDetails.IsDeleted">
-                                @Localizer["Cancel Reservation"]
-                            </MudButton>
+                            @{
+                                var isInPast = ReservationDetails.Date < DateOnly.FromDateTime(DateTime.Now);
+                            }
+                            @if (!isInPast)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
+                                    OnClick="CancelReservation" data-testid="cancel-reservation-button"
+                                    Style="background-color: #e06540; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
+                                    Disabled="@ReservationDetails.IsDeleted">
+                                    @Localizer["Cancel Reservation"]
+                                </MudButton>
+                            }
                         </MudCardActions>
                     </MudCard>
                 </MudItem>
