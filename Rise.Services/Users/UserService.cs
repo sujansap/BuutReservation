@@ -149,7 +149,6 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
         return new UserDetailDto
         {
-            AuthId = "",
             Id = user.Id,
             FirstName = user.FirstName,
             FamilyName = user.FamilyName,
