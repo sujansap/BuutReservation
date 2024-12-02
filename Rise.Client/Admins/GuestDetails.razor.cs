@@ -46,9 +46,6 @@ namespace Rise.Client.Admins
         {
             try
             {
-
-
-                Console.WriteLine(UserDetails?.AuthId);
                 isProcessing = true;
                 StateHasChanged();
 
