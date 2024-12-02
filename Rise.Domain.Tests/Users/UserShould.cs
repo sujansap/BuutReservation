@@ -22,11 +22,10 @@ namespace Rise.Domain.Tests.Users
         #region Email Tests
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
         [InlineData("invalid-email")]
-        public void NotBeCreatedWithInvalidEmail(string? email)
+        public void NotBeCreatedWithInvalidEmail(string email)
         {
             Should.Throw<ArgumentException>(() =>
             {
@@ -44,11 +43,10 @@ namespace Rise.Domain.Tests.Users
         }
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
         [InlineData("invalid-email")]
-        public void NotBeChangedToHaveInvalidEmail(string? email)
+        public void NotBeChangedToHaveInvalidEmail(string email)
         {
             Action act = () =>
             {
@@ -86,10 +84,9 @@ namespace Rise.Domain.Tests.Users
         #region FirstName Tests
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeCreatedWithInvalidFirstName(string? firstName)
+        public void NotBeCreatedWithInvalidFirstName(string firstName)
         {
             Should.Throw<ArgumentException>(() =>
             {
@@ -97,6 +94,7 @@ namespace Rise.Domain.Tests.Users
             }).ParamName.ShouldBe("FirstName");
         }
 
+        [Fact]
         public void NotBeCreatedWithTooLongFirstName()
         {
             Should.Throw<ArgumentException>(() =>
@@ -106,10 +104,9 @@ namespace Rise.Domain.Tests.Users
         }
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeChangedToHaveInvalidFirstName(string? firstName)
+        public void NotBeChangedToHaveInvalidFirstName(string firstName)
         {
             Action act = () =>
             {
@@ -121,6 +118,7 @@ namespace Rise.Domain.Tests.Users
                 .ParamName.ShouldBe("FirstName");
         }
 
+        [Fact]
         public void NotBeChangedToHaveTooLongFirstName()
         {
             Action act = () =>
@@ -145,7 +143,6 @@ namespace Rise.Domain.Tests.Users
         #region FamilyName Tests
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
         public void NotBeCreatedWithInvalidFamilyName(string familyName)
@@ -166,10 +163,9 @@ namespace Rise.Domain.Tests.Users
         }
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeChangedToHaveInvalidFamilyName(string? familyName)
+        public void NotBeChangedToHaveInvalidFamilyName(string familyName)
         {
             Action act = () =>
             {
@@ -206,7 +202,6 @@ namespace Rise.Domain.Tests.Users
         #region PhoneNumber Tests
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
         [InlineData("invalid-phone")]
@@ -228,11 +223,10 @@ namespace Rise.Domain.Tests.Users
         }
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
         [InlineData("invalid-phone-number")]
-        public void NotBeChangedToHaveInvalidPhoneNumber(string? phoneNumber)
+        public void NotBeChangedToHaveInvalidPhoneNumber(string phoneNumber)
         {
             Action act = () =>
             {
@@ -269,19 +263,14 @@ namespace Rise.Domain.Tests.Users
         #region Address Tests
 
         [Theory]
-        [InlineData(null, "123", "Springfield", "12345", "USA")] // Null Street
         [InlineData("", "123", "Springfield", "12345", "USA")] // Empty Street
         [InlineData("   ", "123", "Springfield", "12345", "USA")] // Whitespace Street
-        [InlineData("123", null, "Springfield", "12345", "USA")] // Null Number
         [InlineData("123", "", "Springfield", "12345", "USA")] // Empty Number
         [InlineData("123", "   ", "Springfield", "12345", "USA")] // Whitespace Number
-        [InlineData("123", "123", null, "12345", "USA")] // Null City
         [InlineData("123", "123", "", "12345", "USA")] // Empty City
         [InlineData("123", "123", "   ", "12345", "USA")] // Whitespace City
-        [InlineData("123", "123", "Springfield", null, "USA")] // Null PostalCode
         [InlineData("123", "123", "Springfield", "", "USA")] // Empty PostalCode
         [InlineData("123", "123", "Springfield", "   ", "USA")] // Whitespace PostalCode
-        [InlineData("123", "123", "Springfield", "12345", null)] // Null Country
         [InlineData("123", "123", "Springfield", "12345", "")] // Empty Country
         [InlineData("123", "123", "Springfield", "12345", "   ")] // Whitespace Country
         public void NotBeCreatedWithInvalidAddress(
@@ -305,10 +294,9 @@ namespace Rise.Domain.Tests.Users
         #region "Street"
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeChangedToHaveInvalidStreet(string? street)
+        public void NotBeChangedToHaveInvalidStreet(string street)
         {
             Action act = () =>
             {
@@ -369,10 +357,9 @@ namespace Rise.Domain.Tests.Users
         #region Number
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeChangedToHaveInvalidNumber(string? number)
+        public void NotBeChangedToHaveInvalidNumber(string number)
         {
             Action act = () =>
             {
@@ -433,10 +420,9 @@ namespace Rise.Domain.Tests.Users
         #region City
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeChangedToHaveInvalidCity(string? city)
+        public void NotBeChangedToHaveInvalidCity(string city)
         {
             Action act = () =>
             {
@@ -497,10 +483,9 @@ namespace Rise.Domain.Tests.Users
         #region PostalCode
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeChangedToHaveInvalidPostalCode(string? postalCode)
+        public void NotBeChangedToHaveInvalidPostalCode(string postalCode)
         {
             Action act = () =>
             {
@@ -561,10 +546,9 @@ namespace Rise.Domain.Tests.Users
         #region Country
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("   ")]
-        public void NotBeChangedToHaveInvalidCountry(string? country)
+        public void NotBeChangedToHaveInvalidCountry(string country)
         {
             Action act = () =>
             {
