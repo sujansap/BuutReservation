@@ -17,7 +17,13 @@ namespace Rise.Domain.Boats
         }
         public required Boat Boat { get; set; }
 
-        public required User Mentor { get; set; }
+        private User _mentor = default!;
+
+        public required User Mentor
+        {
+            get => _mentor;
+            set => _mentor = Guard.Against.Null(value, nameof(Mentor), "Mentor cannot be null or empty");
+        }
 
     }
 }
