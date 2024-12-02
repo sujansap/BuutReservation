@@ -68,6 +68,7 @@ public class BatteryAssignmentTests
             .WithBoat(boat)
             .Build();
         battery.AddReservation(reservation);
+        battery.UpdateUsageStats();
 
         var date = DateOnly.FromDateTime(currentTime);
         var startTime = TimeOnly.FromDateTime(currentTime.AddHours(2));
