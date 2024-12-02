@@ -23,10 +23,10 @@ namespace Rise.Domain.Users
             get => _email;
             set
             {
+                value = value.Trim();
                 Guard.Against.NullOrWhiteSpace(value, nameof(Email));
                 Guard.Against.LengthOutOfRange(value, 1, 69, nameof(Email)); //Parameter name does nothing, probably bug in package
                 Guard.Against.InvalidFormat(value, nameof(Email), "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
-                value = value.Trim();
                 _email = value;
             }
         }
@@ -36,9 +36,9 @@ namespace Rise.Domain.Users
             get => _firstName;
             set
             {
+                value = value.Trim();
                 Guard.Against.NullOrWhiteSpace(value, nameof(FirstName));
                 Guard.Against.LengthOutOfRange(value, 1, 100, nameof(FirstName)); //Parameter name does nothing, probably bug in package
-                value = value.Trim();
                 _firstName = value;
             }
         }
@@ -47,9 +47,9 @@ namespace Rise.Domain.Users
             get => _familyName;
             set
             {
+                value = value.Trim();
                 Guard.Against.NullOrWhiteSpace(value, nameof(FamilyName));
                 Guard.Against.LengthOutOfRange(value, 1, 100, nameof(FamilyName)); //Parameter name does nothing, probably bug in package
-                value = value.Trim();
                 _familyName = value;
             }
         }
@@ -58,10 +58,10 @@ namespace Rise.Domain.Users
             get => _phoneNumber;
             set
             {
+                value = value.Trim();
                 Guard.Against.NullOrWhiteSpace(value, nameof(PhoneNumber));
                 Guard.Against.LengthOutOfRange(value, 1, 100, nameof(PhoneNumber)); //Parameter name does nothing, probably bug in package
                 Guard.Against.InvalidFormat(value, nameof(PhoneNumber), "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$");
-                value = value.Trim();
                 _phoneNumber = value;
             }
         }
@@ -83,25 +83,25 @@ namespace Rise.Domain.Users
             get => _address;
             set
             {
+                value.Street = value.Street.Trim();
                 Guard.Against.NullOrWhiteSpace(value.Street, nameof(value.Street));
                 Guard.Against.LengthOutOfRange(value.Street, 1, 200, nameof(value.Street)); //Parameter name does nothing, probably bug in package
-                value.Street = value.Street.Trim();
-
+                
+                value.Number = value.Number.Trim();
                 Guard.Against.NullOrWhiteSpace(value.Number, nameof(value.Number));
                 Guard.Against.LengthOutOfRange(value.Number, 1, 200, nameof(value.Number)); //Parameter name does nothing, probably bug in package
-                value.Number = value.Number.Trim();
 
+                value.City = value.City.Trim();
                 Guard.Against.NullOrWhiteSpace(value.City, nameof(value.City));
                 Guard.Against.LengthOutOfRange(value.City, 1, 200, nameof(value.City)); //Parameter name does nothing, probably bug in package
-                value.City = value.City.Trim();
 
+                value.PostalCode = value.PostalCode.Trim();
                 Guard.Against.NullOrWhiteSpace(value.PostalCode, nameof(value.PostalCode));
                 Guard.Against.LengthOutOfRange(value.PostalCode, 1, 100, nameof(value.PostalCode)); //Parameter name does nothing, probably bug in package
-                value.PostalCode = value.PostalCode.Trim();
 
+                value.Country = value.Country.Trim();
                 Guard.Against.NullOrWhiteSpace(value.Country, nameof(value.Country));
                 Guard.Against.LengthOutOfRange(value.Country, 1, 100, nameof(value.Country)); //Parameter name does nothing, probably bug in package
-                value.Country = value.Country.Trim();
 
                 _address = value;
             }
