@@ -162,7 +162,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
         if (!success)
         {
-            throw new UserCreationFailedException(ErrorMessages.User.RateLimitExceeded);
+            throw new UserCreationFailedException(ErrorMessages.User.Auth0RateLimitExceeded);
         }
     }
 

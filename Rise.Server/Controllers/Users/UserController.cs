@@ -9,7 +9,7 @@ namespace Rise.Server.Controllers.Users
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(ILogger<UserController> logger, IUserService userService) : ControllerBase
+    public class UserController(ILogger<UserController> logger, IUserAdminService userService) : ControllerBase
     {
         private readonly ILogger<UserController> _logger = logger;
         private readonly IUserAdminService _userService = userService;

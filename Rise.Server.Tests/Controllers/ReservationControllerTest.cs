@@ -373,7 +373,7 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);
 
-            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
     }
 }
