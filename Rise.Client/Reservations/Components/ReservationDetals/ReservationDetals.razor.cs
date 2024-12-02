@@ -23,6 +23,8 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         [Inject]
         public required NavigationManager NavigationManager { get; set; }
 
+        private bool IsReservationInPast => ReservationDetails?.Date < DateOnly.FromDateTime(DateTime.Now);
+
         private RenderFragment<string> RenderErrorMessage => (text) => builder =>
         {
             builder.OpenComponent<MudText>(0);

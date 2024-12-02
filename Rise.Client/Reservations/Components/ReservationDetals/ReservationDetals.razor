@@ -7,77 +7,105 @@
 @attribute [Authorize(Roles = "Member, Administrator")]
 @inject IStringLocalizer<ReservationPageResources> Localizer
 
-<MudGrid Class="mt-4">
-    <BackButton data-testid="reservation-details-back-button" Href="/reservations?CurrentTab=reservations" />
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-2">
+    <div class="d-flex mb-2">
+        <BackButton data-testid="reservation-details-back-button" Href="/reservations?CurrentTab=reservations" />
+    </div>
+
     <AsyncData DataFetcher="@GetReservationDetails" @bind-Data="@ReservationDetails" T="ReservationDetailsDto"
         @ref="@AsyncDataRef" TestIdPrefix="reservation-details">
         @if (ReservationDetails != null)
         {
             @if (ReservationDetails.IsDeleted)
             {
-                <MudItem xs="12" Class="d-flex justify-center align-center mt-4">
-                    <MudText Typo="Typo.h5" Class="text-center" Style="color: red;"
+                <MudItem xs="12" Class="d-flex justify-center align-center mt-2">
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Dense="true" Class="rounded-lg"
                         data-testid="cancel-reservation-geannuleerd">
                         @Localizer["DetailsDenied"]
-                    </MudText>
+                    </MudAlert>
                 </MudItem>
             }
             else
             {
-                <MudItem xs="12">
-                    <MudCard Elevation="6" Style="border-radius: 12px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
-                        <MudCardHeader>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.h4" data-testid="reservation-details-title">
-                                    @Localizer["Reservatie Details:"]
-                                </MudText>
-                            </CardHeaderContent>
-                        </MudCardHeader>
-                        <MudCardContent>
-                            <MudGrid>
-                                <MudItem xs="12" md="4" Class="d-flex justify-center align-center">
-                                    <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
-                                        Style="width: 120px; height: 120px; color: #40e0d0;" />
-                                </MudItem>
-                                <MudItem xs="12" md="8">
-                                    <MudText Typo="Typo.h6" data-testid="reservation-date">
-                                        <strong>@Localizer["Date"]:</strong> @ReservationDetails.Date.ToShortDateString()
-                                    </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-boat">
-                                        <strong>@Localizer["Boat"]:</strong> @ReservationDetails.BoatPersonalName
-                                    </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-time">
-                                        <strong>@Localizer["Time"]:</strong> @ReservationDetails.Start - @ReservationDetails.End
-                                    </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery">
-                                        <strong>@Localizer["Battery"]:</strong> @ReservationDetails.BatteryType
-                                    </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery-mentor">
-                                        <strong>@Localizer["Meter/Peter"]:</strong> @ReservationDetails.MentorName
-                                    </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery-current-user">
-                                        <strong>@Localizer["PickupPerson"]:</strong> @ReservationDetails.CurrentBatteryUserName
-                                    </MudText>
-                                </MudItem>
-                            </MudGrid>
-                        </MudCardContent>
-                        <MudCardActions Class="d-flex justify-end">
-                            @{
-                                var isInPast = ReservationDetails.Date < DateOnly.FromDateTime(DateTime.Now);
-                            }
-                            @if (!isInPast)
-                            {
-                                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
-                                    OnClick="CancelReservation" data-testid="cancel-reservation-button"
-                                    Style="background-color: #e06540; border-radius: 20px; transition: background-color 0.3s, box-shadow 0.3s;"
-                                    Disabled="@ReservationDetails.IsDeleted">
-                                    @Localizer["Cancel Reservation"]
-                                </MudButton>
-                            }
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
+                <MudCard Elevation="3" Class="rounded-lg">
+                    <MudCardHeader Class="pb-0">
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h4" Class="mb-0" data-testid="reservation-details-title">
+                                @Localizer["Reservatie Details:"]
+                            </MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+
+                    <MudCardContent Class="pt-2" Style="min-height: 400px;">
+                        <MudGrid Spacing="2">
+                            <MudItem xs="12" Class="d-flex justify-center mb-4">
+                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
+                                    Style="width: 64px; height: 64px; color: #40e0d0;" />
+                            </MudItem>
+
+                            <MudItem xs="12">
+                                <MudStack Spacing="3" Class="px-4">
+                                    <div>
+                                        <MudText Typo="Typo.subtitle1" Style="color: #666666;">@Localizer["Date"]:</MudText>
+                                        <MudText Typo="Typo.h6" data-testid="reservation-date">
+                                            @ReservationDetails.Date.ToShortDateString()
+                                        </MudText>
+                                    </div>
+
+                                    <MudDivider />
+
+                                    <div>
+                                        <MudText Typo="Typo.subtitle1" Style="color: #666666;">@Localizer["Boat"]:</MudText>
+                                        <MudText Typo="Typo.h6" data-testid="reservation-boat">
+                                            @ReservationDetails.BoatPersonalName
+                                        </MudText>
+                                    </div>
+
+                                    <MudDivider />
+
+                                    <div>
+                                        <MudText Typo="Typo.subtitle1" Style="color: #666666;">@Localizer["Time"]:</MudText>
+                                        <MudText Typo="Typo.h6" data-testid="reservation-time">
+                                            @ReservationDetails.Start - @ReservationDetails.End
+                                        </MudText>
+                                    </div>
+
+                                    <MudDivider />
+
+                                    <div>
+                                        <MudText Typo="Typo.subtitle1" Style="color: #666666;">
+                                            @Localizer["PickupPerson"]:
+                                        </MudText>
+                                        <MudText Typo="Typo.h6" data-testid="reservation-battery-current-user">
+                                            @ReservationDetails.CurrentBatteryUserName
+                                        </MudText>
+
+                                        <MudText Typo="Typo.subtitle1" Class="mt-2" Style="color: #666666;">
+                                            @Localizer["MentorPerson"]:
+                                        </MudText>
+                                        <MudText Typo="Typo.h6" data-testid="reservation-battery-mentor">
+                                            @ReservationDetails.MentorName
+                                        </MudText>
+                                    </div>
+
+                                </MudStack>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+
+                    <MudCardActions Class="d-flex justify-end pa-4">
+                        @if (!IsReservationInPast)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="CancelReservation"
+                                data-testid="cancel-reservation-button"
+                                Style="background-color: #e06540; border-radius: 4px; padding: 8px 32px;"
+                                Disabled="@ReservationDetails.IsDeleted">
+                                @Localizer["Cancel Reservation"]
+                            </MudButton>
+                        }
+                    </MudCardActions>
+                </MudCard>
             }
         }
     </AsyncData>
-</MudGrid>
+</MudContainer>
