@@ -45,7 +45,7 @@ namespace Rise.Domain.Boats
 
         public bool IsAvailableForDate(DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
-            if (Reservations.Any(r => r.Battery.Id == Id && r.Battery != null))
+            if (Reservations.Any(r => r.Battery?.Id == Id))
                 return false;
 
             var reservationsOnDate = Reservations
