@@ -175,7 +175,6 @@ namespace Rise.Services.Reservations
                 IsDeleted = reservation.IsDeleted,
                 BoatPersonalName = reservation.Boat.PersonalName,
                 MentorName = reservation.Battery?.Mentor?.FamilyName,
-                BatteryType = reservation.Battery?.Type,
                 BatteryId = reservation.Battery?.Id,
                 CurrentBatteryUserName = reservation.Battery?.CurrentHolder?.FamilyName,
                 CurrentBatteryUserId = reservation.Battery?.CurrentHolderId

@@ -17,17 +17,26 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         [Inject]
         public required ISnackbar SnackbarService { get; set; }
 
-
         [Inject]
         public required IReservationService ReservationService { get; set; }
 
         [Inject]
         public required NavigationManager NavigationManager { get; set; }
 
+        private RenderFragment<string> RenderErrorMessage => (text) => builder =>
+        {
+            builder.OpenComponent<MudText>(0);
+            builder.AddAttribute(1, "Typo", Typo.body1);
+            builder.AddAttribute(2, "data-testid", "cancel-reservation-error");
+            builder.AddAttribute(3, "ChildContent", (RenderFragment)((b) => b.AddContent(4, text)));
+            builder.CloseComponent();
+        };
+
         protected Task<ReservationDetailsDto> GetReservationDetails()
         {
             return ReservationService.GetReservationDetailsAsync(Id);
         }
+
         private async Task CancelReservation()
         {
             if (ReservationDetails is null)
@@ -38,18 +47,21 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
                 ReservationDetails.IsDeleted = true;
                 StateHasChanged();
 
-
                 NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
             }
             catch (Exception ex)
             {
                 Log.Error($"Error cancelling reservation: {ex.Message}");
-                SnackbarService.Add(RenderErrorMessage(ex.Message), Severity.Error);
+                var message = ex.Message switch
+                {
+                    "AlreadyCancelled" => Localizer["AlreadyCancelled"],
+                    "CancellationTooLate" => Localizer["CancellationTooLate"],
+                    _ => Localizer["CancellationError"]
+                };
+                SnackbarService.Add(RenderErrorMessage(message), Severity.Error);
             }
         }
     }
-
-
 }
 
 

@@ -87,4 +87,19 @@
 	<data name="DetailsDenied" xml:space="preserve">
 	<value>This reservation is canceled. You cannot view the details.</value>
 	</data>
+	<data name="PickupPerson" xml:space="preserve">
+		<value>Pickup person</value>
+	</data>
+	<data name="MentorPerson" xml:space="preserve">
+		<value>Mentor</value>
+	</data>
+	<data name="CancellationTooLate" xml:space="preserve">
+		<value>Reservations can only be canceled at least 2 days before the reservation date.</value>
+	</data>
+	<data name="AlreadyCancelled" xml:space="preserve">
+		<value>This reservation has already been cancelled.</value>
+	</data>
+	<data name="CancellationError" xml:space="preserve">
+		<value>An error occurred while canceling the reservation.</value>
+	</data>
 </root>
