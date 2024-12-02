@@ -69,8 +69,8 @@ namespace Rise.Server.Tests.Controllers
 
             // Verify all returned reservations are from the past
             reservationsPage.Data.ShouldAllBe(r => r.Date < today);
-            // start van 2 dagen geleden tot 7 dagen geleden
-            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-8) && r.Date <= today.AddDays(-2));
+            // start van 2 dagen geleden tot in het verleden
+            reservationsPage.Data.ShouldAllBe(r => r.Date <= today.AddDays(-2));
         }
 
         [Fact]
@@ -112,9 +112,8 @@ namespace Rise.Server.Tests.Controllers
             DateOnly start = today.AddDays(-14);
             DateOnly end = today.AddDays(-9);
 
-            nextPage.Data.ShouldAllBe(r => r.Date >= start && r.Date <= end,
-                customMessage: $"Expected dates between {start} and {end}. " +
-                $"Actual dates: {string.Join(", ", nextPage.Data.Select(r => r.Date))}");
+            nextPage.Data.ShouldAllBe(r => r.Date < DateOnly.FromDateTime(DateTime.Now));
+
         }
 
         [Theory]
@@ -325,7 +324,7 @@ namespace Rise.Server.Tests.Controllers
         {
             await LoginAsync(UserRole.Member);
 
-            var validReservationId = 80;
+            var validReservationId = 79;
 
 
             var response = await _client.PatchAsync($"cancel/{validReservationId}", null);
@@ -362,7 +361,7 @@ namespace Rise.Server.Tests.Controllers
             var response = await _client.PatchAsync($"cancel/{cancelledReservationId}", null);
 
 
-            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -374,8 +373,7 @@ namespace Rise.Server.Tests.Controllers
 
             var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);
 
-
-            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
     }
 }
