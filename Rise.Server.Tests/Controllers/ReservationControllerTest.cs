@@ -192,7 +192,7 @@ namespace Rise.Server.Tests.Controllers
 
             var request = new CreateReservationDto
             {
-                TimeSlotId = 63
+                TimeSlotId = 99
             };
 
 
