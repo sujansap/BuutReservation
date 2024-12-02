@@ -1,6 +1,9 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
+using Rise.Shared.Users;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Rise.Client.Tests.Register
@@ -8,6 +11,19 @@ namespace Rise.Client.Tests.Register
     [TestFixture]
     public class RegisterFormPageTest : CustomPageTest
     {
+        private async Task MockRegisterUser(int status = 400)
+        {
+            await Page.RouteAsync("**/api/User/register", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = status,
+                    ContentType = "application/json",
+                    Body = JsonSerializer.Serialize(status == 201 ? 1 : -1)
+                });
+            });
+        }
+
         [Test]
         public async Task ShouldLoadSuccessfully()
         {
@@ -97,9 +113,10 @@ namespace Rise.Client.Tests.Register
         public async Task ShouldValidateAndSubmitSuccessfullyAndResetToDefault()
         {
             await Page.GotoAsync("/register");
+            await MockRegisterUser(201);
 
             var emailField = Page.GetByTestId("email-field");
-            await emailField.FillAsync("Test@test.com");
+            await emailField.FillAsync("PageTest@test.com");
             var passwordField = Page.GetByTestId("password-field");
             await passwordField.FillAsync("P@ssw0rd123");
             var repeatPasswordField = Page.GetByTestId("repeat-password-field");
@@ -111,7 +128,7 @@ namespace Rise.Client.Tests.Register
             var dateOfBirthField = Page.GetByTestId("date-of-birth-picker");
             await dateOfBirthField.FillAsync("01/01/2005");
             var phoneNumberField = Page.GetByTestId("phone-number-field");
-            await phoneNumberField.FillAsync("003212345678");
+            await phoneNumberField.FillAsync("012345678");
 
             var streetField = Page.GetByTestId("street-field");
             await streetField.FillAsync("teststraat");
@@ -214,6 +231,128 @@ namespace Rise.Client.Tests.Register
             await postalCodeField.FillAsync("");
             await postalCodeField.PressAsync("Tab");
             await Expect(postalCodeFieldItem.Locator(".d-flex.mud-input-helper-text.mud-input-error div[id]")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task ShouldShowErrorMessageOnBadRequest()
+        {
+            await Page.GotoAsync("/register");
+            await MockRegisterUser(400);
+
+            var emailField = Page.GetByTestId("email-field");
+            await emailField.FillAsync("PageTest@test.com");
+            var passwordField = Page.GetByTestId("password-field");
+            await passwordField.FillAsync("P@ssw0rd123");
+            var repeatPasswordField = Page.GetByTestId("repeat-password-field");
+            await repeatPasswordField.FillAsync("P@ssw0rd123");
+            var firstNameField = Page.GetByTestId("first-name-field");
+            await firstNameField.FillAsync("test");
+            var lastNameField = Page.GetByTestId("last-name-field");
+            await lastNameField.FillAsync("test");
+            var dateOfBirthField = Page.GetByTestId("date-of-birth-picker");
+            await dateOfBirthField.FillAsync("01/01/2005");
+            var phoneNumberField = Page.GetByTestId("phone-number-field");
+            await phoneNumberField.FillAsync("012345678");
+
+            var streetField = Page.GetByTestId("street-field");
+            await streetField.FillAsync("teststraat");
+            var houseNumberField = Page.GetByTestId("house-number-field");
+            await houseNumberField.FillAsync("45");
+            var cityField = Page.GetByTestId("city-field");
+            await cityField.FillAsync("Gent");
+            var postalCodeField = Page.GetByTestId("postal-code-field");
+            await postalCodeField.FillAsync("9000");
+
+            var countryField = Page.GetByTestId("country-field");
+            await Expect(countryField).Not.ToBeEditableAsync();
+            await Expect(countryField).Not.ToBeEmptyAsync();
+
+            var submitButton = Page.GetByTestId("register-button");
+            var resetButton = Page.GetByTestId("reset-button");
+            await Expect(submitButton).ToBeEnabledAsync();
+            await Expect(resetButton).ToBeEnabledAsync();
+            await submitButton.ClickAsync();
+
+            await Expect(Page.Locator("div[role='alert']")).ToBeVisibleAsync();
+            await Expect(Page.Locator("div[role='alert']")).ToContainTextAsync("Bad Request");
+
+            await Expect(emailField).Not.ToBeEmptyAsync();
+            await Expect(passwordField).Not.ToBeEmptyAsync();
+            await Expect(repeatPasswordField).Not.ToBeEmptyAsync();
+            await Expect(firstNameField).Not.ToBeEmptyAsync();
+            await Expect(lastNameField).Not.ToBeEmptyAsync();
+            await Expect(dateOfBirthField).Not.ToBeEmptyAsync();
+            await Expect(phoneNumberField).Not.ToBeEmptyAsync();
+            await Expect(streetField).Not.ToBeEmptyAsync();
+            await Expect(houseNumberField).Not.ToBeEmptyAsync();
+            await Expect(cityField).Not.ToBeEmptyAsync();
+            await Expect(postalCodeField).Not.ToBeEmptyAsync();
+            await Expect(countryField).Not.ToBeEditableAsync();
+            await Expect(countryField).Not.ToBeEmptyAsync();
+
+            await Expect(submitButton).ToBeEnabledAsync();
+            await Expect(resetButton).ToBeEnabledAsync();
+        }
+
+        [Test]
+        public async Task ShouldShowConflictErrorMessageOnExistingUser()
+        {
+            await Page.GotoAsync("/register");
+            await MockRegisterUser(409);
+
+            var emailField = Page.GetByTestId("email-field");
+            await emailField.FillAsync("existinguser@test.com");
+            var passwordField = Page.GetByTestId("password-field");
+            await passwordField.FillAsync("P@ssw0rd123");
+            var repeatPasswordField = Page.GetByTestId("repeat-password-field");
+            await repeatPasswordField.FillAsync("P@ssw0rd123");
+            var firstNameField = Page.GetByTestId("first-name-field");
+            await firstNameField.FillAsync("test");
+            var lastNameField = Page.GetByTestId("last-name-field");
+            await lastNameField.FillAsync("test");
+            var dateOfBirthField = Page.GetByTestId("date-of-birth-picker");
+            await dateOfBirthField.FillAsync("01/01/2005");
+            var phoneNumberField = Page.GetByTestId("phone-number-field");
+            await phoneNumberField.FillAsync("012345678");
+
+            var streetField = Page.GetByTestId("street-field");
+            await streetField.FillAsync("teststraat");
+            var houseNumberField = Page.GetByTestId("house-number-field");
+            await houseNumberField.FillAsync("45");
+            var cityField = Page.GetByTestId("city-field");
+            await cityField.FillAsync("Gent");
+            var postalCodeField = Page.GetByTestId("postal-code-field");
+            await postalCodeField.FillAsync("9000");
+
+            var countryField = Page.GetByTestId("country-field");
+            await Expect(countryField).Not.ToBeEditableAsync();
+            await Expect(countryField).Not.ToBeEmptyAsync();
+
+            var submitButton = Page.GetByTestId("register-button");
+            var resetButton = Page.GetByTestId("reset-button");
+            await Expect(submitButton).ToBeEnabledAsync();
+            await Expect(resetButton).ToBeEnabledAsync();
+            await submitButton.ClickAsync();
+
+            await Expect(Page.Locator("div[role='alert']")).ToBeVisibleAsync();
+            await Expect(Page.Locator("div[role='alert']")).ToContainTextAsync("Conflict");
+
+            await Expect(emailField).Not.ToBeEmptyAsync();
+            await Expect(passwordField).Not.ToBeEmptyAsync();
+            await Expect(repeatPasswordField).Not.ToBeEmptyAsync();
+            await Expect(firstNameField).Not.ToBeEmptyAsync();
+            await Expect(lastNameField).Not.ToBeEmptyAsync();
+            await Expect(dateOfBirthField).Not.ToBeEmptyAsync();
+            await Expect(phoneNumberField).Not.ToBeEmptyAsync();
+            await Expect(streetField).Not.ToBeEmptyAsync();
+            await Expect(houseNumberField).Not.ToBeEmptyAsync();
+            await Expect(cityField).Not.ToBeEmptyAsync();
+            await Expect(postalCodeField).Not.ToBeEmptyAsync();
+            await Expect(countryField).Not.ToBeEditableAsync();
+            await Expect(countryField).Not.ToBeEmptyAsync();
+
+            await Expect(submitButton).ToBeEnabledAsync();
+            await Expect(resetButton).ToBeEnabledAsync();
         }
     }
 }
