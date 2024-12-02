@@ -109,7 +109,7 @@ namespace Rise.Server.Tests.Controllers
             nextPage.Data.First().Id.ShouldNotBe(firstPage.Data.First().Id);
             // van 8 dagen geleden tot 13 dagen geleden
             // moet de cursor meegeven van de pagina
-            DateOnly start = today.AddDays(-14);
+            DateOnly start = today.AddDays(-15);
             DateOnly end = today.AddDays(-9);
 
             nextPage.Data.ShouldAllBe(r => r.Date < DateOnly.FromDateTime(DateTime.Now));
@@ -191,7 +191,7 @@ namespace Rise.Server.Tests.Controllers
 
             var request = new CreateReservationDto
             {
-                TimeSlotId = 99
+                TimeSlotId = 100
             };
 
 
@@ -328,6 +328,7 @@ namespace Rise.Server.Tests.Controllers
 
 
             var response = await _client.PatchAsync($"cancel/{validReservationId}", null);
+            response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
             var reservationDetailsResponse = await _client.GetAsync($"{validReservationId}");
             reservationDetailsResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -355,20 +356,19 @@ namespace Rise.Server.Tests.Controllers
         public async Task PATCH_CancelReservation_AlreadyCancelledReservation_ExpectBadRequest()
         {
             await LoginAsync(UserRole.Member);
-            var cancelledReservationId = 38;
-
+            var cancelledReservationId = 50;
+            await _client.PatchAsync($"cancel/{cancelledReservationId}", null);
 
             var response = await _client.PatchAsync($"cancel/{cancelledReservationId}", null);
 
-
-            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
 
         [Fact]
         public async Task PATCH_CancelReservation_WithinTwoDaysOfReservation_ExpectBadRequest()
         {
             await LoginAsync(UserRole.Member);
-            var reservationIdWithinTwoDays = 2;
+            var reservationIdWithinTwoDays = 1;
 
 
             var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);

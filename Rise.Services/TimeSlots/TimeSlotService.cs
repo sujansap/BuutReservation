@@ -13,7 +13,7 @@ using Rise.Domain.Exceptions;
 namespace Rise.Services.TimeSlots
 {
     public class TimeSlotService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        : AuthenticationService(dbContext, authContextProvider), ITimeSlotService
+        : AuthenticatedService(dbContext, authContextProvider), ITimeSlotService
     {
         internal class DateTimeSlotBoatUse
         {

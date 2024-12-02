@@ -15,5 +15,6 @@ public static class ErrorMessages
     {
         public const string EmailAlreadyExists = "This email is already in use.";
         public const string UnexpectedError = "An unexpected error ocurred while creating the user.";
+        public const string RateLimitExceeded = "Rate limit exceeded.";
     }
 }

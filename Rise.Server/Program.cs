@@ -147,7 +147,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapControllers();
+    app.MapControllers().RequireAuthorization();
     app.MapFallbackToFile("index.html");
 
     if (app.Environment.IsDevelopment() || app.Environment.IsStaging())

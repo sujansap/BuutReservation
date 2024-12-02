@@ -9,8 +9,7 @@ namespace Rise.Server.Controllers.Users
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
-    public class UserController(ILogger<UserController> logger, IUserAdminService userService) : ControllerBase
+    public class UserController(ILogger<UserController> logger, IUserService userService) : ControllerBase
     {
         private readonly ILogger<UserController> _logger = logger;
         private readonly IUserAdminService _userService = userService;
@@ -20,7 +19,7 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <returns>List of the guest users</returns>
         [HttpGet("guests")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetGuestUsers()
@@ -50,7 +49,7 @@ namespace Rise.Server.Controllers.Users
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
         [HttpPatch("role/member")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
@@ -64,7 +63,7 @@ namespace Rise.Server.Controllers.Users
         /// Registers a new user
         /// </summary>
         /// <param name="userDto">Dto with required user imformation for registration</param>
-        /// <returns>Result of the operation</returns>
+        /// <returns>The id of the registered user</returns>
         [HttpPost("register")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -76,6 +75,5 @@ namespace Rise.Server.Controllers.Users
             var userId = await _userService.RegisterUser(userDto);
             return CreatedAtAction(nameof(RegisterUser), userId);
         }
-
     }
 }
