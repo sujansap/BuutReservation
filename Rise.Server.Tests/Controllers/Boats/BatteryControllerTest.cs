@@ -1,0 +1,99 @@
+using System.Net;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
+using Rise.Server.Tests.Fixtures;
+using Rise.Shared.Boats;
+using Rise.Shared.Users;
+using Shouldly;
+
+namespace Rise.Server.Tests.Controllers.Boats
+{
+    public class BatteryControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture, "Battery")
+    {
+        private const string universalDateFormat = "yyyy-MM-dd";
+        private const string defaultValidationErrorTitle = "One or more validation errors occurred.";
+        private const string validBatteryType = "lithium";
+        private const int validMentorId = 2;
+        private const int validBatteryId = 1;
+
+
+        [Theory]
+        [InlineData("1", "PUT")]
+        public async Task Call_TimeSlotController_Endpoints_ExpectUnauthorized(string url, string httpMethod)
+        {
+            await TestUnauthorizedAccessForEndpoint(url, httpMethod);
+        }
+
+        [Fact]
+        public async Task PUT_NotExistingBattery_NotFound()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.PutAsJsonAsync(int.MaxValue.ToString(), new BatteryUpdateDto() { Type = validBatteryType, MentorId = validMentorId });
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+            Logout();
+        }
+
+        [Theory]
+        [InlineData(-2)]
+        [InlineData(-1)]
+        public async Task PUT_InvalidBatteryId_BadRequest(int? batteryId)
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.PutAsJsonAsync(batteryId.ToString(), new BatteryUpdateDto() { Type = validBatteryType, MentorId = validMentorId });
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+
+            problemDetails?.Errors["id"][0].ShouldBe("Battery id must be positive");
+
+            Logout();
+        }
+
+        [Fact]
+        public async Task PUT_NotFoundMentor_NotFound()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.PutAsJsonAsync(validBatteryId.ToString(), new BatteryUpdateDto() { Type = validBatteryType, MentorId = int.MaxValue });
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+            Logout();
+        }
+
+        [Theory]
+        [InlineData(-2)]
+        [InlineData(-1)]
+        public async Task PUT_InvalidMentorId_BadRequest(int mentorId)
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.PutAsJsonAsync(validBatteryId.ToString(), new BatteryUpdateDto() { Type = validBatteryType, MentorId = mentorId });
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+
+            problemDetails?.Errors["MentorId"][0].ShouldBe("'Mentor Id' must be greater than '0'.");
+
+            Logout();
+        }
+
+        [Fact]
+        public async Task PUT_ValidBattery_UpdateBattery()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.PutAsJsonAsync(validBatteryId.ToString(), new BatteryUpdateDto() { Type = validBatteryType, MentorId = validMentorId });
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            BatteryDto newBattery = (await response.Content.ReadFromJsonAsync<BatteryDto>())!;
+
+            newBattery.Type.ShouldBe(validBatteryType);
+            newBattery.MentorId.ShouldBe(validMentorId);
+
+            Logout();
+        }
+    }
+}

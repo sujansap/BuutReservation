@@ -21,6 +21,8 @@ using Auth0Net.DependencyInjection;
 using Rise.Server.Auth;
 using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
+using Rise.Shared.Boats;
+using Rise.Services.Boats;
 
 try
 {
@@ -107,6 +109,7 @@ try
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IBatteryService, BatteryService>();
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
 
