@@ -7,7 +7,7 @@
 @inject IStringLocalizer<AdminPageResources> Localizer
 
 @layout AdminLayout
-@attribute [Authorize(Roles = "Administrator")]
+@attribute [Authorize(Roles = nameof(UserRole.Administrator))]
 
 <BackButton Href="/admin/guests" data-testid="back-to-guests-list-button" />
 

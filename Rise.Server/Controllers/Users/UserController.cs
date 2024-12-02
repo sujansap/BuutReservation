@@ -9,7 +9,6 @@ namespace Rise.Server.Controllers.Users
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class UserController(ILogger<UserController> logger, IUserService userService) : ControllerBase
     {
         private readonly ILogger<UserController> _logger = logger;
@@ -83,7 +82,7 @@ namespace Rise.Server.Controllers.Users
         /// Registers a new user
         /// </summary>
         /// <param name="userDto">Dto with required user imformation for registration</param>
-        /// <returns>Result of the operation</returns>
+        /// <returns>The id of the registered user</returns>
         [HttpPost("register")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -95,6 +94,5 @@ namespace Rise.Server.Controllers.Users
             var userId = await _userService.RegisterUser(userDto);
             return CreatedAtAction(nameof(RegisterUser), userId);
         }
-
     }
 }

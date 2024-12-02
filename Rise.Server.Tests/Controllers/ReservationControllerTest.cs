@@ -69,8 +69,8 @@ namespace Rise.Server.Tests.Controllers
 
             // Verify all returned reservations are from the past
             reservationsPage.Data.ShouldAllBe(r => r.Date < today);
-            // start van 2 dagen geleden tot 7 dagen geleden
-            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-8) && r.Date <= today.AddDays(-2));
+            // start van 2 dagen geleden tot 8 dagen geleden
+            reservationsPage.Data.ShouldAllBe(r => r.Date >= today.AddDays(-9) && r.Date <= today.AddDays(-2));
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace Rise.Server.Tests.Controllers
             nextPage.Data.First().Id.ShouldNotBe(firstPage.Data.First().Id);
             // van 8 dagen geleden tot 13 dagen geleden
             // moet de cursor meegeven van de pagina
-            DateOnly start = today.AddDays(-14);
+            DateOnly start = today.AddDays(-15);
             DateOnly end = today.AddDays(-9);
 
             nextPage.Data.ShouldAllBe(r => r.Date >= start && r.Date <= end,
@@ -192,7 +192,7 @@ namespace Rise.Server.Tests.Controllers
 
             var request = new CreateReservationDto
             {
-                TimeSlotId = 63
+                TimeSlotId = 100
             };
 
 
@@ -325,10 +325,11 @@ namespace Rise.Server.Tests.Controllers
         {
             await LoginAsync(UserRole.Member);
 
-            var validReservationId = 80;
+            var validReservationId = 79;
 
 
             var response = await _client.PatchAsync($"cancel/{validReservationId}", null);
+            response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
             var reservationDetailsResponse = await _client.GetAsync($"{validReservationId}");
             reservationDetailsResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -356,11 +357,10 @@ namespace Rise.Server.Tests.Controllers
         public async Task PATCH_CancelReservation_AlreadyCancelledReservation_ExpectBadRequest()
         {
             await LoginAsync(UserRole.Member);
-            var cancelledReservationId = 38;
-
+            var cancelledReservationId = 50;
+            await _client.PatchAsync($"cancel/{cancelledReservationId}", null);
 
             var response = await _client.PatchAsync($"cancel/{cancelledReservationId}", null);
-
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
@@ -369,7 +369,7 @@ namespace Rise.Server.Tests.Controllers
         public async Task PATCH_CancelReservation_WithinTwoDaysOfReservation_ExpectBadRequest()
         {
             await LoginAsync(UserRole.Member);
-            var reservationIdWithinTwoDays = 2;
+            var reservationIdWithinTwoDays = 1;
 
 
             var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);

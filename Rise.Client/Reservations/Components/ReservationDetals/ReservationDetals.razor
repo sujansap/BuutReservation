@@ -4,7 +4,8 @@
 @using Rise.Shared.Reservations
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Common
-@attribute [Authorize(Roles = "Member, Administrator")]
+@using Rise.Shared.Users
+@attribute [Authorize(Roles = $"{nameof(UserRole.Member)}, {nameof(UserRole.Administrator)}")]
 
 @inject IStringLocalizer<ReservationPageResources> Localizer
 
@@ -81,4 +82,19 @@
         @text</MudText>;
 
 
-}
+} using Rise.Shared.Users;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 7
+"c:\Users\bramr\RISE\dotnet-2425-gent2\Rise.Client\Reservations\Components\ReservationDetals\ReservationDetals.razor"
+using Rise.Shared.Users;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 7
+"c:\Users\bramr\RISE\dotnet-2425-gent2\Rise.Client\Reservations\Components\ReservationDetals\ReservationDetals.razor"

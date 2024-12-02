@@ -221,6 +221,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
         catch (DbUpdateException ex)
         {
+            _logger.LogError(ex, "Error while saving user.");
             HandleDbUpdateException(ex);
             throw new UserCreationFailedException(ErrorMessages.User.UnexpectedError);
         }
@@ -241,8 +242,9 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 throw new UniqueConstraintViolationException(ErrorMessages.User.EmailAlreadyExists);
             throw new UserCreationFailedException(ex.Message);
         }
-        catch (RateLimitApiException)
+        catch (RateLimitApiException ex)
         {
+            _logger.LogError(ex, "Rate limit exceeded.");
             await RetryRegisterUserInAuth0(userDto, userId);
         }
     }
@@ -280,9 +282,10 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 await SendRegisterUserInAuth0Request(userDto, userId);
                 success = true;
             }
-            catch (RateLimitApiException)
+            catch (RateLimitApiException ex)
             {
                 //Delay so that auth0 api doesn't throw a rate limit exception
+                _logger.LogError(ex, "Rate limit exceeded.");
                 await Task.Delay(TimeSpan.FromSeconds(2));
                 retries++;
             }
@@ -290,11 +293,11 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
         if (!success)
         {
-            throw new UserCreationFailedException("Unexpected error");
+            throw new UserCreationFailedException(ErrorMessages.User.RateLimitExceeded);
         }
     }
 
-    private void HandleDbUpdateException(DbUpdateException ex)
+    private static void HandleDbUpdateException(DbUpdateException ex)
     {
         if (ex.InnerException is PostgresException pgEx)
         {
@@ -303,7 +306,6 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 DatabaseConstraints.UniqueUserEmail => ErrorMessages.User.EmailAlreadyExists,
                 _ => ErrorMessages.User.UnexpectedError
             };
-            _logger.LogError(pgEx, "Unexpected error");
             throw new UniqueConstraintViolationException(message);
         }
     }
