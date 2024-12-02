@@ -45,7 +45,7 @@ namespace Rise.Services.Boats
                 .Include(r => r.User)
                 .Include(r => r.TimeSlot)
                 .Where(r => 
-                    r.BatteryId != null && 
+                    r.Battery != null && 
                     (r.TimeSlot.Date < timeInfo.Today || 
                      (r.TimeSlot.Date == timeInfo.Today && r.TimeSlot.End <= timeInfo.CurrentTime)))
                 .ToListAsync();
@@ -100,7 +100,7 @@ namespace Rise.Services.Boats
             var reservationsToReset = await _dbContext.Reservations
                 .Include(r => r.Battery)
                 .Where(r => 
-                    r.BatteryId != null && 
+                    r.Battery != null && 
                     (r.TimeSlot.Date == today || r.TimeSlot.Date == tomorrow))
                 .ToListAsync();
 

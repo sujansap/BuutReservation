@@ -25,7 +25,7 @@ namespace Rise.Domain.Boats
             set => _type = Guard.Against.NullOrWhiteSpace(value, nameof(Type), "Battery type cannot be null or empty");
         }
 
-        internal void IncrementUsage()
+        internal void UpdateUsageStats()
         {
             _usageCount++;
             _lastUsedAt = DateTime.UtcNow;
@@ -35,7 +35,6 @@ namespace Rise.Domain.Boats
         {
             Guard.Against.Null(reservation, nameof(reservation));
             _reservations.Add(reservation);
-            IncrementUsage();
         }
 
         internal void RemoveReservation(Reservation reservation)
@@ -165,6 +164,7 @@ namespace Rise.Domain.Boats
             {
                 var lastUser = reservation.User;
                 var battery = reservation.Battery!;
+                battery.UpdateUsageStats();
                 reservation.Battery = null;
                 battery.AssignToHolder(lastUser);
             }

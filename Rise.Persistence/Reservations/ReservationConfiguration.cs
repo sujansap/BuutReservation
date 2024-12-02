@@ -16,7 +16,7 @@ namespace Rise.Persistence.Reservations
             builder
                 .HasOne(e => e.Battery)
                 .WithMany(e => e.Reservations)
-                .HasForeignKey(e => e.BatteryId)
+                .HasForeignKey("BatteryId")
                 .IsRequired(false);
 
             builder

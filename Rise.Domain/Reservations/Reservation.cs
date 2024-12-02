@@ -27,18 +27,11 @@ namespace Rise.Domain.Reservations
                 _battery = value;
                 if (_battery is not null)
                 {
-                    BatteryId = _battery.Id;
                     _battery.AddReservation(this);
-                }
-                else
-                {
-                    BatteryId = null;
                 }
             }
         }
-        
-        public int? BatteryId { get; private set; }
-        // TODO: een andmin kan wel aanpassen tot net voor de reservatie
+
         public void Cancel()
         {
             if (IsDeleted)
