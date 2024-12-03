@@ -11,9 +11,27 @@ namespace Rise.Services.Boats
     public class BatteryService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
         : AuthenticationService(dbContext, authContextProvider), IBatteryService
     {
+        /// <summary>
+        /// Gets the battery by id
+        /// </summary>
+        /// <param name="id">battery id</param>
+        /// <returns></returns>
+        /// <exception cref="EntityNotFoundException">When the battery does not exist with given id</exception>
+        public async Task<Battery> FindBattery(int id)
+        {
+            return await _dbContext.Batteries.Include(b => b.Mentor)
+            .FirstOrDefaultAsync(b => b.Id == id) ?? throw new EntityNotFoundException(nameof(Battery), id);
+        }
+        public async Task<BatteryDto> GetBattery(int id)
+        {
+            Battery battery = await FindBattery(id);
+
+            return new BatteryDto { MentorId = battery.Mentor.Id, Type = battery.Type };
+        }
+
         public async Task<BatteryDto> UpdateBattery(int id, BatteryUpdateDto newBattery)
         {
-            Battery? battery = await _dbContext.Batteries.FirstOrDefaultAsync(b => b.Id == id) ?? throw new EntityNotFoundException(nameof(Battery), id);
+            Battery battery = await FindBattery(id);
 
             User? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == newBattery.MentorId) ?? throw new EntityNotFoundException(nameof(User), newBattery.MentorId);
 

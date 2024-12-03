@@ -14,13 +14,32 @@ namespace Rise.Server.Controllers.Boats
         private readonly ILogger<BatteryController> _logger = logger;
         private readonly IBatteryService _batteryService = batteryService;
 
-        // TODO document
         /// <summary>
-        /// 
+        /// Gets the information of a battery
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="newBattery"></param>
-        /// <returns></returns>
+        /// <param name="id">battery id</param>
+        /// <returns>The battery information</returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BatteryDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetBattery(
+            [Range(0, int.MaxValue, ErrorMessage = "Battery id must be positive")]
+            int id)
+        {
+            _logger.LogInformation("GET battery: {id}", id);
+            BatteryDto battery = await _batteryService.GetBattery(id);
+            _logger.LogInformation("GET done fetching battery: {id}", id);
+            return Ok(battery);
+        }
+
+        /// <summary>
+        /// Update the information of a battery
+        /// </summary>
+        /// <param name="id">battery id</param>
+        /// <param name="newBattery">information to update the battery with</param>
+        /// <returns>The updated battery</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BatteryDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

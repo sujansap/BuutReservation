@@ -18,10 +18,39 @@ namespace Rise.Server.Tests.Controllers.Boats
 
 
         [Theory]
+        [InlineData("1", "GET")]
         [InlineData("1", "PUT")]
         public async Task Call_TimeSlotController_Endpoints_ExpectUnauthorized(string url, string httpMethod)
         {
             await TestUnauthorizedAccessForEndpoint(url, httpMethod);
+        }
+
+        [Fact]
+        public async Task Get_NotExistingBattery_NotFound()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.GetAsync(int.MaxValue.ToString());
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+            Logout();
+        }
+
+        [Theory]
+        [InlineData(-2)]
+        [InlineData(-1)]
+        public async Task Get_InvalidBatteryId_BadRequest(int? batteryId)
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.GetAsync(batteryId.ToString());
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+
+            problemDetails?.Errors["id"][0].ShouldBe("Battery id must be positive");
+
+            Logout();
         }
 
         [Fact]
