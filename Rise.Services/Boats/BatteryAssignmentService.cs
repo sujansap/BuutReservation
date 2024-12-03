@@ -65,7 +65,8 @@ namespace Rise.Services.Boats
                     r.TimeSlot.Date >= timeInfo.Today && 
                     r.TimeSlot.Date <= timeInfo.ThreeDaysFromNow &&
                     (r.TimeSlot.Date > timeInfo.Today || 
-                     (r.TimeSlot.Date == timeInfo.Today && r.TimeSlot.Start > timeInfo.CurrentTime)))
+                     (r.TimeSlot.Date == timeInfo.Today && r.TimeSlot.Start > timeInfo.CurrentTime)) &&
+                    !r.IsDeleted)
                 .OrderBy(r => r.TimeSlot.Date)
                 .ThenBy(r => r.TimeSlot.Start)
                 .ToListAsync();
