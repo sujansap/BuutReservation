@@ -3,6 +3,7 @@ using MudBlazor;
 using Rise.Client.Common;
 using Rise.Shared.Reservations;
 using Serilog;
+using Rise.Client.Reservations.Components.Dialogs;
 
 namespace Rise.Client.Reservations.Components.ReservationDetals
 {
@@ -23,7 +24,12 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         [Inject]
         public required NavigationManager NavigationManager { get; set; }
 
+        [Inject]
+        public required IDialogService DialogService { get; set; }
+
         private bool IsReservationInPast => ReservationDetails?.Date < DateOnly.FromDateTime(DateTime.Now);
+        
+        private string GetDisplayText(string? value) => string.IsNullOrEmpty(value) ? "\u00A0" : value;
 
         private RenderFragment<string> RenderErrorMessage => (text) => builder =>
         {
@@ -43,26 +49,34 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         {
             if (ReservationDetails is null)
                 return;
-            try
-            {
-                await ReservationService.CancelReservationAsync(ReservationDetails.Id);
-                ReservationDetails.IsDeleted = true;
-                StateHasChanged();
 
-                NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
-            }
-            catch (Exception ex)
+            var dialog = await DialogService.ShowAsync<CancelReservationDialog>(Localizer["CancelReservationTitle"]);
+            var result = await dialog.Result;
+
+            if (result?.Canceled == false)
             {
-                Log.Error($"Error cancelling reservation: {ex.Message}");
-                var message = ex.Message switch
+                try
                 {
-                    "AlreadyCancelled" => Localizer["AlreadyCancelled"],
-                    "CancellationTooLate" => Localizer["CancellationTooLate"],
-                    _ => Localizer["CancellationError"]
-                };
-                SnackbarService.Add(RenderErrorMessage(message), Severity.Error);
+                    await ReservationService.CancelReservationAsync(ReservationDetails.Id);
+                    ReservationDetails.IsDeleted = true;
+                    StateHasChanged();
+
+                    NavigationManager.NavigateTo("/reservations?CurrentTab=reservations");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Error cancelling reservation: {ex.Message}");
+                    var message = ex.Message switch
+                    {
+                        "AlreadyCancelled" => Localizer["AlreadyCancelled"],
+                        "CancellationTooLate" => Localizer["CancellationTooLate"],
+                        _ => Localizer["CancellationError"]
+                    };
+                    SnackbarService.Add(RenderErrorMessage(message), Severity.Error);
+                }
             }
         }
+
     }
 }
 

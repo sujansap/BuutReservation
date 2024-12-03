@@ -111,5 +111,17 @@
 <data name="CancellationError" xml:space="preserve">
     <value>Er is een fout opgetreden bij het annuleren van de reservatie.</value>
 </data>
+<data name="CancelReservationTitle" xml:space="preserve">
+    <value>Reservatie annuleren</value>
+</data>
+<data name="CancelReservationConfirmation" xml:space="preserve">
+    <value>Weet u zeker dat u deze reservatie wilt annuleren?</value>
+</data>
+<data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+</data>
+<data name="No" xml:space="preserve">
+    <value>Nee</value>
+</data>
 
 </root>

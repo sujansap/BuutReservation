@@ -102,4 +102,16 @@
 	<data name="CancellationError" xml:space="preserve">
 		<value>An error occurred while canceling the reservation.</value>
 	</data>
+	<data name="CancelReservationTitle" xml:space="preserve">
+		<value>Cancel Reservation</value>
+	</data>
+	<data name="CancelReservationConfirmation" xml:space="preserve">
+		<value>Are you sure you want to cancel this reservation?</value>
+	</data>
+	<data name="Yes" xml:space="preserve">
+		<value>Yes</value>
+	</data>
+	<data name="No" xml:space="preserve">
+		<value>No</value>
+	</data>
 </root>
