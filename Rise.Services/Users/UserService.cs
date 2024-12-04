@@ -113,8 +113,13 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
         catch (RateLimitApiException ex)
         {
-            _logger.LogError(ex, "Rate limit exceeded.");
+            _logger.LogError(ex, "Auth0 Rate limit exceeded");
             await RetryRegisterUserInAuth0(userDto, userId);
+        }
+        catch (ApiException ex)
+        {
+            _logger.LogError(ex, "Auth0 api excpetion");
+            throw new UserCreationFailedException(ex.Message);
         }
     }
 
