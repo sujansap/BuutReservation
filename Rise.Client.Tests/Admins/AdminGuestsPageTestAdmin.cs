@@ -128,8 +128,11 @@ namespace Rise.Client.Tests.Admin
             await InitializeWithMockUsers();
 
             // check if both family names are visible
-            await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
-            await Expect(Page.GetByText("Johnson")).ToBeVisibleAsync();
+            //list-guest-page-familyname
+
+            await AssertUserDetails("list-guest-page-familyname-1", "Smith");
+            await AssertUserDetails("list-guest-page-familyname-2", "Johnson");
+
         }
 
 
@@ -156,6 +159,14 @@ namespace Rise.Client.Tests.Admin
             await ReloadPage();
             await Expect(Page.GetByText("Johnson")).ToBeVisibleAsync();
             await Expect(Page.GetByText("Smith")).Not.ToBeVisibleAsync();
+        }
+
+
+        private async Task AssertUserDetails(string testId, string expectedValue)
+        {
+            var locator = Page.GetByTestId(testId);
+            await Expect(locator).ToBeVisibleAsync();
+            await Expect(locator).ToHaveTextAsync(expectedValue);
         }
     }
 }

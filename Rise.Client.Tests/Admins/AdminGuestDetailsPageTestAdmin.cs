@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.Playwright;
 using Rise.Shared.Users;
+using static Rise.Shared.Users.UserRegistrationModelDto;
 
 namespace Rise.Client.Tests.Admin
 {
@@ -55,8 +56,18 @@ namespace Rise.Client.Tests.Admin
             var userDetails = new UserDetailDto
             {
                 Id = userId,
-                FamilyName = "Smith"
-                /*later more here*/
+                FamilyName = "Smith",
+                FirstName = "John",
+                Email = "",
+                PhoneNumber = "",
+                Address = new AddressModel
+                {
+                    Street = "Main",
+                    Number = "123",
+                    City = "New York",
+                    PostalCode = "12345",
+                    Country = "USA"
+                }
             };
 
             await MockUserDetails(userId, userDetails, delayMs);
@@ -67,7 +78,7 @@ namespace Rise.Client.Tests.Admin
         public async Task DisplaysUserFamilyName()
         {
             await InitializeWithMockUser(1);
-            await AssertUserDetail("user-details-page-familyname", "Smith");
+            await AssertUserDetail("user-details-page-familyname", "John Smith");
 
         }
 
@@ -115,20 +126,40 @@ namespace Rise.Client.Tests.Admin
             var initialUser = new UserDetailDto
             {
                 Id = userId,
-                FamilyName = "Smith"
-                /*later more here*/
+                FamilyName = "Smith",
+                FirstName = "John",
+                Email = "",
+                PhoneNumber = "",
+                Address = new AddressModel
+                {
+                    Street = "Main",
+                    Number = "123",
+                    City = "New York",
+                    PostalCode = "12345",
+                    Country = "USA"
+                }
             };
 
             await MockUserDetails(userId, initialUser);
             await NavigateToUrl($"{baseSuffix}/{userId}");
-            await AssertUserDetail("user-details-page-familyname", "Smith");
+            await AssertUserDetail("user-details-page-familyname", "John Smith");
 
             // updatedUser state
             var updatedUser = new UserDetailDto
             {
                 Id = userId,
-                FamilyName = "Johnson"
-                /*later more here*/
+                FirstName = "John",
+                FamilyName = "Johnson",
+                Email = "",
+                PhoneNumber = "",
+                Address = new AddressModel
+                {
+                    Street = "Main",
+                    Number = "123",
+                    City = "New York",
+                    PostalCode = "12345",
+                    Country = "USA"
+                }
             };
 
             await MockUserDetails(userId, updatedUser);
