@@ -1,0 +1,28 @@
+﻿@page "/admin/reservations"
+@using Rise.Shared.Reservations
+@inject IReservationService ReservationService
+@inject ISnackbar Snackbar
+@layout AdminLayout
+@attribute [Authorize(Roles = "Administrator")]
+
+<MudTable Items="Reservations?.Data" Loading="isLoading">
+    <HeaderContent>
+        <MudTh>User</MudTh>
+        <MudTh>Date</MudTh>
+        <MudTh>Time</MudTh>
+        <MudTh>Boat</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.UserName</MudTd>
+        <MudTd>@context.Date.ToShortDateString()</MudTd>
+        <MudTd>@context.Start - @context.End</MudTd>
+        <MudTd>@context.BoatPersonalName</MudTd>
+        <MudTd>
+            <MudButton Color="Color.Error" OnClick="@(() => CancelReservation(context.Id))"
+                Disabled="@context.IsDeleted">
+                Cancel
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>

@@ -147,6 +147,40 @@ namespace Rise.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Gets all reservations in the system with pagination support for admins.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint is accessible only by admins and supports pagination. 
+        /// The admin can fetch reservations for all users in the system.
+        /// </remarks>
+        /// <param name="cursor">The ID of a reservation to fetch relative to, for pagination.</param>
+        /// <param name="isNextPage">If available, true to get the next page or false to get the previous page.</param>
+        /// <param name="pageSize">Number of items to get in a page (default is 10).</param>
+        /// <returns>Paginated list of all reservations in the system.</returns>
+        [HttpGet("all")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllReservations(
+            [FromQuery] int? cursor,
+            [FromQuery] bool? isNextPage,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var reservations = await _reservationService.GetAllReservations(cursor, isNextPage, pageSize);
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching all reservations.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving reservations.");
+            }
+        }
+
+
     }
 }
 

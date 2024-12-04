@@ -14,6 +14,8 @@ public abstract class AuthenticationService
                 nameof(authContextProvider),
                 $"{GetType().Name} requires a {nameof(authContextProvider)}"
             );
+        //authContextProvider.User.IsInRole(Admin);
+
 
         _dbContext = dbContext;
         _authContextProvider = authContextProvider;

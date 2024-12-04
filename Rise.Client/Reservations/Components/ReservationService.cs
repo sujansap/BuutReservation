@@ -59,5 +59,28 @@ namespace Rise.Client.Services
 
             return result;
         }
+
+        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10)
+        {
+            Dictionary<string, string?> queries = new()
+            {
+                ["pageSize"] = pageSize.ToString(),
+            };
+
+            if (cursor is not null)
+                queries.Add("cursor", cursor.ToString());
+
+            if (isNextPage is not null)
+                queries.Add("isNextPage", isNextPage.ToString());
+
+            string queryString = QueryHelpers.AddQueryString("all", queries);
+
+            ItemsPageDto<ReservationDto> result = await _httpClient.GetFromJsonAsync<ItemsPageDto<ReservationDto>>(queryString)
+                ?? new ItemsPageDto<ReservationDto> { Data = [] };
+
+            return result;
+        }
+
+
     }
 }

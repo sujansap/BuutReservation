@@ -196,6 +196,40 @@ namespace Rise.Services.Reservations
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10)
+        {
+            return await PaginationService.GetPaginatedResultsAsync<Reservation, ReservationDto>(
+                queryableDbSet: _dbContext.Reservations
+                    .Include(r => r.User)
+                    .Include(r => r.TimeSlot)
+                    .Include(r => r.Boat)
+                    .AsQueryable(),
+                filterLambda: r => true, // haal alles op
+                orderingExpressions: new List<OrderingExpression<Reservation, object>>
+                {
+            new() { OrderLambda = r => r.TimeSlot.Date, IsDescending = false },
+            new() { OrderLambda = r => r.Id, IsDescending = false }
+                },
+                projection: r => new ReservationDto
+                {
+                    Id = r.Id,
+                    Start = r.TimeSlot.Start,
+                    End = r.TimeSlot.End,
+                    Date = r.TimeSlot.Date,
+                    BoatId = r.BoatId,
+                    IsDeleted = r.IsDeleted,
+                    BoatPersonalName = r.Boat.PersonalName,
+                    UserName = r.User.FamilyName
+                },
+                cursor: cursor,
+                isNextPage: isNextPage,
+                pageSize: pageSize
+            );
+        }
+
+
+
+
     }
 }
 
