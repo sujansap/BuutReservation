@@ -3,7 +3,7 @@ using Rise.Shared.Pagination;
 
 namespace Rise.Shared.Reservations;
 
-public class ReservationDto : BaseDto
+public record ReservationDto : BaseDto
 {
     public TimeOnly Start { get; set; }
     public TimeOnly End { get; set; }

@@ -30,10 +30,10 @@
             </AuthorizeView>
         </MudStack>
         <MudSpacer />
-        <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
+        @* <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
             data-testid="nav-desktop-book">
             @Localizer["BookNow"]
-        </MudButton>
+        </MudButton> *@
         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
             StretchItems="StretchItems.Start">
             <AuthorizeView>
@@ -48,6 +48,9 @@
                     </MudNavLink>
                 </Authorized>
                 <NotAuthorized>
+                    <MudNavLink  Href="register" data-testid="nav-desktop-register" Icon="@Icons.Material.Filled.FollowTheSigns">
+                        @Localizer["Register"]
+                        </MudNavLink>
                     <MudNavLink Href="authentication/login" data-testid="nav-desktop-login"
                         Icon="@Icons.Material.Filled.Login">Log in
                     </MudNavLink>
@@ -80,6 +83,9 @@
                     <MudText>@string.Format(Localizer["WelcomeMessage"], @context.User.Identity?.Name)</MudText>
                 </Authorized>
                 <NotAuthorized>
+                    <MudButton Variant="Variant.Filled" Size="Size.Medium" Color="Color.Primary" Href="register" data-testid="nav-mobile-register" >
+                        @Localizer["Register"]
+                    </MudButton>
                     <MudButton Variant="Variant.Filled" Size="Size.Medium" Color="Color.Primary"
                         Href="authentication/login" data-testid="nav-mobile-login">
                         Login
@@ -96,7 +102,7 @@
         <MudNavLink Href="home" data-testid="nav-mobile-home" Match="NavLinkMatch.All">@Localizer["Home"]
         </MudNavLink>
         <MudNavLink Href="about" data-testid="nav-mobile-about">@Localizer["About"]</MudNavLink>
-            <MudNavLink Href="book" data-testid="nav-mobile-book">@Localizer["BookNow"]</MudNavLink>
+            @* <MudNavLink Href="book" data-testid="nav-mobile-book">@Localizer["BookNow"]</MudNavLink> *@
         <AuthorizeView>
             <Authorized>
                     <MudNavLink Href="reservations" data-testid="nav-mobile-reservations">@Localizer["Reserve"]</MudNavLink>

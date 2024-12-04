@@ -3,11 +3,11 @@ using Rise.Persistence;
 
 namespace Rise.Services.Auth;
 
-public abstract class AuthenticationService
+public abstract class AuthenticatedService
 {
     protected readonly ApplicationDbContext _dbContext;
     protected readonly IAuthContextProvider _authContextProvider;
-    protected AuthenticationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+    protected AuthenticatedService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
     {
         if (authContextProvider.User is null)
             throw new ArgumentNullException(

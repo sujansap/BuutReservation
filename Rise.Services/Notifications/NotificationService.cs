@@ -9,7 +9,7 @@ namespace Rise.Services.Notifications
 {
 
     public class NotificationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        : AuthenticationService(dbContext, authContextProvider), INotificationService
+        : AuthenticatedService(dbContext, authContextProvider), INotificationService
     {
         public async Task<IEnumerable<NotificationDto>> GetUserNotifications(int? limit)
         {

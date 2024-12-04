@@ -16,7 +16,9 @@ using Rise.Shared.Notifications;
 using Rise.Client.Notifications;
 using Rise.Shared.Users;
 using Rise.Client.Admins;
+using Rise.Client.Localization.Register;
 using Rise.Client.Auth;
+using Rise.Client.Register;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -66,7 +68,7 @@ builder.Services.AddHttpClient<INotificationService, NotificationService>(client
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Notification/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddHttpClient<IUserService, UserService>(client =>
+builder.Services.AddHttpClient<IUserAdminService, UserAdminService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
@@ -76,6 +78,11 @@ builder.Services.AddHttpClient<IReservationService, ReservationService>(client =
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Reservation/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
+
+builder.Services.AddHttpClient<IUserRegisterService, UserRegisterService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/register");
+});
 
 var host = builder.Build();
 

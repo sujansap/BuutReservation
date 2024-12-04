@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace Rise.Client.Tests.Layout
 {
     [TestFixture]
-    public class NavMenuTestVisitor : CustomAuthenticatedPageTest
+    public class NavMenuTestVisitor : CustomPageTest
     {
         private const int DefaultHeight = 1920;
 
@@ -23,7 +23,7 @@ namespace Rise.Client.Tests.Layout
         [Test]
         [TestCase("nav-mobile-home", "home", "/huh")]
         [TestCase("nav-mobile-about", "about", "")]
-        [TestCase("nav-mobile-login", "/authentication/login", "")]
+        [TestCase("nav-mobile-login", "/login", "")]
 
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
         {

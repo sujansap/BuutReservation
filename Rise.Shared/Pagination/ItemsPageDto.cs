@@ -1,6 +1,6 @@
 namespace Rise.Shared.Pagination
 {
-    public class ItemsPageDto<T>
+    public record ItemsPageDto<T>
     {
         public required IEnumerable<T> Data { get; set; }
         public int? NextId { get; set; }
