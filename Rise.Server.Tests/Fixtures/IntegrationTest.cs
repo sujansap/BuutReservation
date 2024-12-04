@@ -247,8 +247,12 @@ namespace Rise.Server.Tests.Fixtures
             }
         }
 
-
         public async Task RegisterValidAuth0User()
+        {
+            await RunTaskWithRetries(async () => await RegisterValidUser(), 20);
+        }
+
+        private async Task<bool> RegisterValidUser()
         {
             try
             {
@@ -283,17 +287,22 @@ namespace Rise.Server.Tests.Fixtures
                 });
 
                 Console.WriteLine($"User with buutUserId {buutUserId} created successfully.");
+
+                return true;
             }
             catch (RateLimitApiException ex)
             {
                 Console.WriteLine($"Rate limit exceeded: {ex.Message}. Retrying...");
                 await Task.Delay(TimeSpan.FromSeconds(2));
+                return false;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to create user: {ex.Message}");
-                throw;
+                return false;
+
             }
+
         }
 
 
