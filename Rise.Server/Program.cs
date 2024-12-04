@@ -21,6 +21,7 @@ using Auth0Net.DependencyInjection;
 using Rise.Server.Auth;
 using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
+using Rise.Client.Register;
 
 try
 {
@@ -106,7 +107,8 @@ try
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
-    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IUserAdminService, UserService>();
+    builder.Services.AddScoped<IUserRegisterService, UserService>();
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
 
@@ -145,7 +147,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapControllers();
+    app.MapControllers().RequireAuthorization();
     app.MapFallbackToFile("index.html");
 
     if (app.Environment.IsDevelopment() || app.Environment.IsStaging())

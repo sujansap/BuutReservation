@@ -17,7 +17,6 @@ namespace Rise.Server.Tests.Controllers
             await LoginAsync(UserRole.Member);
             var response = await _client.GetAsync("me");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
-            Logout();
         }
 
         [Fact]
@@ -26,7 +25,6 @@ namespace Rise.Server.Tests.Controllers
             await LoginAsync(UserRole.Member);
             IEnumerable<NotificationDto> response = (await _client.GetFromJsonAsync<IEnumerable<NotificationDto>>("me"))!;
             response.Count().ShouldBe(20);
-            Logout();
         }
 
         [Theory]
@@ -38,7 +36,6 @@ namespace Rise.Server.Tests.Controllers
             await LoginAsync(UserRole.Member);
             var response = await _client.PatchAsync($"read/{id}", null);
             response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-            Logout();
         }
 
         [Theory]
@@ -48,7 +45,6 @@ namespace Rise.Server.Tests.Controllers
             await LoginAsync(UserRole.Member);
             var response = await _client.PatchAsync($"read/{id}", null);
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-            Logout();
         }
 
         [Fact]
@@ -61,7 +57,6 @@ namespace Rise.Server.Tests.Controllers
             IEnumerable<NotificationDto> response = (await _client.GetFromJsonAsync<IEnumerable<NotificationDto>>("me"))!;
 
             response.Any(n => forbiddenIds.Contains(n.Id)).ShouldBeFalse();
-            Logout();
         }
     }
 

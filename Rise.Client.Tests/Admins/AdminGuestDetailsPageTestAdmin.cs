@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Playwright;
 using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Admin
@@ -13,7 +14,15 @@ namespace Rise.Client.Tests.Admin
         [SetUp]
         public async Task SetUpAsync()
         {
+            base.GlobalSetUp();
             await LoginAsync(UserRole.Administrator);
+        }
+
+        [TearDown]
+        public async Task TearDownAsync()
+        {
+            await LogoutAsync();
+            await base.TearDown();
         }
 
         private async Task AssertUserDetail(string testId, string expectedValue)
@@ -66,6 +75,8 @@ namespace Rise.Client.Tests.Admin
         public async Task ShowsLoadingStateWhileFetchingDetails()
         {
             await InitializeWithMockUser(1, 2000);
+            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            // loader is too fast so we need to wait ^^ for everything to be loaded
             await Expect(Page.GetByTestId("user-details-loading-progress")).ToBeVisibleAsync();
         }
 

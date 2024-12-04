@@ -16,6 +16,13 @@ namespace Rise.Client.Tests.Admin
             await LoginAsync(UserRole.Administrator);
         }
 
+        [TearDown]
+        public async Task TearDownAsync()
+        {
+            await LogoutAsync();
+            await base.TearDown();
+        }
+
         private async Task MockUsers(UserDto[] users)
         {
             await Page.RouteAsync("*/**/api/User/guests", async route =>
