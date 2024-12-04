@@ -63,8 +63,8 @@ namespace Rise.Client.Tests
         protected async Task NavigateToUrl(string url)
         {
             await Page.GotoAsync(url);
-            // await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
             await Hydration();
+            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }
 
         protected async Task ReloadPage()

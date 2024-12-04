@@ -28,6 +28,12 @@ namespace Rise.Client.Tests
 
         protected async Task LoginAsync(UserRole role)
         {
+            if (IsLoggedIn())
+            {
+                await InjectSessionStorage();
+                return;
+            }
+
             Credentials? credentials = role switch
             {
                 UserRole.Administrator => Configuration.GetSection("Administrator").Get<Credentials>(),
@@ -36,11 +42,6 @@ namespace Rise.Client.Tests
                 _ => null
             } ?? throw new InvalidOperationException("Credentials cannot be null");
 
-            if (IsLoggedIn())
-            {
-                await InjectSessionStorage();
-                return;
-            }
 
             await LoginUsingCredentials(credentials);
             await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
@@ -94,6 +95,11 @@ namespace Rise.Client.Tests
             await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
             // await Page.GetByTestId("nav-desktop-logout").ClickAsync();
             await NavigateToUrl("/authentication/logout"); // This is not working
+            await Context.AddInitScriptAsync(@"(() => {
+                if (window.location.hostname === 'localhost') {
+                    window.sessionStorage.clear();
+                }
+            })()");
             SessionStorage = null;
         }
 
