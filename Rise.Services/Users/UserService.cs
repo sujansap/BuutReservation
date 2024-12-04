@@ -124,9 +124,23 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
                 await Task.Delay(retryDelayInMilliseconds);
             }
+            catch (ErrorApiException ex) when (attempt < maxRetries)
+            {
+                _logger.LogError(ex, "Auth0 API error occurred while fetching users for role {RoleId}. Status: {Status}, Error: {Error}. Retrying in {RetryDelay}s...",
+                    roleId, ex.StatusCode, ex.Message, retryDelayInMilliseconds / 1000);
+
+                await Task.Delay(retryDelayInMilliseconds);
+            }
+            catch (ApiException ex) when (attempt < maxRetries)
+            {
+                _logger.LogError(ex, "Unexpected Auth0 API error occurred while fetching users for role {RoleId}. Retrying in {RetryDelay}s...",
+                    roleId, retryDelayInMilliseconds / 1000);
+
+                await Task.Delay(retryDelayInMilliseconds);
+            }
         }
 
-        throw new ApplicationException($"Failed to fetch users for role '{roleId}' after {maxRetries + 1} attempts due to rate-limiting.");
+        throw new ApplicationException($"Failed to fetch users for role '{roleId}' after {maxRetries + 1} attempts.");
     }
 
     private UsersPagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)
