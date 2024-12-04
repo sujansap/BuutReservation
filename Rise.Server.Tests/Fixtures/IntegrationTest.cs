@@ -175,10 +175,10 @@ namespace Rise.Server.Tests.Fixtures
         private static async Task RunTaskWithRetries(Func<Task<bool>> callback, int retryLimit)
         {
             var retries = 0;
-            var success = false;
-            while (retries <= retryLimit && !success)
+            var isSuccess = false;
+            while (retries <= retryLimit && !isSuccess)
             {
-                success = await callback();
+                isSuccess = await callback();
                 retries++;
             }
         }

@@ -277,7 +277,12 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     {
         try
         {
-            await SendRegisterUserInAuth0Request(userDto, userId);
+            var isSuccess = await RunTaskWithRetries(async () => await SendRegisterUserInAuth0Request(userDto, userId), 20);
+
+            if (!isSuccess)
+            {
+                throw new UserCreationFailedException(ErrorMessages.User.Auth0RateLimitExceeded);
+            }
         }
         catch (ErrorApiException ex)
         {
@@ -286,11 +291,6 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 throw new UniqueConstraintViolationException(ErrorMessages.User.EmailAlreadyExists);
             throw new UserCreationFailedException(ex.Message);
         }
-        catch (RateLimitApiException ex)
-        {
-            _logger.LogError(ex, "Auth0 Rate limit exceeded");
-            await RetryRegisterUserInAuth0(userDto, userId);
-        }
         catch (ApiException ex)
         {
             _logger.LogError(ex, "Auth0 api excpetion");
@@ -298,52 +298,76 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
     }
 
-    private async Task SendRegisterUserInAuth0Request(UserRegistrationModelDto userDto, int userId)
+    private async Task<bool> SendRegisterUserInAuth0Request(UserRegistrationModelDto userDto, int userId)
     {
-        var auth0User = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
+        try
         {
-            UserName = userDto.Email,
-            Email = userDto.Email,
-            Connection = "Username-Password-Authentication",
-            Password = userDto.Password,
-            AppMetadata = new Dictionary<string, object> {
+            var auth0User = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
+            {
+                UserName = userDto.Email,
+                Email = userDto.Email,
+                Connection = "Username-Password-Authentication",
+                Password = userDto.Password,
+                AppMetadata = new Dictionary<string, object> {
                      { "buutUserId", userId },
                 }
-        }
-           );
+            }
+                       );
 
-        var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = nameof(UserRole.Guest) });
-        var role = roles.FirstOrDefault() ?? throw new RoleNotFoundException(nameof(UserRole.Guest));
-        await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
+            await RunTaskWithRetries(async () => await SendAssignInitialRoleRequest(auth0User), 20);
+            
+            return true;
+        }
+        catch (RateLimitApiException ex)
         {
-            Roles = [role.Id]
-        });
+            //Delay so that auth0 api doesn't throw a rate limit exception
+            _logger.LogError(ex, "Rate limit exceeded.");
+            await Task.Delay(TimeSpan.FromSeconds(2));
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogError(ex, "Http timout exceeded.");
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
+        return false;
     }
 
-    private async Task RetryRegisterUserInAuth0(UserRegistrationModelDto userDto, int userId)
+    private async Task<bool> SendAssignInitialRoleRequest(User auth0User)
+    {
+        try
+        {
+            var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = nameof(UserRole.Guest) });
+            var role = roles.FirstOrDefault() ?? throw new RoleNotFoundException(nameof(UserRole.Guest));
+            await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
+            {
+                Roles = [role.Id]
+            });
+            return true;
+        }
+        catch (RateLimitApiException ex)
+        {
+            //Delay so that auth0 api doesn't throw a rate limit exception
+            _logger.LogError(ex, "Rate limit exceeded.");
+            await Task.Delay(TimeSpan.FromSeconds(2));
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogError(ex, "Http timout exceeded.");
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
+        return false;
+    }
+
+    private static async Task<bool> RunTaskWithRetries(Func<Task<bool>> callback, int retryLimit)
     {
         var retries = 0;
-        var success = false;
-        while (retries <= 20 && !success)
+        var isSuccess = false;
+        while (retries <= retryLimit && !isSuccess)
         {
-            try
-            {
-                await SendRegisterUserInAuth0Request(userDto, userId);
-                success = true;
-            }
-            catch (RateLimitApiException ex)
-            {
-                //Delay so that auth0 api doesn't throw a rate limit exception
-                _logger.LogError(ex, "Rate limit exceeded.");
-                await Task.Delay(TimeSpan.FromSeconds(2));
-                retries++;
-            }
+            isSuccess = await callback();
+            retries++;
         }
-
-        if (!success)
-        {
-            throw new UserCreationFailedException(ErrorMessages.User.Auth0RateLimitExceeded);
-        }
+        return isSuccess;
     }
 
     private static void HandleDbUpdateException(DbUpdateException ex)
