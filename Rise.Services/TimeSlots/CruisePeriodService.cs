@@ -8,7 +8,7 @@ using Rise.Shared.TimeSlots;
 namespace Rise.Services.TimeSlots
 {
     public class CruisePeriodService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        : AuthenticationService(dbContext, authContextProvider), ICruisePeriodService
+        : AuthenticatedService(dbContext, authContextProvider), ICruisePeriodService
     {
         public async Task<CruisePeriodDetailedDto> GetCruisePeriod(int id)
         {
