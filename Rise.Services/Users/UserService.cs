@@ -104,7 +104,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
     private async Task<IPagedList<AssignedUser>> GetAuth0UsersWithRetry(string roleId, int page, int pageSize)
     {
-        const int maxRetries = 2;
+        const int maxRetries = 5;
         const int retryDelayInMilliseconds = 2000;
 
         for (int attempt = 0; attempt <= maxRetries; attempt++)
@@ -176,8 +176,26 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     {
         var auth0User = await FindUserByBuutUserId(userId) ?? throw new EntityNotFoundException("Auth0 user", userId);
 
-        await RemoveRoleFromUser(auth0User, await GetAuth0RoleByName(UserRole.Guest));
-        await AssignRoleToUser(auth0User, await GetAuth0RoleByName(UserRole.Member));
+        try
+        {
+            await RemoveRoleFromUser(auth0User, await GetAuth0RoleByName(UserRole.Guest));
+            await AssignRoleToUser(auth0User, await GetAuth0RoleByName(UserRole.Member));
+        }
+        catch (ErrorApiException ex)
+        {
+            _logger.LogError(ex, "Auth0 error");
+            throw new RoleAssigningFailedException(ex.Message);
+        }
+        catch (RateLimitApiException ex)
+        {
+            _logger.LogError(ex, "Auth0 Rate limit exceeded");
+            throw new RoleAssigningFailedException(ex.Message);
+        }
+        catch (ApiException ex)
+        {
+            _logger.LogError(ex, "Auth0 api excpetion");
+            throw new RoleAssigningFailedException(ex.Message);
+        }
     }
 
     public async Task<int> RegisterUser(UserRegistrationModelDto userDto)

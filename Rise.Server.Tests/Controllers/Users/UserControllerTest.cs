@@ -39,8 +39,6 @@ namespace Rise.Server.Tests.Controllers.Users
             await LoginAsync(UserRole.Administrator);
 
             await Task.Delay(TimeSpan.FromSeconds(2));
-            Console.WriteLine($"Request URL: users?role={roleToQuery}&page=1&pageSize=10");
-
 
             var response = await _client.GetFromJsonAsync<UsersPagination<UserDto>>($"?role={roleToQuery}&page=1&pageSize=10");
 
