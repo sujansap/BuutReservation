@@ -11,7 +11,8 @@ using Rise.Services.Constants;
 using Auth0.Core.Exceptions;
 using Microsoft.Extensions.Logging;
 using Auth0.ManagementApi.Paging;
-using static Rise.Shared.Users.RegisterUserDto;
+using static Rise.Shared.Users.UserRegistrationModelDto;
+
 
 namespace Rise.Services.Users;
 
@@ -154,7 +155,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             FamilyName = user.FamilyName,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
-            Address = new AddressDto
+            Address = new AddressModel
             {
                 Street = user.Address.Street,
                 Number = user.Address.Number,
