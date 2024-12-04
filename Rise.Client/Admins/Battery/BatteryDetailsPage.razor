@@ -1,0 +1,48 @@
+﻿@page "/admin/battery/{Id:int?}"
+@using MudBlazor
+@using Rise.Client.Admins.Components
+@using Rise.Client.Localization.Admins;
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<AdminPageResources> Localizer
+@using static System.Net.WebRequestMethods
+@using Rise.Client.Common
+@using Rise.Shared.Users
+@using Rise.Shared.Boats
+@using FluentValidation
+@using Rise.Client.Common.Buttons
+@attribute [Authorize(Roles = "Administrator")]
+
+@layout AdminLayout
+
+<MudText Typo="Typo.h2">@Localizer["BatteryDetails"]</MudText>
+<AsyncData DataFetcher="@FetchBatteryInfo" @bind-Data="@BatteryDto" T="BatteryDto" TestIdPrefix="battery-details"
+    ShowContentWhenError="@false">
+    <LoadingContent>
+        <MudCard>
+            <MudCardContent>
+                <MudSkeleton Width="200px" Height="60px" />
+                <MudSkeleton Width="200px" Height="60px" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudSkeleton Width="100px" Height="40px" />
+            </MudCardActions>
+        </MudCard>
+    </LoadingContent>
+    <ChildContent>
+        <MudCard Class="pa-4">
+            <MudForm Model="@batteryModel" @ref="@form" Validation="@(batteryValidator.ValidateValue)"
+                ValidationDelay="0">
+                <MudCardContent>
+                    <MudTextField @bind-Value="batteryModel.Type" For="@(() => batteryModel.Type)" Immediate="true"
+                        Label="@Localizer["BatteryType"]" ReadOnly Required FullWidth="@false" />
+                    @* TODO make autocomplete list of users *@
+                    <MudTextField @bind-Value="batteryModel.MentorId" For="@(() => batteryModel.MentorId)"
+                        Immediate="true" Label="@Localizer["BatteryMentor"]" Required FullWidth="@false" />
+                </MudCardContent>
+            </MudForm>
+            <MudCardActions>
+                <PrimaryButton OnClick="@(async () => await Submit())">@Localizer["UpdateBattery"]</PrimaryButton>
+            </MudCardActions>
+        </MudCard>
+    </ChildContent>
+</AsyncData>
