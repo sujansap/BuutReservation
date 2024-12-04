@@ -315,7 +315,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                        );
 
             await RunTaskWithRetries(async () => await SendAssignInitialRoleRequest(auth0User), 20);
-            
+
             return true;
         }
         catch (RateLimitApiException ex)
@@ -326,7 +326,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
         catch (TaskCanceledException ex)
         {
-            _logger.LogError(ex, "Http timout exceeded.");
+            _logger.LogError(ex, "Http timeout exceeded.");
             await Task.Delay(TimeSpan.FromSeconds(5));
         }
         return false;
@@ -352,7 +352,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
         catch (TaskCanceledException ex)
         {
-            _logger.LogError(ex, "Http timout exceeded.");
+            _logger.LogError(ex, "Http timeout exceeded.");
             await Task.Delay(TimeSpan.FromSeconds(5));
         }
         return false;
