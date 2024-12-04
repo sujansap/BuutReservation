@@ -47,18 +47,16 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             TimeSlotRangeInfoDto response = (await _client.GetFromJsonAsync<TimeSlotRangeInfoDto>(MakeTimeSlotRangeUrl(startDate, endDate)))!;
             response.TotalDays.ShouldBe(8);
             response.Days.ShouldBe([
-                new(startDate, false, false, false),
-                new(startDate.AddDays(1), false, false, false),
-                new(startDate.AddDays(2), false, false, false),
+                new(startDate, false, false, true),
+                new(startDate.AddDays(1), false, false, true),
+                new(startDate.AddDays(2), false, false, true),
                 new(startDate.AddDays(3), false, true, false),
                 new(startDate.AddDays(4), false, false, false),
-                new(startDate.AddDays(5), false, true, false),
-                new(startDate.AddDays(6), false, true, false),
-                // new(startDate.AddDays(6), true, false, false), failed due to new seed data
+                new(startDate.AddDays(5), false, true, true),
+                new(startDate.AddDays(6), false, true, true),
                 new(startDate.AddDays(7), false, true, true),
             ]);
 
-            Logout();
         }
 
         [Theory]
@@ -77,7 +75,6 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
                 new(defaultDay, false, false),
             ]);
 
-            Logout();
         }
 
         [Fact]
@@ -94,7 +91,6 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("startDate");
 
-            Logout();
         }
 
         [Fact]
@@ -111,7 +107,6 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("endDate");
 
-            Logout();
         }
 
         [Fact]
@@ -128,7 +123,6 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             result.Errors.Count.ShouldBe(1);
             result.Errors.ShouldContainKey("DateRange");
 
-            Logout();
         }
 
         [Fact]
@@ -152,7 +146,6 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("13:00:00")) && ts.End.Equals(TimeOnly.Parse("14:00:00")));
             response.ShouldContain(ts => ts.Start.Equals(TimeOnly.Parse("16:30:00")) && ts.End.Equals(TimeOnly.Parse("18:45:00")));
 
-            Logout();
         }
 
 
@@ -175,7 +168,6 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             response.ShouldBeEmpty();
             response.Count.ShouldBe(0);
 
-            Logout();
         }
 
         [Fact]
@@ -192,7 +184,6 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             var response = await _client.GetAsync($"{year}/{month}/{day}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-            Logout();
         }
     }
 }

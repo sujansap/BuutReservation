@@ -1,6 +1,6 @@
 namespace Rise.Shared.Notifications
 {
-    public class NotificationDto : BaseDto
+    public record NotificationDto : BaseDto
     {
         public SeverityEnum Severity { get; set; } = default!;
         public string Title { get; set; } = default!;

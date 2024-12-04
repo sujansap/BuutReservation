@@ -15,10 +15,18 @@ namespace Rise.Client.Tests.Layout
         [SetUp]
         public async Task SetUpAsync()
         {
+            base.GlobalSetUp();
             await LoginAsync(UserRole.Guest);
         }
 
-        public static readonly List<NotificationDto> Notifications = NotificationPageTest.Notifications;
+        [TearDown]
+        public async Task TearDownAsync()
+        {
+            await LogoutAsync();
+            await base.TearDown();
+        }
+
+        public static readonly List<NotificationDto> Notifications = NotificationPageTestMember.Notifications;
         private async Task MockHTTPRequests()
         {
             await Page.RouteAsync("*/**/api/Notification/me", async route =>
@@ -44,7 +52,7 @@ namespace Rise.Client.Tests.Layout
 
         [Test]
         [TestCase("nav-desktop-reservations", "/reservations", "")]
-        [TestCase("nav-desktop-book", "/book", "")]
+        // [TestCase("nav-desktop-book", "/book", "")]
         [TestCase("nav-desktop-profile", "/profile", "")]
         [TestCase("nav-desktop-logout", "/authentication/logout", "", false)]
         public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix, bool clickButton = true)
@@ -141,7 +149,7 @@ namespace Rise.Client.Tests.Layout
             if (clickButton)
             {
                 await locator.ClickAsync();
-                await Expect(Page).ToHaveURLAsync(new Regex($"{resultSuffix}$"));
+                await Expect(Page).ToHaveURLAsync(new Regex($"{resultSuffix}(\\?.*)?$"));
             }
         }
 

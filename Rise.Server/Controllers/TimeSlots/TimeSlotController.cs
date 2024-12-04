@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using Swashbuckle.AspNetCore.Annotations;
 using Rise.Shared.Reservations;
 using Microsoft.AspNetCore.Authorization;
+using Rise.Shared.Users;
 
 namespace Rise.Server.Controllers.TimeSlots
 {
     [ApiController]
     [Route("api/[controller]")]
-    // TODO make authorize use nameof user roll
-    [Authorize(Roles = "Guest,Member")]
+    [Authorize(Roles = $"{nameof(UserRole.Guest)},{nameof(UserRole.Member)}")]
     public class TimeSlotController(ITimeSlotService timeSlotService, IReservationService reservationsService, ILogger<TimeSlotController> logger) : ControllerBase
     {
         private readonly ILogger _logger = logger;
