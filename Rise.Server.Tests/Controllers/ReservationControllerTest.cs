@@ -417,5 +417,16 @@ namespace Rise.Server.Tests.Controllers
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             Logout();
         }
+        [Fact]
+        public async Task PATCH_CancelReservation_ByAdminWithinTwoDays_ExpectSuccess()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var reservationIdWithinTwoDays = 2;
+
+            var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+            Logout();
+        }
     }
 }
