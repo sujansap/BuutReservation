@@ -1,7 +1,10 @@
 ﻿@page "/admin/reservations"
+@using Rise.Client.Localization.Admins
 @using Rise.Shared.Reservations
+@using Microsoft.Extensions.Localization
 @inject IReservationService ReservationService
 @inject ISnackbar Snackbar
+@inject IStringLocalizer<AdminPageResources> Localizer
 @layout AdminLayout
 @attribute [Authorize(Roles = "Administrator")]
 
@@ -9,35 +12,36 @@
     <MudItem xs="12" sm="6">
         <MudToggleIconButton Toggled="@ShowPastReservations" ToggledChanged="@TogglePastReservations"
             Icon="@Icons.Material.Filled.Today" ToggledIcon="@Icons.Material.Filled.History" Color="Color.Primary"
-            Size="Size.Medium" />
+            Size="Size.Medium" data-testid="admin-reservations-toggle-button" />
         <MudText Class="ml-2">
-            @(ShowPastReservations ? "Past Reservations" : "Upcoming Reservations")
+            @(ShowPastReservations ? Localizer["PastReservations"] : Localizer["UpcomingReservations"])
         </MudText>
     </MudItem>
 
     <MudItem xs="12">
         <MudTable Items="Reservations?.Data" Loading="isLoading" Hover="true" Class="my-2">
             <HeaderContent>
-                <MudTh>User</MudTh>
-                <MudTh>Date</MudTh>
-                <MudTh>Time</MudTh>
-                <MudTh>Boat</MudTh>
-                <MudTh>Actions</MudTh>
+                <MudTh>@Localizer["User"]</MudTh>
+                <MudTh>@Localizer["Date"]</MudTh>
+                <MudTh>@Localizer["Time"]</MudTh>
+                <MudTh>@Localizer["Boat"]</MudTh>
+                <MudTh>@Localizer["Actions"]</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd>@context.UserName</MudTd>
-                <MudTd>@context.Date.ToShortDateString()</MudTd>
-                <MudTd>@context.Start - @context.End</MudTd>
-                <MudTd>@context.BoatPersonalName</MudTd>
+                <MudTd data-testid="admin-reservation-user">@context.UserName</MudTd>
+                <MudTd data-testid="admin-reservation-date">@context.Date.ToShortDateString()</MudTd>
+                <MudTd data-testid="admin-reservation-time">@context.Start - @context.End</MudTd>
+                <MudTd data-testid="admin-reservation-boat">@context.BoatPersonalName</MudTd>
                 <MudTd>
                     @if (context.IsDeleted)
                     {
-                        <MudText Color="Color.Error">Cancelled</MudText>
+                        <MudText Color="Color.Error" data-testid="admin-reservation-status">Cancelled</MudText>
                     }
                     else
                     {
-                        <MudButton Color="Color.Error" OnClick="@(() => CancelReservation(context.Id))">
-                            Cancel
+                        <MudButton Color="Color.Error" OnClick="@(() => CancelReservation(context.Id))"
+                            data-testid="admin-reservation-cancel-button">
+                            @Localizer["Cancel"]
                         </MudButton>
                     }
                 </MudTd>
@@ -48,12 +52,14 @@
     <MudItem xs="12" Class="d-flex justify-center mt-4">
         <MudStack Row="true" Spacing="2" Justify="Justify.Center">
             <MudButton OnClick="@LoadPreviousPage" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary"
-                Variant="Variant.Filled" Disabled="!(Reservations?.PreviousId.HasValue ?? false)">
-                Previous
+                Variant="Variant.Filled" Disabled="!(Reservations?.PreviousId.HasValue ?? false)"
+                data-testid="admin-reservations-previous">
+                @Localizer["Previous"]
             </MudButton>
             <MudButton OnClick="@LoadNextPage" EndIcon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary"
-                Variant="Variant.Filled" Disabled="!(Reservations?.NextId.HasValue ?? false)">
-                Next
+                Variant="Variant.Filled" Disabled="!(Reservations?.NextId.HasValue ?? false)"
+                data-testid="admin-reservations-next">
+                @Localizer["Next"]
             </MudButton>
         </MudStack>
     </MudItem>
