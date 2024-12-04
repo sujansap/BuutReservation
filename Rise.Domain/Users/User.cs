@@ -83,26 +83,7 @@ namespace Rise.Domain.Users
             get => _address;
             set
             {
-                value.Street = value.Street.Trim();
-                Guard.Against.NullOrWhiteSpace(value.Street, nameof(value.Street));
-                Guard.Against.LengthOutOfRange(value.Street, 1, 200, nameof(value.Street)); //Parameter name does nothing, probably bug in package
-                
-                value.Number = value.Number.Trim();
-                Guard.Against.NullOrWhiteSpace(value.Number, nameof(value.Number));
-                Guard.Against.LengthOutOfRange(value.Number, 1, 200, nameof(value.Number)); //Parameter name does nothing, probably bug in package
-
-                value.City = value.City.Trim();
-                Guard.Against.NullOrWhiteSpace(value.City, nameof(value.City));
-                Guard.Against.LengthOutOfRange(value.City, 1, 200, nameof(value.City)); //Parameter name does nothing, probably bug in package
-
-                value.PostalCode = value.PostalCode.Trim();
-                Guard.Against.NullOrWhiteSpace(value.PostalCode, nameof(value.PostalCode));
-                Guard.Against.LengthOutOfRange(value.PostalCode, 1, 100, nameof(value.PostalCode)); //Parameter name does nothing, probably bug in package
-
-                value.Country = value.Country.Trim();
-                Guard.Against.NullOrWhiteSpace(value.Country, nameof(value.Country));
-                Guard.Against.LengthOutOfRange(value.Country, 1, 100, nameof(value.Country)); //Parameter name does nothing, probably bug in package
-
+                Guard.Against.Null(value, nameof(Address));
                 _address = value;
             }
         }
@@ -114,11 +95,57 @@ namespace Rise.Domain.Users
             private string _city = default!;
             private string _postalCode = default!;
             private string _country = default!;
-            public required string Street { get => _street; set => _street = value; }
-            public required string Number { get => _number; set => _number = value; }
-            public required string City { get => _city; set => _city = value; }
-            public required string PostalCode { get => _postalCode; set => _postalCode = value; }
-            public required string Country { get => _country; set => _country = value; }
+            public required string Street
+            {
+                get => _street; set
+                {
+                    value = value.Trim();
+                    Guard.Against.NullOrWhiteSpace(value, nameof(Street));
+                    Guard.Against.LengthOutOfRange(value, 1, 200, nameof(Street)); //Parameter name does nothing, probably bug in package
+                    _street = value;
+                }
+            }
+            public required string Number
+            {
+                get => _number; set
+                {
+                    value = value.Trim();
+                    Guard.Against.NullOrWhiteSpace(value, nameof(Number));
+                    Guard.Against.LengthOutOfRange(value, 1, 200, nameof(Number)); //Parameter name does nothing, probably bug in package
+                    _number = value;
+                }
+            }
+            public required string City
+            {
+                get => _city; set
+                {
+                    value = value.Trim();
+                    Guard.Against.NullOrWhiteSpace(value, nameof(City));
+                    Guard.Against.LengthOutOfRange(value, 1, 200, nameof(City)); //Parameter name does nothing, probably bug in package
+                    _city = value;
+                }
+            }
+            public required string PostalCode
+            {
+                get => _postalCode; set
+                {
+                    value = value.Trim();
+                    Guard.Against.NullOrWhiteSpace(value, nameof(PostalCode));
+                    Guard.Against.LengthOutOfRange(value, 1, 100, nameof(PostalCode)); //Parameter name does nothing, probably bug in package
+                    _postalCode = value;
+                }
+            }
+            public required string Country
+            {
+                get => _country; set
+                {
+                    value = value.Trim();
+                    Guard.Against.NullOrWhiteSpace(value, nameof(Country));
+                    Guard.Against.LengthOutOfRange(value, 1, 100, nameof(Country)); //Parameter name does nothing, probably bug in package
+                    _country = value;
+                }
+            }
+
         }
 
         private readonly List<Reservation> reservations = [];
