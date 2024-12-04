@@ -5,6 +5,7 @@ namespace Rise.Shared.Boats
     /// </summary>
     public record BatteryDto
     {
+        public required int Id { get; set; }
         public required string Type { get; set; }
         public required int MentorId { get; set; }
     }
