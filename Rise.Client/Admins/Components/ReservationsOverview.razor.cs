@@ -8,6 +8,9 @@ namespace Rise.Client.Admins.Components
     {
         private ItemsPageDto<ReservationDto>? Reservations;
         private bool isLoading = true;
+        private bool ShowPastReservations = false;
+        private int? Cursor;
+        private bool? IsNextPage;
 
         protected override async Task OnInitializedAsync()
         {
@@ -18,7 +21,8 @@ namespace Rise.Client.Admins.Components
         {
             try
             {
-                Reservations = await ReservationService.GetAllReservations(null, null, 10);
+                isLoading = true;
+                Reservations = await ReservationService.GetAllReservations(Cursor, IsNextPage, 10, ShowPastReservations);
             }
             catch (Exception ex)
             {
@@ -36,7 +40,6 @@ namespace Rise.Client.Admins.Components
             {
                 await ReservationService.CancelReservationAsync(id);
                 Snackbar.Add("Reservation canceled successfully.", Severity.Success);
-                await LoadReservations();
             }
             catch (Exception ex)
             {
@@ -44,9 +47,29 @@ namespace Rise.Client.Admins.Components
             }
         }
 
-        private string SetRowStyle(ReservationDto reservation)
+        private async Task TogglePastReservations(bool enable)
         {
-            return reservation.IsDeleted ? "opacity: 0.5;" : "";
+            if (ShowPastReservations != enable)
+            {
+                ShowPastReservations = enable;
+                Cursor = null;
+                IsNextPage = null;
+                await LoadReservations();
+            }
+        }
+
+        private async Task LoadNextPage()
+        {
+            IsNextPage = true;
+            Cursor = Reservations?.NextId;
+            await LoadReservations();
+        }
+
+        private async Task LoadPreviousPage()
+        {
+            IsNextPage = false;
+            Cursor = Reservations?.PreviousId;
+            await LoadReservations();
         }
     }
 }

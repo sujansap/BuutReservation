@@ -134,6 +134,7 @@ namespace Rise.Server.Controllers
         {
             try
             {
+                bool isAdmin = User.IsInRole("Administrator");
                 await _reservationService.CancelReservationAsync(id);
                 return NoContent();
             }
@@ -166,11 +167,13 @@ namespace Rise.Server.Controllers
         public async Task<IActionResult> GetAllReservations(
             [FromQuery] int? cursor,
             [FromQuery] bool? isNextPage,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] bool showPastReservations = false)
+
         {
             try
             {
-                var reservations = await _reservationService.GetAllReservations(cursor, isNextPage, pageSize);
+                var reservations = await _reservationService.GetAllReservations(cursor, isNextPage, pageSize, showPastReservations);
                 return Ok(reservations);
             }
             catch (Exception ex)

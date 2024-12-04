@@ -5,24 +5,56 @@
 @layout AdminLayout
 @attribute [Authorize(Roles = "Administrator")]
 
-<MudTable Items="Reservations?.Data" Loading="isLoading">
-    <HeaderContent>
-        <MudTh>User</MudTh>
-        <MudTh>Date</MudTh>
-        <MudTh>Time</MudTh>
-        <MudTh>Boat</MudTh>
-        <MudTh>Actions</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd>@context.UserName</MudTd>
-        <MudTd>@context.Date.ToShortDateString()</MudTd>
-        <MudTd>@context.Start - @context.End</MudTd>
-        <MudTd>@context.BoatPersonalName</MudTd>
-        <MudTd>
-            <MudButton Color="Color.Error" OnClick="@(() => CancelReservation(context.Id))"
-                Disabled="@context.IsDeleted">
-                Cancel
+<MudGrid Class="mt-4">
+    <MudItem xs="12" sm="6">
+        <MudToggleIconButton Toggled="@ShowPastReservations" ToggledChanged="@TogglePastReservations"
+            Icon="@Icons.Material.Filled.Today" ToggledIcon="@Icons.Material.Filled.History" Color="Color.Primary"
+            Size="Size.Medium" />
+        <MudText Class="ml-2">
+            @(ShowPastReservations ? "Past Reservations" : "Upcoming Reservations")
+        </MudText>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudTable Items="Reservations?.Data" Loading="isLoading" Hover="true" Class="my-2">
+            <HeaderContent>
+                <MudTh>User</MudTh>
+                <MudTh>Date</MudTh>
+                <MudTh>Time</MudTh>
+                <MudTh>Boat</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.UserName</MudTd>
+                <MudTd>@context.Date.ToShortDateString()</MudTd>
+                <MudTd>@context.Start - @context.End</MudTd>
+                <MudTd>@context.BoatPersonalName</MudTd>
+                <MudTd>
+                    @if (context.IsDeleted)
+                    {
+                        <MudText Color="Color.Error">Cancelled</MudText>
+                    }
+                    else
+                    {
+                        <MudButton Color="Color.Error" OnClick="@(() => CancelReservation(context.Id))">
+                            Cancel
+                        </MudButton>
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+
+    <MudItem xs="12" Class="d-flex justify-center mt-4">
+        <MudStack Row="true" Spacing="2" Justify="Justify.Center">
+            <MudButton OnClick="@LoadPreviousPage" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary"
+                Variant="Variant.Filled" Disabled="!(Reservations?.PreviousId.HasValue ?? false)">
+                Previous
             </MudButton>
-        </MudTd>
-    </RowTemplate>
-</MudTable>
+            <MudButton OnClick="@LoadNextPage" EndIcon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary"
+                Variant="Variant.Filled" Disabled="!(Reservations?.NextId.HasValue ?? false)">
+                Next
+            </MudButton>
+        </MudStack>
+    </MudItem>
+</MudGrid>

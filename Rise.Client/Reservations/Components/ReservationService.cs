@@ -60,11 +60,12 @@ namespace Rise.Client.Services
             return result;
         }
 
-        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10)
+        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10, bool showPastReservations = false)
         {
             Dictionary<string, string?> queries = new()
             {
                 ["pageSize"] = pageSize.ToString(),
+                ["showPastReservations"] = showPastReservations.ToString()
             };
 
             if (cursor is not null)

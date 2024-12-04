@@ -42,7 +42,7 @@ namespace Rise.Shared.Reservations
         /// <param name="isNextPage">Specifies if the next page or previous page is needed</param>
         /// <param name="pageSize">The number of reservations per page</param>
         /// <returns>A paginated list of all reservations</returns>
-        Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10);
+        Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10, bool showPastReservations = false);
     }
 
 

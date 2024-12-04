@@ -183,28 +183,40 @@ namespace Rise.Services.Reservations
         }
         public async Task CancelReservationAsync(int reservationId)
         {
+            bool isAdmin = _authContextProvider.IsAdmin();
+
             int userId = (int)_authContextProvider.GetUserId()!;
 
-            var reservation = await _dbContext.Reservations
+            var query = _dbContext.Reservations
                 .Include(r => r.TimeSlot)
                 .Include(r => r.User)
-                .Where(r => r.UserId == userId)
-                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                .AsQueryable();
+
+            if (!isAdmin)
+            {
+                query = query.Where(r => r.UserId == userId);
+            }
+
+            var reservation = await query.FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
-            reservation.Cancel();
+            reservation.Cancel(isAdmin);
+
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10)
+        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize, bool showPastReservations)
         {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
             return await PaginationService.GetPaginatedResultsAsync<Reservation, ReservationDto>(
                 queryableDbSet: _dbContext.Reservations
                     .Include(r => r.User)
                     .Include(r => r.TimeSlot)
                     .Include(r => r.Boat)
+                    .Where(r => showPastReservations ? r.TimeSlot.Date < today : r.TimeSlot.Date >= today)
                     .AsQueryable(),
-                filterLambda: r => true, // haal alles op
+                filterLambda: r => true,
                 orderingExpressions: new List<OrderingExpression<Reservation, object>>
                 {
             new() { OrderLambda = r => r.TimeSlot.Date, IsDescending = false },
@@ -226,6 +238,7 @@ namespace Rise.Services.Reservations
                 pageSize: pageSize
             );
         }
+
 
 
 
