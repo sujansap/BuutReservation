@@ -91,4 +91,19 @@
 		<value>De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
 			Vaargebied: van de Meulestedebrug tot aan het Keizerspark.</value>
 	</data>
+	<data name="CruisePeriod">
+		<value>
+			Vaarperiode
+		</value>
+	</data>
+	<data name="Start">
+		<value>
+			Start
+		</value>
+	</data>
+	<data name="End">
+		<value>
+			Einde
+		</value>
+	</data>
 </root>

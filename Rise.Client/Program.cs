@@ -17,6 +17,7 @@ using Rise.Client.Notifications;
 using Rise.Shared.Users;
 using Rise.Client.Admins;
 using Rise.Client.Auth;
+using Rise.Client.Admins.CruisePeriods;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -69,6 +70,11 @@ builder.Services.AddHttpClient<INotificationService, NotificationService>(client
 builder.Services.AddHttpClient<IUserService, UserService>(client =>
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
+}).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
+builder.Services.AddHttpClient<ICruisePeriodService, CruisePeriodService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/CruisePeriod/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 var host = builder.Build();
