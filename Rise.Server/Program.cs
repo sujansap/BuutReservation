@@ -92,7 +92,10 @@ try
         config.ClientId = builder.Configuration["Auth0:M2MClientId"];
         config.ClientSecret = builder.Configuration["Auth0:M2MClientSecret"];
     });
-    builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
+    builder.Services.AddAuth0ManagementClient().ConfigureHttpClient((httpClient) =>
+    {
+        httpClient.Timeout = TimeSpan.FromSeconds(200);
+    }).AddManagementAccessToken();
 
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
