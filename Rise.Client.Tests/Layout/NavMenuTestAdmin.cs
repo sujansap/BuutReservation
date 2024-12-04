@@ -11,7 +11,15 @@ namespace Rise.Client.Tests.Layout
         [SetUp]
         public async Task SetUpAsync()
         {
+            base.GlobalSetUp();
             await LoginAsync(UserRole.Administrator);
+        }
+
+        [TearDown]
+        public async Task TearDownAsync()
+        {
+            await LogoutAsync();
+            await base.TearDown();
         }
 
         [Test]

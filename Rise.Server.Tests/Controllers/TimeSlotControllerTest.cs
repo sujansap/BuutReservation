@@ -54,7 +54,6 @@ namespace Rise.Server.Tests.Controllers
                 new(startDate.AddDays(4), false, false, false),
                 new(startDate.AddDays(5), false, true, true),
                 new(startDate.AddDays(6), false, true, true),
-                // new(startDate.AddDays(6), true, false, false), failed due to new seed data
                 new(startDate.AddDays(7), false, true, true),
             ]);
 

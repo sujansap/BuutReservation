@@ -16,7 +16,7 @@ namespace Rise.Client.Admins
         private int TotalPages => (int)Math.Ceiling(Users.TotalCount / (double)PageSize);
 
         [Inject]
-        public required IUserService UserService { get; set; }
+        public required IUserAdminService UserService { get; set; }
 
         private async Task<UsersPagination<UserDto>> FetchUsers()
         {

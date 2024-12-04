@@ -15,7 +15,7 @@ using static Rise.Shared.Users.RegisterUserDto;
 
 namespace Rise.Services.Users;
 
-public class UserService(ApplicationDbContext dbContext, IManagementApiClient managementApiClient, ILogger<UserService> logger) : IUserService
+public class UserService(ApplicationDbContext dbContext, IManagementApiClient managementApiClient, ILogger<UserService> logger) : IUserAdminService, IUserRegisterService
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
     private readonly IManagementApiClient _managementApiClient = managementApiClient;
@@ -179,7 +179,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         await AssignRoleToUser(auth0User, await GetAuth0RoleByName(UserRole.Member));
     }
 
-    public async Task<int> RegisterUser(RegisterUserDto userDto)
+    public async Task<int> RegisterUser(UserRegistrationModelDto userDto)
     {
         using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -194,7 +194,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         return user.Id;
     }
 
-    private async Task<DomainUser> CreateUserInDatabase(RegisterUserDto userDto)
+    private async Task<DomainUser> CreateUserInDatabase(UserRegistrationModelDto userDto)
     {
         var address = userDto.Address;
         DomainUser user = new()
@@ -203,6 +203,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             FirstName = userDto.FirstName,
             FamilyName = userDto.FamilyName,
             PhoneNumber = userDto.PhoneNumber,
+            DateOfBirth = userDto.DateOfBirth,
             Address = new()
             {
                 City = address.City,
@@ -228,7 +229,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         return user;
     }
 
-    private async Task RegisterUserInAuth0(RegisterUserDto userDto, int userId)
+    private async Task RegisterUserInAuth0(UserRegistrationModelDto userDto, int userId)
     {
         try
         {
@@ -243,12 +244,17 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
         catch (RateLimitApiException ex)
         {
-            _logger.LogError(ex, "Rate limit exceeded.");
+            _logger.LogError(ex, "Auth0 Rate limit exceeded");
             await RetryRegisterUserInAuth0(userDto, userId);
+        }
+        catch (ApiException ex)
+        {
+            _logger.LogError(ex, "Auth0 api excpetion");
+            throw new UserCreationFailedException(ex.Message);
         }
     }
 
-    private async Task SendRegisterUserInAuth0Request(RegisterUserDto userDto, int userId)
+    private async Task SendRegisterUserInAuth0Request(UserRegistrationModelDto userDto, int userId)
     {
         var auth0User = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
         {
@@ -270,7 +276,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         });
     }
 
-    private async Task RetryRegisterUserInAuth0(RegisterUserDto userDto, int userId)
+    private async Task RetryRegisterUserInAuth0(UserRegistrationModelDto userDto, int userId)
     {
         var retries = 0;
         var success = false;
@@ -292,7 +298,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
         if (!success)
         {
-            throw new UserCreationFailedException(ErrorMessages.User.RateLimitExceeded);
+            throw new UserCreationFailedException(ErrorMessages.User.Auth0RateLimitExceeded);
         }
     }
 

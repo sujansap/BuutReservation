@@ -10,13 +10,14 @@ public class RegisterUserDtoBadData : IEnumerable<object[]>
     public IEnumerator<object[]> GetEnumerator()
     {
         // Valid data to use as a baseline
-        var validData = new RegisterUserDto
+        var validData = new UserRegistrationModelDto
         {
             Email = "john.doe@example.com",
             FamilyName = "Doe",
             FirstName = "John",
             Password = "SecureP@ssw0rd",
             PhoneNumber = "+123456789",
+            DateOfBirth = new DateTime(2005, 1, 1),
             Address = new()
             {
                 City = "Gent",

@@ -20,6 +20,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Patrick",
         FamilyName = "Her De Gaver",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(1980, 12, 12),
         Address = new (){Street = "Korenlei", Number = "7", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -27,6 +28,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Bram",
         FamilyName = "de Clerk",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(1998, 3, 21),
         Address = new (){Street = "Onderbergen", Number = "23", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -34,6 +36,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Simon",
         FamilyName = "Piatti",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(2002, 8, 13),
         Address = new (){Street = "Koning Albertlaan", Number = "42", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -41,6 +44,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Bindo",
         FamilyName = "Chin",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(1999, 6, 5),
         Address = new (){Street = "Veldstraat", Number = "14", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -48,6 +52,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Bas",
         FamilyName = "Barabich",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(2001, 10, 10),
         Address = new (){Street = "Dampoortstraat", Number = "89", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -55,6 +60,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Pushwant",
         FamilyName = "Helks",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(2002, 2, 8),
         Address = new (){Street = "Sint-Pietersnieuwstraat", Number = "31", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -62,6 +68,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Sujan",
         FamilyName = "Montu",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(2002, 11, 10),
         Address = new (){Street = "Bagattenstraat", Number = "5", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -69,6 +76,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Xan",
         FamilyName = "Serket",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(1995, 1, 1),
         Address = new (){Street = "Henegouwenstraat", Number = "12", City = "Gent", PostalCode = "9000", Country = "België"},
     },
     new() {
@@ -76,6 +84,7 @@ internal class UserSeeder(ApplicationDbContext dbContext) : GeneralSeeder<User>(
         FirstName = "Kimberlie",
         FamilyName = "De Clerck",
         PhoneNumber = "+32477587465",
+        DateOfBirth = new DateTime(1973, 7, 23),
         Address = new (){Street = "Sint-Jacobsnieuwstraat", Number = "22", City = "Gent", PostalCode = "9000", Country = "België"},
     },
 ];

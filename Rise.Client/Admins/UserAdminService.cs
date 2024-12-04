@@ -4,11 +4,11 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Admins;
 
-public class UserService : IUserService
+public class UserAdminService : IUserAdminService
 {
     private readonly HttpClient _httpClient;
 
-    public UserService(HttpClient httpClient)
+    public UserAdminService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
@@ -29,26 +29,8 @@ public class UserService : IUserService
         await _httpClient.PostAsJsonAsync("role", new AddMemberRoleDto { UserId = userId, Role = UserRole.Member });
     }
 
-    public async Task<int> RegisterUser(RegisterUserDto userDto)
+    public Task<int> RegisterUser(UserRegistrationModelDto userDto)
     {
-        var result = await _httpClient.PostAsJsonAsync("register", new RegisterUserDto
-        {
-            Email = "",
-            FirstName = "",
-            FamilyName = "",
-            PhoneNumber = "",
-            Password = "",
-            Address = new()
-            {
-                City = "",
-                Country = "",
-                Number = "",
-                PostalCode = "",
-                Street = ""
-            }
-        }
-        );
-
-        return 1;
+        throw new NotImplementedException();
     }
 }

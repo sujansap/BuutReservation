@@ -22,7 +22,7 @@ namespace Rise.Client.Admins
 
 
         [Inject]
-        public required IUserService UserService { get; set; }
+        public required IUserAdminService UserService { get; set; }
 
         [Inject]
         public required NavigationManager NavigationManager { get; set; }

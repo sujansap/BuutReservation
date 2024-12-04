@@ -42,19 +42,19 @@
                                         Style="width: 120px; height: 120px; color: #40e0d0;" />
                                 </MudItem>
                                 <MudItem xs="12" md="8">
-                                    <MudText Typo="Typo.h6" data-testid="reservation-date">
+                                    <MudText Typo="Typo.h6" data-testid="reservation-details-date">
                                         <strong>@Localizer["Date"]:</strong> @ReservationDetails.Date.ToShortDateString()
                                     </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-boat">
+                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-details-boat">
                                         <strong>@Localizer["Boat"]:</strong> @ReservationDetails.BoatPersonalName
                                     </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-time">
+                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-details-time">
                                         <strong>@Localizer["Time"]:</strong> @ReservationDetails.Start - @ReservationDetails.End
                                     </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery">
+                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-details-battery">
                                         <strong>@Localizer["Battery"]:</strong> @ReservationDetails.BatteryType
                                     </MudText>
-                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-battery-mentor">
+                                    <MudText Typo="Typo.h6" Class="mt-4" data-testid="reservation-details-battery-mentor">
                                         <strong>@Localizer["Meter/Peter"]:</strong> @ReservationDetails.MentorName
                                     </MudText>
                                 </MudItem>

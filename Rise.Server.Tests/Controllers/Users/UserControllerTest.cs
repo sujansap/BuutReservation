@@ -4,6 +4,7 @@ using Rise.Shared.Users;
 using System.Net.Http.Json;
 using System.Net;
 using Auth0.ManagementApi.Models;
+using static Rise.Shared.Users.UserRegistrationModelDto;
 
 namespace Rise.Server.Tests.Controllers.Users
 {
@@ -136,9 +137,10 @@ namespace Rise.Server.Tests.Controllers.Users
 
         [Theory]
         [ClassData(typeof(RegisterUserDtoValidData))]
-        public async Task POST_RegisterUser_ReturnsUserId(RegisterUserDto userDto)
+        public async Task POST_RegisterUser_ReturnsUserId(UserRegistrationModelDto userDto)
         {
             await Task.Delay(TimeSpan.FromSeconds(2));
+
 
             var response = await _client.PostAsJsonAsync("register", userDto);
 
@@ -152,7 +154,7 @@ namespace Rise.Server.Tests.Controllers.Users
 
         [Theory]
         [ClassData(typeof(RegisterUserDtoBadData))]
-        public async Task POST_RegisterUser_ReturnsBadRequest(RegisterUserDto userDto)
+        public async Task POST_RegisterUser_ReturnsBadRequest(UserRegistrationModelDto userDto)
         {
             var response = await _client.PostAsJsonAsync("register", userDto);
 
@@ -164,13 +166,14 @@ namespace Rise.Server.Tests.Controllers.Users
         {
             await Task.Delay(TimeSpan.FromSeconds(2));
 
-            var userDto = new RegisterUserDto()
+            var userDto = new UserRegistrationModelDto()
             {
                 Email = "rand.om@example.com",
                 Password = "SecureP@ssw0rd123",
                 FirstName = "John",
                 FamilyName = "Doe",
                 PhoneNumber = "+32471123456",
+                DateOfBirth = new DateTime(2005, 1, 1),
                 Address = new()
                 {
                     Street = "Fabiolalaan",
