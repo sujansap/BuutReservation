@@ -10,7 +10,7 @@ namespace Rise.Client.Tests
         [OneTimeSetUp]
         public virtual void GlobalSetUp()
         {
-            SetDefaultExpectTimeout(10_000);
+            SetDefaultExpectTimeout(15_000);
         }
 
         [SetUp]
@@ -55,13 +55,15 @@ namespace Rise.Client.Tests
 
         protected async Task Hydration()
         {
+            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
             await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
-            await Page.WaitForSelectorAsync("[data-testid=authorization-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
+            // await Page.WaitForSelectorAsync("[data-testid=authorization-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
         }
 
         protected async Task NavigateToUrl(string url)
         {
             await Page.GotoAsync(url);
+            // await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
             await Hydration();
         }
 

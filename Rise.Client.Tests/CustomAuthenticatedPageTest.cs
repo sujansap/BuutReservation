@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Playwright;
 using Rise.Shared.Users;
 
 namespace Rise.Client.Tests
@@ -18,22 +19,15 @@ namespace Rise.Client.Tests
         public override void GlobalSetUp()
         {
             var builder = new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .AddUserSecrets<CustomAuthenticatedPageTest>();
+            .AddUserSecrets<CustomAuthenticatedPageTest>()
+            .AddEnvironmentVariables();
             Configuration = builder.Build();
-
 
             base.GlobalSetUp();
         }
 
         protected async Task LoginAsync(UserRole role)
         {
-            if (IsLoggedIn())
-            {
-                await InjectSessionStorage();
-                return;
-            }
-
             Credentials? credentials = role switch
             {
                 UserRole.Administrator => Configuration.GetSection("Administrator").Get<Credentials>(),
@@ -42,7 +36,14 @@ namespace Rise.Client.Tests
                 _ => null
             } ?? throw new InvalidOperationException("Credentials cannot be null");
 
+            if (IsLoggedIn())
+            {
+                await InjectSessionStorage();
+                return;
+            }
+
             await LoginUsingCredentials(credentials);
+            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }
 
         private async Task LoginUsingCredentials(Credentials credentials)
@@ -54,7 +55,6 @@ namespace Rise.Client.Tests
             await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
 
             await SaveSessionStorage();
-            await NavigateToUrl("/home");
         }
 
         private async Task SaveSessionStorage()
@@ -88,7 +88,12 @@ namespace Rise.Client.Tests
 
         protected async Task LogoutAsync()
         {
-            await NavigateToUrl("/authentication/logout");
+            // await Page.SetViewportSizeAsync(1280, 1920);
+            // await NavigateToUrl("/home");
+            // await Hydration();
+            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            // await Page.GetByTestId("nav-desktop-logout").ClickAsync();
+            await NavigateToUrl("/authentication/logout"); // This is not working
             SessionStorage = null;
         }
 

@@ -27,7 +27,7 @@ namespace Rise.Client.Tests.Register
         [Test]
         public async Task ShouldLoadSuccessfully()
         {
-            await Page.GotoAsync("/register");
+            await NavigateToUrl("/register");
 
             var title = Page.GetByTestId("page-title");
             var container = Page.GetByTestId("register-container");
@@ -43,7 +43,7 @@ namespace Rise.Client.Tests.Register
         [Test]
         public async Task ShouldInitializeFormWithEmptyValuesAndNotEmptyCountry()
         {
-            await Page.GotoAsync("/register");
+            await NavigateToUrl("/register");
 
             var emailField = Page.GetByTestId("email-field");
             var passwordField = Page.GetByTestId("password-field");
@@ -100,7 +100,7 @@ namespace Rise.Client.Tests.Register
         [Test]
         public async Task ShouldLoadRegisterButtonDisabledAndResetButtonEnabled()
         {
-            await Page.GotoAsync("/register");
+            await NavigateToUrl("/register");
 
             var registerButton = Page.GetByTestId("register-button");
             var resetButton = Page.GetByTestId("reset-button");
@@ -112,7 +112,7 @@ namespace Rise.Client.Tests.Register
         [Test]
         public async Task ShouldValidateAndSubmitSuccessfullyAndResetToDefault()
         {
-            await Page.GotoAsync("/register");
+            await NavigateToUrl("/register");
             await MockRegisterUser(201);
 
             var emailField = Page.GetByTestId("email-field");
@@ -169,7 +169,7 @@ namespace Rise.Client.Tests.Register
         [Test]
         public async Task ShouldShowValidationErrorsUponInvalidInput()
         {
-            await Page.GotoAsync("/register");
+            await NavigateToUrl("/register");
 
             var emailField = Page.GetByTestId("email-field");
             var emailFieldItem = Page.GetByTestId("item-email-field");
@@ -236,7 +236,7 @@ namespace Rise.Client.Tests.Register
         [Test]
         public async Task ShouldShowErrorMessageOnBadRequest()
         {
-            await Page.GotoAsync("/register");
+            await NavigateToUrl("/register");
             await MockRegisterUser(400);
 
             var emailField = Page.GetByTestId("email-field");
@@ -297,7 +297,7 @@ namespace Rise.Client.Tests.Register
         [Test]
         public async Task ShouldShowConflictErrorMessageOnExistingUser()
         {
-            await Page.GotoAsync("/register");
+            await NavigateToUrl("/register");
             await MockRegisterUser(409);
 
             var emailField = Page.GetByTestId("email-field");
