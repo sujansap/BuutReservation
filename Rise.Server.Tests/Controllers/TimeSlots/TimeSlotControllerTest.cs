@@ -6,7 +6,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Rise.Shared.Users;
 
-namespace Rise.Server.Tests.Controllers
+namespace Rise.Server.Tests.Controllers.TimeSlots
 {
     public class TimeSlotControllerTest(ApiWebApplicationFactory fixture) : IntegrationTest(fixture, "TimeSlot")
     {
