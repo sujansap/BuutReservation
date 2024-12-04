@@ -203,7 +203,7 @@ namespace Rise.Server.Tests.Fixtures
         {
             "GET" => await _client.GetAsync(url),
             "POST" => await _client.PostAsJsonAsync(url, new object()),
-            "PTACH" => await _client.PatchAsJsonAsync(url, new object()),
+            "PATCH" => await _client.PatchAsJsonAsync(url, new object()),
             _ => null,
         };
 
