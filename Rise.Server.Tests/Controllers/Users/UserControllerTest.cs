@@ -18,6 +18,7 @@ namespace Rise.Server.Tests.Controllers.Users
         public async Task GetUsersByRole_WithNonAdminRole_ReturnsForbidden(string url, UserRole testLoginRole)
         {
             await LoginAsync(testLoginRole);
+            await Task.Delay(TimeSpan.FromSeconds(2));
             var response = await _client.GetAsync(url);
             response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
         }
