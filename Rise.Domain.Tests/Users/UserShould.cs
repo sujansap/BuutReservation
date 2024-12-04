@@ -282,7 +282,7 @@ namespace Rise.Domain.Tests.Users
                    FirstName = ValidFirstName,
                    PhoneNumber = ValidPhoneNumber,
                    DateOfBirth = ValidDateOfBirth,
-                   Address = null,
+                   Address = null!,
                };
            };
 
