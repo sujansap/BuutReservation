@@ -25,6 +25,8 @@ namespace Rise.Client.Tests.Layout
 
         [Test]
         [TestCase("nav-admin-guests", "/admin/guests", "")]
+        [TestCase("nav-admin-cruise-period", "/admin/cruise_period", "")]
+        [TestCase("nav-admin-battery", "/admin/battery", "")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
         {
             await Page.SetViewportSizeAsync(959, 1920);
