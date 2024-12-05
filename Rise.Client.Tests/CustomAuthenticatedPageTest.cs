@@ -4,7 +4,6 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests
 {
-    [TestFixture]
     public class CustomAuthenticatedPageTest : CustomPageTest
     {
         protected IConfiguration Configuration { get; private set; } = default!;
@@ -44,7 +43,6 @@ namespace Rise.Client.Tests
 
 
             await LoginUsingCredentials(credentials);
-            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }
 
         private async Task LoginUsingCredentials(Credentials credentials)
@@ -54,6 +52,8 @@ namespace Rise.Client.Tests
             await Page.FillAsync("input[name='username']", credentials.Email);
             await Page.FillAsync("input[name='password']", credentials.Password);
             await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
+
+            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
             await SaveSessionStorage();
         }
@@ -66,7 +66,7 @@ namespace Rise.Client.Tests
 
         private bool IsLoggedIn()
         {
-            return SessionStorage?.Contains("oidc.user:https://rise-gent2.eu.auth0.com:8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l") ?? false;
+            return SessionStorage?.Contains("oidc.user:https://rise-gent2.eu.auth0.com") ?? false;
         }
 
         private async Task InjectSessionStorage()
@@ -89,24 +89,15 @@ namespace Rise.Client.Tests
 
         protected async Task LogoutAsync()
         {
-            // await Page.SetViewportSizeAsync(1280, 1920);
-            // await NavigateToUrl("/home");
-            // await Hydration();
-            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-            // await Page.GetByTestId("nav-desktop-logout").ClickAsync();
-            await NavigateToUrl("/authentication/logout"); // This is not working
-            await Context.AddInitScriptAsync(@"(() => {
-                if (window.location.hostname === 'localhost') {
-                    window.sessionStorage.clear();
-                }
-            })()");
             SessionStorage = null;
+            await Page.SetViewportSizeAsync(1080, 1920);
+            await NavigateToUrl("/");
+            await Page.GetByTestId("nav-desktop-logout").ClickAsync();
         }
 
         protected async Task CheckRedirectedToLogin()
         {
             await Expect(Page.GetByText("Log in to Buut")).ToBeVisibleAsync();
-
         }
 
         protected async Task TestRedirectWhenNotLoggedIn(string url)

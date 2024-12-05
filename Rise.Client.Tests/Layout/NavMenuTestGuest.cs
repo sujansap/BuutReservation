@@ -7,23 +7,14 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Layout
 {
-    [TestFixture]
     public class NavMenuTestGuest : CustomAuthenticatedPageTest
     {
         private const int DefaultHeight = 1920;
 
         [SetUp]
-        public async Task SetUpAsync()
+        public async Task SetUp()
         {
-            base.GlobalSetUp();
             await LoginAsync(UserRole.Guest);
-        }
-
-        [TearDown]
-        public async Task TearDownAsync()
-        {
-            await LogoutAsync();
-            await base.TearDown();
         }
 
         public static readonly List<NotificationDto> Notifications = NotificationPageTestMember.Notifications;

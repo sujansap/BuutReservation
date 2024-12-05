@@ -5,22 +5,14 @@ using Rise.Shared.Users;
 namespace Rise.Client.Tests.Admin
 {
 
-    [TestFixture]
     public class AdminGuestsPageTestAdmin : CustomAuthenticatedPageTest
     {
         protected const string baseSuffix = "/admin/guests";
 
         [SetUp]
-        public async Task SetUpAsync()
+        public async Task SetUp()
         {
             await LoginAsync(UserRole.Administrator);
-        }
-
-        [TearDown]
-        public async Task TearDownAsync()
-        {
-            await LogoutAsync();
-            await base.TearDown();
         }
 
         private async Task MockUsers(UserDto[] users)
@@ -83,7 +75,8 @@ namespace Rise.Client.Tests.Admin
         {
             await Page.RouteAsync("*/**/api/User/guests", async route =>
             {
-                await Task.Delay(1000); //dealay  to simulate loading
+                await Task.Delay(2000);
+
                 await route.FulfillAsync(new()
                 {
                     Status = 200,

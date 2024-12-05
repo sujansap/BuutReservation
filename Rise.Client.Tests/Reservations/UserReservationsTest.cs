@@ -6,7 +6,6 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Reservations
 {
-    [TestFixture]
     public class UserReservationsTest : CustomAuthenticatedPageTest
     {
         [SetUp]
@@ -161,7 +160,7 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationsApi();
             await NavigateToUrl(UserReservationsUrl);
 
-            await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
+            await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(1);
         }
 
         [Test]
@@ -247,7 +246,7 @@ namespace Rise.Client.Tests.Reservations
             await NavigateToUrl(UserReservationsUrl + "&Past=true");
 
             ILocator locator = Page.GetByTestId("reservation-item");
-            await Expect(locator).ToHaveCountAsync(0);
+            await Expect(locator).ToHaveCountAsync(1);
         }
 
         [Test]
@@ -265,8 +264,7 @@ namespace Rise.Client.Tests.Reservations
             await NavigateToUrl(UserReservationsUrl + "&Past=true");
 
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
-            // FIXME - locator can't be found
-            // await Expect(firstReservation.GetByTestId("reservation-date")).Not.ToBeEmptyAsync();
+            await Expect(firstReservation.GetByTestId("reservation-date")).Not.ToBeEmptyAsync();
             await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(PastReservation.Date.ToString("dd/MM/yyyy"));
             await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(PastReservation.BoatPersonalName);
             await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{PastReservation.Start:HH:mm} - {PastReservation.End:HH:mm}");

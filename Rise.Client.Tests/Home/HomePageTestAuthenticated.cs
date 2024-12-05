@@ -3,7 +3,6 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Home
 {
-    [TestFixture]
     public class HomePageTestAuthenticated : CustomAuthenticatedPageTest
     {
 
