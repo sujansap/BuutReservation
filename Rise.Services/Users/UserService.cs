@@ -106,8 +106,10 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     {
         const int maxRetries = 5;
         const int retryDelayInMilliseconds = 2000;
+        int retries = 0;
+        bool success = false;
 
-        for (int attempt = 0; attempt <= maxRetries; attempt++)
+        while (retries <= maxRetries && !success)
         {
             try
             {
@@ -117,30 +119,39 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
                 return assignedUsersPage;
             }
-            catch (RateLimitApiException ex) when (attempt < maxRetries)
+            catch (RateLimitApiException ex)
             {
-                _logger.LogWarning(ex, "Rate limit exceeded while fetching users for role {RoleId}. Retrying in {RetryDelay}s...",
-                    roleId, retryDelayInMilliseconds / 1000);
-
-                await Task.Delay(retryDelayInMilliseconds);
+                HandleRetryableException(ex, "Rate limit exceeded", roleId, retries, maxRetries);
             }
-            catch (ErrorApiException ex) when (attempt < maxRetries)
+            catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "Auth0 API error occurred while fetching users for role {RoleId}. Status: {Status}, Error: {Error}. Retrying in {RetryDelay}s...",
-                    roleId, ex.StatusCode, ex.Message, retryDelayInMilliseconds / 1000);
-
-                await Task.Delay(retryDelayInMilliseconds);
+                HandleRetryableException(ex, $"HTTP request failed. Status: {ex.StatusCode}", roleId, retries, maxRetries);
             }
-            catch (ApiException ex) when (attempt < maxRetries)
+            catch (ErrorApiException ex)
             {
-                _logger.LogError(ex, "Unexpected Auth0 API error occurred while fetching users for role {RoleId}. Retrying in {RetryDelay}s...",
-                    roleId, retryDelayInMilliseconds / 1000);
-
-                await Task.Delay(retryDelayInMilliseconds);
+                HandleRetryableException(ex, $"Auth0 API error. Status: {ex.StatusCode}, Error: {ex.Message}", roleId, retries, maxRetries);
             }
+            catch (ApiException ex)
+            {
+                HandleRetryableException(ex, "Unexpected Auth0 API error", roleId, retries, maxRetries);
+            }
+
+            await Task.Delay(retryDelayInMilliseconds);
+            retries++;
         }
 
         throw new ApplicationException($"Failed to fetch users for role '{roleId}' after {maxRetries + 1} attempts.");
+    }
+
+    private void HandleRetryableException(Exception ex, string message, string roleId, int retries, int maxRetries)
+    {
+        if (retries >= maxRetries)
+        {
+            throw new ApplicationException($"Failed to fetch users for role '{roleId}' after {maxRetries + 1} attempts.", ex);
+        }
+
+        _logger.LogWarning(ex, "{Message} while fetching users for role {RoleId}. Attempt {Attempt} of {MaxAttempts}.",
+            message, roleId, retries + 1, maxRetries + 1);
     }
 
     private UsersPagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)
