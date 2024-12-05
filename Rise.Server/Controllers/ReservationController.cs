@@ -9,7 +9,7 @@ namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = nameof(UserRole.Member))]
+
     public class ReservationController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger;
@@ -39,6 +39,7 @@ namespace Rise.Server.Controllers
         /// <param name="pageSize">Number of items to get in a page.</param>
         /// <returns>List of reservations</returns>
         [HttpGet("me")]
+        [Authorize(Roles = nameof(UserRole.Member))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -86,6 +87,7 @@ namespace Rise.Server.Controllers
         /// <param name="reservationDto">The details of the reservation to create</param>
         /// <returns>The deatils of the created reservation</returns>
         [HttpPost]
+        [Authorize(Roles = nameof(UserRole.Member))]
         [NoQueryParameters]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -107,6 +109,7 @@ namespace Rise.Server.Controllers
         /// <response code="404">If no reservation with the specified ID is found.</response>
         /// <response code="500">If an error occurs while retrieving the reservation details.</response>
         [HttpGet("{id}")]
+        [Authorize(Roles = nameof(UserRole.Member))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservationDetailsDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -131,6 +134,8 @@ namespace Rise.Server.Controllers
         }
 
         [HttpPatch("cancel/{id}")]
+        [Authorize(Roles = $"{nameof(UserRole.Administrator)},{nameof(UserRole.Member)}")]
+
         public async Task<IActionResult> CancelReservation(int id)
         {
             try
@@ -162,6 +167,7 @@ namespace Rise.Server.Controllers
         /// <param name="pageSize">Number of items to get in a page (default is 10).</param>
         /// <returns>Paginated list of all reservations in the system.</returns>
         [HttpGet("all")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

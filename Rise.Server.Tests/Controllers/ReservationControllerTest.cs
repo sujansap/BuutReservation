@@ -379,12 +379,47 @@ namespace Rise.Server.Tests.Controllers
         public async Task PATCH_CancelReservation_ByAdminWithinTwoDays_ExpectSuccess()
         {
             await LoginAsync(UserRole.Administrator);
-            var reservationIdWithinTwoDays = 2;
+            var reservationIdWithinTwoDays = 59;
 
             var response = await _client.PatchAsync($"cancel/{reservationIdWithinTwoDays}", null);
 
             response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         }
+        [Fact]
+        public async Task PATCH_CancelReservation_ByAdminOnSameDay_ExpectSuccess()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var reservationIdOnSameDay = 56;
+
+            var response = await _client.PatchAsync($"cancel/{reservationIdOnSameDay}", null);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        }
+
+        [Fact]
+        public async Task PATCH_CancelReservation_ByUserForPastReservation_ExpectBadRequest()
+        {
+            await LoginAsync(UserRole.Member);
+            var pastReservationId = 5;
+
+            var response = await _client.PatchAsync($"cancel/{pastReservationId}", null);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        }
+        [Fact]
+        public async Task PATCH_CancelReservation_ByAdminForPastReservation_ExpectBadRequest()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var pastReservationId = 5;
+
+            var response = await _client.PatchAsync($"cancel/{pastReservationId}", null);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        }
+
     }
 }
