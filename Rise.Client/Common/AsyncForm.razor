@@ -23,7 +23,6 @@ else
             }
         }
 
-        @* TODO fix spacing between content and error *@
         @if (ShowContent())
         {
             @FormContent(ChildContent)
@@ -64,7 +63,8 @@ else
             </MudCardContent>
         </MudForm>
         <MudCardActions>
-            <PrimaryButton OnClick="@(async () => await Submit())" Disabled="@(IsLoading)">Update
+            <PrimaryButton OnClick="@(async () => await Submit())" Disabled="@(IsLoading)" data-testid="@TestIdSubmit()">
+                Update
             </PrimaryButton>
         </MudCardActions>
     </MudCard>;

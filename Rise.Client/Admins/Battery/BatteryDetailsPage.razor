@@ -19,14 +19,16 @@
     DataToFormData="@BatteryToUpdateBattery" @bind-FormData="@batteryModel" Validation="@batteryValidator.ValidateValue"
     ValidationDelay="0" TestIdPrefix="battery-details">
     <LoadingContent>
-        <MudSkeleton Width="100%" Height="60px" />
-        <MudSkeleton Width="100%" Height="60px" />
+        <div data-testid="battery-details-placeholder">
+            <MudSkeleton Width="100%" Height="60px" />
+            <MudSkeleton Width="100%" Height="60px" />
+        </div>
     </LoadingContent>
     <ChildContent>
         <MudTextField @bind-Value="batteryModel.Type" For="@(() => batteryModel.Type)" Immediate="true"
-            Label="@Localizer["BatteryType"]" ReadOnly Required FullWidth="@true" />
+            Label="@Localizer["BatteryType"]" ReadOnly Required FullWidth="@true" data-testid="battery-details-type" />
                 @* TODO make autocomplete list of users *@
         <MudTextField @bind-Value="batteryModel.MentorId" For="@(() => batteryModel.MentorId)" Immediate="true"
-            Label="@Localizer["BatteryMentor"]" Required FullWidth="@false" />
+            Label="@Localizer["BatteryMentor"]" Required FullWidth="@false" data-testid="battery-details-mentor-id" />
     </ChildContent>
 </AsyncForm>

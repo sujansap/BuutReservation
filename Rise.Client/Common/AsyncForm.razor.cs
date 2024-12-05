@@ -82,5 +82,10 @@ namespace Rise.Client.Common
         {
             return PrefixTestId("success");
         }
+
+        private string TestIdSubmit()
+        {
+            return PrefixTestId("submit");
+        }
     }
 }
