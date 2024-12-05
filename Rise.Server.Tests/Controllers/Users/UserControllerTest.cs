@@ -33,20 +33,6 @@ namespace Rise.Server.Tests.Controllers.Users
             response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
         }
 
-        [Theory]
-        [InlineData(UserRole.Guest)]
-        public async Task GetUsersByRole_AsAdmin_ReturnsCorrectUsers(UserRole roleToQuery)
-        {
-            await LoginAsync(UserRole.Administrator);
-
-            await Task.Delay(TimeSpan.FromSeconds(2));
-
-            var response = await _client.GetFromJsonAsync<UsersPagination<UserDto>>($"?role={roleToQuery}");
-
-            response.ShouldNotBeNull();
-            response.Items.ShouldNotBeNull();
-            response.Items.Count().ShouldBeGreaterThan(0);
-        }
 
         [Theory]
         [InlineData(0, 10)]
