@@ -6,7 +6,7 @@
 
 @if (ShowLoader())
 {
-    @FormContent(LoadingContent)
+    @FormContent(LoadingContent(TestIdLoading()))
 }
 else
 {
@@ -15,7 +15,7 @@ else
         {
             @if (ShowStaticAlert())
             {
-                @InfoContainerContent(ErrorContent)
+                @InfoContainerContent(ErrorContent(ErrorMessageContent((ErrorMessage, TestIdError()))))
             }
             @if (ShowSnackBarAlert())
             {
@@ -32,26 +32,15 @@ else
 
 @code {
     [Parameter]
-    public virtual string? SuccessMessage { get; set; }
+    public string SuccessMessage { get; set; } = "Successfully submitted data";
 
     [Parameter]
-    public RenderFragment? SuccessMessageContent { get; set; }
-
-    protected virtual string DefaultSuccesContent() => "Successfully submitted data";
-
-    protected virtual RenderFragment DefaultSuccesMessageContent() => @<MudText Typo="Typo.body1"
-        data-testid="@TestIdSuccess()">
-        @SuccessMessage</MudText>;
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        SuccessMessage ??= DefaultSuccesContent();
-        SuccessMessageContent ??= DefaultSuccesMessageContent();
-    }
+    public RenderFragment<(string successMessage, string testId)> SuccessMessageContent { get; set; } = (context) => @<MudText Typo="Typo.body1" data-testid="@context.testId">
+    @context.successMessage</MudText>;
 
     private void ShowSuccesMessage()
     {
-        SnackbarService.Add(@SuccessMessageContent ?? DefaultErrorMessageContent(), Severity.Success);
+        SnackbarService.Add(SuccessMessageContent((SuccessMessage, TestIdSuccess())), Severity.Success);
     }
 
     private RenderFragment FormContent(RenderFragment? fields)

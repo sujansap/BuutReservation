@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Serilog;
 
 namespace Rise.Client.Common
 {
@@ -12,8 +13,6 @@ namespace Rise.Client.Common
         [Parameter, EditorRequired]
         public required string TestIdPrefix { get; set; }
 
-        private bool shouldRender;
-
         private Func<Task<T>> _previousDataFetcher = default!;
 
         [Parameter, EditorRequired]
@@ -22,7 +21,7 @@ namespace Rise.Client.Common
             get; set;
         }
 
-        private T? _cachedData;
+        protected T? _cachedData;
 
         /// <summary>
         /// The fetched data
@@ -61,11 +60,9 @@ namespace Rise.Client.Common
         [Parameter]
         public bool ShowContentWhenError { get; set; } = true;
 
-        protected virtual Task AssignData(T? data)
+        private bool IsDifferentFetcher()
         {
-            _cachedData = Data;
-            Data = data;
-            return DataChanged.InvokeAsync(Data);
+            return _previousDataFetcher?.Equals(DataFetcher) ?? false;
         }
 
         private bool IsCachedDataEqual()
@@ -75,41 +72,45 @@ namespace Rise.Client.Common
 
         protected override async Task OnInitializedAsync()
         {
-            bool isDifferentFetcher = _previousDataFetcher != DataFetcher;
-            bool isCachedDataEqual = IsCachedDataEqual();
-            shouldRender = isDifferentFetcher || !isCachedDataEqual;
-
             _previousDataFetcher = DataFetcher;
-            if (isDifferentFetcher || !isCachedDataEqual)
+            if (IsDifferentFetcher() || !IsCachedDataEqual())
             {
                 await FetchData();
             }
         }
+        protected virtual Task AssignData(T? data)
+        {
+            _cachedData = Data;
+            Data = data;
+            return DataChanged.InvokeAsync(Data);
+        }
+
         public async Task FetchData()
         {
-            if (!IsLoading)
+            if (IsLoading) return;
+
+            Log.Information("Started loading");
+            IsLoading = true;
+            HasError = false;
+            try
             {
-                IsLoading = true;
-                HasError = false;
-                try
-                {
-                    T? newData = await DataFetcher();
-                    await AssignData(newData);
-                }
-                catch (Exception ex)
-                {
-                    HasError = true;
-                    // TODO fix localisation of error message
-                    ErrorMessage = ex.Message ?? "Oops something went wrong";
-                }
-                finally
-                {
-                    IsLoading = false;
-                }
+
+                T? newData = await DataFetcher();
+                await AssignData(newData);
+            }
+            catch (Exception ex)
+            {
+                HasError = true;
+                // TODO fix localisation of error message
+                ErrorMessage = ex.Message ?? "Oops something went wrong";
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
-        protected override bool ShouldRender() => shouldRender;
+        protected override bool ShouldRender() => IsLoading || HasError || !IsCachedDataEqual() || IsDifferentFetcher();
 
         protected bool ShowStaticAlert()
         {
@@ -146,12 +147,12 @@ namespace Rise.Client.Common
             return sb.ToString();
         }
 
-        private string TestIdLoading()
+        protected string TestIdLoading()
         {
             return PrefixTestId("loading-progress");
         }
 
-        private string TestIdError()
+        protected string TestIdError()
         {
             return PrefixTestId("fetch-error");
         }

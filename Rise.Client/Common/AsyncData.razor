@@ -5,7 +5,7 @@
 @* TODO limit loader to show up only after 1 second *@
 @if (ShowLoader())
 {
-    @InfoContainerContent(LoadingContent)
+    @InfoContainerContent(LoadingContent(TestIdLoading()))
 }
 else
 {
@@ -14,7 +14,7 @@ else
     {
         @if (ShowStaticAlert())
         {
-            @InfoContainerContent(ErrorContent)
+            @InfoContainerContent(ErrorContent(ErrorMessageContent((ErrorMessage, TestIdError()))))
         }
         @if (ShowSnackBarAlert())
         {
@@ -38,33 +38,23 @@ else
     </MudContainer>;
 
     [Parameter]
-    public RenderFragment? LoadingContent { get; set; }
+    public RenderFragment<string> LoadingContent { get; set; } = (string testId) => @<MudProgressCircular Indeterminate="true" data-testid="@testId" />;
 
     [Parameter]
-    public RenderFragment? ErrorMessageContent { get; set; }
+    public RenderFragment<(string? errorMessage, string testId)> ErrorMessageContent { get; set; } = (context) => @<MudText
+        Typo="Typo.body1" data-testid="@context.testId">
+        @context.errorMessage</MudText>;
 
     [Parameter]
-    public RenderFragment? ErrorContent { get; set; }
+    public RenderFragment<RenderFragment> ErrorContent
+    { get; set; }
+        = (RenderFragment errorMessageContent) => @<MudAlert Severity="Severity.Error">
+        @errorMessageContent</MudAlert>;
 
     [Parameter, EditorRequired]
     public required RenderFragment ChildContent { get; set; }
-
-    protected virtual RenderFragment DefaultLoadingContent() => @<MudProgressCircular Indeterminate="true" data-testid="@TestIdLoading()" />;
-    protected virtual RenderFragment DefaultErrorMessageContent() => @<MudText Typo="Typo.body1"
-        data-testid="@TestIdError()">
-        @ErrorMessage</MudText>;
-
-    protected virtual RenderFragment DefaultErrorContent() => @<MudAlert Severity="Severity.Error">
-        @ErrorMessageContent</MudAlert>;
-    protected override void OnParametersSet()
-    {
-        LoadingContent ??= DefaultLoadingContent();
-        ErrorMessageContent ??= DefaultErrorMessageContent();
-        ErrorContent ??= DefaultErrorContent();
-    }
-
     protected void DisplayErrorOnSnackbar()
     {
-        SnackbarService.Add(@ErrorMessageContent ?? DefaultErrorMessageContent(), Severity.Error);
+        SnackbarService.Add(ErrorMessageContent((ErrorMessage, TestIdError())), Severity.Error);
     }
 }
