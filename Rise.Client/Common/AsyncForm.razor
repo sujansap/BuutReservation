@@ -1,0 +1,74 @@
+﻿@using Rise.Client.Common.Buttons
+@using Serilog
+@typeparam T
+@typeparam K
+@inherits AsyncData<T>
+
+@if (ShowLoader())
+{
+    @FormContent(LoadingContent)
+}
+else
+{
+    <MudStack Spacing="4">
+        @if (HasError)
+        {
+            @if (ShowStaticAlert())
+            {
+                @InfoContainerContent(ErrorContent)
+            }
+            @if (ShowSnackBarAlert())
+            {
+                DisplayErrorOnSnackbar();
+            }
+        }
+
+        @* TODO fix spacing between content and error *@
+        @if (ShowContent())
+        {
+            @FormContent(ChildContent)
+        }
+    </MudStack>
+}
+
+@code {
+    [Parameter]
+    public virtual string? SuccessMessage { get; set; }
+
+    [Parameter]
+    public RenderFragment? SuccessMessageContent { get; set; }
+
+    protected virtual string DefaultSuccesContent() => "Successfully submitted data";
+
+    protected virtual RenderFragment DefaultSuccesMessageContent() => @<MudText Typo="Typo.body1"
+        data-testid="@TestIdSuccess()">
+        @SuccessMessage</MudText>;
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        SuccessMessage ??= DefaultSuccesContent();
+        SuccessMessageContent ??= DefaultSuccesMessageContent();
+    }
+
+    private void ShowSuccesMessage()
+    {
+        SnackbarService.Add(@SuccessMessageContent ?? DefaultErrorMessageContent(), Severity.Success);
+    }
+
+    private RenderFragment FormContent(RenderFragment? fields)
+    {
+        return @<MudCard Class="pa-4">
+        <MudForm @ref="@Form" Model="@FormData" Validation="@Validation">
+            <MudCardContent>
+                @fields
+            </MudCardContent>
+        </MudForm>
+        <MudCardActions>
+            <PrimaryButton OnClick="@(async () => await Submit())" Disabled="@(IsLoading)">Update
+            </PrimaryButton>
+        </MudCardActions>
+    </MudCard>;
+    }
+    @* TODO primary button name *@
+    @* TODO reset button *@
+}
