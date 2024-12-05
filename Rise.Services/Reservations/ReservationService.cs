@@ -177,7 +177,13 @@ namespace Rise.Services.Reservations
                 MentorName = reservation.Battery?.Mentor?.FamilyName,
                 BatteryId = reservation.Battery?.Id,
                 CurrentBatteryUserName = reservation.Battery?.CurrentHolder?.FamilyName,
-                CurrentBatteryUserId = reservation.Battery?.CurrentHolderId
+                CurrentBatteryUserId = reservation.Battery?.CurrentHolderId,
+                CurrentHolderPhoneNumber = reservation.Battery?.CurrentHolder?.PhoneNumber,
+                CurrentHolderEmail = reservation.Battery?.CurrentHolder?.Email,
+                CurrentHolderStreet = reservation.Battery?.CurrentHolder?.Address.Street,
+                CurrentHolderNumber = reservation.Battery?.CurrentHolder?.Address.Number,
+                CurrentHolderCity = reservation.Battery?.CurrentHolder?.Address.City,
+                CurrentHolderPostalCode = reservation.Battery?.CurrentHolder?.Address.PostalCode
             };
         }
         public async Task CancelReservationAsync(int reservationId)

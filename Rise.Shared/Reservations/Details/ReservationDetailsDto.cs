@@ -16,4 +16,12 @@ public record ReservationDetailsDto : BaseDto
     public int? BatteryId { get; set; }
     public string? CurrentBatteryUserName { get; set; }
     public int? CurrentBatteryUserId { get; set; }
+    
+    // New properties for current holder contact details
+    public string? CurrentHolderPhoneNumber { get; set; }
+    public string? CurrentHolderEmail { get; set; }
+    public string? CurrentHolderStreet { get; set; }
+    public string? CurrentHolderNumber { get; set; }
+    public string? CurrentHolderCity { get; set; }
+    public string? CurrentHolderPostalCode { get; set; }
 }
