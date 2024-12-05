@@ -4,7 +4,8 @@
 @using Rise.Shared.Reservations
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Common
-@attribute [Authorize(Roles = "Member, Administrator")]
+@using Rise.Shared.Users
+@attribute [Authorize(Roles = $"{nameof(UserRole.Member)}, {nameof(UserRole.Administrator)}")]
 @inject IStringLocalizer<ReservationPageResources> Localizer
 
 
@@ -109,4 +110,12 @@
             }
         }
     </AsyncData>
-</MudContainer>
+</MudGrid>
+
+@code {
+    private RenderFragment<String> RenderErrorMessage => (text) => @<MudText Typo="Typo.body1"
+        data-testid="cancel-reservation-error">
+        @text</MudText>;
+
+
+}

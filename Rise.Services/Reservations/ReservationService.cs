@@ -15,7 +15,7 @@ using Rise.Shared.Reservations;
 namespace Rise.Services.Reservations
 {
     public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        : AuthenticationService(dbContext, authContextProvider), IReservationService
+        : AuthenticatedService(dbContext, authContextProvider), IReservationService
     {
 
 
@@ -186,7 +186,6 @@ namespace Rise.Services.Reservations
 
             var reservation = await _dbContext.Reservations
                 .Include(r => r.TimeSlot)
-                .Include(r => r.User)
                 .Where(r => r.UserId == userId)
                 .FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
