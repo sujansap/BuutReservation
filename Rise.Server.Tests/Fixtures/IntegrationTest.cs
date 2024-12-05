@@ -175,10 +175,10 @@ namespace Rise.Server.Tests.Fixtures
         private static async Task RunTaskWithRetries(Func<Task<bool>> callback, int retryLimit)
         {
             var retries = 0;
-            var success = false;
-            while (retries <= retryLimit && !success)
+            var isSuccess = false;
+            while (retries <= retryLimit && !isSuccess)
             {
-                success = await callback();
+                isSuccess = await callback();
                 retries++;
             }
         }
@@ -203,7 +203,7 @@ namespace Rise.Server.Tests.Fixtures
         {
             "GET" => await _client.GetAsync(url),
             "POST" => await _client.PostAsJsonAsync(url, new object()),
-            "PTACH" => await _client.PatchAsJsonAsync(url, new object()),
+            "PATCH" => await _client.PatchAsJsonAsync(url, new object()),
             _ => null,
         };
 
