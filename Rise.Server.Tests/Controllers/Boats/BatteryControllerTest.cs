@@ -54,6 +54,24 @@ namespace Rise.Server.Tests.Controllers.Boats
         }
 
         [Fact]
+        public async Task Get_ExistingBattery_Found()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var response = await _client.GetAsync(validBatteryId.ToString());
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var details = await response.Content.ReadFromJsonAsync<BatteryDto>();
+            details.ShouldNotBeNull();
+
+            details.Id.ShouldBe(validBatteryId);
+            details.Type.ShouldBe("Lithium-Ion");
+            details.MentorId.ShouldBe(1);
+
+            Logout();
+        }
+
+        [Fact]
         public async Task PUT_NotExistingBattery_NotFound()
         {
             await LoginAsync(UserRole.Administrator);
