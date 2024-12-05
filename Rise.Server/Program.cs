@@ -14,7 +14,6 @@ using Rise.Shared.Notifications;
 using Rise.Services.Notifications;
 using Rise.Shared.Users;
 using Rise.Services.Users;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Auth0Net.DependencyInjection;
@@ -107,6 +106,7 @@ try
         options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
     });
 
+    builder.Services.AddScoped<ICruisePeriodService, CruisePeriodService>();
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
