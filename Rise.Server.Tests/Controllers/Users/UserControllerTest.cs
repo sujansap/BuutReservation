@@ -41,7 +41,7 @@ namespace Rise.Server.Tests.Controllers.Users
 
             await Task.Delay(TimeSpan.FromSeconds(2));
 
-            var response = await _client.GetFromJsonAsync<UsersPagination<UserDto>>($"?role={roleToQuery}&page=1&pageSize=10");
+            var response = await _client.GetFromJsonAsync<UsersPagination<UserDto>>($"?role={roleToQuery}");
 
             response.ShouldNotBeNull();
             response.Items.ShouldNotBeNull();
