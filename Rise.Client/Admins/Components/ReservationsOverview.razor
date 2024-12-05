@@ -1,7 +1,7 @@
 ﻿@page "/admin/reservations"
+@using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Admins
 @using Rise.Shared.Reservations
-@using Microsoft.Extensions.Localization
 @inject IReservationService ReservationService
 @inject ISnackbar Snackbar
 @inject IStringLocalizer<AdminPageResources> Localizer
@@ -27,19 +27,20 @@
                 <MudTh>@Localizer["Boat"]</MudTh>
                 <MudTh>@Localizer["Actions"]</MudTh>
             </HeaderContent>
-            <RowTemplate>
-                <MudTd data-testid="admin-reservation-user">@context.UserName</MudTd>
-                <MudTd data-testid="admin-reservation-date">@context.Date.ToShortDateString()</MudTd>
-                <MudTd data-testid="admin-reservation-time">@context.Start - @context.End</MudTd>
-                <MudTd data-testid="admin-reservation-boat">@context.BoatPersonalName</MudTd>
+            <RowTemplate Context="reservation">
+                <MudTd data-testid="admin-reservation-user">@reservation.UserName</MudTd>
+                <MudTd data-testid="admin-reservation-date">@reservation.Date.ToShortDateString()</MudTd>
+                <MudTd data-testid="admin-reservation-time">@reservation.Start - @reservation.End</MudTd>
+                <MudTd data-testid="admin-reservation-boat">@reservation.BoatPersonalName</MudTd>
                 <MudTd>
-                    @if (context.IsDeleted)
+                    @if (reservation.IsDeleted)
                     {
-                        <MudText Color="Color.Error" data-testid="admin-reservation-status">Cancelled</MudText>
+                        <MudText Color="Color.Error" data-testid="admin-reservation-status">@Localizer["Cancelled"]
+                        </MudText>
                     }
                     else
                     {
-                        <MudButton Color="Color.Error" OnClick="@(() => CancelReservation(context.Id))"
+                        <MudButton Color="Color.Error" OnClick="@(() => CancelReservation(reservation.Id))"
                             data-testid="admin-reservation-cancel-button">
                             @Localizer["Cancel"]
                         </MudButton>

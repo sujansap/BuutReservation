@@ -26,7 +26,7 @@ namespace Rise.Client.Admins.Components
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Error loading reservations: {ex.Message}", Severity.Error);
+                Snackbar.Add(Localizer["ErrorLoadingReservations", ex.Message], Severity.Error);
             }
             finally
             {
@@ -39,11 +39,12 @@ namespace Rise.Client.Admins.Components
             try
             {
                 await ReservationService.CancelReservationAsync(id);
-                Snackbar.Add("Reservation canceled successfully.", Severity.Success);
+                Snackbar.Add(Localizer["ReservationCancelledSuccess"], Severity.Success);
+                await LoadReservations();
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Error canceling reservation: {ex.Message}", Severity.Error);
+                Snackbar.Add(Localizer["ErrorCancelingReservation", ex.Message], Severity.Error);
             }
         }
 

@@ -11,7 +11,7 @@ namespace Rise.Domain.Tests.Reservations
         {
             Reservation reservation = new ReservationBuilder().Build();
 
-            
+
             reservation.Boat.ShouldBe(ReservationBuilder.ValidBoat);
             reservation.TimeSlot.ShouldBe(ReservationBuilder.ValidTimeSlot);
             reservation.User.ShouldBe(ReservationBuilder.ValidUser);
@@ -64,73 +64,149 @@ namespace Rise.Domain.Tests.Reservations
         }
 
         [Fact]
-        public void CancelReservationSuccessfully_WhenValid()
+        public void CancelReservationSuccessfully_AsAdmin_WhenWithinTwoDays()
         {
             
             var reservation = new ReservationBuilder()
                 .WithTimeSlot(
                     new TimeSlotBuilder()
-                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(3)))
+                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(1))) 
                         .Build()
                 )
                 .Build();
 
             
-            reservation.Cancel();
+            reservation.Cancel(isAdmin: true);
 
             
             reservation.IsDeleted.ShouldBeTrue();
         }
 
         [Fact]
-        public void ThrowException_WhenAlreadyCancelled()
+        public void CancelReservationSuccessfully_AsAdmin_OnSameDay()
+        {
+            
+
+            var startDate = DateTime.Today;
+            var endDate = startDate.AddDays(5);
+            var reservation = new ReservationBuilder()
+                .WithTimeSlot(
+                    new TimeSlotBuilder()
+                    .WithCruisePeriod(new CruisePeriodBuilder()
+                    .WithStart(startDate)
+                    .WithEnd(endDate)
+                    .Build())
+                        .WithDate(DateOnly.FromDateTime(DateTime.Today))
+                        .Build()
+                )
+                .Build();
+
+            
+            reservation.Cancel(isAdmin: true);
+
+            
+            reservation.IsDeleted.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void ThrowException_WhenAdminCancelsPastReservation()
+        {
+            
+            var startDate = DateTime.Today.AddDays(-(1));
+            var endDate = startDate.AddDays(5);
+            var reservation = new ReservationBuilder()
+                .WithTimeSlot(
+                    new TimeSlotBuilder()
+                    .WithCruisePeriod(new CruisePeriodBuilder()
+                    .WithStart(startDate)
+                    .WithEnd(endDate)
+                    .Build())
+                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)))
+                        .Build()
+                )
+                .Build();
+
+            
+            Should.Throw<InvalidOperationException>(() => reservation.Cancel(isAdmin: true))
+                .Message.ShouldBe("Reservations in the past cannot be canceled.");
+        }
+
+        [Fact]
+        public void ThrowException_WhenUserCancelsPastReservation()
+        {
+            
+            var startDate = DateTime.Today.AddDays(-(1));
+            var endDate = startDate.AddDays(5);
+            var reservation = new ReservationBuilder()
+                .WithTimeSlot(
+                    new TimeSlotBuilder()
+                    .WithCruisePeriod(new CruisePeriodBuilder()
+                    .WithStart(startDate)
+                    .WithEnd(endDate)
+                    .Build())
+                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)))
+                        .Build()
+                )
+                .Build();
+
+            
+            Should.Throw<InvalidOperationException>(() => reservation.Cancel(isAdmin: false))
+                .Message.ShouldBe("Reservations in the past cannot be canceled.");
+        }
+
+        [Fact]
+        public void ThrowException_WhenAdminTriesToCancelAlreadyCancelledReservation()
         {
             
             var reservation = new ReservationBuilder()
                 .WithTimeSlot(
                     new TimeSlotBuilder()
-                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(4)))
+                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(5)))
                         .Build()
                 )
                 .Build();
 
-            reservation.Cancel();
+            reservation.Cancel(isAdmin: true); 
 
             
-            Should.Throw<InvalidOperationException>(() => reservation.Cancel())
+            Should.Throw<InvalidOperationException>(() => reservation.Cancel(isAdmin: true))
                 .Message.ShouldBe("The reservation is already canceled.");
         }
 
         [Fact]
-        public void ThrowException_WhenCancellationWithinTwoDays()
+        public void NotThrowException_WhenAdminCancelsExactlyTwoDaysBefore()
         {
             
             var reservation = new ReservationBuilder()
                 .WithTimeSlot(
                     new TimeSlotBuilder()
-                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(1))) // Less than 2 days
+                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2))) 
                         .Build()
                 )
                 .Build();
 
-            Should.Throw<InvalidOperationException>(() => reservation.Cancel())
-                .Message.ShouldBe("Reservations can only be canceled at least 2 days before the reservation date.");
+            
+            reservation.Cancel(isAdmin: true);
+
+            
+            reservation.IsDeleted.ShouldBeTrue();
         }
 
         [Fact]
-        public void NotThrowException_WhenCancellationExactlyTwoDaysBefore()
+        public void EnforceTwoDayRule_WhenUserCancelsReservation()
         {
+            
             var reservation = new ReservationBuilder()
                 .WithTimeSlot(
                     new TimeSlotBuilder()
-                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2))) // Exactly 2 days
+                        .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(1))) 
                         .Build()
                 )
                 .Build();
 
-            reservation.Cancel();
-
-            reservation.IsDeleted.ShouldBeTrue();
+            
+            Should.Throw<InvalidOperationException>(() => reservation.Cancel(isAdmin: false))
+                .Message.ShouldBe("Reservations can only be canceled at least 2 days before the reservation date unless canceled by an admin.");
         }
 
     }
