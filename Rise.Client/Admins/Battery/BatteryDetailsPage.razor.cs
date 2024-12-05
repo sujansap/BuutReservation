@@ -12,30 +12,7 @@ namespace Rise.Client.Admins.Battery
         [Parameter]
         public int? Id { get; set; }
 
-        private BatteryDto? batteryDto;
-
-        public required BatteryDto? BatteryDto
-        {
-            get => batteryDto;
-            set
-            {
-                batteryDto = value;
-                batteryModel = value is null ? DefaultBatteryUpdateDto : new()
-                {
-                    MentorId = value.MentorId,
-                    Type = value.Type,
-                };
-            }
-        }
-
         public BatteryUpdateDto.Validator batteryValidator = new();
-
-        private Task<BatteryDto> FetchBatteryInfo()
-        {
-            return BatteryService.GetBattery(Id ?? 1);
-        }
-
-        public BatteryUpdateDto batteryModel = DefaultBatteryUpdateDto;
 
         private static BatteryUpdateDto DefaultBatteryUpdateDto =>
         new()
@@ -44,31 +21,29 @@ namespace Rise.Client.Admins.Battery
             Type = "Lithium",
         };
 
+
+        public static BatteryUpdateDto BatteryToUpdateBattery(BatteryDto batteryDto)
+        {
+            return batteryDto is null ? DefaultBatteryUpdateDto : new()
+            {
+                MentorId = batteryDto.MentorId,
+                Type = batteryDto.Type,
+            };
+        }
+
+        private Task<BatteryDto> FetchBatteryInfo()
+        {
+            return BatteryService.GetBattery(Id ?? 1);
+        }
+
+        public BatteryUpdateDto batteryModel = DefaultBatteryUpdateDto;
+
         [Inject]
         public required ISnackbar Snackbar { get; set; }
 
-        public required MudForm form;
-
-        private async Task Submit()
+        private async Task<BatteryDto> HandleSubmit(BatteryUpdateDto batteryDetails)
         {
-            await form.Validate();
-
-            if (form.IsValid)
-            {
-                try
-                {
-                    // TODO make localisation
-                    // TODO make use of the problemDetails
-                    batteryDto = await BatteryService.UpdateBattery(Id ?? 1, batteryModel);
-                    Snackbar.Add("Successfully updated battery!", Severity.Success);
-                }
-                catch (Exception e)
-                {
-                    Snackbar.Add(e.Message, Severity.Error);
-                }
-
-            }
-
+            return await BatteryService.UpdateBattery(Id ?? 1, batteryDetails);
         }
     }
 }

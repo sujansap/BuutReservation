@@ -15,34 +15,18 @@
 @layout AdminLayout
 
 <MudText Typo="Typo.h2">@Localizer["BatteryDetails"]</MudText>
-<AsyncData DataFetcher="@FetchBatteryInfo" @bind-Data="@BatteryDto" T="BatteryDto" TestIdPrefix="battery-details"
-    ShowContentWhenError="@false">
+<AsyncForm T="BatteryDto" K="BatteryUpdateDto" DataFetcher="@FetchBatteryInfo" OnSubmit="@HandleSubmit"
+    DataToFormData="@BatteryToUpdateBattery" @bind-FormData="@batteryModel" Validation="@batteryValidator.ValidateValue"
+    ValidationDelay="0" TestIdPrefix="battery-details">
     <LoadingContent>
-        <MudCard>
-            <MudCardContent>
-                <MudSkeleton Width="200px" Height="60px" />
-                <MudSkeleton Width="200px" Height="60px" />
-            </MudCardContent>
-            <MudCardActions>
-                <MudSkeleton Width="100px" Height="40px" />
-            </MudCardActions>
-        </MudCard>
+        <MudSkeleton Width="100%" Height="60px" />
+        <MudSkeleton Width="100%" Height="60px" />
     </LoadingContent>
     <ChildContent>
-        <MudCard Class="pa-4">
-            <MudForm Model="@batteryModel" @ref="@form" Validation="@(batteryValidator.ValidateValue)"
-                ValidationDelay="0">
-                <MudCardContent>
-                    <MudTextField @bind-Value="batteryModel.Type" For="@(() => batteryModel.Type)" Immediate="true"
-                        Label="@Localizer["BatteryType"]" ReadOnly Required FullWidth="@false" />
-                    @* TODO make autocomplete list of users *@
-                    <MudTextField @bind-Value="batteryModel.MentorId" For="@(() => batteryModel.MentorId)"
-                        Immediate="true" Label="@Localizer["BatteryMentor"]" Required FullWidth="@false" />
-                </MudCardContent>
-            </MudForm>
-            <MudCardActions>
-                <PrimaryButton OnClick="@(async () => await Submit())">@Localizer["UpdateBattery"]</PrimaryButton>
-            </MudCardActions>
-        </MudCard>
+        <MudTextField @bind-Value="batteryModel.Type" For="@(() => batteryModel.Type)" Immediate="true"
+            Label="@Localizer["BatteryType"]" ReadOnly Required FullWidth="@true" />
+                @* TODO make autocomplete list of users *@
+        <MudTextField @bind-Value="batteryModel.MentorId" For="@(() => batteryModel.MentorId)" Immediate="true"
+            Label="@Localizer["BatteryMentor"]" Required FullWidth="@false" />
     </ChildContent>
-</AsyncData>
+</AsyncForm>
