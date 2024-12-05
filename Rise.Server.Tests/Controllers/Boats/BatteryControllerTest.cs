@@ -57,16 +57,17 @@ namespace Rise.Server.Tests.Controllers.Boats
         public async Task Get_ExistingBattery_Found()
         {
             await LoginAsync(UserRole.Administrator);
-            var response = await _client.GetAsync(validBatteryId.ToString());
+            int batteryId = 2;
+            var response = await _client.GetAsync(batteryId.ToString());
 
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
             var details = await response.Content.ReadFromJsonAsync<BatteryDto>();
             details.ShouldNotBeNull();
 
-            details.Id.ShouldBe(validBatteryId);
-            details.Type.ShouldBe("Lithium-Ion");
-            details.MentorId.ShouldBe(1);
+            details.Id.ShouldBe(batteryId);
+            details.Type.ShouldBe("Loodzuur");
+            details.MentorId.ShouldBe(batteryId);
 
 
         }
