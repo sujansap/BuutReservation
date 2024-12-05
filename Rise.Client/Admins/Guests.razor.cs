@@ -13,7 +13,7 @@ namespace Rise.Client.Admins
         private IEnumerable<UserDto> Users { get; set; } = [];
 
         [Inject]
-        public required IUserService UserService { get; set; }
+        public required IUserAdminService UserService { get; set; }
 
 
         private Task<IEnumerable<UserDto>> FetchUsers()

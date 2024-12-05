@@ -12,6 +12,7 @@ public class CruisePeriod : Entity
         get => _start;
         set
         {
+            // TODO check against null
             Guard.Against.OutOfSQLDateRange(value, nameof(Start));
             _start = value;
         }
@@ -22,6 +23,7 @@ public class CruisePeriod : Entity
         get => _end;
         set
         {
+            // TODO check against null
             Guard.Against.OutOfSQLDateRange(value, nameof(End));
             Guard.Against.OutOfRange(value, nameof(End), _start, DateTime.MaxValue, "End date must be after Start date.");
             _end = value;
@@ -40,6 +42,7 @@ public class CruisePeriod : Entity
     /// </exception>
     public void AddTimeSlot(TimeSlot timeSlot)
     {
+        // TODO check against null
         Guard.Against.OutOfRange(
             timeSlot.Date.ToDateTime(timeSlot.Start),
             nameof(AddTimeSlot),

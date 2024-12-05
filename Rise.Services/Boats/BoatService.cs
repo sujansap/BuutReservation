@@ -9,7 +9,7 @@ using Rise.Domain.Exceptions;
 namespace Rise.Services.Boats
 {
     public class BatteryService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        : AuthenticationService(dbContext, authContextProvider), IBatteryService
+        : AuthenticatedService(dbContext, authContextProvider), IBatteryService
     {
         /// <summary>
         /// Gets the battery by id

@@ -33,7 +33,7 @@ namespace Rise.Server.Tests.Controllers.Boats
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
-            Logout();
+
         }
 
         [Theory]
@@ -50,7 +50,7 @@ namespace Rise.Server.Tests.Controllers.Boats
 
             problemDetails?.Errors["id"][0].ShouldBe("Battery id must be positive");
 
-            Logout();
+
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace Rise.Server.Tests.Controllers.Boats
             details.Type.ShouldBe("Lithium-Ion");
             details.MentorId.ShouldBe(1);
 
-            Logout();
+
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Rise.Server.Tests.Controllers.Boats
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
-            Logout();
+
         }
 
         [Theory]
@@ -96,7 +96,7 @@ namespace Rise.Server.Tests.Controllers.Boats
 
             problemDetails?.Errors["id"][0].ShouldBe("Battery id must be positive");
 
-            Logout();
+
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace Rise.Server.Tests.Controllers.Boats
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
-            Logout();
+
         }
 
         [Theory]
@@ -124,7 +124,7 @@ namespace Rise.Server.Tests.Controllers.Boats
 
             problemDetails?.Errors["MentorId"][0].ShouldBe("'Mentor Id' must be greater than '0'.");
 
-            Logout();
+
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace Rise.Server.Tests.Controllers.Boats
             newBattery.Type.ShouldBe(validBatteryType);
             newBattery.MentorId.ShouldBe(validMentorId);
 
-            Logout();
+
         }
     }
 }

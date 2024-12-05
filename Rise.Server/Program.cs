@@ -14,7 +14,6 @@ using Rise.Shared.Notifications;
 using Rise.Services.Notifications;
 using Rise.Shared.Users;
 using Rise.Services.Users;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Auth0Net.DependencyInjection;
@@ -23,6 +22,7 @@ using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
 using Rise.Shared.Boats;
 using Rise.Services.Boats;
+using Rise.Client.Register;
 
 try
 {
@@ -93,7 +93,10 @@ try
         config.ClientId = builder.Configuration["Auth0:M2MClientId"];
         config.ClientSecret = builder.Configuration["Auth0:M2MClientSecret"];
     });
-    builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
+    builder.Services.AddAuth0ManagementClient().ConfigureHttpClient((httpClient) =>
+    {
+        httpClient.Timeout = TimeSpan.FromSeconds(200);
+    }).AddManagementAccessToken();
 
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -105,10 +108,12 @@ try
         options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
     });
 
+    builder.Services.AddScoped<ICruisePeriodService, CruisePeriodService>();
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
-    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IUserAdminService, UserService>();
+    builder.Services.AddScoped<IUserRegisterService, UserService>();
     builder.Services.AddScoped<IBatteryService, BatteryService>();
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
@@ -148,7 +153,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapControllers();
+    app.MapControllers().RequireAuthorization();
     app.MapFallbackToFile("index.html");
 
     if (app.Environment.IsDevelopment() || app.Environment.IsStaging())

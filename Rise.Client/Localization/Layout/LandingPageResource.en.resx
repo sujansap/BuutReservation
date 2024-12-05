@@ -20,6 +20,9 @@
 	<data name="Profile">
 		<value>Profile</value>
 	</data>
+	<data name="Register">
+		<value>Register</value>
+	</data>
 	<data name="Notifications">
 		<value>Notifications</value>
 	</data>

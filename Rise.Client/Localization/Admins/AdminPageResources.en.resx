@@ -94,6 +94,21 @@
 		<value>The boats are permanently moored at the lowered quay in Terneuzenlaan. Sailing area:
 			from Meulestedebrug to Keizerspark.</value>
 	</data>
+	<data name="CruisePeriod">
+		<value>
+			Cruise Period
+		</value>
+	</data>
+	<data name="Start">
+		<value>
+			Start
+		</value>
+	</data>
+	<data name="End">
+		<value>
+			End
+		</value>
+	</data>
 	<data name="Battery">
 		<value>
 			Battery

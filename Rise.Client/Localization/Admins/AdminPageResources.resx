@@ -116,4 +116,19 @@
 			Update
 		</value>
 	</data>
+	<data name="CruisePeriod">
+		<value>
+			Vaarperiode
+		</value>
+	</data>
+	<data name="Start">
+		<value>
+			Start
+		</value>
+	</data>
+	<data name="End">
+		<value>
+			Einde
+		</value>
+	</data>
 </root>

@@ -4,11 +4,12 @@ using Rise.Server.Common.Filters;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
 using Rise.Domain.Exceptions;
+using Rise.Shared.Users;
 namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Member")]
+    [Authorize(Roles = nameof(UserRole.Member))]
     public class ReservationController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger;

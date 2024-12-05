@@ -19,6 +19,9 @@
 	<data name="Profile">
 		<value>Profile</value>
 	</data>
+	<data name="Register">
+		<value>Registreer</value>
+	</data>
 	<data name="Notifications">
 		<value>Notifications</value>
 	</data>
