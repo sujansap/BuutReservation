@@ -20,17 +20,21 @@
 
         <MudGrid>
             <MudItem xs="12" sm="6">
-                <MudField Label="@Localizer["NameLabel"]" Variant="Variant.Text" data-testid="user-details-page-name"
-                    Class="mb-4">@($"{UserDetails?.FirstName} {UserDetails?.FamilyName}")</MudField>
-                <MudField Label="@Localizer["EmailLabel"]" Variant="Variant.Text" data-testid="user-details-page-email"
-                    Class="mb-4">@UserDetails?.Email</MudField>
+                <MudField Label="@Localizer["NameLabel"]" Variant="Variant.Text" Class="mb-4">
+                    <span data-testid="user-details-page-name">@($"{UserDetails?.FirstName} {UserDetails?.FamilyName}")</span>
+                </MudField>
+                <MudField Label="@Localizer["EmailLabel"]" Variant="Variant.Text" Class="mb-4">
+                    <span data-testid="user-details-page-email">@UserDetails?.Email</span>
+                </MudField>
             </MudItem>
 
             <MudItem xs="12" sm="6">
-                <MudField Label="@Localizer["AddressLabel"]" Variant="Variant.Text"
-                    data-testid="user-details-page-address" Class="mb-4">@FormattedAddress</MudField>
-                <MudField Label="@Localizer["PhoneLabel"]" Variant="Variant.Text" data-testid="user-details-page-phone"
-                    Class="mb-4">@UserDetails?.PhoneNumber</MudField>
+                <MudField Label="@Localizer["AddressLabel"]" Variant="Variant.Text" Class="mb-4">
+                    <span data-testid="user-details-page-address">@FormattedAddress</span>
+                </MudField>
+                <MudField Label="@Localizer["PhoneLabel"]" Variant="Variant.Text" Class="mb-4">
+                    <span data-testid="user-details-page-phone">@UserDetails?.PhoneNumber</span>
+                </MudField>
             </MudItem>
         </MudGrid>
 
