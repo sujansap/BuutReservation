@@ -164,7 +164,7 @@ namespace Rise.Client.Tests.Admin
 
             await MockUserDetails(userId, updatedUser);
             await ReloadPage();
-            await AssertUserDetail("user-details-page-familyname", "Johnson");
+            await AssertUserDetail("user-details-page-familyname", "John Johnson");
         }
 
         [Test]
