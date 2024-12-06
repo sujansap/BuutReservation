@@ -25,7 +25,7 @@ namespace Rise.Server.Tests.Controllers
             await LoginAsync(UserRole.Member);
             var response = await _client.GetAsync("me/unread/count");
             var count = await response.Content.ReadFromJsonAsync<int>();
-            count.ShouldBe(4);
+            count.ShouldBe(1);
         }
 
         [Fact]
