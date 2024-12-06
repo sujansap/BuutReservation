@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.Playwright;
 using Rise.Shared.Users;
+using static Rise.Shared.Users.UserRegistrationModelDto;
 
 namespace Rise.Client.Tests.Admin
 {
@@ -55,8 +56,18 @@ namespace Rise.Client.Tests.Admin
             var userDetails = new UserDetailDto
             {
                 Id = userId,
-                FamilyName = "Smith"
-                /*later more here*/
+                FamilyName = "Smith",
+                FirstName = "John",
+                Email = "john.smith@example.com",
+                PhoneNumber = "+1234567890",
+                Address = new AddressModel
+                {
+                    Street = "Main Street",
+                    Number = "123",
+                    City = "New York",
+                    PostalCode = "12345",
+                    Country = "USA"
+                }
             };
 
             await MockUserDetails(userId, userDetails, delayMs);
@@ -67,8 +78,21 @@ namespace Rise.Client.Tests.Admin
         public async Task DisplaysUserFamilyName()
         {
             await InitializeWithMockUser(1);
-            await AssertUserDetail("user-details-page-familyname", "Smith");
+            await AssertUserDetail("user-details-page-familyname", "John Smith");
 
+        }
+        [Test]
+        public async Task DisplaysUserPhone()
+        {
+            await InitializeWithMockUser(1);
+            await AssertUserDetail("user-details-page-phone", "+1234567890");
+        }
+
+        [Test]
+        public async Task DisplaysUserAddress()
+        {
+            await InitializeWithMockUser(1);
+            await AssertUserDetail("user-details-page-address", "Main Street 123, 12345 New York, USA");
         }
 
         [Test]
@@ -106,34 +130,63 @@ namespace Rise.Client.Tests.Admin
             await Page.GetByTestId("back-to-guests-list-button").ClickAsync();
             await Expect(Page).ToHaveURLAsync(baseSuffix);
         }
-
         [Test]
-        public async Task RefreshesDataOnReload()
+        public async Task UpdatesAllFieldsOnDataRefresh()
         {
             const int userId = 1;
-            // initialUser state
+            // Initial state
             var initialUser = new UserDetailDto
             {
                 Id = userId,
-                FamilyName = "Smith"
-                /*later more here*/
+                FamilyName = "Smith",
+                FirstName = "John",
+                Email = "john.smith@example.com",
+                PhoneNumber = "+1234567890",
+                Address = new AddressModel
+                {
+                    Street = "Main Street",
+                    Number = "123",
+                    City = "New York",
+                    PostalCode = "12345",
+                    Country = "USA"
+                }
             };
 
             await MockUserDetails(userId, initialUser);
             await NavigateToUrl($"{baseSuffix}/{userId}");
-            await AssertUserDetail("user-details-page-familyname", "Smith");
 
-            // updatedUser state
+            // Verify initial state
+            await AssertUserDetail("user-details-page-name", "John Smith");
+            await AssertUserDetail("user-details-page-email", "john.smith@example.com");
+            await AssertUserDetail("user-details-page-phone", "+1234567890");
+            await AssertUserDetail("user-details-page-address", "Main Street 123, 12345 New York, USA");
+
+            // Updated state
             var updatedUser = new UserDetailDto
             {
                 Id = userId,
-                FamilyName = "Johnson"
-                /*later more here*/
+                FamilyName = "Johnson",
+                FirstName = "John",
+                Email = "john.johnson@example.com",
+                PhoneNumber = "+1987654321",
+                Address = new AddressModel
+                {
+                    Street = "Broadway",
+                    Number = "456",
+                    City = "Los Angeles",
+                    PostalCode = "90001",
+                    Country = "USA"
+                }
             };
 
             await MockUserDetails(userId, updatedUser);
             await ReloadPage();
-            await AssertUserDetail("user-details-page-familyname", "Johnson");
+
+            // Verify updated state
+            await AssertUserDetail("user-details-page-name", "John Johnson");
+            await AssertUserDetail("user-details-page-email", "john.johnson@example.com");
+            await AssertUserDetail("user-details-page-phone", "+1987654321");
+            await AssertUserDetail("user-details-page-address", "Broadway 456, 90001 Los Angeles, USA");
         }
 
         [Test]
