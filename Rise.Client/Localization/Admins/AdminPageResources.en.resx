@@ -109,4 +109,7 @@
 			End
 		</value>
 	</data>
+	<data name="AddCruisePeriod">
+		<value>Add Cruise Period</value>
+	</data>
 </root>

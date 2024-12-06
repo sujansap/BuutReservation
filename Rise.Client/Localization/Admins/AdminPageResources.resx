@@ -106,4 +106,7 @@
 			Einde
 		</value>
 	</data>
+	<data name="AddCruisePeriod">
+		<value>Voeg Vaarperiode</value>
+	</data>
 </root>

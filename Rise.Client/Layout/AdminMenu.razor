@@ -10,6 +10,11 @@
 <MudNavLink data-testid="nav-admin-guests" Href="/admin/guests">
     @Localizer["NewUsers"]
 </MudNavLink>
-<MudNavLink data-testid="nav-admin-cruise-period" Href="/admin/cruise_period">
-    @Localizer["CruisePeriod"]
-</MudNavLink>
+<MudNavGroup Title="@Localizer["CruisePeriod"]" Expanded="false" Href="/admin/cruise_period">
+    <MudNavLink data-testid="nav-admin-cruise-period" Href="/admin/cruise_period">
+        @Localizer["CruisePeriod"]
+    </MudNavLink>
+    <MudNavLink data-testid="nav-admin-cruise-period-add" Href="/admin/cruise_period/add">
+        @Localizer["AddCruisePeriod"]
+    </MudNavLink>
+</MudNavGroup>
