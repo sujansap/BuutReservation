@@ -43,7 +43,8 @@
                         Color="Color.Inherit" data-testid="nav-desktop-profile" />
                     @if (_unreadNotificationCount > 0)
                     {
-                        <MudBadge Color="Color.Secondary" Content="@_unreadNotificationCount" Max="99" Overlap>
+                        <MudBadge Color="Color.Secondary" Content="@_unreadNotificationCount" Max="99" Overlap
+                            data-testid="nav-desktop-notifications-count-badge">
                             <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
                                 data-testid="nav-desktop-notifications" OnClick="HandleNotificationButtonClicked" />
                         </MudBadge>
