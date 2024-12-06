@@ -16,6 +16,9 @@ namespace Rise.Client.Admins
         public required AsyncData<UserDetailDto> AsyncDataRef { get; set; }
         private UserDetailDto? UserDetails { get; set; }
 
+        private string FormattedFullName => UserDetails != null
+            ? $"{UserDetails.FirstName} {UserDetails.FamilyName}"
+            : string.Empty;
         private string FormattedAddress => UserDetails?.Address != null
             ? $"{UserDetails.Address.Street} {UserDetails.Address.Number}, {UserDetails.Address.PostalCode} {UserDetails.Address.City}, {UserDetails.Address.Country}"
             : string.Empty;

@@ -15,7 +15,7 @@
     TestIdPrefix="user-details">
     <MudPaper Class="pa-4">
         <MudText data-testid="user-details-page-familyname" Typo="Typo.h3" Class="mb-4">
-            @($"{UserDetails?.FirstName} {UserDetails?.FamilyName}")
+            @FormattedFullName
         </MudText>
 
         <MudGrid>
