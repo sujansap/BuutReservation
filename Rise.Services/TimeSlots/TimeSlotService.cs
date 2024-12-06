@@ -9,6 +9,7 @@ using Rise.Services.Auth;
 using System.Text.Json;
 using System.Security.Claims;
 using Rise.Domain.Exceptions;
+using Rise.Domain.TimeSlots;
 
 namespace Rise.Services.TimeSlots
 {
@@ -128,6 +129,31 @@ namespace Rise.Services.TimeSlots
 
         }
 
+        /// <summary>
+        /// Creates a new time slot
+        /// </summary>
+        /// <param name="dto">dto with info to create timslot</param>
+        /// <returns>Id of the created time slot</returns>
+        /// <exception cref="EntityNotFoundException"></exception>
+        public async Task<int> CreateTimeSlot(CreateTimeSlotDto timslotDto)
+        {
+            var cruisePeriod = await _dbContext.CruisePeriods
+                .FirstOrDefaultAsync(cp => cp.Id == timslotDto.CruisePeriodId)
+                ?? throw new EntityNotFoundException(nameof(CruisePeriod), timslotDto.CruisePeriodId);
+
+            var timeSlot = new TimeSlot
+            {
+                Start = timslotDto.Start,
+                End = timslotDto.End,
+                Date = timslotDto.Date,
+                CruisePeriod = cruisePeriod
+            };
+
+            _dbContext.TimeSlots.Add(timeSlot);
+            await _dbContext.SaveChangesAsync();
+
+            return timeSlot.Id;
+        }
 
     }
 }
