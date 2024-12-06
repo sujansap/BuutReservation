@@ -41,10 +41,18 @@
                 <Authorized>
                     <MudIconButton Href="profile" Edge="Edge.End" Icon="@Icons.Material.Filled.Person"
                         Color="Color.Inherit" data-testid="nav-desktop-profile" />
-                    <MudBadge Color="Color.Secondary" Content="0" Max="99" Overlap>
+                    @if (_unreadNotificationCount > 0)
+                    {
+                        <MudBadge Color="Color.Secondary" Content="@_unreadNotificationCount" Max="99" Overlap>
+                            <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
+                                data-testid="nav-desktop-notifications" OnClick="HandleNotificationButtonClicked" />
+                        </MudBadge>
+                    }
+                    else
+                    {
                         <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" Edge="Edge.End"
                             data-testid="nav-desktop-notifications" OnClick="HandleNotificationButtonClicked" />
-                    </MudBadge>
+                    }
 
                     <MudNavLink OnClick="@BeginLogOut" data-testid="nav-desktop-logout"
                         Icon="@Icons.Material.Filled.Logout" IconColor="Color.Inherit">
