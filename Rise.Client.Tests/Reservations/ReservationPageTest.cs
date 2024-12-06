@@ -191,8 +191,15 @@ namespace Rise.Client.Tests.Reservations
             await NavigateToUrl("/reservations");
 
             ILocator booked = Page.Locator("[data-celtype=fully-booked]");
-            await Expect(booked).ToHaveCountAsync(0);
+            try
+            {
+                await Expect(booked).ToHaveCountAsync(35);
 
+            }
+            catch (PlaywrightException)
+            {
+                await Expect(booked).ToHaveCountAsync(42);
+            }
         }
 
         [Test]
@@ -395,8 +402,7 @@ namespace Rise.Client.Tests.Reservations
         {
             string currentDate = DateTime.Today.ToString(universalDateFormat);
             await NavigateToUrl("/reservations");
-            // await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
-
+            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
             string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);

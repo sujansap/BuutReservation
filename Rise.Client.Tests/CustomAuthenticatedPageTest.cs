@@ -89,10 +89,12 @@ namespace Rise.Client.Tests
 
         protected async Task LogoutAsync()
         {
-            SessionStorage = null;
+            if (IsLoggedIn()) return;
+
             await Page.SetViewportSizeAsync(1080, 1920);
             await NavigateToUrl("/");
             await Page.GetByTestId("nav-desktop-logout").ClickAsync();
+            SessionStorage = null;
         }
 
         protected async Task CheckRedirectedToLogin()
