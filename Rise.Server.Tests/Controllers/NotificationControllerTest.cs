@@ -20,6 +20,15 @@ namespace Rise.Server.Tests.Controllers
         }
 
         [Fact]
+        public async Task GET_CurrentUser_Notifications_Unread_Count_ReturnsCount()
+        {
+            await LoginAsync(UserRole.Member);
+            var response = await _client.GetAsync("me/unread/count");
+            var count = await response.Content.ReadFromJsonAsync<int>();
+            count.ShouldBe(4);
+        }
+
+        [Fact]
         public async Task GET_CurrentUser_Notifications_GivesNotifications()
         {
             await LoginAsync(UserRole.Member);
