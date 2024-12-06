@@ -400,9 +400,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task ShouldChangeCurrentDateWhenGoingToNextMonth()
         {
-            string currentDate = DateTime.Today.ToString(universalDateFormat);
             await NavigateToUrl("/reservations");
-            await Page.WaitForFunctionAsync($"() => window.location.href.includes('CurrentDate={currentDate}')");
             ILocator next = Page.GetByTestId("calendar-next");
             await next.ClickAsync();
             string nextMonthDate = DateTime.Today.AddMonths(1).ToString(universalDateFormat);

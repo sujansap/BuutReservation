@@ -35,11 +35,12 @@ namespace Rise.Client.Tests.Reservations
             BoatPersonalName = "Speedy"
         };
 
-        private async Task MockReservationsApi()
+        private async Task MockReservationsApi(int delayMs = 0)
         {
             await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
-                // await Task.Delay(3000);
+                if (delayMs > 0)
+                    await Task.Delay(delayMs);
 
                 var response = new ItemsPageDto<ReservationDto>()
                 {
@@ -105,7 +106,7 @@ namespace Rise.Client.Tests.Reservations
             await NavigateToUrl(UserReservationsUrl);
 
 
-            // await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
+            await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
             await Expect(Page.GetByTestId("reservation-item")).ToBeVisibleAsync();
             var viewDetailsButton = Page.GetByTestId("view-reservation-details-button");
             await viewDetailsButton.ClickAsync();
@@ -165,7 +166,7 @@ namespace Rise.Client.Tests.Reservations
 
             var date = firstReservation.GetByTestId("reservation-date");
 
-            await Expect(date).ToContainTextAsync(ValidReservation.Date.ToShortDateString());
+            await Expect(date).ToContainTextAsync(ValidReservation.Date.ToString());
 
             var boatName = firstReservation.GetByTestId("reservation-boat-name");
             await Expect(boatName).ToContainTextAsync(ValidReservation.BoatPersonalName);
@@ -178,13 +179,11 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task ShowsLoadingStateWhileFetchingReservations()
         {
-            await MockReservationsApi();
+            await MockReservationsApi(delayMs: 5000);
 
             await NavigateToUrl(UserReservationsUrl);
 
             await Expect(Page.GetByTestId("user-reservations-loading-progress")).ToBeVisibleAsync();
-
-            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']");
         }
 
         [Test]
