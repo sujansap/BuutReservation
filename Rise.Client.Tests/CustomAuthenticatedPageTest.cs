@@ -1,47 +1,35 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Playwright;
 using Rise.Shared.Users;
+using System.Collections.Concurrent;
 
 namespace Rise.Client.Tests
 {
     public class CustomAuthenticatedPageTest : CustomPageTest
     {
-        private SemaphoreSlim loginSemaphore = default!;
-        private bool failedToLogin = false;
+        private static readonly ConcurrentDictionary<UserRole, SemaphoreSlim> roleSemaphores = new();
+        private static readonly ConcurrentDictionary<UserRole, string?> roleSessionStorage = new();
 
-        private string? SessionStorage
+        public static void Dispose()
         {
-            get;
-            set;
-        }
-
-        [OneTimeSetUp]
-        public override void GlobalSetUp()
-        {
-            base.GlobalSetUp();
-            loginSemaphore = new(1, 1);
-        }
-
-        [OneTimeTearDown]
-        public virtual void GlobalTearDown()
-        {
-            loginSemaphore.Dispose();
+            foreach (var semaphore in roleSemaphores.Values)
+            {
+                semaphore.Dispose();
+            }
         }
 
         protected async Task LoginAsync(UserRole role)
         {
-            await loginSemaphore.WaitAsync();
+            var semaphore = roleSemaphores.GetOrAdd(role, _ => new SemaphoreSlim(1, 1));
+
+            await semaphore.WaitAsync();
 
             try
             {
-                if (IsLoggedIn())
+                if (IsLoggedIn(role))
                 {
-                    await LoadLoginFromSession();
-                }
-                else if (failedToLogin)
-                {
-                    throw new PlaywrightException("Fixture failed to log in");
+                    roleSessionStorage.TryGetValue(role, out string? savedSession);
+                    await LoadLoginFromSession(savedSession);
                 }
                 else
                 {
@@ -55,12 +43,12 @@ namespace Rise.Client.Tests
 
                     int attempts = 0;
 
-                    while (attempts < 5 && !IsLoggedIn())
+                    while (attempts < 5 && !IsLoggedIn(role))
                     {
                         try
                         {
                             await FillInCredentials(credentials);
-                            await SaveSessionStorage();
+                            await SaveSessionStorage(role);
                         }
                         catch (LoginFailedException e)
                         {
@@ -69,14 +57,18 @@ namespace Rise.Client.Tests
                         }
                     }
 
-                    if (!IsLoggedIn())
-                        failedToLogin = true;
                 }
             }
             finally
             {
-                loginSemaphore.Release();
+                semaphore.Release();
             }
+        }
+
+        private static bool IsLoggedIn(UserRole role)
+        {
+            return roleSessionStorage.TryGetValue(role, out string? savedSession) && savedSession != null;
+
         }
 
         private async Task FillInCredentials(Credentials credentials)
@@ -98,23 +90,22 @@ namespace Rise.Client.Tests
             }
         }
 
-        private Task FinishUpLogin()
+        private Task<IElementHandle?> FinishUpLogin()
         {
             return Page.WaitForSelectorAsync("[data-testid=login-finishing]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
         }
 
-        private async Task SaveSessionStorage()
+        private async Task SaveSessionStorage(UserRole role)
         {
             string sessionStorage = await Page.EvaluateAsync<string>("() => JSON.stringify(sessionStorage)");
-            SessionStorage = sessionStorage;
+
+            roleSessionStorage[role] = sessionStorage;
         }
 
-        private bool IsLoggedIn()
+        private async Task LoadLoginFromSession(string? sessionStorage)
         {
-            return SessionStorage?.Contains("oidc.user:https://rise-gent2.eu.auth0.com") ?? false;
-        }
-        private async Task LoadLoginFromSession()
-        {
+            if (sessionStorage == null) return;
+
             await NavigateToUrl("/");
             await Page.EvaluateAsync(@"storage => {
                 if (window.location.hostname === 'localhost') {
@@ -123,7 +114,8 @@ namespace Rise.Client.Tests
                         window.sessionStorage.setItem(key, value);
                     }
                 }
-            }", SessionStorage);
+            }", sessionStorage);
+
             await Page.EvaluateAsync(@"key => {
                 if (window.location.hostname === 'localhost') {
                     return window.sessionStorage.getItem(key);
@@ -140,14 +132,14 @@ namespace Rise.Client.Tests
             public required string Password { get; set; }
         }
 
-        protected async Task LogoutAsync()
+        protected async Task LogoutAsync(UserRole role)
         {
-            if (!IsLoggedIn()) return;
+            if (!IsLoggedIn(role)) return;
 
             await Page.SetViewportSizeAsync(1080, 1920);
             await NavigateToUrl("/");
             await Page.GetByTestId("nav-desktop-logout").ClickAsync();
-            SessionStorage = null;
+
         }
 
         protected async Task CheckRedirectedToLogin()
@@ -160,12 +152,13 @@ namespace Rise.Client.Tests
             await NavigateToUrl(url);
             await CheckRedirectedToLogin();
         }
+
         protected async Task TestNotAuthorized(string url, UserRole role)
         {
             await LoginAsync(role);
             await NavigateToUrl(url);
             await Expect(Page.GetByTestId("unauthorized")).ToBeVisibleAsync();
-            await LogoutAsync();
+            await LogoutAsync(role);
         }
     }
 

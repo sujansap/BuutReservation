@@ -9,8 +9,9 @@ namespace Rise.Client.Tests.Home
         [Test]
         public async Task ClickReservationButton_ShouldNavigateToReservations()
         {
+            UserRole role = UserRole.Guest;
             //Arrange
-            await LoginAsync(UserRole.Guest);
+            await LoginAsync(role);
             await NavigateToUrl("/home");
 
             //Act
@@ -20,7 +21,7 @@ namespace Rise.Client.Tests.Home
             //Assert
             await Expect(Page).ToHaveURLAsync(new Regex("/reservations\\?.*$"));
 
-            await LogoutAsync();
+            await LogoutAsync(role);
         }
     }
 }
