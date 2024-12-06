@@ -166,7 +166,99 @@ public class CancelReservationTest : CustomAuthenticatedPageTest
         await Expect(errorMessage).ToHaveTextAsync($"Failed to cancel reservation with ID {reservationDetails.Id}. Response: Bad Request");
     }
 
+    [Test]
+    public async Task ShowsCancelConfirmationDialog()
+    {
+        var reservationDetails = new ReservationDetailsDto
+        {
+            Id = 1,
+            Date = DateOnly.Parse(DateTime.Now.AddDays(5).ToString("yyyy/MM/dd")),
+            Start = TimeOnly.Parse("10:00"),
+            End = TimeOnly.Parse("13:00"),
+            BoatId = 1,
+            BoatPersonalName = "Limba",
+            MentorName = "John Doe",
+            BatteryType = "Lithium-Ion",
+            IsDeleted = false
+        };
 
+        await MockReservationDetailsApi(reservationDetails);
+        await NavigateToUrl($"/reservations/{reservationDetails.Id}");
+
+        var cancelButton = Page.GetByTestId("cancel-reservation-button");
+        await cancelButton.ClickAsync();
+
+        // Verify dialog appears with correct content
+        var dialogTitle = Page.GetByText("Reservatie annuleren");
+        var dialogContent = Page.GetByText("Weet u zeker dat u deze reservatie wilt annuleren?");
+        
+        await Expect(dialogTitle).ToBeVisibleAsync();
+        await Expect(dialogContent).ToBeVisibleAsync();
+    }
+
+    [Test]
+    public async Task CancelsReservationWhenConfirmed()
+    {
+        var reservationDetails = new ReservationDetailsDto
+        {
+            Id = 1,
+            Date = DateOnly.Parse(DateTime.Now.AddDays(5).ToString("yyyy/MM/dd")),
+            Start = TimeOnly.Parse("10:00"),
+            End = TimeOnly.Parse("13:00"),
+            BoatId = 1,
+            BoatPersonalName = "Limba",
+            MentorName = "John Doe",
+            BatteryType = "Lithium-Ion",
+            IsDeleted = false
+        };
+
+        await MockReservationDetailsApi(reservationDetails);
+        await MockCancelReservationApi(reservationDetails.Id);
+
+        await NavigateToUrl($"/reservations/{reservationDetails.Id}");
+
+        // Click cancel button to show dialog
+        var cancelButton = Page.GetByTestId("cancel-reservation-button");
+        await cancelButton.ClickAsync();
+
+        // Click confirm in dialog
+        var confirmButton = Page.GetByTestId("cancel-confirmation-yes");
+        await confirmButton.ClickAsync();
+
+        // Should redirect to reservations list
+        await Expect(Page).ToHaveURLAsync(ReservationsListUrl);
+    }
+
+    [Test]
+    public async Task DoesNotCancelWhenDialogCancelled()
+    {
+        var reservationDetails = new ReservationDetailsDto
+        {
+            Id = 1,
+            Date = DateOnly.Parse(DateTime.Now.AddDays(5).ToString("yyyy/MM/dd")),
+            Start = TimeOnly.Parse("10:00"),
+            End = TimeOnly.Parse("13:00"),
+            BoatId = 1,
+            BoatPersonalName = "Limba",
+            MentorName = "John Doe",
+            BatteryType = "Lithium-Ion",
+            IsDeleted = false
+        };
+
+        await MockReservationDetailsApi(reservationDetails);
+        await NavigateToUrl($"/reservations/{reservationDetails.Id}");
+
+        // Click cancel button to show dialog
+        var cancelButton = Page.GetByTestId("cancel-reservation-button");
+        await cancelButton.ClickAsync();
+
+        // Click no in dialog
+        var noButton = Page.GetByTestId("cancel-confirmation-no");
+        await noButton.ClickAsync();
+
+        // Should stay on same page
+        await Expect(Page).ToHaveURLAsync($"/reservations/{reservationDetails.Id}");
+    }
 
 }
 

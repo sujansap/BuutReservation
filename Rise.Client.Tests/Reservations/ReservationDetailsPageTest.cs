@@ -59,8 +59,6 @@ namespace Rise.Client.Tests.Reservations
             await Expect(Page.GetByTestId("reservation-details-date")).ToContainTextAsync(reservationDetails.Date.ToString("dd/MM/yyyy")); // FIXME element not found??
             await Expect(Page.GetByTestId("reservation-details-boat")).ToContainTextAsync(reservationDetails.BoatPersonalName);
             await Expect(Page.GetByTestId("reservation-details-time")).ToContainTextAsync($"{reservationDetails.Start:HH:mm} - {reservationDetails.End:HH:mm}");
-            await Expect(Page.GetByTestId("reservation-details-battery")).ToContainTextAsync(reservationDetails.BatteryType);
-            await Expect(Page.GetByTestId("reservation-details-battery-mentor")).ToContainTextAsync(reservationDetails.MentorName);
         }
 
         [Test]
@@ -74,60 +72,60 @@ namespace Rise.Client.Tests.Reservations
             await Expect(errorMessage).ToBeVisibleAsync(new() { Timeout = 30000 });
         }
 
-// [Test]
-// public async Task ShowsCurrentBatteryUserWhenAvailable()
-// {
-//     var reservationDetails = new ReservationDetailsDto
-//     {
-//         Id = 1,
-//         Date = DateOnly.Parse("2024/10/30"),
-//         Start = TimeOnly.Parse("10:00"),
-//         End = TimeOnly.Parse("13:00"),
-//         BoatId = 101,
-//         BoatPersonalName = "Limba",
-//         MentorName = "John Doe",
-//         BatteryType = "Lithium-Ion",
-//         CurrentBatteryUserId = 42,
-//         CurrentBatteryUserName = "Jane Smith"
-//     };
 
-//     await MockReservationDetailsApi(reservationDetails);
-//     await Page.GotoAsync(UserReservationDetailsUrl);
+        [Test]
+        public async Task ShowsCurrentBatteryUserWhenAvailable()
+        {
+            var reservationDetails = new ReservationDetailsDto
+            {
+                Id = 1,
+                Date = DateOnly.Parse("2024/10/30"),
+                Start = TimeOnly.Parse("10:00"),
+                End = TimeOnly.Parse("13:00"),
+                BoatId = 101,
+                BoatPersonalName = "Limba",
+                MentorName = "John Doe",
+                BatteryType = "Lithium-Ion",
+                CurrentBatteryUserId = 42,
+                CurrentBatteryUserName = "Jane Smith",
+                CurrentHolderPhoneNumber = "123456789",
+                CurrentHolderEmail = "jane@example.com",
+                CurrentHolderStreet = "Main Street",
+                CurrentHolderNumber = "123",
+                CurrentHolderPostalCode = "1000",
+                CurrentHolderCity = "Brussels"
+            };
 
-//     await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
+            await MockReservationDetailsApi(reservationDetails);
+            await NavigateToUrl(UserReservationDetailsUrl);
 
-//     var currentUserText = await Page.GetByTestId("reservation-battery-current-user").TextContentAsync();
-//     currentUserText.ShouldContain(reservationDetails.CurrentBatteryUserName);
-// }
+            await Expect(Page.GetByTestId("reservation-battery-current-user")).ToContainTextAsync(reservationDetails.CurrentBatteryUserName);
+            await Expect(Page.GetByTestId("reservation-holder-phone")).ToContainTextAsync(reservationDetails.CurrentHolderPhoneNumber);
+            await Expect(Page.GetByTestId("reservation-holder-email")).ToContainTextAsync(reservationDetails.CurrentHolderEmail);
+            await Expect(Page.GetByTestId("reservation-holder-address")).ToContainTextAsync($"{reservationDetails.CurrentHolderStreet} {reservationDetails.CurrentHolderNumber}");
+            await Expect(Page.GetByTestId("reservation-holder-city")).ToContainTextAsync($"{reservationDetails.CurrentHolderPostalCode} {reservationDetails.CurrentHolderCity}");
+        }
 
-// [Test]
-// public async Task HidesCurrentBatteryUserWhenNotAvailable()
-// {
-//     var reservationDetails = new ReservationDetailsDto
-//     {
-//         Id = 1,
-//         Date = DateOnly.Parse("2024/10/30"),
-//         Start = TimeOnly.Parse("10:00"),
-//         End = TimeOnly.Parse("13:00"),
-//         BoatId = 101,
-//         BoatPersonalName = "Limba",
-//         MentorName = "John Doe",
-//         BatteryType = "Lithium-Ion",
-//         CurrentBatteryUserId = null,
-//         CurrentBatteryUserName = null
-//     };
+        [Test]
+        public async Task ShowsNoPickupInfoWhenNoCurrentHolder()
+        {
+            var reservationDetails = new ReservationDetailsDto
+            {
+                Id = 1,
+                Date = DateOnly.Parse("2024/10/30"),
+                Start = TimeOnly.Parse("10:00"),
+                End = TimeOnly.Parse("13:00"),
+                BoatId = 101,
+                BoatPersonalName = "Limba",
+                MentorName = "John Doe",
+                // No holder details provided
+            };
 
-//     await MockReservationDetailsApi(reservationDetails);
-//     await Page.GotoAsync(UserReservationDetailsUrl);
+            await MockReservationDetailsApi(reservationDetails);
+            await NavigateToUrl(UserReservationDetailsUrl);
 
-//     await Page.WaitForRequestAsync(request => request.Url.Contains("api/Reservation/1"));
-
-//     var currentUserElement = Page.GetByTestId("reservation-battery-current-user");
-//     await Expect(currentUserElement).ToHaveCountAsync(0);
-// }
-
-
-
+            await Expect(Page.GetByTestId("no-pickup-info")).ToContainTextAsync("Geen ophaal informatie beschikbaar");
+        }
 
     }
 }

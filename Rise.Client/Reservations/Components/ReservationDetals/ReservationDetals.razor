@@ -51,19 +51,19 @@
                                     <MudStack Spacing="4">
                                         <div>
                                             <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Date"]</MudText>
-                                            <MudText Typo="Typo.body1" data-testid="reservation-date" Class="mt-1">
+                                            <MudText Typo="Typo.body1" data-testid="reservation-details-date" Class="mt-1">
                                                 @(string.IsNullOrEmpty(ReservationDetails.Date.ToString()) ? "-" : ReservationDetails.Date.ToShortDateString())
                                             </MudText>
                                         </div>
                                         <div>
                                             <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Boat"]</MudText>
-                                            <MudText Typo="Typo.body1" data-testid="reservation-boat" Class="mt-1">
+                                            <MudText Typo="Typo.body1" data-testid="reservation-details-boat" Class="mt-1">
                                                 @GetDisplayText(ReservationDetails.BoatPersonalName)
                                             </MudText>
                                         </div>
                                         <div>
                                             <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Time"]</MudText>
-                                            <MudText Typo="Typo.body1" data-testid="reservation-time" Class="mt-1">
+                                            <MudText Typo="Typo.body1" data-testid="reservation-details-time" Class="mt-1">
                                                 @($"{ReservationDetails.Start} - {ReservationDetails.End}")
                                             </MudText>
                                         </div>
@@ -85,16 +85,16 @@
                                             </div>
                                             <div>
                                                 <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Contact"]</MudText>
-                                                <MudText Typo="Typo.body1" Class="mt-1">
+                                                <MudText Typo="Typo.body1" data-testid="reservation-holder-phone" Class="mt-1">
                                                     @GetDisplayText(ReservationDetails.CurrentHolderPhoneNumber)<br />
-                                                    @GetDisplayText(ReservationDetails.CurrentHolderEmail)
+                                                    <div data-testid="reservation-holder-email">@GetDisplayText(ReservationDetails.CurrentHolderEmail)</div>
                                                 </MudText>
                                             </div>
                                             <div>
                                                 <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Address"]</MudText>
-                                                <MudText Typo="Typo.body1" Class="mt-1">
+                                                <MudText Typo="Typo.body1" data-testid="reservation-holder-address" Class="mt-1">
                                                     @GetDisplayText($"{ReservationDetails.CurrentHolderStreet} {ReservationDetails.CurrentHolderNumber}")<br />
-                                                    @GetDisplayText($"{ReservationDetails.CurrentHolderPostalCode} {ReservationDetails.CurrentHolderCity}")
+                                                    <div data-testid="reservation-holder-city">@GetDisplayText($"{ReservationDetails.CurrentHolderPostalCode} {ReservationDetails.CurrentHolderCity}")</div>
                                                 </MudText>
                                             </div>
                                             <div>
@@ -111,7 +111,7 @@
                                     <MudPaper Elevation="0" Class="pa-4" Style="border: 1px solid rgba(64, 224, 208, 0.6); border-radius: 16px;">
                                         <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
                                             <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" Size="Size.Large" />
-                                            <MudText Typo="Typo.h6" Align="Align.Center">@Localizer["NoPickupInfo"]</MudText>
+                                            <MudText Typo="Typo.h6" Align="Align.Center" data-testid="no-pickup-info">@Localizer["NoPickupInfo"]</MudText>
                                         </MudStack>
                                     </MudPaper>
                                 }
