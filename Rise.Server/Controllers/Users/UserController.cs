@@ -15,18 +15,30 @@ namespace Rise.Server.Controllers.Users
         private readonly IUserAdminService _userService = userService;
 
         /// <summary>
-        /// Get all the guest users
+        /// Get users by role
         /// </summary>
-        /// <returns>List of the guest users</returns>
-        [HttpGet("guests")]
-        [Authorize(Roles = nameof(UserRole.Administrator))]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
+        /// <param name="role">Role to filter users by (Administrator, Member, Guest).</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Number of items per page</param>
+        /// <returns>List of users matching the specified role</returns>
+        [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pagination<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetGuestUsers()
+        public async Task<IActionResult> GetUsersByRole([FromQuery] UserRole role, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            _logger.LogInformation("GET api/User/guests");
-            var users = await _userService.GetGuestUsers();
-            return Ok(users);
+            _logger.LogInformation("GET api/User?role={Role}&page={Page}&pageSize={PageSize}", role, page, pageSize);
+
+            try
+            {
+                var users = await _userService.GetUsersByRole(role, page, pageSize);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving users for role: {Role}", role);
+                return BadRequest("Error retrieving users");
+            }
         }
 
         /// <summary>
@@ -34,6 +46,7 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <returns>The details of a user</returns>
         [HttpGet("{userId}")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDetailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserDetails(int userId)
@@ -48,13 +61,19 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
-        [HttpPatch("role/member")]
-        [Authorize(Roles = nameof(UserRole.Administrator))]
+        [HttpPost("role")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
         {
             _logger.LogInformation("POST api/User/role for userId: {userId}", request.UserId);
+            if (request.Role != UserRole.Member)
+            {
+                // Only members can be added
+                //adding other roles not implemented yet
+                return BadRequest("Role must be Member");
+            }
             await _userService.AddMemberRole(request.UserId);
             return Ok();
         }

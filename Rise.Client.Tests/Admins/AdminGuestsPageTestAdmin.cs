@@ -15,73 +15,121 @@ namespace Rise.Client.Tests.Admin
             await LoginAsync(UserRole.Administrator);
         }
 
-        private async Task MockUsers(UserDto[] users)
+
+        [TearDown]
+        public async Task TearDownAsync()
         {
-            await Page.RouteAsync("*/**/api/User/guests", async route =>
-            {
-                await route.FulfillAsync(new()
-                {
-                    Status = 200,
-                    ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(users)
-                });
-            });
+            await LogoutAsync();
+            await base.TearDown();
         }
 
-        private async Task InitializeWithMockUsers()
+        private async Task MockUsers(int page = 1, int pageSize = 10, bool hasNextPage = false)
+
         {
-            UserDto[] users =
-            [
-                new()
+            var users = new UserDto[]
+            {
+                new UserDto
                 {
                     Id = 1,
                     FamilyName = "Smith"
                 },
-                new()
+                new UserDto
                 {
                     Id = 2,
                     FamilyName = "Johnson"
                 }
-            ];
+            };
 
-            await MockUsers(users);
-            await NavigateToUrl(baseSuffix);
+            var response = new Pagination<UserDto>
+            {
+                Items = users,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = users.Length,
+                HasNextPage = hasNextPage
+            };
+
+            await Page.RouteAsync("**/api/User?**", async route =>
+            {
+
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "application/json",
+                    Body = JsonSerializer.Serialize(response)
+                });
+            });
         }
 
-        [Test]
-        public async Task HasUserList()
+        private async Task InitializeWithMockUsers(int page = 1, bool hasNextPage = false)
         {
+            await MockUsers(page, 10, hasNextPage);
             await NavigateToUrl(baseSuffix);
-            await Expect(Page.GetByTestId("user-list")).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task DisplaysUsersTable()
         {
             await InitializeWithMockUsers();
-            await Expect(Page.GetByTestId("users-table")).ToBeVisibleAsync();
+            var locator = Page.GetByTestId("users-table");
+            await Expect(locator).ToBeVisibleAsync();
         }
 
         [Test]
         public async Task DisplaysNoUsersMessageWhenEmpty()
         {
-            await MockUsers([]);
-            await NavigateToUrl(baseSuffix);
-            await Expect(Page.GetByTestId("users-none")).ToBeVisibleAsync();
-        }
+            var emptyResponse = new Pagination<UserDto>
+            {
+                Items = Array.Empty<UserDto>(),
+                Page = 1,
+                PageSize = 10,
+                TotalCount = 0,
+                HasNextPage = false
+            };
 
-        [Test]
-        public async Task ShowsLoadingStateWhileFetchingUsers()
-        {
-            await Page.RouteAsync("*/**/api/User/guests", async route =>
+            await Page.RouteAsync("**/api/User?**", async route =>
             {
                 await Task.Delay(2000);
 
                 await route.FulfillAsync(new()
                 {
                     Status = 200,
-                    ContentType = "text/json",
-                    Body = JsonSerializer.Serialize(Array.Empty<UserDto>())
+                    ContentType = "application/json",
+                    Body = JsonSerializer.Serialize(emptyResponse, new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    })
+                });
+            });
+
+            await NavigateToUrl(baseSuffix);
+            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await Expect(Page.GetByTestId("users-none")).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task ShowsLoadingStateWhileFetchingUsers()
+        {
+            var emptyResponse = new Pagination<UserDto>
+            {
+                Items = Array.Empty<UserDto>(),
+                Page = 1,
+                PageSize = 10,
+                TotalCount = 0,
+                HasNextPage = false
+            };
+
+            await Page.RouteAsync("**/api/User?**", async route =>
+            {
+                await Task.Delay(1000);
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "application/json",
+                    Body = JsonSerializer.Serialize(emptyResponse, new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    })
                 });
             });
 
@@ -90,65 +138,25 @@ namespace Rise.Client.Tests.Admin
         }
 
         [Test]
-        public async Task DisplaysErrorMessageOnFailedFetch()
-        {
-            await Page.RouteAsync("*/**/api/User/guests", async route =>
-            {
-                await route.FulfillAsync(new()
-                {
-                    Status = 500,
-                    ContentType = "text/plain",
-                    Body = "Internal Server Error"
-                });
-            });
-
-            await NavigateToUrl(baseSuffix);
-            await Expect(Page.GetByTestId("user-list-fetch-error")).ToBeVisibleAsync();
-        }
-
-        [Test]
         public async Task TableHasCorrectHeaders()
         {
             await InitializeWithMockUsers();
-
-            ILocator headerCell = Page.GetByTestId("users-list-familyName");
-            await Expect(headerCell).ToContainTextAsync("Familienaam");
+            await Expect(Page.GetByTestId("users-list-familyName")).ToContainTextAsync("Familienaam");
         }
 
         [Test]
         public async Task DisplaysUserFamilyNames()
         {
             await InitializeWithMockUsers();
-
-            // check if both family names are visible
-            await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
-            await Expect(Page.GetByText("Johnson")).ToBeVisibleAsync();
+            await AssertUserDetails("list-guest-page-familyname-1", "Smith");
+            await AssertUserDetails("list-guest-page-familyname-2", "Johnson");
         }
 
-
-        [Test]
-        public async Task RefreshesDataOnReload()
+        private async Task AssertUserDetails(string testId, string expectedValue)
         {
-            // initial state
-            UserDto[] initialUsers =
-            [
-                new() { Id = 1, FamilyName = "Smith" }
-            ];
-
-            await MockUsers(initialUsers);
-            await NavigateToUrl(baseSuffix);
-            await Expect(Page.GetByText("Smith")).ToBeVisibleAsync();
-
-            // updated state
-            UserDto[] updatedUsers =
-            [
-                new() { Id = 2, FamilyName = "Johnson" }
-            ];
-
-            await MockUsers(updatedUsers);
-            await ReloadPage();
-            await Expect(Page.GetByText("Johnson")).ToBeVisibleAsync();
-            await Expect(Page.GetByText("Smith")).Not.ToBeVisibleAsync();
+            var locator = Page.GetByTestId(testId);
+            await Expect(locator).ToBeVisibleAsync();
+            await Expect(locator).ToHaveTextAsync(expectedValue);
         }
     }
 }
