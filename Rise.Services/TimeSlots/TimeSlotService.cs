@@ -133,26 +133,23 @@ namespace Rise.Services.TimeSlots
         /// Creates a new time slot
         /// </summary>
         /// <param name="dto">dto with info to create timslot</param>
-        /// <returns>Id of the created time slot</returns>
+        /// <returns>Returns the amount of timeslots that were added</returns>
         /// <exception cref="EntityNotFoundException"></exception>
-        public async Task<int> CreateTimeSlot(CreateTimeSlotDto timslotDto)
+        public async Task<int> CreateTimeSlot(CreateTimeSlotDto dto)
         {
-            var cruisePeriod = await _dbContext.CruisePeriods
-                .FirstOrDefaultAsync(cp => cp.Id == timslotDto.CruisePeriodId)
-                ?? throw new EntityNotFoundException(nameof(CruisePeriod), timslotDto.CruisePeriodId);
+            var cruisePeriod = await _dbContext.CruisePeriods.Include(cp => cp.TimeSlots)
+                .FirstOrDefaultAsync(cp => cp.Id == dto.CruisePeriodId && !cp.IsDeleted)
+                ?? throw new EntityNotFoundException(nameof(CruisePeriod), dto.CruisePeriodId);
 
-            var timeSlot = new TimeSlot
-            {
-                CruisePeriod = cruisePeriod,
-                Start = timslotDto.Start,
-                End = timslotDto.End,
-                Date = timslotDto.Date,
-            };
+            //add timeslots for the range of the cruise period
+            //we add the timeslots in bulk to the cruise period
+            // if one fails, don't add any
+            cruisePeriod.AddTimeSlots(dto.Start, dto.End);
 
-            _dbContext.TimeSlots.Add(timeSlot);
             await _dbContext.SaveChangesAsync();
 
-            return timeSlot.Id;
+            return cruisePeriod.TimeSlots.Count;
+
         }
 
 

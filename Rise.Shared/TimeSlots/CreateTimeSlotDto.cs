@@ -6,7 +6,6 @@ public record class CreateTimeSlotDto
 {
     public TimeOnly Start { get; init; }
     public TimeOnly End { get; init; }
-    public DateOnly Date { get; init; }
     public int CruisePeriodId { get; init; }
 
     public class Validator : AbstractValidator<CreateTimeSlotDto>
@@ -20,10 +19,6 @@ public record class CreateTimeSlotDto
                 .NotEmpty().WithMessage("End time is required")
                 .GreaterThan(x => x.Start).WithMessage("End time must be after start time");
 
-            RuleFor(x => x.Date)
-                .NotEmpty().WithMessage("Date is required")
-                .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
-                    .WithMessage("Date must be today or in the future");
 
             RuleFor(x => x.CruisePeriodId)
                 .NotEmpty().WithMessage("Cruise Period ID is required")
