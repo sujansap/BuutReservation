@@ -43,7 +43,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             Roles = new[] { role.Id }
         });
     }
-    public async Task<UsersPagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
+    public async Task<Pagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
     {
         try
         {
@@ -83,7 +83,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 })
                 .ToListAsync();
 
-            return new UsersPagination<UserDto>
+            return new Pagination<UserDto>
             {
                 Items = userDtos,
                 TotalCount = assignedUsersPage.Paging.Total,
@@ -154,9 +154,9 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             message, roleId, retries + 1, maxRetries + 1);
     }
 
-    private UsersPagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)
+    private Pagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)
     {
-        return new UsersPagination<UserDto>
+        return new Pagination<UserDto>
         {
             Items = new List<UserDto>(),
             TotalCount = 0,

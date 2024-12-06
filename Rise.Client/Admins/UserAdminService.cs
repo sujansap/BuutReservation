@@ -12,10 +12,10 @@ public class UserAdminService : IUserAdminService
     {
         _httpClient = httpClient;
     }
-    public async Task<UsersPagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
+    public async Task<Pagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
     {
-        var result = await _httpClient.GetFromJsonAsync<UsersPagination<UserDto>>($"?role={role}&page={page}&pageSize={pageSize}");
-        return result ?? new UsersPagination<UserDto>();
+        var result = await _httpClient.GetFromJsonAsync<Pagination<UserDto>>($"?role={role}&page={page}&pageSize={pageSize}");
+        return result ?? new Pagination<UserDto>();
     }
 
     public async Task<UserDetailDto> GetUserDetails(int userId)

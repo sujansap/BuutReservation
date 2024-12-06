@@ -1,6 +1,6 @@
 namespace Rise.Shared.Users;
 
-public record UsersPagination<T>
+public record Pagination<T>
 {
     public IEnumerable<T> Items { get; set; } = [];
     public int Page { get; set; }
@@ -8,3 +8,4 @@ public record UsersPagination<T>
     public int TotalCount { get; set; }
     public bool HasNextPage { get; set; }
 }
+

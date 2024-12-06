@@ -23,7 +23,7 @@ namespace Rise.Server.Controllers.Users
         /// <returns>List of users matching the specified role</returns>
         [HttpGet]
         [Authorize(Roles = "Administrator")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UsersPagination<UserDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pagination<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUsersByRole([FromQuery] UserRole role, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {

@@ -39,7 +39,7 @@ namespace Rise.Client.Tests.Admin
                 }
             };
 
-            var response = new UsersPagination<UserDto>
+            var response = new Pagination<UserDto>
             {
                 Items = users,
                 Page = page,
@@ -77,7 +77,7 @@ namespace Rise.Client.Tests.Admin
         [Test]
         public async Task DisplaysNoUsersMessageWhenEmpty()
         {
-            var emptyResponse = new UsersPagination<UserDto>
+            var emptyResponse = new Pagination<UserDto>
             {
                 Items = Array.Empty<UserDto>(),
                 Page = 1,
@@ -107,7 +107,7 @@ namespace Rise.Client.Tests.Admin
         [Test]
         public async Task ShowsLoadingStateWhileFetchingUsers()
         {
-            var emptyResponse = new UsersPagination<UserDto>
+            var emptyResponse = new Pagination<UserDto>
             {
                 Items = Array.Empty<UserDto>(),
                 Page = 1,
