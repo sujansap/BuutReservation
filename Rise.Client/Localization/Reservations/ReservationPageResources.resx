@@ -132,8 +132,11 @@
 <data name="Address" xml:space="preserve">
     <value>Adres</value>
 </data>
-<data name="Email" xml:space="preserve">
-    <value>E-mail</value>
+<data name="ReservationDetails" xml:space="preserve">
+    <value>Reservatie Details</value>
+</data>
+<data name="NoPickupInfo" xml:space="preserve">
+    <value>Geen ophaal informatie beschikbaar</value>
 </data>
 
 </root>

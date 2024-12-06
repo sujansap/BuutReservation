@@ -123,7 +123,10 @@
 <data name="Address" xml:space="preserve">
     <value>Address</value>
 </data>
-<data name="Email" xml:space="preserve">
-    <value>E-mail</value>
+<data name="ReservationDetails" xml:space="preserve">
+    <value>Reservation Details</value>
+</data>
+<data name="NoPickupInfo" xml:space="preserve">
+    <value>No pickup information available</value>
 </data>
 </root>

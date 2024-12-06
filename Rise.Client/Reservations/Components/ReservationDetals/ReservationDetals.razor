@@ -33,7 +33,7 @@
                     <MudCardHeader>
                         <CardHeaderContent>
                             <MudText Typo="Typo.h4" data-testid="reservation-details-title">
-                                @Localizer["Reservatie Details:"]
+                                @Localizer["ReservationDetails"]
                             </MudText>
                         </CardHeaderContent>
                     </MudCardHeader>
@@ -45,9 +45,9 @@
 
                     <MudCardContent>
                         <MudGrid>
-                            <!-- Left Column -->
+                            @* Linkse column *@
                             <MudItem xs="12" md="6">
-                                <MudPaper Elevation="0" Class="pa-4">
+                                <MudPaper Elevation="0" Class="pa-4" Style="border: 1px solid rgba(64, 224, 208, 0.6); border-radius: 16px;">
                                     <MudStack Spacing="4">
                                         <div>
                                             <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Date"]</MudText>
@@ -71,38 +71,50 @@
                                 </MudPaper>
                             </MudItem>
 
-                            <!-- Right Column -->
+                            @*rechtse column*@
                             <MudItem xs="12" md="6">
-                                <MudPaper Elevation="0" Class="pa-4">
-                                    <MudStack Spacing="4">
-                                        <div>
-                                            <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["PickupPerson"]</MudText>
-                                            <MudText Typo="Typo.body1" data-testid="reservation-battery-current-user" Class="mt-1">
-                                                @GetDisplayText(ReservationDetails.CurrentBatteryUserName)
-                                            </MudText>
-                                        </div>
-                                        <div>
-                                            <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Contact"]</MudText>
-                                            <MudText Typo="Typo.body1" Class="mt-1">
-                                                @GetDisplayText(ReservationDetails.CurrentHolderPhoneNumber)<br />
-                                                @GetDisplayText(ReservationDetails.CurrentHolderEmail)
-                                            </MudText>
-                                        </div>
-                                        <div>
-                                            <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Address"]</MudText>
-                                            <MudText Typo="Typo.body1" Class="mt-1">
-                                                @GetDisplayText($"{ReservationDetails.CurrentHolderStreet} {ReservationDetails.CurrentHolderNumber}")<br />
-                                                @GetDisplayText($"{ReservationDetails.CurrentHolderPostalCode} {ReservationDetails.CurrentHolderCity}")
-                                            </MudText>
-                                        </div>
-                                        <div>
-                                            <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["MentorPerson"]</MudText>
-                                            <MudText Typo="Typo.body1" data-testid="reservation-battery-mentor" Class="mt-1">
-                                                @GetDisplayText(ReservationDetails.MentorName)
-                                            </MudText>
-                                        </div>
-                                    </MudStack>
-                                </MudPaper>
+                                @if (HasCurrentHolderDetails())
+                                {
+                                    <MudPaper Elevation="0" Class="pa-4" Style="border: 1px solid rgba(64, 224, 208, 0.6); border-radius: 16px;">
+                                        <MudStack Spacing="4">
+                                            <div>
+                                                <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["PickupPerson"]</MudText>
+                                                <MudText Typo="Typo.body1" data-testid="reservation-battery-current-user" Class="mt-1">
+                                                    @GetDisplayText(ReservationDetails.CurrentBatteryUserName)
+                                                </MudText>
+                                            </div>
+                                            <div>
+                                                <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Contact"]</MudText>
+                                                <MudText Typo="Typo.body1" Class="mt-1">
+                                                    @GetDisplayText(ReservationDetails.CurrentHolderPhoneNumber)<br />
+                                                    @GetDisplayText(ReservationDetails.CurrentHolderEmail)
+                                                </MudText>
+                                            </div>
+                                            <div>
+                                                <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["Address"]</MudText>
+                                                <MudText Typo="Typo.body1" Class="mt-1">
+                                                    @GetDisplayText($"{ReservationDetails.CurrentHolderStreet} {ReservationDetails.CurrentHolderNumber}")<br />
+                                                    @GetDisplayText($"{ReservationDetails.CurrentHolderPostalCode} {ReservationDetails.CurrentHolderCity}")
+                                                </MudText>
+                                            </div>
+                                            <div>
+                                                <MudText Typo="Typo.h6" Color="Color.Primary">@Localizer["MentorPerson"]</MudText>
+                                                <MudText Typo="Typo.body1" data-testid="reservation-battery-mentor" Class="mt-1">
+                                                    @GetDisplayText(ReservationDetails.MentorName)
+                                                </MudText>
+                                            </div>
+                                        </MudStack>
+                                    </MudPaper>
+                                }
+                                else
+                                {
+                                    <MudPaper Elevation="0" Class="pa-4" Style="border: 1px solid rgba(64, 224, 208, 0.6); border-radius: 16px;">
+                                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                            <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Primary" Size="Size.Large" />
+                                            <MudText Typo="Typo.h6" Align="Align.Center">@Localizer["NoPickupInfo"]</MudText>
+                                        </MudStack>
+                                    </MudPaper>
+                                }
                             </MudItem>
                         </MudGrid>
                     </MudCardContent>

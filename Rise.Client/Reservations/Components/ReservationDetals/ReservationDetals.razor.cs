@@ -77,6 +77,15 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
             }
         }
 
+        private bool HasCurrentHolderDetails()
+        {
+            return !string.IsNullOrWhiteSpace(ReservationDetails?.CurrentBatteryUserName) ||
+                   !string.IsNullOrWhiteSpace(ReservationDetails?.CurrentHolderPhoneNumber) ||
+                   !string.IsNullOrWhiteSpace(ReservationDetails?.CurrentHolderEmail) ||
+                   !string.IsNullOrWhiteSpace(ReservationDetails?.CurrentHolderStreet) ||
+                   !string.IsNullOrWhiteSpace(ReservationDetails?.CurrentHolderCity);
+        }
+
     }
 }
 
