@@ -143,10 +143,10 @@ namespace Rise.Services.TimeSlots
 
             var timeSlot = new TimeSlot
             {
+                CruisePeriod = cruisePeriod,
                 Start = timslotDto.Start,
                 End = timslotDto.End,
                 Date = timslotDto.Date,
-                CruisePeriod = cruisePeriod
             };
 
             _dbContext.TimeSlots.Add(timeSlot);
@@ -154,6 +154,7 @@ namespace Rise.Services.TimeSlots
 
             return timeSlot.Id;
         }
+
 
     }
 }

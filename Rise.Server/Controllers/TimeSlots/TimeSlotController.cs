@@ -118,6 +118,24 @@ namespace Rise.Server.Controllers.TimeSlots
                 return false;
             }
         }
+
+
+        [HttpPost]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CreateTimeSlot([FromBody] CreateTimeSlotDto dto)
+        {
+            _logger.LogInformation("POST TimeSlot for CruisePeriod {CruisePeriodId}", dto.CruisePeriodId);
+
+            int timeSlotId = await _timeSlotService.CreateTimeSlot(dto);
+            _logger.LogDebug("Created TimeSlot with Id {TimeSlotId}", timeSlotId);
+
+            return Ok(timeSlotId);
+        }
     }
 }
 

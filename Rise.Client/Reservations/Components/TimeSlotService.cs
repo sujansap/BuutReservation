@@ -9,6 +9,11 @@ namespace Rise.Client.TimeSlots
     {
         private readonly HttpClient httpClient = httpClient;
 
+        public Task<int> CreateTimeSlot(CreateTimeSlotDto dto)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<TimeSlotRangeInfoDto> GetAllTimeSlotsInRange(DateOnly startDate, DateOnly endDate)
         {
             Dictionary<string, string?> queries = new()
