@@ -131,8 +131,20 @@
                 <MudNavLink Href="profile" data-testid="nav-mobile-profile" Icon="@Icons.Material.Filled.Person">
                     @Localizer["Profile"]
                 </MudNavLink>
-                <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
-                    Icon="@Icons.Material.Filled.Notifications">@Localizer["Notifications"]</MudNavLink>
+                @if (_unreadNotificationCount > 0)
+                {
+                    <MudBadge Color="Color.Primary" Content="@_unreadNotificationCount" Max="99" Overlap
+                        Origin="Origin.CenterRight" data-testid="nav-mobile-notifications-count-badge">
+                        <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
+                            Icon="@Icons.Material.Filled.Notifications">@Localizer["Notifications"]</MudNavLink>
+                    </MudBadge>
+                }
+                else
+                {
+                    <MudNavLink Href="notifications" data-testid="nav-mobile-notifications"
+                        Icon="@Icons.Material.Filled.Notifications">@Localizer["Notifications"]</MudNavLink>
+                }
+
                 <MudDivider />
                 <MudNavLink OnClick="@BeginLogOut" data-testid="nav-mobile-logout" Icon="@Icons.Material.Filled.Logout">
                     Log out</MudNavLink>

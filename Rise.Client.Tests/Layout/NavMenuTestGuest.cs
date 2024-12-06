@@ -157,6 +157,18 @@ namespace Rise.Client.Tests.Layout
         }
 
         [Test]
+        public async Task Mobile_NotificationsBadge_ToBeVisible()
+        {
+            await MockHTTPRequests();
+            await Page.SetViewportSizeAsync(959, 1920);
+            await NavigateToUrl("/home");
+            await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
+
+            ILocator notificationBadge = Page.GetByTestId("nav-mobile-notifications-count-badge");
+            await Expect(notificationBadge).ToBeVisibleAsync();
+        }
+
+        [Test]
         [TestCase("nav-mobile-profile", "profile", "")]
         [TestCase("nav-mobile-reservations", "reservations", "")]
         [TestCase("nav-mobile-notifications", "notifications", "")]
