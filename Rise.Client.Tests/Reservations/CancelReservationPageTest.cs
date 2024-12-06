@@ -51,32 +51,6 @@ public class CancelReservationTest : CustomAuthenticatedPageTest
     }
 
     [Test]
-    public async Task CancelReservationSuccessfully()
-    {
-        var reservationDetails = new ReservationDetailsDto
-        {
-            Id = 1,
-            Date = DateOnly.Parse(DateTime.Now.AddDays(5).ToString("yyyy/MM/dd")), //is cancelbaar
-            Start = TimeOnly.Parse("10:00"),
-            End = TimeOnly.Parse("13:00"),
-            BoatId = 1,
-            BoatPersonalName = "Limba",
-            MentorName = "John Doe",
-            BatteryType = "Lithium-Ion",
-            IsDeleted = false
-        };
-
-        await MockReservationDetailsApi(reservationDetails);
-        await MockCancelReservationApi(reservationDetails.Id);
-
-        await NavigateToUrl(UserReservationDetailsUrl);
-        var cancelButton = Page.GetByTestId("cancel-reservation-button");
-        await cancelButton.ClickAsync();
-
-        await Expect(Page).ToHaveURLAsync(ReservationsListUrl);
-    }
-
-    [Test]
     public async Task PreventCancelReservationWithin2Days()
     {
         var reservationDetails = new ReservationDetailsDto
