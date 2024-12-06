@@ -120,13 +120,12 @@
                     </MudCardContent>
 
                     <MudCardActions Class="d-flex justify-end pa-4">
-                        @if (!IsReservationInPast)
+                        @if (CanCancelReservation)
                         {
                             <MudButton Variant="Variant.Filled" Color="Color.Error" 
                                 OnClick="CancelReservation"
                                 data-testid="cancel-reservation-button"
-                                Style="background-color: #e06540;"
-                                Disabled="@ReservationDetails.IsDeleted">
+                                Style="background-color: #e06540;">
                                 @Localizer["Cancel Reservation"]
                             </MudButton>
                         }

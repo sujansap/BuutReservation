@@ -28,10 +28,16 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         public required IDialogService DialogService { get; set; }
 
         private bool IsReservationInPast => ReservationDetails?.Date < DateOnly.FromDateTime(DateTime.Now);
-        
-        private string GetDisplayText(string? value) => string.IsNullOrEmpty(value) ? "\u00A0" : value;
+        private bool CanCancelReservation => 
+            ReservationDetails != null && 
+            !ReservationDetails.IsDeleted && 
+            !IsReservationInPast && 
+            ReservationDetails.Date >= DateOnly.FromDateTime(DateTime.Now.AddDays(2));
 
-        private RenderFragment<string> RenderErrorMessage => (text) => builder =>
+        
+        private  static string GetDisplayText(string? value) => string.IsNullOrEmpty(value) ? "\u00A0" : value;
+
+        private static RenderFragment<string> RenderErrorMessage => (text) => builder =>
         {
             builder.OpenComponent<MudText>(0);
             builder.AddAttribute(1, "Typo", Typo.body1);
@@ -86,6 +92,7 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
                    !string.IsNullOrWhiteSpace(ReservationDetails?.CurrentHolderCity);
         }
 
+      
     }
 }
 
