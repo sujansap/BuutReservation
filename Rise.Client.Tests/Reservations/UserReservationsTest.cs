@@ -165,8 +165,7 @@ namespace Rise.Client.Tests.Reservations
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
             var date = firstReservation.GetByTestId("reservation-date");
-
-            await Expect(date).ToContainTextAsync(ValidReservation.Date.ToString());
+            await Expect(date).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"));
 
             var boatName = firstReservation.GetByTestId("reservation-boat-name");
             await Expect(boatName).ToContainTextAsync(ValidReservation.BoatPersonalName);
