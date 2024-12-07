@@ -1,16 +1,25 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using Microsoft.Extensions.Configuration;
+
 
 namespace Rise.Client.Tests
 {
-    [Parallelizable(ParallelScope.Fixtures)]
+    [Parallelizable(ParallelScope.Self)]
     [TestFixture]
     public class CustomPageTest : PageTest
     {
+        protected static IConfiguration Configuration { get; private set; } = default!;
+
         [OneTimeSetUp]
         public virtual void GlobalSetUp()
         {
-            SetDefaultExpectTimeout(15_000);
+            var builder = new ConfigurationBuilder()
+            .AddUserSecrets<CustomAuthenticatedPageTest>()
+            .AddEnvironmentVariables();
+            Configuration = builder.Build();
+            SetDefaultExpectTimeout(5_000);
+
         }
 
         [SetUp]
@@ -41,6 +50,7 @@ namespace Rise.Client.Tests
                 ) : null,
             });
         }
+
         public override BrowserNewContextOptions ContextOptions()
         {
             string baseUrl = TestContext.Parameters.Get("BASE_URL", "https://localhost:5003");
@@ -49,22 +59,20 @@ namespace Rise.Client.Tests
                 Locale = "en-US",
                 ColorScheme = ColorScheme.Light,
                 BaseURL = baseUrl,
-                IgnoreHTTPSErrors = true
+                IgnoreHTTPSErrors = true,
             };
         }
 
         protected async Task Hydration()
         {
-            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-            await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
-            // await Page.WaitForSelectorAsync("[data-testid=authorization-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Hidden, Timeout = 0 });
+            await Page.WaitForSelectorAsync("[data-testid=app-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
+            await Page.WaitForSelectorAsync("[data-testid=authorization-loader]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
         }
 
         protected async Task NavigateToUrl(string url)
         {
             await Page.GotoAsync(url);
             await Hydration();
-            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }
 
         protected async Task ReloadPage()

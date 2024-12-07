@@ -5,24 +5,15 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Reservations
 {
-    [TestFixture]
     public class ReservationDetailsPageTest : CustomAuthenticatedPageTest
     {
         private const string UserReservationDetailsUrl = "/reservations/1";
         private const string InvalidReservationDetailsUrl = "/reservations/100";
 
         [SetUp]
-        public async Task SetUpAsync()
+        public async Task SetUp()
         {
-            base.GlobalSetUp();
             await LoginAsync(UserRole.Member);
-        }
-
-        [TearDown]
-        public async Task TearDownAsync()
-        {
-            await LogoutAsync();
-            await base.TearDown();
         }
 
         private async Task MockReservationDetailsApi(ReservationDetailsDto? response = null, int status = 200)
@@ -56,7 +47,7 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationDetailsApi(reservationDetails);
             await NavigateToUrl(UserReservationDetailsUrl);
 
-            await Expect(Page.GetByTestId("reservation-details-date")).ToContainTextAsync(reservationDetails.Date.ToString("dd/MM/yyyy")); // FIXME element not found??
+            await Expect(Page.GetByTestId("reservation-details-date")).ToContainTextAsync(reservationDetails.Date.ToString("dd/MM/yyyy"));
             await Expect(Page.GetByTestId("reservation-details-boat")).ToContainTextAsync(reservationDetails.BoatPersonalName);
             await Expect(Page.GetByTestId("reservation-details-time")).ToContainTextAsync($"{reservationDetails.Start:HH:mm} - {reservationDetails.End:HH:mm}");
             await Expect(Page.GetByTestId("reservation-details-battery")).ToContainTextAsync(reservationDetails.BatteryType);
