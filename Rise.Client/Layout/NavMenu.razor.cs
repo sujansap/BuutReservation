@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Rise.Client.Notifications;
 using Rise.Shared.Notifications;
 
 namespace Rise.Client.Layout
@@ -16,6 +16,8 @@ namespace Rise.Client.Layout
         public required NavigationManager Navigation { get; set; }
         [Inject]
         public required INotificationService NotificationService { get; set; }
+        [Inject]
+        public required AuthenticationStateProvider AuthStateProvider { get; set; }
 
         private void ToggleDrawer()
         {
@@ -24,13 +26,15 @@ namespace Rise.Client.Layout
 
         protected override async Task OnInitializedAsync()
         {
-            await UpdateNotificationCount();
+            AuthenticationState? authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user?.Identity?.IsAuthenticated ?? false)
+                await UpdateNotificationCount();
         }
 
         private async Task UpdateNotificationCount()
         {
             _unreadNotificationCount = await NotificationService.GetUnreadNotificationCount();
-            StateHasChanged();
         }
 
         private void HandleNotificationButtonClicked()

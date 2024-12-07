@@ -3,6 +3,7 @@
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Layout
 @using Rise.Client.Notifications.Components
+@using Rise.Shared.Users
 
 @inject IStringLocalizer<LandingPageResource> Localizer
 
@@ -23,7 +24,7 @@
                 <Authorized>
                     <MudNavLink Href="reservations" data-testid="nav-desktop-reservations">@Localizer["Reserve"]
                     </MudNavLink>
-                    @if (context.User.IsInRole("Administrator"))
+                    @if (context.User.IsInRole(nameof(UserRole.Administrator)))
                     {
                         <MudNavLink Href="admin" data-testid="nav-desktop-admin">@Localizer["Admin"]</MudNavLink>
                     }
@@ -31,10 +32,6 @@
             </AuthorizeView>
         </MudStack>
         <MudSpacer />
-        @* <MudButton Class="mr-4" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Secondary" Href="book"
-            data-testid="nav-desktop-book">
-            @Localizer["BookNow"]
-        </MudButton> *@
         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center"
             StretchItems="StretchItems.Start">
             <AuthorizeView>
