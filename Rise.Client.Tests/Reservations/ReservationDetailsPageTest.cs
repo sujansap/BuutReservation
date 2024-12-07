@@ -117,6 +117,5 @@ namespace Rise.Client.Tests.Reservations
 
             await Expect(Page.GetByTestId("no-pickup-info")).ToContainTextAsync("Geen ophaal informatie beschikbaar");
         }
-
     }
 }
