@@ -11,19 +11,23 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
         [Inject]
         public required ICruisePeriodService CruisePeriodService { get; set; }
 
+
+        [Inject]
+        private ITimeSlotService TimeSlotService { get; set; } = default!;
+
         [Inject]
         public required ISnackbar Snackbar { get; set; }
 
         [Parameter]
         public int? Id { get; set; }
 
-        private MudForm form;
+        private MudForm? form;
 
         private Validator validator = new();
 
         private TimeSpan? StartTime { get; set; }
         private TimeSpan? EndTime { get; set; }
-        private CreateTimeSlotDto AllTimeSlotsDto { get; set; }
+        private CreateTimeSlotDto AllTimeSlotsDto { get; set; } = new CreateTimeSlotDto();
         private CruisePeriodDetailedDto? CruisePeriod { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -36,7 +40,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
                     CruisePeriodId = Id.Value
                 };
             }
-            await base.OnInitializedAsync();
+
         }
 
         public async Task<CruisePeriodDetailedDto> FetchCruisePeriod()
@@ -54,7 +58,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
                     Start = TimeOnly.FromTimeSpan(StartTime.Value),
                     End = TimeOnly.FromTimeSpan(EndTime.Value)
                 };
-                // Create new DTO with all existing time slots plus the new one
+
                 AllTimeSlotsDto.TimeSlots.Add(newTimeSlot);
 
                 var validationResult = await validator.ValidateAsync(AllTimeSlotsDto);
@@ -91,6 +95,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
 
                 Console.WriteLine("Saving time slots");
                 Console.WriteLine(AllTimeSlotsDto.TimeSlots.Count);
+                await TimeSlotService.CreateTimeSlot(AllTimeSlotsDto);
                 Snackbar.Add("Time slots saved successfully", Severity.Success);
 
 
