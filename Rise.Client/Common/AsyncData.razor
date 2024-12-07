@@ -1,51 +1,60 @@
 ﻿@using Rise.Client.Common
 @typeparam T
-@inject ISnackbar SnackbarService
 
 @* TODO check mobile view *@
 @* TODO limit loader to show up only after 1 second *@
-@if (!DisableLoader && IsLoading)
+@if (ShowLoader())
 {
-    @RenderLoading
+    @InfoContainerContent(LoadingContent(TestIdLoading()))
 }
 else
 {
+    <MudStack Spacing="4">
     @if (HasError)
     {
         @if (ShowStaticAlert())
         {
-            @RenderError
+            @InfoContainerContent(ErrorContent(ErrorMessageContent((ErrorMessage, TestIdError()))))
         }
         @if (ShowSnackBarAlert())
         {
-            ShowErrorOnSnackbar();
+            DisplayErrorOnSnackbar();
         }
     }
 
-    @* TODO fix spacing between content and error *@
-    @if (ShowContentWhenError || !HasError)
+        @if (ShowContent())
     {
         @ChildContent
     }
-
+    </MudStack>
 }
 
 @code {
-    protected virtual RenderFragment RenderInfoContainer(RenderFragment content) => @<MudContainer
-        Class="d-flex justify-center">
+    [Parameter]
+    public RenderFragment<RenderFragment?> InfoContainerContent { get; set; } =
+        (RenderFragment? content) =>
+    @<MudContainer Class="d-flex justify-center">
         @content
     </MudContainer>;
 
-    protected virtual RenderFragment RenderLoading => RenderInfoContainer(@<MudProgressCircular Indeterminate="true" data-testid="@TestIdLoading()" />);
+    [Parameter]
+    public RenderFragment<string> LoadingContent { get; set; } = (string testId) => @<MudProgressCircular Indeterminate="true" data-testid="@testId" />;
 
-    protected virtual RenderFragment RenderErrorMessage => @<MudText Typo="Typo.body1" data-testid="@TestIdError()">
-        @ErrorMessage</MudText>;
+    [Parameter]
+    public RenderFragment<(string? errorMessage, string testId)> ErrorMessageContent { get; set; } = (context) => @<MudText
+        Typo="Typo.body1" data-testid="@context.testId">
+        @context.errorMessage</MudText>;
 
-    protected virtual RenderFragment RenderError => RenderInfoContainer(@<MudAlert Severity="Severity.Error">
-        @RenderErrorMessage</MudAlert>);
+    [Parameter]
+    public RenderFragment<RenderFragment> ErrorContent
+    { get; set; }
+        = (RenderFragment errorMessageContent) => @<MudAlert Severity="Severity.Error">
+        @errorMessageContent</MudAlert>;
 
-    private void ShowErrorOnSnackbar()
+    [Parameter, EditorRequired]
+    public required RenderFragment ChildContent { get; set; }
+    protected void DisplayErrorOnSnackbar()
     {
-        SnackbarService.Add(@RenderErrorMessage, Severity.Error);
+        SnackbarService.Add(ErrorMessageContent((ErrorMessage, TestIdError())), Severity.Error);
     }
 }

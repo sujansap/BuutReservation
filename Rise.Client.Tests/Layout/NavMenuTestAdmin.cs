@@ -3,23 +3,14 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Layout
 {
-    [TestFixture]
     public class NavMenuTestAdmin : CustomAuthenticatedPageTest
     {
         private const int DefaultHeight = 1920;
 
         [SetUp]
-        public async Task SetUpAsync()
+        public async Task SetUp()
         {
-            base.GlobalSetUp();
             await LoginAsync(UserRole.Administrator);
-        }
-
-        [TearDown]
-        public async Task TearDownAsync()
-        {
-            await LogoutAsync();
-            await base.TearDown();
         }
 
         [Test]
@@ -34,6 +25,8 @@ namespace Rise.Client.Tests.Layout
 
         [Test]
         [TestCase("nav-admin-guests", "/admin/guests", "")]
+        [TestCase("nav-admin-cruise-period", "/admin/cruise_period", "")]
+        [TestCase("nav-admin-battery", "/admin/battery", "")]
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
         {
             await Page.SetViewportSizeAsync(959, 1920);

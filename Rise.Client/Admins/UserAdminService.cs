@@ -12,11 +12,10 @@ public class UserAdminService : IUserAdminService
     {
         _httpClient = httpClient;
     }
-
-    public async Task<IEnumerable<UserDto>> GetGuestUsers()
+    public async Task<Pagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
     {
-        var result = await _httpClient.GetFromJsonAsync<IEnumerable<UserDto>>("guests");
-        return result ?? Enumerable.Empty<UserDto>();
+        var result = await _httpClient.GetFromJsonAsync<Pagination<UserDto>>($"?role={role}&page={page}&pageSize={pageSize}");
+        return result ?? new Pagination<UserDto>();
     }
 
     public async Task<UserDetailDto> GetUserDetails(int userId)
@@ -27,7 +26,7 @@ public class UserAdminService : IUserAdminService
 
     public async Task AddMemberRole(int userId)
     {
-        await _httpClient.PostAsJsonAsync("role/member", new AddMemberRoleDto { UserId = userId });
+        await _httpClient.PostAsJsonAsync("role", new AddMemberRoleDto { UserId = userId, Role = UserRole.Member });
     }
 
     public Task<int> RegisterUser(UserRegistrationModelDto userDto)

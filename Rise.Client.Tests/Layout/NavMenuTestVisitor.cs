@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 
 namespace Rise.Client.Tests.Layout
 {
-    [TestFixture]
     public class NavMenuTestVisitor : CustomPageTest
     {
         private const int DefaultHeight = 1920;
