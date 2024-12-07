@@ -12,12 +12,8 @@ public record class CreateTimeSlotDto
     public class Validator : AbstractValidator<CreateTimeSlotDto>
     {
         private const double RequiredHourDuration = 1.5;
-        private readonly IEnumerable<TimeSlotRange> _existingTimeSlots;
-
-        public Validator(IEnumerable<TimeSlotRange> existingTimeSlots)
+        public Validator()
         {
-            _existingTimeSlots = existingTimeSlots ?? Enumerable.Empty<TimeSlotRange>();
-
             RuleFor(x => x.TimeSlots)
                 .NotEmpty().WithMessage("At least one time slot is required")
                 .ForEach(slot =>
@@ -37,7 +33,7 @@ public record class CreateTimeSlotDto
 
             RuleFor(x => x.TimeSlots)
                 .Must(HasNoOverlaps)
-                .WithMessage("Time slot overlaps with an existing time slot");
+                .WithMessage("Time slot overlaps with another time slot");
 
             RuleFor(x => x.CruisePeriodId)
                 .NotEmpty().WithMessage("Cruise Period ID is required")
@@ -50,16 +46,15 @@ public record class CreateTimeSlotDto
             return duration.TotalHours >= RequiredHourDuration;
         }
 
-        private bool HasNoOverlaps(List<TimeSlotRange> newTimeSlots)
+        private bool HasNoOverlaps(List<TimeSlotRange> timeSlots)
         {
-            foreach (var newSlot in newTimeSlots)
+            var sortedSlots = timeSlots.OrderBy(x => x.Start).ToList();
+
+            for (int i = 0; i < sortedSlots.Count - 1; i++)
             {
-                foreach (var existingSlot in _existingTimeSlots)
+                if (sortedSlots[i].End > sortedSlots[i + 1].Start)
                 {
-                    if (!(newSlot.End <= existingSlot.Start || newSlot.Start >= existingSlot.End))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
             return true;

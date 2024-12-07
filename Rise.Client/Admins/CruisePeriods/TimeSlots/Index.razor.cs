@@ -19,11 +19,11 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
 
         private MudForm form;
 
-        // private Validator validator = new();
+        private Validator validator = new();
 
         private TimeSpan? StartTime { get; set; }
         private TimeSpan? EndTime { get; set; }
-        private HashSet<CreateTimeSlotDto> TimeSlots { get; set; } = new();
+        private CreateTimeSlotDto AllTimeSlotsDto { get; set; }
         private CruisePeriodDetailedDto? CruisePeriod { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -31,6 +31,10 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
             if (Id.HasValue)
             {
                 CruisePeriod = await CruisePeriodService.GetCruisePeriod(Id.Value);
+                AllTimeSlotsDto = new CreateTimeSlotDto
+                {
+                    CruisePeriodId = Id.Value
+                };
             }
             await base.OnInitializedAsync();
         }
@@ -44,27 +48,20 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
         {
             if (StartTime.HasValue && EndTime.HasValue)
             {
-                var timeSlot = new CreateTimeSlotDto
+
+                var newTimeSlot = new TimeSlotRange
                 {
-                    CruisePeriodId = CruisePeriod?.Id ?? 0,
-                    TimeSlots = new List<TimeSlotRange>
-                    {
-                        new TimeSlotRange
-                        {
-                            Start = TimeOnly.FromTimeSpan(StartTime.Value),
-                            End = TimeOnly.FromTimeSpan(EndTime.Value)
-                        }
-                    }
+                    Start = TimeOnly.FromTimeSpan(StartTime.Value),
+                    End = TimeOnly.FromTimeSpan(EndTime.Value)
                 };
+                // Create new DTO with all existing time slots plus the new one
+                AllTimeSlotsDto.TimeSlots.Add(newTimeSlot);
 
-                var existingSlots = TimeSlots.SelectMany(ts => ts.TimeSlots).ToList();
-
-                var validator = new CreateTimeSlotDto.Validator(existingSlots);
-                var validationResult = await validator.ValidateAsync(timeSlot);
+                var validationResult = await validator.ValidateAsync(AllTimeSlotsDto);
 
                 if (validationResult.IsValid)
                 {
-                    TimeSlots.Add(timeSlot);
+
                     StartTime = null;
                     EndTime = null;
                     await form.ResetAsync();
@@ -72,6 +69,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
                 }
                 else
                 {
+                    AllTimeSlotsDto.TimeSlots.Remove(newTimeSlot);
                     foreach (var error in validationResult.Errors)
                     {
                         Snackbar.Add(error.ErrorMessage, Severity.Error);
@@ -80,9 +78,9 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
             }
         }
 
-        private void RemoveTimeSlot(CreateTimeSlotDto timeSlot)
+        private void RemoveTimeSlot(TimeSlotRange timeSlot)
         {
-            TimeSlots.Remove(timeSlot);
+            AllTimeSlotsDto.TimeSlots.Remove(timeSlot);
             StateHasChanged();
         }
 
@@ -90,17 +88,15 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
         {
             try
             {
-                foreach (var timeSlot in TimeSlots)
-                {
-                    //await CruisePeriodService.CreateTimeSlot(timeSlot);
-                }
 
+                Console.WriteLine("Saving time slots");
+                Console.WriteLine(AllTimeSlotsDto.TimeSlots.Count);
                 Snackbar.Add("Time slots saved successfully", Severity.Success);
 
-                TimeSlots.Clear();
+
                 StateHasChanged();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Snackbar.Add("Failed to save time slots", Severity.Error);
             }

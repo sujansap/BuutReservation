@@ -62,7 +62,7 @@
 
                 <MudText Typo="Typo.h6" Class="mb-4">Fixed Daily Time Slots</MudText>
 
-                @if (!TimeSlots.Any())
+                @if (!AllTimeSlotsDto.TimeSlots.Any())
                 {
                     <MudAlert Severity="Severity.Info" Elevation="0">
                         No time slots have been added yet
@@ -72,14 +72,14 @@
                 {
                     <MudPaper Class="pa-4" Elevation="0">
                         <MudList Dense="true" Clickable="true" T="TimeSpan">
-                            @foreach (var timeSlot in TimeSlots.OrderBy(t => t.TimeSlots.First().Start))
+                            @foreach (var timeSlot in AllTimeSlotsDto.TimeSlots.OrderBy(t => t.Start))
                             {
                                 <MudListItem>
                                     <div class="d-flex justify-space-between align-center w-100">
                                         <div class="d-flex gap-3 align-center">
                                             <MudIcon Icon="@Icons.Material.Filled.Schedule" />
-                                            <MudText>@timeSlot.TimeSlots.First().Start.ToString("HH:mm") -
-                                                @timeSlot.TimeSlots.First().End.ToString("HH:mm")</MudText>
+                                            <MudText>@timeSlot.Start.ToString("HH:mm") -
+                                                @timeSlot.End.ToString("HH:mm")</MudText>
                                         </div>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
                                             Size="Size.Small" OnClick="@(() => RemoveTimeSlot(timeSlot))" />
@@ -93,7 +93,7 @@
             </MudCardContent>
 
             <MudCardActions Class="d-flex justify-end pa-4">
-                <PrimaryButton Disabled="@(!TimeSlots.Any())" OnClick="SaveTimeSlots">
+                <PrimaryButton Disabled="@(!AllTimeSlotsDto.TimeSlots.Any())" OnClick="SaveTimeSlots">
                     Save Time Slots
                 </PrimaryButton>
             </MudCardActions>
