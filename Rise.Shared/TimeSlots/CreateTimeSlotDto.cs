@@ -2,38 +2,86 @@ using FluentValidation;
 
 namespace Rise.Shared.TimeSlots;
 
+
+
 public record class CreateTimeSlotDto
 {
-    public TimeOnly Start { get; init; }
-    public TimeOnly End { get; init; }
+    public List<TimeSlotRange> TimeSlots { get; init; } = new();
     public int CruisePeriodId { get; init; }
 
     public class Validator : AbstractValidator<CreateTimeSlotDto>
     {
         private const double RequiredHourDuration = 1.5;
-        public Validator()
+        private readonly IEnumerable<TimeSlotRange> _existingTimeSlots;
+
+        public Validator(IEnumerable<TimeSlotRange> existingTimeSlots)
         {
+            _existingTimeSlots = existingTimeSlots ?? Enumerable.Empty<TimeSlotRange>();
 
-            RuleFor(x => x.Start)
-                    .NotEmpty().WithMessage("Start time is required");
+            RuleFor(x => x.TimeSlots)
+                .NotEmpty().WithMessage("At least one time slot is required")
+                .ForEach(slot =>
+                {
+                    slot.ChildRules(timeSlot =>
+                    {
+                        timeSlot.RuleFor(x => x.Start)
+                            .NotEmpty().WithMessage("Start time is required");
 
-            RuleFor(x => x.End)
-                    .NotEmpty().WithMessage("End time is required")
-                    .GreaterThan(x => x.Start).WithMessage("End time must be after start time");
+                        timeSlot.RuleFor(x => x.End)
+                            .NotEmpty().WithMessage("End time is required")
+                            .GreaterThan(x => x.Start).WithMessage("End time must be after start time")
+                            .Must((range, end) => IsValidDuration(range.Start, end))
+                            .WithMessage($"Time slot must be at least {RequiredHourDuration} hours long");
+                    });
+                });
 
-            RuleFor(x => x)
-                    .Must(x => IsValidDuration(x.Start, x.End))
-                    .WithMessage($"Time slot must be exactly {RequiredHourDuration} hours long");
+            RuleFor(x => x.TimeSlots)
+                .Must(HasNoOverlaps)
+                .WithMessage("Time slot overlaps with an existing time slot");
 
             RuleFor(x => x.CruisePeriodId)
-                    .NotEmpty().WithMessage("Cruise Period ID is required")
-                    .GreaterThan(0).WithMessage("Cruise Period ID must be a positive number");
+                .NotEmpty().WithMessage("Cruise Period ID is required")
+                .GreaterThan(0).WithMessage("Cruise Period ID must be a positive number");
         }
 
         private bool IsValidDuration(TimeOnly start, TimeOnly end)
         {
             var duration = end - start;
-            return Math.Abs(duration.TotalHours - RequiredHourDuration) < 0.001;
+            return duration.TotalHours >= RequiredHourDuration;
         }
+
+        private bool HasNoOverlaps(List<TimeSlotRange> newTimeSlots)
+        {
+            foreach (var newSlot in newTimeSlots)
+            {
+                foreach (var existingSlot in _existingTimeSlots)
+                {
+                    if (!(newSlot.End <= existingSlot.Start || newSlot.Start >= existingSlot.End))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue =>
+            async (model, propertyName) =>
+            {
+                var result = await ValidateAsync(ValidationContext<CreateTimeSlotDto>
+                    .CreateWithOptions((CreateTimeSlotDto)model, x => x.IncludeProperties(propertyName)));
+                if (result.IsValid)
+                    return [];
+                return result.Errors.Select(e => e.ErrorMessage);
+            };
+
+
+
     }
 }
+public record class TimeSlotRange
+{
+    public TimeOnly Start { get; init; }
+    public TimeOnly End { get; init; }
+}
+

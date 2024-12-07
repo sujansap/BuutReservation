@@ -135,16 +135,20 @@ namespace Rise.Services.TimeSlots
         /// <param name="dto">dto with info to create timslot</param>
         /// <returns>Returns the amount of timeslots that were added</returns>
         /// <exception cref="EntityNotFoundException"></exception>
-        public async Task<int> CreateTimeSlot(CreateTimeSlotDto dto)
+        public async Task<int> CreateTimeSlot(CreateTimeSlotDto addTimeSlotsDto)
         {
             var cruisePeriod = await _dbContext.CruisePeriods.Include(cp => cp.TimeSlots)
-                .FirstOrDefaultAsync(cp => cp.Id == dto.CruisePeriodId && !cp.IsDeleted)
-                ?? throw new EntityNotFoundException(nameof(CruisePeriod), dto.CruisePeriodId);
+                .FirstOrDefaultAsync(cp => cp.Id == addTimeSlotsDto.CruisePeriodId && !cp.IsDeleted)
+                ?? throw new EntityNotFoundException(nameof(CruisePeriod), addTimeSlotsDto.CruisePeriodId);
 
             //add timeslots for the range of the cruise period
             //we add the timeslots in bulk to the cruise period
             // if one fails, don't add any
-            cruisePeriod.AddTimeSlots(dto.Start, dto.End);
+            addTimeSlotsDto.TimeSlots.ForEach(timeSlot =>
+            {
+                cruisePeriod.AddTimeSlots(timeSlot.Start, timeSlot.End);
+            });
+
 
             await _dbContext.SaveChangesAsync();
 

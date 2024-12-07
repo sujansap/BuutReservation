@@ -1,7 +1,6 @@
 
 
 using Rise.Domain.Exceptions;
-
 namespace Rise.Domain.TimeSlots;
 public class CruisePeriod : Entity
 {
@@ -101,4 +100,6 @@ public class CruisePeriod : Entity
             currentDate = currentDate.AddDays(1);
         }
     }
+
+
 }
