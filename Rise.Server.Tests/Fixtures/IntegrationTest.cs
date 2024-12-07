@@ -246,5 +246,66 @@ namespace Rise.Server.Tests.Fixtures
                 return false;
             }
         }
+
+        public async Task RegisterValidAuth0User()
+        {
+            await RunTaskWithRetries(async () => await RegisterValidUser(), 20);
+        }
+
+        private async Task<bool> RegisterValidUser()
+        {
+            try
+            {
+
+                const int buutUserId = 3;
+                const string email = "user3@example.com";
+                const string password = "SecureP@ssw0rd123!";
+                const UserRole roleName = UserRole.Guest;
+
+                // Create the user
+                var user = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
+                {
+                    UserName = email,
+                    Email = email,
+                    Connection = "Username-Password-Authentication",
+                    Password = password,
+                    AppMetadata = new Dictionary<string, object>
+            {
+                { "buutUserId", buutUserId }
+            }
+                });
+
+                _createdUserIds.Add(user.UserId);
+
+                // Assign a role to the user
+                var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = roleName.ToString() });
+                var role = roles.FirstOrDefault() ?? throw new Exception($"Role '{roleName}' not found");
+
+                await _managementApiClient.Users.AssignRolesAsync(user.UserId, new AssignRolesRequest
+                {
+                    Roles = new[] { role.Id }
+                });
+
+                Console.WriteLine($"User with buutUserId {buutUserId} created successfully.");
+
+                return true;
+            }
+            catch (RateLimitApiException ex)
+            {
+                Console.WriteLine($"Rate limit exceeded: {ex.Message}. Retrying...");
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to create user: {ex.Message}");
+                return false;
+
+            }
+
+        }
+
+
+
     }
 }

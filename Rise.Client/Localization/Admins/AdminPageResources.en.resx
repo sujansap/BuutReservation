@@ -109,4 +109,29 @@
 			End
 		</value>
 	</data>
+	<data name="Battery">
+		<value>
+			Battery
+		</value>
+	</data>
+	<data name="BatteryDetails">
+		<value>
+			Battery Details
+		</value>
+	</data>
+	<data name="BatteryType">
+		<value>
+			Type
+		</value>
+	</data>
+	<data name="BatteryMentor">
+		<value>
+			Mentor
+		</value>
+	</data>
+	<data name="UpdateBattery">
+		<value>
+			Update
+		</value>
+	</data>
 </root>
