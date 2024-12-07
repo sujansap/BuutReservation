@@ -14,7 +14,14 @@ namespace Rise.Domain.Boats
         public DateTime? LastUsedAt => _lastUsedAt;
         public int? CurrentHolderId { get; private set; }
         public User? CurrentHolder { get; private set; }
-        public User Mentor { get; set; } = null!;
+
+        private User _mentor = default!;
+        public required User Mentor
+        {
+            get => _mentor;
+            set => _mentor = Guard.Against.Null(value, nameof(Mentor), "Mentor cannot be null or empty");
+        }
+
         public int BoatId { get; set; }
         public required Boat Boat { get; set; }
         public IReadOnlyCollection<Reservation> Reservations => _reservations.AsReadOnly();
@@ -87,7 +94,7 @@ namespace Rise.Domain.Boats
         public bool HasSufficientChargingTime(DateTime currentTime)
         {
             if (LastUsedAt == null) return true;
-            
+
             var hoursSinceLastUse = (currentTime - LastUsedAt.Value).TotalHours;
             return hoursSinceLastUse >= 4;
         }
@@ -98,7 +105,7 @@ namespace Rise.Domain.Boats
         }
 
         public static IEnumerable<Battery> GetCompatibleBatteriesForBoat(
-            IEnumerable<Battery> batteries, 
+            IEnumerable<Battery> batteries,
             int boatId)
         {
             Guard.Against.Null(batteries, nameof(batteries));
@@ -120,8 +127,8 @@ namespace Rise.Domain.Boats
             Guard.Against.Null(compatibleBatteries, nameof(compatibleBatteries));
 
             return await Task.Run(() => compatibleBatteries
-                .FirstOrDefault(b => 
-                    b.HasSufficientChargingTime(currentTime) && 
+                .FirstOrDefault(b =>
+                    b.HasSufficientChargingTime(currentTime) &&
                     b.IsAvailableForDate(date, start, end)));
         }
 

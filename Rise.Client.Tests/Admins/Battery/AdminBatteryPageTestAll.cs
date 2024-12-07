@@ -1,10 +1,10 @@
 using Rise.Shared.Users;
 
-namespace Rise.Client.Tests.Admin
+namespace Rise.Client.Tests.Admins.Battery
 {
-    public class AdminGuestsPageTestAll : CustomAuthenticatedPageTest
+    public class AdminBatteryPageTestAll : CustomAuthenticatedPageTest
     {
-        protected const string baseSuffix = "/admin/guests";
+        private const string baseSuffix = "/admin/battery/";
 
         [Test]
         public async Task RedirectWhenNotLoggedIn()

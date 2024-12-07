@@ -1,14 +1,17 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using Serilog;
 
 namespace Rise.Client.Common
 {
     public partial class AsyncData<T> : ComponentBase
     {
+        [Inject]
+        public required ISnackbar SnackbarService { get; set; }
+
         [Parameter, EditorRequired]
         public required string TestIdPrefix { get; set; }
-
-        private bool shouldRender;
 
         private Func<Task<T>> _previousDataFetcher = default!;
 
@@ -18,7 +21,7 @@ namespace Rise.Client.Common
             get; set;
         }
 
-        private T? _cachedData;
+        protected T? _cachedData;
 
         /// <summary>
         /// The fetched data
@@ -37,11 +40,18 @@ namespace Rise.Client.Common
         [Parameter]
         public EventCallback<T?> DataChanged { get; set; }
 
-        protected bool IsLoading { get; private set; } = false;
+        /// <summary>
+        /// Current loading state
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Raises the <see cref="LoadingChanged"/> event upon change.  When bound via <c>@bind-Loading</c>, this property is updated when the loading is changed.
+        /// </remarks>
+        protected bool IsLoading { get; set; } = false;
+
         [Parameter]
         public bool DisableLoader { get; set; } = false;
 
-        protected bool HasError { get; private set; } = false;
+        protected bool HasError { get; set; } = false;
         protected string? ErrorMessage { get; set; }
 
         [Parameter]
@@ -50,8 +60,10 @@ namespace Rise.Client.Common
         [Parameter]
         public bool ShowContentWhenError { get; set; } = true;
 
-        [Parameter, EditorRequired]
-        public required RenderFragment ChildContent { get; set; }
+        private bool IsDifferentFetcher()
+        {
+            return _previousDataFetcher?.Equals(DataFetcher) ?? false;
+        }
 
         private bool IsCachedDataEqual()
         {
@@ -60,56 +72,67 @@ namespace Rise.Client.Common
 
         protected override async Task OnInitializedAsync()
         {
-            bool isDifferentFetcher = _previousDataFetcher != DataFetcher;
-            bool isCachedDataEqual = IsCachedDataEqual();
-            shouldRender = isDifferentFetcher || !isCachedDataEqual;
-
             _previousDataFetcher = DataFetcher;
-            if (isDifferentFetcher || !isCachedDataEqual)
+            if (IsDifferentFetcher() || !IsCachedDataEqual())
             {
                 await FetchData();
             }
         }
+        protected virtual Task AssignData(T? data)
+        {
+            _cachedData = Data;
+            Data = data;
+            return DataChanged.InvokeAsync(Data);
+        }
+
         public async Task FetchData()
         {
-            if (!IsLoading)
-            {
-                IsLoading = true;
-                HasError = false;
+            if (IsLoading) return;
 
-                try
-                {
-                    T? newData = await DataFetcher();
-                    _cachedData = Data;
-                    Data = newData;
-                    await DataChanged.InvokeAsync(Data);
-                }
-                catch (Exception ex)
-                {
-                    HasError = true;
-                    // TODO fix localisation of error message
-                    ErrorMessage = ex.Message ?? "Oops something went wrong";
-                }
-                finally
-                {
-                    IsLoading = false;
-                }
+            Log.Information("Started loading");
+            IsLoading = true;
+            HasError = false;
+            try
+            {
+
+                T? newData = await DataFetcher();
+                await AssignData(newData);
+            }
+            catch (Exception ex)
+            {
+                HasError = true;
+                // TODO fix localisation of error message
+                ErrorMessage = ex.Message ?? "Oops something went wrong";
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
-        protected override bool ShouldRender() => shouldRender;
+        protected override bool ShouldRender() => IsLoading || HasError || !IsCachedDataEqual() || IsDifferentFetcher();
 
-        private bool ShowStaticAlert()
+        protected bool ShowStaticAlert()
         {
             return ErrorDisplayMethod == AsyncErrorDisplayMethod.StaticAlert || ErrorDisplayMethod == AsyncErrorDisplayMethod.Both;
         }
 
-        private bool ShowSnackBarAlert()
+        protected bool ShowSnackBarAlert()
         {
             return ErrorDisplayMethod == AsyncErrorDisplayMethod.SnackBarAlert || ErrorDisplayMethod == AsyncErrorDisplayMethod.Both;
         }
 
-        private string PrefixTestId(string testId)
+        protected bool ShowContent()
+        {
+            return ShowContentWhenError || !HasError;
+        }
+
+        protected bool ShowLoader()
+        {
+            return !DisableLoader && IsLoading;
+        }
+
+        protected string PrefixTestId(string testId)
         {
             StringBuilder sb = new(TestIdPrefix);
             if (sb.Length > 0)
@@ -124,12 +147,12 @@ namespace Rise.Client.Common
             return sb.ToString();
         }
 
-        private string TestIdLoading()
+        protected string TestIdLoading()
         {
             return PrefixTestId("loading-progress");
         }
 
-        private string TestIdError()
+        protected string TestIdError()
         {
             return PrefixTestId("fetch-error");
         }

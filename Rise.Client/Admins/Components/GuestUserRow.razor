@@ -5,7 +5,9 @@
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<AdminPageResources> Localizer
 
-<MudTd DataLabel="@Localizer["FamilyName"]">@User.FamilyName</MudTd>
+<MudTd data-testid="@($"list-guest-page-familyname-{User.Id}")" DataLabel="@Localizer["FamilyName"]">
+    @User.FamilyName
+</MudTd>
 <MudTd>
     <MudStack Row="true">
         @*TODO:make this a common component*@

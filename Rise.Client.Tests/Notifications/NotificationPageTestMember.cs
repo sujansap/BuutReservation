@@ -4,21 +4,12 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Notifications
 {
-    [TestFixture]
     public class NotificationPageTestMember : CustomAuthenticatedPageTest // test for notifications that members will see/get
     {
         [SetUp]
-        public async Task SetUpAsync()
+        public async Task SetUp()
         {
-            base.GlobalSetUp();
             await LoginAsync(UserRole.Member);
-        }
-
-        [TearDown]
-        public async Task TearDownAsync()
-        {
-            await LogoutAsync();
-            await base.TearDown();
         }
 
         public static readonly List<NotificationDto> Notifications =
@@ -325,7 +316,7 @@ namespace Rise.Client.Tests.Notifications
 
             // Assert is-unread indicator is visible
             var isReadElementBadge = Page.GetByTestId($"notification-is-unread-badge-{id1}");
-            await Expect(isReadElementBadge).Not.ToBeVisibleAsync();
+            await Expect(isReadElementBadge).ToBeVisibleAsync();
 
             // Click on the notification
             var notificationElement1 = Page.GetByTestId($"notification-{id1}");

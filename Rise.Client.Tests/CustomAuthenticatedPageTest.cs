@@ -1,84 +1,129 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Playwright;
 using Rise.Shared.Users;
+using System.Collections.Concurrent;
 
 namespace Rise.Client.Tests
 {
-    [TestFixture]
     public class CustomAuthenticatedPageTest : CustomPageTest
     {
-        protected IConfiguration Configuration { get; private set; } = default!;
+        private static readonly ConcurrentDictionary<UserRole, SemaphoreSlim> roleSemaphores = new();
+        private static readonly ConcurrentDictionary<UserRole, string?> roleSessionStorage = new();
 
-        private string? SessionStorage
+        public static void Dispose()
         {
-            get;
-            set;
-        }
-
-        [OneTimeSetUp]
-        public override void GlobalSetUp()
-        {
-            var builder = new ConfigurationBuilder()
-            .AddUserSecrets<CustomAuthenticatedPageTest>()
-            .AddEnvironmentVariables();
-            Configuration = builder.Build();
-
-            base.GlobalSetUp();
+            foreach (var semaphore in roleSemaphores.Values)
+            {
+                semaphore.Dispose();
+            }
         }
 
         protected async Task LoginAsync(UserRole role)
         {
-            if (IsLoggedIn())
+            var semaphore = roleSemaphores.GetOrAdd(role, _ => new SemaphoreSlim(1, 1));
+
+            await semaphore.WaitAsync();
+
+            try
             {
-                await InjectSessionStorage();
-                return;
+                if (IsLoggedIn(role))
+                {
+                    roleSessionStorage.TryGetValue(role, out string? savedSession);
+                    await LoadLoginFromSession(savedSession);
+                }
+                else
+                {
+                    Credentials? credentials = role switch
+                    {
+                        UserRole.Administrator => Configuration.GetSection("Administrator").Get<Credentials>(),
+                        UserRole.Guest => Configuration.GetSection("Guest").Get<Credentials>(),
+                        UserRole.Member => Configuration.GetSection("Member").Get<Credentials>(),
+                        _ => null
+                    } ?? throw new InvalidOperationException("Credentials cannot be null");
+
+                    int attempts = 0;
+
+                    while (attempts < 5 && !IsLoggedIn(role))
+                    {
+                        try
+                        {
+                            await FillInCredentials(credentials);
+                            await SaveSessionStorage(role);
+                        }
+                        catch (LoginFailedException e)
+                        {
+                            Console.WriteLine(e.ToString());
+                            await Task.Delay(2 ^ (++attempts) * 1000);
+                        }
+                    }
+
+                }
             }
-
-            Credentials? credentials = role switch
+            finally
             {
-                UserRole.Administrator => Configuration.GetSection("Administrator").Get<Credentials>(),
-                UserRole.Guest => Configuration.GetSection("Guest").Get<Credentials>(),
-                UserRole.Member => Configuration.GetSection("Member").Get<Credentials>(),
-                _ => null
-            } ?? throw new InvalidOperationException("Credentials cannot be null");
-
-
-            await LoginUsingCredentials(credentials);
-            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+                semaphore.Release();
+            }
         }
 
-        private async Task LoginUsingCredentials(Credentials credentials)
+        private static bool IsLoggedIn(UserRole role)
+        {
+            return roleSessionStorage.TryGetValue(role, out string? savedSession) && savedSession != null;
+
+        }
+
+        private async Task FillInCredentials(Credentials credentials)
         {
             await NavigateToUrl("/authentication/login");
+            try
+            {
+                await Page.FillAsync("input[name='username']", credentials.Email);
+                await Page.FillAsync("input[name='password']", credentials.Password);
+                await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
+                await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                await Hydration();
 
-            await Page.FillAsync("input[name='username']", credentials.Email);
-            await Page.FillAsync("input[name='password']", credentials.Password);
-            await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
-
-            await SaveSessionStorage();
+                await FinishUpLogin();
+            }
+            catch (PlaywrightException e)
+            {
+                throw new LoginFailedException(e);
+            }
         }
 
-        private async Task SaveSessionStorage()
+        private Task<IElementHandle?> FinishUpLogin()
+        {
+            return Page.WaitForSelectorAsync("[data-testid=login-finishing]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
+        }
+
+        private async Task SaveSessionStorage(UserRole role)
         {
             string sessionStorage = await Page.EvaluateAsync<string>("() => JSON.stringify(sessionStorage)");
-            SessionStorage = sessionStorage;
+
+            roleSessionStorage[role] = sessionStorage;
         }
 
-        private bool IsLoggedIn()
+        private async Task LoadLoginFromSession(string? sessionStorage)
         {
-            return SessionStorage?.Contains("oidc.user:https://rise-gent2.eu.auth0.com:8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l") ?? false;
-        }
+            if (sessionStorage == null) return;
 
-        private async Task InjectSessionStorage()
-        {
-            await Context.AddInitScriptAsync(@"(storage => {
+            await NavigateToUrl("/");
+            await Page.EvaluateAsync(@"storage => {
                 if (window.location.hostname === 'localhost') {
                     const entries = JSON.parse(storage);
                     for (const [key, value] of Object.entries(entries)) {
                         window.sessionStorage.setItem(key, value);
                     }
                 }
-            })('" + SessionStorage + "')");
+            }", sessionStorage);
+
+            await Page.EvaluateAsync(@"key => {
+                if (window.location.hostname === 'localhost') {
+                    return window.sessionStorage.getItem(key);
+                }
+                return 'Failed to load :c';
+            }", "oidc.user:https://rise-gent2.eu.auth0.com:8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l");
+            await Page.GetByTestId("nav-desktop-login").ClickAsync();
+            await FinishUpLogin();
         }
 
         private class Credentials
@@ -87,26 +132,19 @@ namespace Rise.Client.Tests
             public required string Password { get; set; }
         }
 
-        protected async Task LogoutAsync()
+        protected async Task LogoutAsync(UserRole role)
         {
-            // await Page.SetViewportSizeAsync(1280, 1920);
-            // await NavigateToUrl("/home");
-            // await Hydration();
-            await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-            // await Page.GetByTestId("nav-desktop-logout").ClickAsync();
-            await NavigateToUrl("/authentication/logout"); // This is not working
-            await Context.AddInitScriptAsync(@"(() => {
-                if (window.location.hostname === 'localhost') {
-                    window.sessionStorage.clear();
-                }
-            })()");
-            SessionStorage = null;
+            if (!IsLoggedIn(role)) return;
+
+            await Page.SetViewportSizeAsync(1080, 1920);
+            await NavigateToUrl("/");
+            await Page.GetByTestId("nav-desktop-logout").ClickAsync();
+
         }
 
         protected async Task CheckRedirectedToLogin()
         {
             await Expect(Page.GetByText("Log in to Buut")).ToBeVisibleAsync();
-
         }
 
         protected async Task TestRedirectWhenNotLoggedIn(string url)
@@ -114,12 +152,15 @@ namespace Rise.Client.Tests
             await NavigateToUrl(url);
             await CheckRedirectedToLogin();
         }
+
         protected async Task TestNotAuthorized(string url, UserRole role)
         {
             await LoginAsync(role);
             await NavigateToUrl(url);
             await Expect(Page.GetByTestId("unauthorized")).ToBeVisibleAsync();
-            await LogoutAsync();
+            await LogoutAsync(role);
         }
     }
+
+    internal class LoginFailedException(Exception e) : Exception("Login attempt failed", e);
 }

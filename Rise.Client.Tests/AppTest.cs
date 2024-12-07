@@ -1,8 +1,6 @@
 
 namespace Rise.Client.Tests
 {
-
-    [TestFixture]
     public class AppTest : CustomPageTest
     {
         private const int DefaultHeight = 1920;

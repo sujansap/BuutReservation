@@ -4,21 +4,12 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Reservations;
 
-[TestFixture]
 public class CancelReservationTest : CustomAuthenticatedPageTest
 {
     [SetUp]
-    public async Task SetUpAsync()
+    public async Task SetUp()
     {
-        base.GlobalSetUp();
         await LoginAsync(UserRole.Member);
-    }
-
-    [TearDown]
-    public async Task TearDownAsync()
-    {
-        await LogoutAsync();
-        await base.TearDown();
     }
 
     private const string UserReservationDetailsUrl = "/reservations/41";
@@ -132,7 +123,7 @@ public class CancelReservationTest : CustomAuthenticatedPageTest
 
         // Click the cancel button
         var cancelButton = Page.GetByTestId("cancel-reservation-button");
-        await cancelButton.ClickAsync(); // FIXME timeout error on this
+        await cancelButton.ClickAsync();
 
         // Assert: Verify that the snackbar error message is displayed
         var errorMessage = Page.GetByTestId("cancel-reservation-error");
