@@ -1,4 +1,4 @@
-﻿@page "/admin/battery/{Id:int?}"
+@page "/admin/battery/{Id:int?}"
 @using MudBlazor
 @using Rise.Client.Admins.Components
 @using Rise.Client.Localization.Admins;
@@ -27,7 +27,7 @@
     <ChildContent>
         <MudTextField @bind-Value="batteryModel.Type" For="@(() => batteryModel.Type)" Immediate="true"
             Label="@Localizer["BatteryType"]" ReadOnly Required FullWidth="@true" data-testid="battery-details-type" />
-                @* TODO make autocomplete list of users *@
+        @* TODO make autocomplete list of users *@
         <MudTextField @bind-Value="batteryModel.MentorId" For="@(() => batteryModel.MentorId)" Immediate="true"
             Label="@Localizer["BatteryMentor"]" Required FullWidth="@false" data-testid="battery-details-mentor-id" />
     </ChildContent>
