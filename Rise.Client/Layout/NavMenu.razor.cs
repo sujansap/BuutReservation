@@ -1,40 +1,50 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Rise.Shared.Notifications;
 
 namespace Rise.Client.Layout
 {
-    public partial class NavMenu
+    public partial class NavMenu : IDisposable
     {
         private bool _drawerOpen = false;
         private bool _notificationPopoverOpen = false;
-        private int _unreadNotificationCount = 0;
-
+        private bool _isAuthenticated = false;
+        private AuthenticationStateChangedHandler? _authHandler;
 
         [Inject]
         public required NavigationManager Navigation { get; set; }
         [Inject]
-        public required INotificationService NotificationService { get; set; }
-        [Inject]
         public required AuthenticationStateProvider AuthStateProvider { get; set; }
 
-        private void ToggleDrawer()
+        protected override void OnInitialized()
         {
-            _drawerOpen = !_drawerOpen;
+            _authHandler = async (Task<AuthenticationState> task) =>
+            {
+                var authState = await task;
+                _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+                await InvokeAsync(StateHasChanged);
+            };
+
+            AuthStateProvider.AuthenticationStateChanged += _authHandler;
+        }
+
+        public void Dispose()
+        {
+            if (_authHandler != null)
+            {
+                AuthStateProvider.AuthenticationStateChanged -= _authHandler;
+            }
         }
 
         protected override async Task OnInitializedAsync()
         {
-            AuthenticationState? authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-            if (user?.Identity?.IsAuthenticated ?? false)
-                await UpdateNotificationCount();
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            _isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
         }
 
-        private async Task UpdateNotificationCount()
+        private void ToggleDrawer()
         {
-            _unreadNotificationCount = await NotificationService.GetUnreadNotificationCount();
+            _drawerOpen = !_drawerOpen;
         }
 
         private void HandleNotificationButtonClicked()
