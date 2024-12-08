@@ -78,7 +78,7 @@ namespace Rise.Client.Tests.Admins.Battery
             int batteryId = 1;
             BatteryDto battery = new() { Id = batteryId, Type = "Lithium", MentorId = 1 };
             BatteryUpdateDto updatedBattery = new() { Type = "Zink", MentorId = 2 };
-            await MockBatteryDetailsValid(batteryId, battery, 2000);
+            await MockBatteryDetailsValid(batteryId, battery, 5000);
             await NavigateToUrl(baseSuffix);
 
             ILocator placeholder = Page.GetByTestId("battery-details-placeholder");
