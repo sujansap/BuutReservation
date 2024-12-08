@@ -2,7 +2,6 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Admin
 {
-    [TestFixture]
     public class AdminGuestsPageTestAll : CustomAuthenticatedPageTest
     {
         protected const string baseSuffix = "/admin/guests";

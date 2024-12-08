@@ -1,6 +1,5 @@
 namespace Rise.Client.Tests.Home
 {
-    [TestFixture]
     public class HomePageTestVisitor : CustomAuthenticatedPageTest
     {
 

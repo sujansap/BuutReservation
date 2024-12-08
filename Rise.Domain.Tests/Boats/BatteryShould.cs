@@ -1,5 +1,6 @@
 ﻿using Rise.Domain.Boats;
 using Rise.Domain.Tests.TestUtilities;
+using Rise.Domain.Users;
 using Shouldly;
 
 namespace Rise.Domain.Tests.Boats;
@@ -33,6 +34,23 @@ public class BatteryShould
 
         act.ShouldThrow<ArgumentException>()
             .ParamName.ShouldBe("Type");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    public void NotBeCreated_WithInvalidMentor(User? mentor)
+    {
+
+        Action act = () =>
+        {
+            Battery battery = new BatteryBuilder()
+            .WithMentor(mentor!)
+            .Build();
+        };
+
+
+        act.ShouldThrow<ArgumentException>()
+            .ParamName.ShouldBe("Mentor");
     }
 }
 

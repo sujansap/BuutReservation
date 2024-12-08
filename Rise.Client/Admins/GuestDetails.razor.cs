@@ -12,13 +12,17 @@ namespace Rise.Client.Admins
     {
         [Parameter]
         public int Id { get; set; }
-        private string name = "John Doe";
-        private string email = "johndoe@example.com";
-        private string adres = "123 Street, City";
-        private string phone = "+32 123 456 789";
 
         public required AsyncData<UserDetailDto> AsyncDataRef { get; set; }
         private UserDetailDto? UserDetails { get; set; }
+
+        private string FormattedFullName => UserDetails != null
+            ? $"{UserDetails.FirstName} {UserDetails.FamilyName}"
+            : string.Empty;
+        private string FormattedAddress => UserDetails?.Address != null
+            ? $"{UserDetails.Address.Street} {UserDetails.Address.Number}, {UserDetails.Address.PostalCode} {UserDetails.Address.City}, {UserDetails.Address.Country}"
+            : string.Empty;
+
 
         [Inject]
         public required IUserAdminService UserService { get; set; }
@@ -36,7 +40,9 @@ namespace Rise.Client.Admins
 
         protected void NavigateToListPage()
         {
+
             NavigationManager.NavigateTo("/admin/guests");
+
         }
 
         private async Task ApproveGuest()

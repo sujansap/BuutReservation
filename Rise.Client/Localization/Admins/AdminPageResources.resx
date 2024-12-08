@@ -127,4 +127,44 @@
 	</data>
 	
 
+	<data name="Battery">
+		<value>
+			Batterij
+		</value>
+	</data>
+	<data name="BatteryDetails">
+		<value>
+			Batterij Details
+		</value>
+	</data>
+	<data name="BatteryType">
+		<value>
+			Soort
+		</value>
+	</data>
+	<data name="BatteryMentor">
+		<value>
+			Meter/peter
+		</value>
+	</data>
+	<data name="UpdateBattery">
+		<value>
+			Update
+		</value>
+	</data>
+	<data name="CruisePeriod">
+		<value>
+			Vaarperiode
+		</value>
+	</data>
+	<data name="Start">
+		<value>
+			Start
+		</value>
+	</data>
+	<data name="End">
+		<value>
+			Einde
+		</value>
+	</data>
 </root>

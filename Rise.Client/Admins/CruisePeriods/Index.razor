@@ -1,0 +1,25 @@
+﻿@page "/admin/cruise_period/{Id:int?}"
+@using MudBlazor
+@using Rise.Client.Admins.Components
+@using Rise.Client.Localization.Admins;
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<AdminPageResources> Localizer
+@using static System.Net.WebRequestMethods
+@using Rise.Client.Common
+@using Rise.Shared.Users
+@using Rise.Shared.TimeSlots
+@using FluentValidation
+@using Rise.Client.Common.Buttons
+@attribute [Authorize(Roles = nameof(UserRole.Administrator))]
+
+@layout AdminLayout
+
+<MudText Typo="Typo.h2">@Localizer["CruisePeriod"]</MudText>
+<AsyncData DataFetcher="@FetchCruisePeriod" @bind-Data="@CruisePeriod" T="CruisePeriodDetailedDto"
+  TestIdPrefix="cruise-period-details">
+  <MudStack>
+    <MudText Typo="Typo.h4" data-testid="cruise-period-start">@($"{Localizer["Start"]}: {CruisePeriod.Start}")
+    </MudText>
+    <MudText Typo="Typo.h4" data-testid="cruise-period-end">@($"{Localizer["End"]}: {CruisePeriod.End}")</MudText>
+  </MudStack>
+</AsyncData>

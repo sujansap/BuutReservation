@@ -1,14 +1,9 @@
 using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
-using NUnit.Framework;
 using NUnit.Framework.Internal;
-using Rise.Shared.Users;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Rise.Client.Tests.Register
 {
-    [TestFixture]
     public class RegisterFormPageTest : CustomPageTest
     {
         private async Task MockRegisterUser(int status = 400)

@@ -6,6 +6,7 @@
     "Blazor",
     "dotnet",
     "Hogent",
+    "nameof",
     "Npgsql",
     "Pushwant",
     "Rampelberg",
@@ -16,6 +17,7 @@
     "Snowyxa",
     "Sujan",
     "sujansapkota",
+    "testid",
     "Unclickable"
   ],
   "conventionalCommits.scopes": [
