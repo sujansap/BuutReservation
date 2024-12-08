@@ -47,7 +47,7 @@ namespace Rise.Client.Tests
                     {
                         try
                         {
-                            await FillInCredentials(credentials);
+                            await LoginProcess(credentials);
                             await SaveSessionStorage(role);
                         }
                         catch (LoginFailedException e)
@@ -71,30 +71,26 @@ namespace Rise.Client.Tests
 
         }
 
-        private async Task FillInCredentials(Credentials credentials)
+        private async Task LoginProcess(Credentials? credentials)
         {
             await NavigateToUrl("/authentication/login");
             try
             {
-                await Page.FillAsync("input[name='username']", credentials.Email);
-                await Page.FillAsync("input[name='password']", credentials.Password);
-                await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
+                if (credentials is not null)
+                {
+                    await Page.FillAsync("input[name='username']", credentials.Email);
+                    await Page.FillAsync("input[name='password']", credentials.Password);
+                    await Page.ClickAsync("button[type='submit']:not(.ulp-hidden-form-submit-button)");
+                }
                 await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
                 await Hydration();
-
-                await FinishUpLogin();
+                await Page.WaitForSelectorAsync("[data-testid=login-finishing]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
             }
             catch (PlaywrightException e)
             {
                 throw new LoginFailedException(e);
             }
         }
-
-        private Task<IElementHandle?> FinishUpLogin()
-        {
-            return Page.WaitForSelectorAsync("[data-testid=login-finishing]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
-        }
-
         private async Task SaveSessionStorage(UserRole role)
         {
             string sessionStorage = await Page.EvaluateAsync<string>("() => JSON.stringify(sessionStorage)");
@@ -122,8 +118,7 @@ namespace Rise.Client.Tests
                 }
                 return 'Failed to load :c';
             }", "oidc.user:https://rise-gent2.eu.auth0.com:8vJtbXg2FptHGmKrpFl1tZwhiXOJZ57l");
-            await Page.GetByTestId("nav-desktop-login").ClickAsync();
-            await FinishUpLogin();
+            await LoginProcess(null);
         }
 
         private class Credentials
