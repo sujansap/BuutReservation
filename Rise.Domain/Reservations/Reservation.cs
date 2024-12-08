@@ -25,10 +25,7 @@ namespace Rise.Domain.Reservations
             {
                 _battery?.RemoveReservation(this);
                 _battery = value;
-                if (_battery is not null)
-                {
-                    _battery.AddReservation(this);
-                }
+                _battery?.AddReservation(this);
             }
         }
 
@@ -46,6 +43,11 @@ namespace Rise.Domain.Reservations
             }
 
             IsDeleted = true;
+        }
+
+        public void AssignLastUserToBattery()
+        {
+            Battery?.AssignToHolder(User, TimeSlot.Date.ToDateTime(TimeSlot.Start));
         }
     }
 }

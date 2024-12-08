@@ -11,12 +11,10 @@ namespace Rise.Persistence.Reservations
         public override void Configure(EntityTypeBuilder<Reservation> builder)
         {
             base.Configure(builder);
-            // TODO: add battery relation here and in domain
 
             builder
                 .HasOne(e => e.Battery)
                 .WithMany(e => e.Reservations)
-                .HasForeignKey("BatteryId")
                 .IsRequired(false);
 
             builder

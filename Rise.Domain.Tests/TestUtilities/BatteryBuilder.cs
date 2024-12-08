@@ -37,7 +37,6 @@ namespace Rise.Domain.Tests.TestUtilities
             {
                 Type = batteryType,
                 Boat = boat,
-                BoatId = boat.Id,
                 Mentor = mentor
             };
         }

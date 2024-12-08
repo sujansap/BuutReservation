@@ -177,7 +177,7 @@ namespace Rise.Services.Reservations
                 MentorName = reservation.Battery?.Mentor?.FamilyName,
                 BatteryId = reservation.Battery?.Id,
                 CurrentBatteryUserName = reservation.Battery?.CurrentHolder?.FamilyName,
-                CurrentBatteryUserId = reservation.Battery?.CurrentHolderId,
+                CurrentBatteryUserId = reservation.Battery?.CurrentHolder?.Id,
                 CurrentHolderPhoneNumber = reservation.Battery?.CurrentHolder?.PhoneNumber,
                 CurrentHolderEmail = reservation.Battery?.CurrentHolder?.Email,
                 CurrentHolderStreet = reservation.Battery?.CurrentHolder?.Address.Street,

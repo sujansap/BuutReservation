@@ -1,4 +1,5 @@
 using Rise.Domain.Reservations;
+using Rise.Domain.TimeSlots;
 
 namespace Rise.Domain.Boats
 {
@@ -18,14 +19,6 @@ namespace Rise.Domain.Boats
 
         public IReadOnlyList<Battery> Batteries => batteries.AsReadOnly();
 
-        public Battery? GetAvailableBatteryForDate(DateOnly date, TimeOnly startTime, TimeOnly endTime)
-        {
-            return batteries
-                .OrderBy(b => b.UsageCount)
-                .ThenBy(b => b.LastUsedAt ?? DateTime.MinValue)
-                .FirstOrDefault(b => b.IsAvailableForDate(date, startTime, endTime));
-        }
-
         public void AddReservation(Reservation reservation)
         {
             Guard.Against.Null(reservation, nameof(reservation));
@@ -36,6 +29,47 @@ namespace Rise.Domain.Boats
         {
             Guard.Against.Null(battery, nameof(battery));
             batteries.Add(battery);
+        }
+
+        public Battery? FindAvailableBatteryAsync(TimeSlot timeSlot, DateTime currentTime)
+        {
+            Guard.Against.Null(timeSlot);
+            Guard.Against.Null(currentTime);
+
+            IEnumerable<Battery> compatibleBatteries = batteries
+                .OrderBy(b => b.UsageCount)
+                .ThenBy(b => b.LastUsedAt ?? DateTime.MinValue);
+
+            return compatibleBatteries.FirstOrDefault(
+                b => b.HasSufficientChargingTime(currentTime) && b.IsAvailableForTimeSlot(timeSlot));
+        }
+
+        public void AssignBatteriesToReservations(DateTime now)
+        {
+            var reservationsByDate = reservations
+                .GroupBy(r => r.TimeSlot.Date)
+                .OrderBy(g => g.Key);
+
+            foreach (var dateGroup in reservationsByDate)
+            {
+                foreach (var reservation in dateGroup.OrderBy(r => r.TimeSlot.Start))
+                {
+                    if (reservation.Battery is null)
+                        AssignBatteryToReservation(reservation, now);
+                    else
+                        continue;
+                }
+            }
+        }
+
+        private void AssignBatteryToReservation(Reservation reservation, DateTime now)
+        {
+            Battery? availableBattery = FindAvailableBatteryAsync(reservation.TimeSlot, now);
+            if (availableBattery is not null)
+            {
+                reservation.Battery = availableBattery;
+                reservation.AssignLastUserToBattery();
+            }
         }
 
     }

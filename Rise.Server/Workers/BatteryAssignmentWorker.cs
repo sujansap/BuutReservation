@@ -1,27 +1,13 @@
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
 using Rise.Services.Boats;
 
 namespace Rise.Server.Workers
 {
-    public class BatteryAssignmentWorker : BackgroundService
+    public class BatteryAssignmentWorker(
+        IServiceProvider services,
+        ILogger<BatteryAssignmentWorker> logger) : BackgroundService
     {
-        private readonly IServiceProvider _services;
-        private readonly ILogger<BatteryAssignmentWorker> _logger;
-        private bool _initialAssignmentDone;
-
-        public BatteryAssignmentWorker(
-            IServiceProvider services,
-            ILogger<BatteryAssignmentWorker> logger)
-        {
-            _services = services;
-            _logger = logger;
-            _initialAssignmentDone = false;
-        }
+        private readonly IServiceProvider _services = services;
+        private readonly ILogger<BatteryAssignmentWorker> _logger = logger;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -31,14 +17,7 @@ namespace Rise.Server.Workers
                 {
                     using var scope = _services.CreateScope();
                     var batteryService = scope.ServiceProvider.GetRequiredService<BatteryAssignmentService>();
-                    
-                    if (!_initialAssignmentDone)
-                    {
-                        _logger.LogInformation("Performing initial battery assignment reset and optimization");
-                        // await ResetAndReassignBatteries(batteryService);
-                        _initialAssignmentDone = true;
-                    }
-                    
+
                     await batteryService.AssignAndOptimizeBatteries();
                     
                     // Run every 2 hour
@@ -52,9 +31,5 @@ namespace Rise.Server.Workers
             }
         }
 
-        // private async Task ResetAndReassignBatteries(BatteryAssignmentService batteryService)
-        // {
-        //     await batteryService.AssignAndOptimizeBatteries();
-        // }
     }
 }

@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Boats;
-using Rise.Domain.Reservations;
 using Rise.Persistence;
 using Microsoft.Extensions.Logging;
-using Rise.Domain.Common;
+using Rise.Domain.Boats;
+using Rise.Domain.Reservations;
 
 namespace Rise.Services.Boats
 {
@@ -16,14 +15,15 @@ namespace Rise.Services.Boats
 
         public async Task AssignAndOptimizeBatteries()
         {
-            var timeInfo = GetCurrentTimeInfo();
-            
+            TimeInfo timeInfo = GetCurrentTimeInfo();
+
+            // TODO handle completed reservations
             await HandleCompletedReservations(timeInfo);
-            var upcomingReservations = await GetUpcomingReservations(timeInfo);
-            var allBatteries = await GetAllBatteriesWithUsageInfo();
-            
-            await Battery.AssignBatteriesToReservationsAsync(upcomingReservations, allBatteries, timeInfo);
-            
+
+            // TODO assign to upcoming reservations
+            await AssignBatteriesToReservations(timeInfo);
+
+
             await _dbContext.SaveChangesAsync();
         }
 
@@ -42,76 +42,56 @@ namespace Rise.Services.Boats
         {
             var completedReservations = await _dbContext.Reservations
                 .Include(r => r.Battery)
+                    .ThenInclude(b => b!.Mentor)
                 .Include(r => r.User)
-                .Include(r => r.TimeSlot)
-                .Where(r => 
-                    r.Battery != null && 
-                    (r.TimeSlot.Date < timeInfo.Today || 
-                     (r.TimeSlot.Date == timeInfo.Today && r.TimeSlot.End <= timeInfo.CurrentTime)))
+                .Where(r =>
+                    r.Battery! != null! &&
+                    (r.TimeSlot.Date < timeInfo.Today ||
+                    (r.TimeSlot.Date == timeInfo.Today && r.TimeSlot.End <= timeInfo.CurrentTime)))
                 .ToListAsync();
 
-            Battery.HandleCompletedReservations(completedReservations);
-        }
-
-        private async Task<List<Reservation>> GetUpcomingReservations(TimeInfo timeInfo)
-        {
-            return await _dbContext.Reservations
-                .Include(r => r.Boat)
-                .ThenInclude(b => b.Batteries)
-                .Include(r => r.TimeSlot)
-                .Include(r => r.User)
-                .Include(r => r.Battery)
-                .Where(r => 
-                    r.TimeSlot.Date >= timeInfo.Today && 
-                    r.TimeSlot.Date <= timeInfo.ThreeDaysFromNow &&
-                    (r.TimeSlot.Date > timeInfo.Today || 
-                     (r.TimeSlot.Date == timeInfo.Today && r.TimeSlot.Start > timeInfo.CurrentTime)) &&
-                    !r.IsDeleted)
-                .OrderBy(r => r.TimeSlot.Date)
-                .ThenBy(r => r.TimeSlot.Start)
-                .ToListAsync();
-        }
-
-        private async Task<List<Battery>> GetAllBatteriesWithUsageInfo()
-        {
-            return await _dbContext.Batteries
-                .Include(b => b.Reservations)
-                .Include(b => b.CurrentHolder)
-                .OrderBy(b => b.UsageCount)
-                .ToListAsync();
-        }
-
-        public async Task ResetAllBatteryAssignments()
-        {
-            _logger.LogInformation("Resetting all battery assignments");
-            
-            var allBatteries = await _dbContext.Batteries
-                .Include(b => b.CurrentHolder)
-                .Include(b => b.Mentor)
-                .ToListAsync();
-
-            foreach (var battery in allBatteries)
+            // TODO handle logic for reservation that were canceled
+            foreach (Reservation reservation in completedReservations)
             {
-                battery.AssignToHolder(null);
+                reservation.AssignLastUserToBattery();
             }
+        }
 
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var tomorrow = today.AddDays(1);
-            
-            var reservationsToReset = await _dbContext.Reservations
-                .Include(r => r.Battery)
-                .Where(r => 
-                    r.Battery != null && 
-                    (r.TimeSlot.Date == today || r.TimeSlot.Date == tomorrow))
+        private async Task AssignBatteriesToReservations(TimeInfo timeInfo)
+        {
+            List<Boat> boats = await _dbContext.Boats
+                .Include(boat => boat.Reservations
+                    .Where(
+                    res =>
+                    (timeInfo.Today == res.TimeSlot.Date && timeInfo.CurrentTime < res.TimeSlot.Start) ||
+                    (timeInfo.Today < res.TimeSlot.Date && (
+                        res.TimeSlot.Date < timeInfo.ThreeDaysFromNow ||
+                        (res.TimeSlot.Date == timeInfo.ThreeDaysFromNow && res.TimeSlot.Start < timeInfo.CurrentTime)
+                    )))
+                    .OrderBy(res => res.TimeSlot.Date)
+                    .ThenBy(res => res.TimeSlot.Start)
+                )
+                    .ThenInclude(res => res.TimeSlot)
+                .Include(boat => boat.Reservations.Where(res =>
+                    res.Battery! != null!
+                ))
+                    .ThenInclude(res => res.Battery)
+                        .ThenInclude(bat => bat!.Mentor)
+                .Include(boat => boat.Reservations)
+                    .ThenInclude(res => res.Battery)
+                        .ThenInclude(bat => bat!.CurrentHolder)
                 .ToListAsync();
 
-            foreach (var reservation in reservationsToReset)
+            foreach (Boat boat in boats)
             {
-                reservation.Battery = null;
+                boat.AssignBatteriesToReservations(timeInfo.Now);
             }
-
-            await _dbContext.SaveChangesAsync();
-            _logger.LogInformation("Successfully reset all battery assignments");
         }
     }
+
+    internal record TimeInfo(
+    DateTime Now,
+    DateOnly Today,
+    TimeOnly CurrentTime,
+    DateOnly ThreeDaysFromNow);
 }
