@@ -10,7 +10,7 @@ namespace Rise.Server.Controllers.TimeSlots
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = $"{nameof(UserRole.Guest)},{nameof(UserRole.Member)}")]
+    [Authorize(Roles = $"{nameof(UserRole.Guest)},{nameof(UserRole.Member)},{nameof(UserRole.Administrator)}")]
     public class TimeSlotController(ITimeSlotService timeSlotService, IReservationService reservationsService, ILogger<TimeSlotController> logger) : ControllerBase
     {
         private readonly ILogger _logger = logger;
