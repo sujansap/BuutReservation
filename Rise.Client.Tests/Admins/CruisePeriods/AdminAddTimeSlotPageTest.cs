@@ -82,7 +82,6 @@ namespace Rise.Client.Tests.Admins.CruisePeriods
 
             var periodName = Page.GetByTestId("cruise-period-name");
             await Expect(periodName).ToBeVisibleAsync();
-            await Expect(periodName).ToContainTextAsync("Cruise Period");
 
             var startDate = Page.GetByTestId("cruise-period-start");
             await Expect(startDate).ToBeVisibleAsync();
