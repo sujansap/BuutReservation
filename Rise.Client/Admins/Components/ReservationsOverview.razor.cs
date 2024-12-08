@@ -61,6 +61,12 @@ namespace Rise.Client.Admins.Components
 
         private async Task LoadNextPage()
         {
+            if (Reservations?.NextId == null)
+            {
+                Snackbar.Add(Localizer["NoMorePages"], Severity.Warning);
+                return;
+            }
+
             IsNextPage = true;
             Cursor = Reservations?.NextId;
             await LoadReservations();
@@ -68,6 +74,12 @@ namespace Rise.Client.Admins.Components
 
         private async Task LoadPreviousPage()
         {
+            if (Reservations?.PreviousId == null || Reservations?.IsFirstPage == true)
+            {
+                Snackbar.Add(Localizer["AlreadyOnFirstPage"], Severity.Warning);
+                return;
+            }
+
             IsNextPage = false;
             Cursor = Reservations?.PreviousId;
             await LoadReservations();
