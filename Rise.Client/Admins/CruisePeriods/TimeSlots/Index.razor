@@ -41,16 +41,16 @@
                         <MudGrid>
                             <MudItem xs="12" sm="5">
                                 <MudTimePicker @bind-Time="@StartTime" Label="Start Time" Class="mt-0"
-                                    PickerVariant="PickerVariant.Dialog" Required="true"
+                                    PickerVariant="PickerVariant.Dialog" Required="true" data-testid="time-slot-start"
                                     TimeEditMode="TimeEditMode.Normal" />
                             </MudItem>
                             <MudItem xs="12" sm="5">
                                 <MudTimePicker @bind-Time="@EndTime" Label="End Time" Class="mt-0"
                                     PickerVariant="PickerVariant.Dialog" Required="true"
-                                    TimeEditMode="TimeEditMode.Normal" />
+                                    TimeEditMode="TimeEditMode.Normal" data-testid="time-slot-end" />
                             </MudItem>
                             <MudItem xs="12" sm="2" Class="d-flex align-center">
-                                <PrimaryButton OnClick="AddTimeSlot" Class="ml-auto">
+                                <PrimaryButton OnClick="AddTimeSlot" Class="ml-auto" data-testid="add-time-slot-button">
                                     Add
                                 </PrimaryButton>
                             </MudItem>
@@ -64,25 +64,27 @@
 
                 @if (!AllTimeSlotsDto.TimeSlots.Any())
                 {
-                    <MudAlert Severity="Severity.Info" Elevation="0">
+                    <MudAlert Severity="Severity.Info" Elevation="0" data-testid="no-time-slots-message">
                         No time slots have been added yet
                     </MudAlert>
                 }
                 else
                 {
-                    <MudPaper Class="pa-4" Elevation="0">
+                    <MudPaper Class="pa-4" Elevation="0" data-testid="time-slots-list">
                         <MudList Dense="true" Clickable="true" T="TimeSpan">
                             @foreach (var timeSlot in AllTimeSlotsDto.TimeSlots.OrderBy(t => t.Start))
                             {
-                                <MudListItem>
+                                <MudListItem data-testid="time-slot-item">
                                     <div class="d-flex justify-space-between align-center w-100">
                                         <div class="d-flex gap-3 align-center">
                                             <MudIcon Icon="@Icons.Material.Filled.Schedule" />
-                                            <MudText>@timeSlot.Start.ToString("HH:mm") -
-                                                @timeSlot.End.ToString("HH:mm")</MudText>
+                                            <MudText data-testid=@($"time-slot-text-{FormatTimeSlot(timeSlot)}")>
+                                                @FormatTimeSlot(timeSlot)
+                                            </MudText>
                                         </div>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
-                                            Size="Size.Small" OnClick="@(() => RemoveTimeSlot(timeSlot))" />
+                                            Size="Size.Small" OnClick="@(() => RemoveTimeSlot(timeSlot))"
+                                            data-testid="delete-time-slot-button" />
                                     </div>
                                 </MudListItem>
                                 <MudDivider Class="my-2" />
@@ -93,7 +95,8 @@
             </MudCardContent>
 
             <MudCardActions Class="d-flex justify-end pa-4">
-                <PrimaryButton Disabled="@(!AllTimeSlotsDto.TimeSlots.Any())" OnClick="SaveTimeSlots">
+                <PrimaryButton Disabled="@(!AllTimeSlotsDto.TimeSlots.Any())" OnClick="SaveTimeSlots"
+                    data-testid="save-time-slots-button">
                     Save Time Slots
                 </PrimaryButton>
             </MudCardActions>

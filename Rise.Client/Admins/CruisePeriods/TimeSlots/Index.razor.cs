@@ -30,6 +30,11 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
         private CreateTimeSlotDto AllTimeSlotsDto { get; set; } = new CreateTimeSlotDto();
         private CruisePeriodDetailedDto? CruisePeriod { get; set; }
 
+
+        private string FormatTimeSlot(TimeSlotRange timeSlot)
+        {
+            return $"{timeSlot.Start.ToString("HH:mm")} - {timeSlot.End.ToString("HH:mm")}";
+        }
         protected override async Task OnInitializedAsync()
         {
             if (Id.HasValue)
