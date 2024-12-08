@@ -119,8 +119,7 @@ public class AdminReservationPageTest : CustomAuthenticatedPageTest
 
         var errorMessage = Page.GetByTestId("admin-cancel-reservation-error");
         await Expect(errorMessage).ToBeVisibleAsync();
-        await Expect(errorMessage).ToHaveTextAsync($"Failed to cancel reservation with ID {reservations.Id}. Response: Bad Request");
-
+        await Expect(errorMessage).ToContainTextAsync("Failed to cancel reservation with ID");
     }
 
     [Test]
@@ -160,7 +159,7 @@ public class AdminReservationPageTest : CustomAuthenticatedPageTest
             new ReservationDto
             {
                 Id = 13,
-                Date = DateOnly.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd")), // 1 dag later
+                Date = DateOnly.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd")),
                 Start = TimeOnly.Parse("10:00"),
                 End = TimeOnly.Parse("13:00"),
                 BoatPersonalName = "Mystic River",

@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
+using Serilog;
 
 namespace Rise.Client.Admins.Components
 {
@@ -11,6 +13,11 @@ namespace Rise.Client.Admins.Components
         private bool ShowPastReservations = false;
         private int? Cursor;
         private bool? IsNextPage;
+
+        [Inject]
+        public required ISnackbar SnackbarService { get; set; }
+
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -26,7 +33,7 @@ namespace Rise.Client.Admins.Components
             }
             catch (Exception ex)
             {
-                Snackbar.Add(Localizer["ErrorLoadingReservations", ex.Message], Severity.Error);
+                Snackbar.Add(RenderErrorMessage(Localizer["ErrorLoadingReservations", ex.Message]), Severity.Error);
             }
             finally
             {
@@ -44,7 +51,8 @@ namespace Rise.Client.Admins.Components
             }
             catch (Exception ex)
             {
-                Snackbar.Add(Localizer["ErrorCancelingReservation", ex.Message], Severity.Error);
+                Log.Error($"Error cancelling reservation: {ex.Message}");
+                SnackbarService.Add(RenderErrorMessage(ex.Message), Severity.Error);
             }
         }
 
@@ -63,7 +71,7 @@ namespace Rise.Client.Admins.Components
         {
             if (Reservations?.NextId == null)
             {
-                Snackbar.Add(Localizer["NoMorePages"], Severity.Warning);
+                Snackbar.Add(RenderErrorMessage(Localizer["NoMorePages"]), Severity.Warning);
                 return;
             }
 
@@ -76,7 +84,7 @@ namespace Rise.Client.Admins.Components
         {
             if (Reservations?.PreviousId == null || Reservations?.IsFirstPage == true)
             {
-                Snackbar.Add(Localizer["AlreadyOnFirstPage"], Severity.Warning);
+                Snackbar.Add(RenderErrorMessage(Localizer["AlreadyOnFirstPage"]), Severity.Warning);
                 return;
             }
 
