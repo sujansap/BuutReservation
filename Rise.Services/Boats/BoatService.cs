@@ -3,44 +3,33 @@ using Rise.Services.Auth;
 using Rise.Persistence;
 using Rise.Domain.Users;
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Boats;
-using Rise.Domain.Exceptions;
+using Rise.Shared;
 
 namespace Rise.Services.Boats
 {
-    public class BatteryService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        : AuthenticatedService(dbContext, authContextProvider), IBatteryService
+    public class BoatService : AuthenticatedService, IBoatService
     {
-        /// <summary>
-        /// Gets the battery by id
-        /// </summary>
-        /// <param name="id">battery id</param>
-        /// <returns></returns>
-        /// <exception cref="EntityNotFoundException">When the battery does not exist with given id</exception>
-        public async Task<Battery> FindBattery(int id)
+        public BoatService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+            : base(dbContext, authContextProvider)
         {
-            return await _dbContext.Batteries.Include(b => b.Mentor)
-            .FirstOrDefaultAsync(b => b.Id == id) ?? throw new EntityNotFoundException(nameof(Battery), id);
-        }
-        public async Task<BatteryDto> GetBattery(int id)
-        {
-            Battery battery = await FindBattery(id);
-
-            return new BatteryDto { Id = battery.Id, MentorId = battery.Mentor.Id, Type = battery.Type };
         }
 
-        public async Task<BatteryDto> UpdateBattery(int id, BatteryUpdateDto newBattery)
+        public async Task<IEnumerable<BoatDto>> GetAllBoatsAsync()
         {
-            Battery battery = await FindBattery(id);
 
-            User? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == newBattery.MentorId) ?? throw new EntityNotFoundException(nameof(User), newBattery.MentorId);
 
-            battery.Mentor = user;
-            battery.Type = newBattery.Type;
+            var boats = await _dbContext.Boats
+                .Select(boat => new BoatDto
+                {
+                    Id = boat.Id,
+                    PersonalName = boat.PersonalName,
+                    IsAvailable = boat.IsAvailable
+                })
+                .ToListAsync();
 
-            await _dbContext.SaveChangesAsync();
-
-            return new BatteryDto { Id = battery.Id, MentorId = battery.Mentor.Id, Type = battery.Type };
+            return boats;
         }
     }
 }
+
+
