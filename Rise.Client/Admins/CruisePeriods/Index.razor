@@ -21,5 +21,8 @@
     <MudText Typo="Typo.h4" data-testid="cruise-period-start">@($"{Localizer["Start"]}: {CruisePeriod.Start}")
     </MudText>
     <MudText Typo="Typo.h4" data-testid="cruise-period-end">@($"{Localizer["End"]}: {CruisePeriod.End}")</MudText>
+    <PrimaryButton Href=@($"admin/cruise_period/{CruisePeriod.Id}/timeslots")>
+      @Localizer["AddTimeSlot"]
+    </PrimaryButton>
   </MudStack>
 </AsyncData>

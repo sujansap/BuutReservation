@@ -185,5 +185,153 @@ namespace Rise.Server.Tests.Controllers.TimeSlots
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
         }
+
+        [Fact]
+        public async Task CreateTimeSlot_ValidData_CreatesSuccessfully()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = 1,
+                TimeSlots = new List<TimeSlotRange>
+                {
+                    new() { Start = new TimeOnly(22, 0), End = new TimeOnly(23, 40) },
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            var timeSlotsCount = await response.Content.ReadFromJsonAsync<int>();
+            timeSlotsCount.ShouldBe(90);
+        }
+
+        [Fact]
+        public async Task CreateTimeSlot_UnauthorizedUser_ReturnsForbidden()
+        {
+            await LoginAsync(UserRole.Guest);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = 1,
+                TimeSlots = new List<TimeSlotRange>
+                {
+                    new() { Start = new TimeOnly(10, 0), End = new TimeOnly(11, 30) }
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
+        public async Task CreateTimeSlot_InvalidCruisePeriod_ReturnsNotFound()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = 99999, // Non-existent ID
+                TimeSlots = new List<TimeSlotRange>
+                {
+                    new() { Start = new TimeOnly(10, 0), End = new TimeOnly(11, 30) }
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public async Task CreateTimeSlot_InvalidCruisePeriodId_ReturnsBadRequest(int invalidCruisePeriodId)
+        {
+            await LoginAsync(UserRole.Administrator);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = invalidCruisePeriodId,
+                TimeSlots = new List<TimeSlotRange>
+                {
+                    new() { Start = new TimeOnly(10, 0), End = new TimeOnly(11, 30) }
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateTimeSlot_EmptyTimeSlots_ReturnsBadRequest()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = 1,
+                TimeSlots = new List<TimeSlotRange>()
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateTimeSlot_InvalidDuration_ReturnsBadRequest()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = 1,
+                TimeSlots = new List<TimeSlotRange>
+                {
+                    new() { Start = new TimeOnly(10, 0), End = new TimeOnly(11, 0) } // Less than 1.5 hours
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateTimeSlot_OverlappingTimeSlots_ReturnsBadRequest()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = 1,
+                TimeSlots = new List<TimeSlotRange>
+                {
+                    new() { Start = new TimeOnly(10, 0), End = new TimeOnly(11, 30) },
+                    new() { Start = new TimeOnly(11, 0), End = new TimeOnly(12, 30) } // Overlaps with previous slot
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateTimeSlot_EndTimeBeforeStartTime_ReturnsBadRequest()
+        {
+            await LoginAsync(UserRole.Administrator);
+            var dto = new CreateTimeSlotDto
+            {
+                CruisePeriodId = 1,
+                TimeSlots = new List<TimeSlotRange>
+                {
+                    new() { Start = new TimeOnly(11, 0), End = new TimeOnly(10, 0) }
+                }
+            };
+
+            var response = await _client.PostAsJsonAsync("", dto);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+
     }
 }

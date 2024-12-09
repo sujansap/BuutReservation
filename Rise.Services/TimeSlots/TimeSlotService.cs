@@ -9,6 +9,7 @@ using Rise.Services.Auth;
 using System.Text.Json;
 using System.Security.Claims;
 using Rise.Domain.Exceptions;
+using Rise.Domain.TimeSlots;
 
 namespace Rise.Services.TimeSlots
 {
@@ -125,6 +126,33 @@ namespace Rise.Services.TimeSlots
         {
             // Calculate the date based on today's date plus the minimum days
             return DateOnly.FromDateTime(DateTime.Today.AddDays(Reservation.MinDaysBetweenReservation));
+
+        }
+
+        /// <summary>
+        /// Creates a new time slot
+        /// </summary>
+        /// <param name="dto">dto with info to create timslot</param>
+        /// <returns>Returns the amount of timeslots that were added</returns>
+        /// <exception cref="EntityNotFoundException"></exception>
+        public async Task<int> CreateTimeSlot(CreateTimeSlotDto addTimeSlotsDto)
+        {
+            var cruisePeriod = await _dbContext.CruisePeriods.Include(cp => cp.TimeSlots)
+                .FirstOrDefaultAsync(cp => cp.Id == addTimeSlotsDto.CruisePeriodId && !cp.IsDeleted)
+                ?? throw new EntityNotFoundException(nameof(CruisePeriod), addTimeSlotsDto.CruisePeriodId);
+
+            //add timeslots for the range of the cruise period
+            //we add the timeslots in bulk to the cruise period
+            // if one fails, don't add any
+            addTimeSlotsDto.TimeSlots.ForEach(timeSlot =>
+            {
+                cruisePeriod.AddTimeSlots(timeSlot.Start, timeSlot.End);
+            });
+
+
+            await _dbContext.SaveChangesAsync();
+
+            return cruisePeriod.TimeSlots.Count;
 
         }
 
