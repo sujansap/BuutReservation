@@ -91,9 +91,21 @@
 		<value>Heden</value>
 	</data>
 	<data name="Cancel Reservation" xml:space="preserve">
-  <value>Annuleer reservatie</value>
-</data>
-<data name="DetailsDenied" xml:space="preserve">
-  <value>Deze reservatie is geannuleerd. Je kan de details niet bekijken.</value>
-</data>
+		<value>Annuleer reservatie</value>
+	</data>
+	<data name="DetailsDenied" xml:space="preserve">
+		<value>Deze reservatie is geannuleerd. Je kan de details niet bekijken.</value>
+	</data>
+	<data name="Legend" xml:space="preserve">
+		<value>Legende</value>
+	</data>
+	<data name="YourReservationLegend" xml:space="preserve">
+		<value>Uw reservatie</value>
+	</data>
+	<data name="AvailableLegend" xml:space="preserve">
+		<value>Beschikbaar</value>
+	</data>
+	<data name="FullyBookedLegend" xml:space="preserve">
+		<value>Volzet</value>
+	</data>
 </root>
