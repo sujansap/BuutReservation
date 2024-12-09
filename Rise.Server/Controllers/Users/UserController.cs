@@ -1,18 +1,16 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Rise.Domain.Users;
-using Rise.Shared.Infrastructure;
 using Rise.Shared.Users;
 
 namespace Rise.Server.Controllers.Users
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(ILogger<UserController> logger, IUserAdminService userService) : ControllerBase
+    public class UserController(ILogger<UserController> logger, IUserAdminService userAdminService, IUserService userService) : ControllerBase
     {
         private readonly ILogger<UserController> _logger = logger;
-        private readonly IUserAdminService _userService = userService;
+        private readonly IUserAdminService _userAdminService = userAdminService;
+        private readonly IUserService _userService = userService;
 
         /// <summary>
         /// Get all the guest users
@@ -25,7 +23,7 @@ namespace Rise.Server.Controllers.Users
         public async Task<IActionResult> GetGuestUsers()
         {
             _logger.LogInformation("GET api/User/guests");
-            var users = await _userService.GetGuestUsers();
+            var users = await _userAdminService.GetGuestUsers();
             return Ok(users);
         }
 
@@ -39,7 +37,7 @@ namespace Rise.Server.Controllers.Users
         public async Task<IActionResult> GetUserDetails(int userId)
         {
             _logger.LogInformation("GET api/User/{userId}", userId);
-            var details = await _userService.GetUserDetails(userId);
+            var details = await _userAdminService.GetUserDetails(userId);
             return Ok(details);
         }
 
@@ -55,7 +53,7 @@ namespace Rise.Server.Controllers.Users
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
         {
             _logger.LogInformation("POST api/User/role for userId: {userId}", request.UserId);
-            await _userService.AddMemberRole(request.UserId);
+            await _userAdminService.AddMemberRole(request.UserId);
             return Ok();
         }
 
@@ -72,8 +70,21 @@ namespace Rise.Server.Controllers.Users
         public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationModelDto userDto)
         {
             _logger.LogInformation("POST api/User/register");
-            var userId = await _userService.RegisterUser(userDto);
+            var userId = await _userAdminService.RegisterUser(userDto);
             return CreatedAtAction(nameof(RegisterUser), userId);
+        }
+
+        
+
+        [HttpPatch]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> UpdateUser([FromBody] UserProfileDto userProfileDto)
+        {
+            await _userService.UpdateUserAsync(userProfileDto);
+            return NoContent();
         }
     }
 }

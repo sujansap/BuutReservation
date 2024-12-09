@@ -21,7 +21,7 @@ public partial class RightProfilePanel
         PhoneNumber = string.Empty,
     };
 
-    private readonly UserProfileDto InitialProfileDto = new()
+    private UserProfileDto InitialProfileDto = new()
     {
         Address = new()
         {
@@ -33,7 +33,7 @@ public partial class RightProfilePanel
         },
         FamilyName = "initial",
         FirstName = "initial",
-        PhoneNumber = "initial",
+        PhoneNumber = "911",
     };
 
     private MudForm Form = null!;
@@ -42,25 +42,37 @@ public partial class RightProfilePanel
 
     private bool EditIsEnabled = false;
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        SetUserProfileDtoToInitialState();
+    }
+
+    private void SaveChanges()
+    {
+        Form.Validate();
+        if (Form.IsValid)
+        {
+            SetInitialStateToCurrentUserProfileDto();
+            Form.ResetValidation();
+            ToggleEdit();
+        }
+    }
+
+    private void CancelEdit()
+    {
+        SetUserProfileDtoToInitialState();
+        Form.ResetValidation();
+        ToggleEdit();
+    }
+
     private void ToggleEdit()
     {
         EditIsEnabled = !EditIsEnabled;
     }
 
-    private void CancelEdit()
-    {
-        ResetUserProfileDtoToInitialState();
-        Form.ResetValidation();
-        ToggleEdit();
-    }
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        ResetUserProfileDtoToInitialState();
-    }
-
-    private void ResetUserProfileDtoToInitialState()
+    private void SetUserProfileDtoToInitialState()
     {
         UserProfileDto = new UserProfileDto
         {
@@ -68,6 +80,17 @@ public partial class RightProfilePanel
             FamilyName = InitialProfileDto.FamilyName,
             PhoneNumber = InitialProfileDto.PhoneNumber,
             Address = InitialProfileDto.Address,
+        };
+    }
+
+    private void SetInitialStateToCurrentUserProfileDto()
+    {
+        InitialProfileDto = new UserProfileDto
+        {
+            FirstName = UserProfileDto.FirstName,
+            FamilyName = UserProfileDto.FamilyName,
+            PhoneNumber = UserProfileDto.PhoneNumber,
+            Address = UserProfileDto.Address,
         };
     }
 }

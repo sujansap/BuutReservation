@@ -120,7 +120,7 @@ namespace Rise.Domain.Users
             public required string PostalCode { get => _postalCode; set => _postalCode = value; }
             public required string Country { get => _country; set => _country = value; }
         }
-
+        
         private readonly List<Reservation> reservations = [];
         public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
         private readonly List<Battery> guardedBatteries = [];

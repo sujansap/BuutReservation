@@ -10,16 +10,10 @@ namespace Rise.Server.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = nameof(UserRole.Member))]
-    public class ReservationController : ControllerBase
+    public class ReservationController(IReservationService reservationService, ILogger<ReservationController> logger) : ControllerBase
     {
-        private readonly ILogger<ReservationController> _logger;
-        private readonly IReservationService _reservationService;
-
-        public ReservationController(IReservationService reservationService, ILogger<ReservationController> logger)
-        {
-            _logger = logger;
-            _reservationService = reservationService;
-        }
+        private readonly ILogger<ReservationController> _logger = logger;
+        private readonly IReservationService _reservationService = reservationService;
 
         /// <summary>
         /// Gets all reservations for a user.

@@ -52,7 +52,7 @@
     <MudStack Row="true" Class="mb-4" Justify="Justify.FlexEnd">
         @if (EditIsEnabled)
         {
-            <PrimaryButton>
+            <PrimaryButton OnClick="@SaveChanges">
                 @Localizer["Save"]
             </PrimaryButton>
             <CancelButton OnClick="@CancelEdit">

@@ -9,12 +9,21 @@ using Npgsql;
 using Rise.Services.Constants;
 using Auth0.Core.Exceptions;
 using Microsoft.Extensions.Logging;
+using Rise.Services.Auth;
 
 namespace Rise.Services.Users;
 
-public class UserService(ApplicationDbContext dbContext, IManagementApiClient managementApiClient, ILogger<UserService> logger) : IUserAdminService, IUserRegisterService
+public class UserService(
+        ApplicationDbContext dbContext,
+        IManagementApiClient managementApiClient,
+        ILogger<UserService> logger,
+        IAuthContextProvider authContextProvider
+    )
+    : AuthenticatedService(dbContext, authContextProvider),
+      IUserAdminService,
+      IUserRegisterService,
+      IUserService
 {
-    private readonly ApplicationDbContext _dbContext = dbContext;
     private readonly IManagementApiClient _managementApiClient = managementApiClient;
     private readonly ILogger<UserService> _logger = logger;
 
@@ -182,5 +191,29 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             };
             throw new UniqueConstraintViolationException(message);
         }
+    }
+
+    public async Task UpdateUserAsync(UserProfileDto userProfileDto)
+    {
+        int userId = (int) _authContextProvider.GetUserId()!;
+
+        var user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
+
+        user.FirstName = userProfileDto.FirstName;
+        user.FamilyName = userProfileDto.FamilyName;
+        user.PhoneNumber = userProfileDto.PhoneNumber;
+        user.Address = AddressDtoToUserAddress(userProfileDto.Address);
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    private static DomainUser.UserAddress AddressDtoToUserAddress(UserProfileDto.AddressDto addressDto){
+        return new (){
+            City = addressDto.City ,
+            Country= addressDto.Country,
+            Number= addressDto.Number,
+            PostalCode= addressDto.PostalCode,
+            Street= addressDto.Street,
+        };
     }
 }
