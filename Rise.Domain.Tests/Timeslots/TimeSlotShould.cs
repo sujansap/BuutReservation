@@ -193,7 +193,7 @@ namespace Rise.Domain.Tests.TimeSlots
         {
             TimeSlot timeSlot = new TimeSlotBuilder().Build();
 
-            timeSlot.StartDateTime.ShouldBe(timeSlot.Date.ToDateTime(timeSlot.End));
+            timeSlot.EndDateTime.ShouldBe(timeSlot.Date.ToDateTime(timeSlot.End));
         }
 
     }
