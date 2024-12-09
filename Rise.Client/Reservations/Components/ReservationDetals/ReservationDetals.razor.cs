@@ -37,15 +37,6 @@ namespace Rise.Client.Reservations.Components.ReservationDetals
         
         private  static string GetDisplayText(string? value) => string.IsNullOrEmpty(value) ? "\u00A0" : value;
 
-        private static RenderFragment<string> RenderErrorMessage => (text) => builder =>
-        {
-            builder.OpenComponent<MudText>(0);
-            builder.AddAttribute(1, "Typo", Typo.body1);
-            builder.AddAttribute(2, "data-testid", "cancel-reservation-error");
-            builder.AddAttribute(3, "ChildContent", (RenderFragment)((b) => b.AddContent(4, text)));
-            builder.CloseComponent();
-        };
-
         protected Task<ReservationDetailsDto> GetReservationDetails()
         {
             return ReservationService.GetReservationDetailsAsync(Id);
