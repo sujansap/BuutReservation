@@ -15,7 +15,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
        {
             new UserRegistrationModelDto
             {
-                Email = "a@b.co", // Minimal valid email
+                Email = "a@d.co", // Minimal valid email
                 Password = string.Concat(Enumerable.Repeat("pA0!", 16)), // Max-length password
                 FirstName = new string('F', 100), // Max-length first name
                 FamilyName = new string('L', 100), // Max-length family name
@@ -35,7 +35,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
         yield return new object[]
         {
             new UserRegistrationModelDto(){
-                Email= string.Concat(["a.",new string('a', 62),"@b.co"]) , // Max-length email
+                Email= string.Concat(["a.",new string('a', 62),"@d.co"]) , // Max-length email
                 Password= "P@ssw0rd123", // Complex valid password
                 FirstName= "Anne-Marie", // Name with a hyphen
                 FamilyName= "O'Connor", // Name with an apostrophe
@@ -55,7 +55,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
         {
             new UserRegistrationModelDto
             {
-                Email = "aa@b.co",
+                Email = "aa@d.co",
                 Password = "SecurePassword123!", // Complex valid password
                 FirstName = "Zoë", // Name with special character
                 FamilyName = "D'Angelo", // Name with apostrophe
@@ -75,7 +75,7 @@ public class RegisterUserDtoValidData : IEnumerable<object[]>
         yield return new object[]{
             new UserRegistrationModelDto()
             {
-                Email = "john.doe@example.com",
+                Email = "john.doe@test.com",
                 Password = "SecureP@ssw0rd123",
                 FirstName = "John",
                 FamilyName = "Doe",
