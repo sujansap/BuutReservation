@@ -18,6 +18,7 @@ namespace Rise.Client.Tests.Layout
         }
 
         public static readonly List<NotificationDto> Notifications = NotificationPageTestMember.Notifications;
+        private static readonly int UnreadNotificationCount = Notifications.Where(n => !n.IsRead).Count();
         private async Task MockHTTPRequests()
         {
             await Page.RouteAsync("*/**/api/Notification/me", async route =>
@@ -37,6 +38,16 @@ namespace Rise.Client.Tests.Layout
                     Status = 200,
                     ContentType = "text/json",
                     Body = JsonSerializer.Serialize(Notifications.Take(3))
+                });
+            });
+
+            await Page.RouteAsync("*/**/api/Notification/me/unread/count", async route =>
+            {
+                await route.FulfillAsync(new()
+                {
+                    Status = 200,
+                    ContentType = "text/json",
+                    Body = JsonSerializer.Serialize(Notifications.Where(n => !n.IsRead).Count())
                 });
             });
         }
@@ -123,6 +134,29 @@ namespace Rise.Client.Tests.Layout
             await popoverButton.ClickAsync();
 
             await Expect(Page).ToHaveURLAsync(new Regex("/notifications$"));
+        }
+
+        [Test]
+        public async Task Desktop_NotificationsBadge_ToBeVisible()
+        {
+            await MockHTTPRequests();
+            await Page.SetViewportSizeAsync(961, DefaultHeight);
+            await NavigateToUrl("/home");
+
+            ILocator notificationBadge = Page.GetByTestId("nav-desktop-notifications-count-badge");
+            await Expect(notificationBadge).ToBeVisibleAsync();
+        }
+
+        [Test]
+        public async Task Mobile_NotificationsBadge_ToBeVisible()
+        {
+            await MockHTTPRequests();
+            await Page.SetViewportSizeAsync(959, 1920);
+            await NavigateToUrl("/home");
+            await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
+
+            ILocator notificationBadge = Page.GetByTestId("nav-mobile-notifications-count-badge");
+            await Expect(notificationBadge).ToBeVisibleAsync();
         }
 
         [Test]
