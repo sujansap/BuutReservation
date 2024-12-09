@@ -16,10 +16,12 @@ namespace Rise.Domain.Tests.TestUtilities
 
         public Boat Build()
         {
-            return new()
+            var boat = new Boat
             {
                 PersonalName = personalName
             };
+
+            return boat;
         }
 
     }

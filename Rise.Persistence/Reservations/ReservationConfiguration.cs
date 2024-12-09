@@ -13,6 +13,11 @@ namespace Rise.Persistence.Reservations
             base.Configure(builder);
 
             builder
+                .HasOne(e => e.Battery)
+                .WithMany(e => e.Reservations)
+                .IsRequired(false);
+
+            builder
                 .HasOne(e => e.Boat)
                 .WithMany(e => e.Reservations)
                 .HasForeignKey(e => e.BoatId)
@@ -41,6 +46,11 @@ namespace Rise.Persistence.Reservations
                 .HasIndex(e => new { e.UserId, e.TimeSlotId })
                 .IsUnique()
                 .HasDatabaseName("IX_Unique_User_TimeSlot");
+
+            builder
+                .HasOne(e => e.PreviousBatteryHolder)
+                .WithMany(e => e.HoldsBatteries)
+                .IsRequired(false);
         }
     }
 }

@@ -54,4 +54,8 @@ public class TimeSlot : Entity
 
     private readonly List<Reservation> reservations = [];
     public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
+
+    // TODO test method
+    public DateTime StartDateTime => Date.ToDateTime(Start);
+    public DateTime EndDateTime => Date.ToDateTime(End);
 }
