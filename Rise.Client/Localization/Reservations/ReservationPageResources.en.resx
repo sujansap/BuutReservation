@@ -9,8 +9,6 @@
 	<data name="YourReservations">
 		<value>Your Reservations</value>
 	</data>
-
-
 	<data name="CreateReservation" xml:space="preserve">
 		<value>Create Reservation</value>
 	</data>
@@ -37,6 +35,18 @@
 	</data>
 	<data name="ErrorLoadingReservations">
 		<value>Something went wrong while fetching the reservations.</value>
+	</data>
+	<data name="Date">
+		<value>Date</value>
+	</data>
+	<data name="FullyBooked">
+		<value>Fully booked</value>
+	</data>
+	<data name="NotAvailable">
+		<value>Not available</value>
+	</data>
+	<data name="Available">
+		<value>Available</value>
 	</data>
 	<!-- New translations -->
 	<data name="UpcomingReservations" xml:space="preserve">

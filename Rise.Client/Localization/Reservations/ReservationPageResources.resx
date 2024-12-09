@@ -45,6 +45,9 @@
 	<data name="NotAvailable">
 		<value>Niet beschikbaar</value>
 	</data>
+	<data name="Available">
+		<value>Beschikbaar</value>
+	</data>
 	<data name="SelectDate">
 		<value>Selecteer datum</value>
 	</data>

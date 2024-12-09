@@ -1,0 +1,24 @@
+﻿@page "/profile"
+@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Profile;
+@using MudBlazor
+@using Rise.Client.Common.Buttons
+@using Rise.Client.Profile.Components
+@inject IStringLocalizer<ProfilePageResources> Localizer
+
+<PageTitle>@Localizer["TODO"]</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <MudCard>
+            <MudStack Row="true" StretchItems="StretchItems.End">
+                <LeftProfilePanel>
+
+                </LeftProfilePanel>
+                <RightProfilePanel>
+
+                </RightProfilePanel>
+            </MudStack>
+        </MudCard>
+    </Authorized>
+</AuthorizeView>

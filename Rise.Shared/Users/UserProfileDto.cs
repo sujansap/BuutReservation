@@ -2,17 +2,14 @@ using FluentValidation;
 
 namespace Rise.Shared.Users;
 
-public record class UserRegistrationModelDto
+public class UserProfileDto
 {
-    public required string Email { get; set; }
-    public required string Password { get; set; }
     public required string FirstName { get; set; }
     public required string FamilyName { get; set; }
     public required string PhoneNumber { get; set; }
-    public required DateTime? DateOfBirth { get; set; }
-    public required AddressModel Address { get; set; }
+    public required AddressDto Address { get; set; }
 
-    public record class AddressModel
+    public record class AddressDto
     {
         public required string Street { get; set; }
         public required string Number { get; set; }
@@ -21,12 +18,10 @@ public record class UserRegistrationModelDto
         public required string Country { get; set; }
     }
 
-    public class Validator : AbstractValidator<UserRegistrationModelDto>
+    public class Validator : AbstractValidator<UserProfileDto>
     {
-        public const int emailMaxLength = 69;
-        public const int passwordMaxLength = 64;
         public const int firstNameMaxLength = 100;
-        public const int lastNameMaxLength = 100;
+        public const int familyNameMaxLength = 100;
         public const int phoneNumberMaxLength = 35;
         public const int streetMaxLength = 200;
         public const int numberMaxLength = 25;
@@ -36,36 +31,14 @@ public record class UserRegistrationModelDto
 
         public Validator()
         {
-
-            RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Please provide your email address")
-            .MaximumLength(emailMaxLength).WithMessage($"Email can't be longer than {emailMaxLength} characters")
-            .EmailAddress().WithMessage("The email address provided is not valid");
-
-
-            RuleFor(x => x.Password).NotEmpty()
-            .WithMessage("Please provide a password.")
-            .MaximumLength(passwordMaxLength).WithMessage($"Password can't be longer than {passwordMaxLength} characters.")
-            .Matches(".*[!@#$%^&*].*")
-            .WithMessage("Password requires at least one special character: !@#$%^&*")
-            .Matches(".*[a-z].*")
-            .WithMessage("Password requires at least one lower case letter")
-            .Matches(".*[A-Z].*")
-            .WithMessage("Password requires at least one upper case letter")
-            .Matches(".*[0-9].*")
-            .WithMessage("Password requires at least one number")
-            .Matches(".{8,}")
-            .WithMessage("Password requires at least 8 characters");
-
-
             RuleFor(x => x.FirstName).NotEmpty()
             .WithMessage("Please provide your first name")
             .MaximumLength(firstNameMaxLength).WithMessage($"First name can't be longer than {firstNameMaxLength} characters");
 
 
             RuleFor(x => x.FamilyName).NotEmpty()
-            .WithMessage("Please provide your last name")
-            .MaximumLength(lastNameMaxLength).WithMessage($"Last name can't be longer than {lastNameMaxLength} characters");
+            .WithMessage("Please provide your family name")
+            .MaximumLength(familyNameMaxLength).WithMessage($"Last name can't be longer than {familyNameMaxLength} characters");
 
 
             RuleFor(x => x.PhoneNumber).NotEmpty()
@@ -73,10 +46,6 @@ public record class UserRegistrationModelDto
             .MaximumLength(phoneNumberMaxLength).WithMessage($"Phone number name can't be longer than {phoneNumberMaxLength} characters")
             .Matches("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$")
             .WithMessage("The phone number provided is not valid");
-
-            RuleFor(x => x.DateOfBirth)
-            .NotEmpty().WithMessage("Please provide your date of birth.")
-            .Must(BeAtLeast18YearsOld).WithMessage("You must be at least 18 years old to register.");
 
 
             RuleFor(x => x.Address.Street).NotEmpty()
@@ -104,17 +73,13 @@ public record class UserRegistrationModelDto
             .MaximumLength(countryMaxLength).WithMessage($"Country name can't be longer than {countryMaxLength} characters");
         }
 
-        private bool BeAtLeast18YearsOld(DateTime? dateOfBirth)
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
         {
-            return dateOfBirth.HasValue && dateOfBirth.Value <= DateTime.Today.AddYears(-18);
-        }
-
-        public Func<object, string, Task<IEnumerable<string>>>  ValidateValue => async (model, propertyName) =>
-        {
-            var result = await ValidateAsync(ValidationContext<UserRegistrationModelDto>.CreateWithOptions((UserRegistrationModelDto)model, x => x.IncludeProperties(propertyName)));
+            var result = await ValidateAsync(ValidationContext<UserProfileDto>.CreateWithOptions((UserProfileDto)model, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)
-                return Array.Empty<string>();
+                return [];
             return result.Errors.Select(e => e.ErrorMessage);
         };
+
     }
 }

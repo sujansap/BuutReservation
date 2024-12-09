@@ -1,0 +1,69 @@
+﻿@using Microsoft.Extensions.Localization
+@using Rise.Client.Localization.Profile;
+@using Rise.Client.Common.Buttons
+@inject IStringLocalizer<ProfilePageResources> Localizer
+
+<MudContainer>
+    <MudForm Model="@UserProfileDto" @ref="@Form" Validation="@(Validator.ValidateValue)" Disabled="@(!EditIsEnabled)"
+        Class="mb-4">
+        <MudText Typo="Typo.h4" Class="mt-4">@Localizer["YourProfile"]</MudText>
+        <MudStack>
+            <MudTextField @bind-Value="UserProfileDto.FirstName" For="@(() => UserProfileDto.FirstName)"
+                Label="@Localizer["FirstName"]" Required="@EditIsEnabled" OnlyValidateIfDirty="true" Immediate="true">
+            </MudTextField>
+            <MudTextField @bind-Value="UserProfileDto.FamilyName" For="@(() => UserProfileDto.FamilyName)"
+                Label="@Localizer["FamilyName"]" Required="@EditIsEnabled" OnlyValidateIfDirty="true" Immediate="true">
+            </MudTextField>
+            <MudTextField @bind-Value="UserProfileDto.PhoneNumber" For="@(() => UserProfileDto.PhoneNumber)"
+                Label="@Localizer["PhoneNumber"]" Required="@EditIsEnabled" OnlyValidateIfDirty="true" Immediate="true">
+            </MudTextField>
+            <MudGrid Spacing="2">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h5">@Localizer["Address"]</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="8">
+                    <MudTextField @bind-Value="UserProfileDto.Address.Street"
+                        For="@(() => UserProfileDto.Address.Street)" Label="@Localizer["Street"]"
+                        Required="@EditIsEnabled" OnlyValidateIfDirty="true" Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="UserProfileDto.Address.Number"
+                        For="@(() => UserProfileDto.Address.Number)" Label="@Localizer["Number"]"
+                        Required="@EditIsEnabled" OnlyValidateIfDirty="true" Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" sm="8">
+                    <MudTextField @bind-Value="UserProfileDto.Address.City" For="@(() => UserProfileDto.Address.City)"
+                        Label="@Localizer["City"]" Required="@EditIsEnabled" OnlyValidateIfDirty="true"
+                        Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField @bind-Value="UserProfileDto.Address.PostalCode"
+                        For="@(() => UserProfileDto.Address.PostalCode)" Label="@Localizer["PostalCode"]"
+                        Required="@EditIsEnabled" OnlyValidateIfDirty="true" Immediate="true" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value=" UserProfileDto.Address.Country" ReadOnly="true"
+                        For="@(() => UserProfileDto.Address.Country)" Label="@Localizer["Country"]"
+                        Required="@EditIsEnabled" OnlyValidateIfDirty="true" Immediate="true" />
+                </MudItem>
+            </MudGrid>
+        </MudStack>
+    </MudForm>
+    <MudStack Row="true" Class="mb-4" Justify="Justify.FlexEnd">
+        @if (EditIsEnabled)
+        {
+            <PrimaryButton>
+                @Localizer["Save"]
+            </PrimaryButton>
+            <CancelButton OnClick="@CancelEdit">
+                @Localizer["Cancel"]
+            </CancelButton>
+        }
+        else
+        {
+            <PrimaryButton OnClick="@ToggleEdit">
+                @Localizer["Edit"]
+            </PrimaryButton>
+        }
+    </MudStack>
+</MudContainer>
