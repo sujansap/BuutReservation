@@ -5,12 +5,13 @@
 @using Rise.Client.Common.Buttons
 @using Rise.Client.Localization.Layout
 @using Rise.Client.Home.Components
+@using Rise.Client.Localization.Home
 @inject NavigationManager navigation
-@inject IStringLocalizer<LandingPageResource> Localizer
+@inject IStringLocalizer<HomePageResources> Localizer
 
 @layout EmptyLayout
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@Localizer["PageTitle"]</PageTitle>
 
 <div
     Style="position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; width: 100vw; min-height: 600px;">
@@ -21,19 +22,14 @@
         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; padding: 0 1rem;">
         <MudContainer MaxWidth="MaxWidth.Medium">
             <MudText data-testid="hero-title" Typo="Typo.h1" Align="Align.Start" Style="color:white">
-                BUUT
+                @Localizer["HeroTitle"]
             </MudText>
             <MudText Typo="Typo.h4" Class="mb-4" Align="Align.Start" Style="color:white">
-                Deelbootjes voor<br />
-                Muide - Meulestede - Afrikalaan
+                @Localizer["HeroSubtitle"]
             </MudText>
             <PrimaryButton data-testid="reservation-button" Href="/reservations" Size="Size.Large">
-                Reserveer
+                @Localizer["ReserveButton"]
             </PrimaryButton>
-            @* <MudButton data-testid="reservation-button" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
-                Href="/reservations">
-                Reserveer
-            </MudButton>*@
         </MudContainer>
     </div>
 </div>
@@ -42,26 +38,22 @@
     <TwoColumnSection ImageSrc="assets/images/water.webp" ImageAlt="Water view" ImageFirst="true"
         data-testid="boats-section">
         <ContentSection>
-            <MudText Typo="Typo.h3" Class="mb-4">DE BOTEN</MudText>
+            <MudText Typo="Typo.h3" Class="mb-4">@Localizer["BoatsTitle"]</MudText>
             <MudText Typo="Typo.body1" Class="mb-6">
-                Via het Wijkbudget van Stad Gent kocht VZW Buut drie bootjes aan (type Whaly 450 classic), aangedreven
-                met een elektrische motor.
+                @Localizer["BoatsIntro"]
             </MudText>
             <MudText Typo="Typo.body1" Class="mb-6">
-                Deze 3 bootjes, Lubeck, Limba en Leith werden vernoemd naar straten in de buurt
-                Muide-Meulestee-Afrikalaan. Deze straten verwijzen naar havens. Er werd gekozen voor namen beginnend met
-                de letter L, als eerbetoon aan de overleden buurtwerker Lucien De Ridder.
+                @Localizer["BoatsNames"]
             </MudText>
             <MudText Typo="Typo.body1" Class="mb-6">
-                De bootjes kunnen door wijkbewoners online gereserveerd worden.
+                @Localizer["BoatsReservation"]
             </MudText>
             <MudText Typo="Typo.body1" Class="mb-6">
-                Geniet van op het water van de rust en pracht van onze buurt, van aan de Meulestedebrug tot aan het
-                Keizerspark. De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
+                @Localizer["BoatsLocation"]
             </MudText>
             <div Class="d-inline-block">
                 <PrimaryButton data-testid="reservation-button-two-coloum-section" Href="/reservations">
-                    Reserveer
+                    @Localizer["ReserveButton"]
                 </PrimaryButton>
             </div>
         </ContentSection>
