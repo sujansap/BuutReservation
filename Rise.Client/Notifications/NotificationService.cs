@@ -8,6 +8,12 @@ namespace Rise.Client.Notifications
     public class NotificationService(HttpClient httpClient) : INotificationService
     {
         private readonly HttpClient _httpClient = httpClient;
+
+        public Task<int> GetUnreadNotificationCount()
+        {
+            return _httpClient.GetFromJsonAsync<int>("me/unread/count");
+        }
+
         public async Task<IEnumerable<NotificationDto>> GetUserNotifications(int? limit)
         {
 

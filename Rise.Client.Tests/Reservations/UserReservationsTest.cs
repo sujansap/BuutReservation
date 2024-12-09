@@ -6,21 +6,12 @@ using Rise.Shared.Users;
 
 namespace Rise.Client.Tests.Reservations
 {
-    [TestFixture]
     public class UserReservationsTest : CustomAuthenticatedPageTest
     {
         [SetUp]
-        public async Task SetUpAsync()
+        public async Task SetUp()
         {
-            base.GlobalSetUp();
             await LoginAsync(UserRole.Member);
-        }
-
-        [TearDown]
-        public async Task TearDownAsync()
-        {
-            await LogoutAsync();
-            await base.TearDown();
         }
 
         private const string UserReservationsUrl = "/reservations?CurrentTab=reservations";
@@ -44,11 +35,12 @@ namespace Rise.Client.Tests.Reservations
             BoatPersonalName = "Speedy"
         };
 
-        private async Task MockReservationsApi()
+        private async Task MockReservationsApi(int delayMs = 0)
         {
             await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
             {
-                // await Task.Delay(3000);
+                if (delayMs > 0)
+                    await Task.Delay(delayMs);
 
                 var response = new ItemsPageDto<ReservationDto>()
                 {
@@ -114,7 +106,7 @@ namespace Rise.Client.Tests.Reservations
             await NavigateToUrl(UserReservationsUrl);
 
 
-            // await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
+            await Page.WaitForSelectorAsync("[data-testid='reservation-item']");
             await Expect(Page.GetByTestId("reservation-item")).ToBeVisibleAsync();
             var viewDetailsButton = Page.GetByTestId("view-reservation-details-button");
             await viewDetailsButton.ClickAsync();
@@ -161,7 +153,7 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationsApi();
             await NavigateToUrl(UserReservationsUrl);
 
-            await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(0);
+            await Expect(Page.GetByTestId("reservation-item")).ToHaveCountAsync(1);
         }
 
         [Test]
@@ -172,41 +164,26 @@ namespace Rise.Client.Tests.Reservations
 
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
 
+            var date = firstReservation.GetByTestId("reservation-date");
+            await Expect(date).ToContainTextAsync(ValidReservation.Date.ToString("dd/MM/yyyy"));
 
-            var dateText = await firstReservation.GetByTestId("reservation-date").TextContentAsync();
-            var datePattern = @"\b\d{2}/\d{2}/\d{4}\b";
-            var match = Regex.Match(dateText, datePattern);
+            var boatName = firstReservation.GetByTestId("reservation-boat-name");
+            await Expect(boatName).ToContainTextAsync(ValidReservation.BoatPersonalName);
 
-
-            Assert.IsTrue(match.Success);
-            var formattedDate = match.Value.Replace("/", "-");
-
-
-            Assert.That(ValidReservation.Date.ToString("dd-MM-yyyy"), Is.EqualTo(formattedDate));
-
-
-            var boatNameText = await firstReservation.GetByTestId("reservation-boat-name").TextContentAsync();
-            Assert.IsTrue(boatNameText.Contains(ValidReservation.BoatPersonalName));
-
-            var timeText = await firstReservation.GetByTestId("reservation-time").TextContentAsync();
-            Assert.IsTrue(timeText.Contains($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}"));
+            var time = firstReservation.GetByTestId("reservation-time");
+            await Expect(time).ToContainTextAsync($"{ValidReservation.Start:HH:mm} - {ValidReservation.End:HH:mm}");
         }
 
 
-        // [Test]
-        // public async Task ShowsLoadingStateWhileFetchingReservations()
-        // {
-        //     await MockReservationsApi();
+        [Test]
+        public async Task ShowsLoadingStateWhileFetchingReservations()
+        {
+            await MockReservationsApi(delayMs: 5000);
 
-        //     await NavigateToUrl(UserReservationsUrl);
+            await NavigateToUrl(UserReservationsUrl);
 
-
-
-        //     await Page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-        //     // await Expect(Page.GetByTestId("user-reservations-loading-progress")).ToBeVisibleAsync();
-
-        //     await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']");
-        // }
+            await Expect(Page.GetByTestId("user-reservations-loading-progress")).ToBeVisibleAsync();
+        }
 
         [Test]
         public async Task ShowsEmptyStateWhenNoReservations()
@@ -214,8 +191,8 @@ namespace Rise.Client.Tests.Reservations
             await MockEmptyReservationsApi();
             await NavigateToUrl(UserReservationsUrl);
 
-            // await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden, Timeout = 10000 });
-            await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible, Timeout = 10000 });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
+            await Page.WaitForSelectorAsync("[data-testid='no-reservations']", new() { State = WaitForSelectorState.Visible });
 
             ILocator emptyStateMessage = Page.GetByTestId("no-reservations");
             await Expect(emptyStateMessage).ToBeVisibleAsync();
@@ -230,9 +207,9 @@ namespace Rise.Client.Tests.Reservations
             await MockReservationsApiError();
             await NavigateToUrl(UserReservationsUrl);
 
-            // await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-loading-progress']", new() { State = WaitForSelectorState.Hidden });
             await Expect(Page.GetByTestId("user-reservations-fetch-error")).ToBeVisibleAsync();
-            // await Page.WaitForSelectorAsync("[data-testid='user-reservations-fetch-error']", new() { State = WaitForSelectorState.Visible });
+            await Page.WaitForSelectorAsync("[data-testid='user-reservations-fetch-error']", new() { State = WaitForSelectorState.Visible });
 
             ILocator errorMessage = Page.GetByTestId("user-reservations-fetch-error");
             await Expect(errorMessage).ToBeVisibleAsync();
@@ -247,7 +224,7 @@ namespace Rise.Client.Tests.Reservations
             await NavigateToUrl(UserReservationsUrl + "&Past=true");
 
             ILocator locator = Page.GetByTestId("reservation-item");
-            await Expect(locator).ToHaveCountAsync(0);
+            await Expect(locator).ToHaveCountAsync(1);
         }
 
         [Test]
@@ -265,8 +242,7 @@ namespace Rise.Client.Tests.Reservations
             await NavigateToUrl(UserReservationsUrl + "&Past=true");
 
             ILocator firstReservation = Page.GetByTestId("reservation-item").First;
-            // FIXME - locator can't be found
-            // await Expect(firstReservation.GetByTestId("reservation-date")).Not.ToBeEmptyAsync();
+            await Expect(firstReservation.GetByTestId("reservation-date")).Not.ToBeEmptyAsync();
             await Expect(firstReservation.GetByTestId("reservation-date")).ToContainTextAsync(PastReservation.Date.ToString("dd/MM/yyyy"));
             await Expect(firstReservation.GetByTestId("reservation-boat-name")).ToContainTextAsync(PastReservation.BoatPersonalName);
             await Expect(firstReservation.GetByTestId("reservation-time")).ToContainTextAsync($"{PastReservation.Start:HH:mm} - {PastReservation.End:HH:mm}");
