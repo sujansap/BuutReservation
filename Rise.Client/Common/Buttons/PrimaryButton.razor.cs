@@ -20,6 +20,10 @@ namespace Rise.Client.Common.Buttons
         [Parameter]
         public Size Size { get; set; } = Size.Medium;
 
+
+        [Parameter]
+        public bool Disabled { get; set; }
+
     }
 
 }

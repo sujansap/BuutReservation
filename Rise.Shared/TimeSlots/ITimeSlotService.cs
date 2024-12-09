@@ -14,5 +14,7 @@ namespace Rise.Shared.TimeSlots
             int year,
             int month,
             int day);
+
+        Task<int> CreateTimeSlot(CreateTimeSlotDto dto);
     }
 }

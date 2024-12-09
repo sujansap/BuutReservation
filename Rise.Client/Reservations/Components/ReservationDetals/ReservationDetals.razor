@@ -20,12 +20,10 @@
         {
             @if (ReservationDetails.IsDeleted)
             {
-                <MudItem xs="12" Class="d-flex justify-center align-center mt-2">
                     <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Dense="true" Class="rounded-lg"
                         data-testid="cancel-reservation-geannuleerd">
                         @Localizer["DetailsDenied"]
                     </MudAlert>
-                </MudItem>
             }
             else
             {
@@ -135,3 +133,11 @@
         }
     </AsyncData>
 </MudContainer>
+
+@code {
+    private RenderFragment<String> RenderErrorMessage => (text) => @<MudText Typo="Typo.body1"
+        data-testid="cancel-reservation-error">
+        @text</MudText>;
+
+
+}

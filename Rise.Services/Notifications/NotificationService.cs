@@ -55,6 +55,14 @@ namespace Rise.Services.Notifications
             };
         }
 
+        public async Task<int> GetUnreadNotificationCount()
+        {
+            int userId = (int)_authContextProvider.GetUserId()!;
+
+            return (await _dbContext.Users.Include(user => user.Notifications)
+                    .FirstAsync(user => user.Id == userId))
+                .Notifications.Where(notification => !notification.IsRead).Count();
+        }
     }
 
 }

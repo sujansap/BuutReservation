@@ -48,6 +48,23 @@ namespace Rise.Server.Controllers
             }
         }
 
+        [HttpGet("me/unread/count")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUnreadNotificationCount()
+        {
+            try
+            {
+                var count = await _notificationService.GetUnreadNotificationCount();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching the unread notification count for the current user.");
+                return Problem("An error occurred while fetching the unread notification count for the current user.", statusCode: StatusCodes.Status500InternalServerError);
+            }
+        }
+
         /// <summary>
         /// Marks a notification as read.
         /// </summary>
