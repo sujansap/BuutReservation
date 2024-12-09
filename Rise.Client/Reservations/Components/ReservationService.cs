@@ -15,6 +15,21 @@ namespace Rise.Client.Services
 
             if (!response.IsSuccessStatusCode)
             {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                
+                // Map the backend error messages to localized keys
+                var localizedKey = errorMessage switch
+                {
+                    var msg when msg.Contains("already canceled") => "AlreadyCancelled",
+                    var msg when msg.Contains("2 days before") => "CancellationTooLate",
+                    _ => null
+                };
+
+                if (localizedKey != null)
+                {
+                    throw new Exception(localizedKey);
+                }
+                
                 throw new Exception($"Failed to cancel reservation with ID {reservationId}. Response: {response.ReasonPhrase}");
             }
         }

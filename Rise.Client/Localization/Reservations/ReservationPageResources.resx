@@ -108,4 +108,47 @@
 	<data name="FullyBookedLegend" xml:space="preserve">
 		<value>Volzet</value>
 	</data>
+<data name="PickupPerson" xml:space="preserve">
+  <value>Ophaal persoon</value>
+</data>
+<data name="MentorPerson" xml:space="preserve">
+  <value>Meter/Peter</value>
+</data>
+<data name="CancellationTooLate" xml:space="preserve">
+    <value>Reservaties kunnen alleen geannuleerd worden minimaal 2 dagen voor de reservatiedatum.</value>
+</data>
+<data name="AlreadyCancelled" xml:space="preserve">
+    <value>Deze reservatie is al geannuleerd.</value>
+</data>
+<data name="CancellationError" xml:space="preserve">
+    <value>Er is een fout opgetreden bij het annuleren van de reservatie.</value>
+</data>
+<data name="CancelReservationTitle" xml:space="preserve">
+    <value>Reservatie annuleren</value>
+</data>
+<data name="CancelReservationConfirmation" xml:space="preserve">
+    <value>Weet u zeker dat u deze reservatie wilt annuleren?</value>
+</data>
+<data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+</data>
+<data name="No" xml:space="preserve">
+    <value>Nee</value>
+</data>
+<data name="Contact" xml:space="preserve">
+    <value>Contact gegevens</value>
+</data>
+<data name="PhoneNumber" xml:space="preserve">
+    <value>Telefoonnummer</value>
+</data>
+<data name="Address" xml:space="preserve">
+    <value>Adres</value>
+</data>
+<data name="ReservationDetails" xml:space="preserve">
+    <value>Reservatie Details</value>
+</data>
+<data name="NoPickupInfo" xml:space="preserve">
+    <value>Geen ophaal informatie beschikbaar</value>
+</data>
+
 </root>
