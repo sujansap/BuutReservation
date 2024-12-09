@@ -7,4 +7,7 @@ public interface IBoatService
     /// </summary>
     /// <returns>Een lijst van BoatDto-objecten.</returns>
     Task<IEnumerable<BoatDto>> GetAllBoatsAsync();
+
+    Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable);
+
 }

@@ -24,5 +24,20 @@ namespace Rise.Client.Services
             return (await response.Content.ReadFromJsonAsync<List<BoatDto>>())!;
         }
 
+        /// <summary>
+        /// Update de beschikbaarheid van een boot.
+        /// </summary>
+        /// <param name="boatId">De ID van de boot.</param>
+        /// <param name="isAvailable">De nieuwe beschikbaarheidsstatus.</param>
+        public async Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable)
+        {
+            var content = JsonContent.Create(isAvailable);
+            var response = await _httpClient.PatchAsync($"{boatId}/availability", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to update availability for boat with ID {boatId}. Status: {response.StatusCode}, Response: {response.ReasonPhrase}");
+            }
+        }
     }
 }

@@ -4,6 +4,8 @@ using Rise.Persistence;
 using Rise.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Rise.Shared;
+using Rise.Domain.Exceptions;
+using Rise.Domain.Boats;
 
 namespace Rise.Services.Boats
 {
@@ -28,6 +30,22 @@ namespace Rise.Services.Boats
                 .ToListAsync();
 
             return boats;
+        }
+
+
+        /// <summary>
+        /// Updates the availability of a specific boat by its ID.
+        /// </summary>
+        /// <param name="boatId">The ID of the boat to update.</param>
+        /// <param name="isAvailable">The new availability status of the boat.</param>
+        /// <returns>Task representing the asynchronous operation.</returns>
+        public async Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable)
+        {
+            Boat boat = await _dbContext.Boats.FindAsync(boatId)
+                ?? throw new EntityNotFoundException(nameof(Boat), boatId);
+
+            boat.ChangeAvailability(isAvailable);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

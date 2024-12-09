@@ -7,8 +7,6 @@ namespace Rise.Client.Admins.Boats
 {
     public partial class AdminBoats
     {
-        // public required AsyncData<List<BoatDto>> AsyncDataRef { get; set; }
-
         private List<BoatDto>? boats;
 
         [Inject]
@@ -31,6 +29,22 @@ namespace Rise.Client.Admins.Boats
             catch (Exception ex)
             {
                 snackbar.Add($"Error loading boats: {ex.Message}", Severity.Error);
+            }
+        }
+
+        private async Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable)
+        {
+            try
+            {
+                Console.WriteLine($"Updating boat {boatId} to {isAvailable}");
+                await boatService.UpdateBoatAvailabilityAsync(boatId, isAvailable);
+                snackbar.Add($"Boat availability updated to {(isAvailable ? "Available" : "Unavailable")}.", Severity.Success);
+                await LoadBoats();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating boat: {ex}");
+                snackbar.Add($"Error updating boat availability: {ex.Message}", Severity.Error);
             }
         }
 

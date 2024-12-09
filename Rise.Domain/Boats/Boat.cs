@@ -49,10 +49,9 @@ namespace Rise.Domain.Boats
         /// Updates the availability of the boat
         /// </summary>
         /// <param name="isAvailable">New availability status</param>
-        public void UpdateAavailability(bool isAvailable)
+        public void ChangeAvailability(bool isAvailable)
         {
             IsAvailable = isAvailable;
-
         }
 
 

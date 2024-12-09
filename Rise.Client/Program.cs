@@ -99,6 +99,10 @@ builder.Services.AddHttpClient<IBoatService, BoatService>(client =>
 
 
 
+
+
+
+
 var host = builder.Build();
 
 const string defaultCulture = "nl-BE";
