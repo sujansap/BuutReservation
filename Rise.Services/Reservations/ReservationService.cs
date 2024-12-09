@@ -180,14 +180,14 @@ namespace Rise.Services.Reservations
                 BoatPersonalName = reservation.Boat.PersonalName,
                 MentorName = reservation.Battery?.Mentor?.FamilyName,
                 BatteryId = reservation.Battery?.Id,
-                CurrentBatteryUserName = reservation.PreviousBatteryHolder?.FamilyName,
-                CurrentBatteryUserId = reservation.PreviousBatteryHolder?.Id,
-                CurrentHolderPhoneNumber = reservation.PreviousBatteryHolder?.PhoneNumber,
-                CurrentHolderEmail = reservation.PreviousBatteryHolder?.Email,
-                CurrentHolderStreet = reservation.PreviousBatteryHolder?.Address.Street,
-                CurrentHolderNumber = reservation.PreviousBatteryHolder?.Address.Number,
-                CurrentHolderCity = reservation.PreviousBatteryHolder?.Address.City,
-                CurrentHolderPostalCode = reservation.PreviousBatteryHolder?.Address.PostalCode
+                CurrentBatteryUserName = previousBatteryHolder?.FamilyName,
+                CurrentBatteryUserId = previousBatteryHolder?.Id,
+                CurrentHolderPhoneNumber = previousBatteryHolder?.PhoneNumber,
+                CurrentHolderEmail = previousBatteryHolder?.Email,
+                CurrentHolderStreet = previousBatteryHolder?.Address.Street,
+                CurrentHolderNumber = previousBatteryHolder?.Address.Number,
+                CurrentHolderCity = previousBatteryHolder?.Address.City,
+                CurrentHolderPostalCode = previousBatteryHolder?.Address.PostalCode
             };
         }
         public async Task CancelReservationAsync(int reservationId)
