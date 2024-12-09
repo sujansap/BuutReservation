@@ -11,10 +11,11 @@ using Rise.Services.Auth;
 using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
+using Rise.Shared.Notifications;
 
 namespace Rise.Services.Reservations
 {
-    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider, INotificationService notificationService)
         : AuthenticatedService(dbContext, authContextProvider), IReservationService
     {
 
@@ -124,6 +125,14 @@ namespace Rise.Services.Reservations
             {
                 _dbContext.Reservations.Add(reservation);
                 await _dbContext.SaveChangesAsync();
+
+                await notificationService.SendNotificationToUser(
+                userId,
+                "Reservation Confirmed",
+                $"Your reservation on {timeSlot.Date.ToLongDateString()} {timeSlot.Start:HH:mm} - {timeSlot.End:HH:mm} has been confirmed with boat {boat.PersonalName}. Please arrive on time.",
+                SeverityEnum.Info
+                );
+
                 return reservation.Id;
             }
             catch (DbUpdateException ex)
@@ -193,6 +202,19 @@ namespace Rise.Services.Reservations
 
             reservation.Cancel();
             await _dbContext.SaveChangesAsync();
+            try
+            {
+                await notificationService.SendNotificationToUser(
+                    userId,
+                    "Reservation Cancelled",
+                    $"Your reservation on {reservation.TimeSlot.Date.ToLongDateString()} {reservation.TimeSlot.Start:HH:mm} - {reservation.TimeSlot.End:HH:mm} has been cancelled.",
+                    SeverityEnum.Info
+                );
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
     }

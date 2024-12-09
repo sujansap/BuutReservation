@@ -1,4 +1,5 @@
 using Ardalis.GuardClauses;
+using Auth0.ManagementApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Notifications;
 using Rise.Persistence;
@@ -62,6 +63,29 @@ namespace Rise.Services.Notifications
             return (await _dbContext.Users.Include(user => user.Notifications)
                     .FirstAsync(user => user.Id == userId))
                 .Notifications.Where(notification => !notification.IsRead).Count();
+        }
+
+        public Task SendNotificationToUser(int userId, string title, string message, SeverityEnum severity)
+        {
+            try
+            {
+                Notification notification = new Notification
+                {
+                    UserId = userId,
+                    Title = title,
+                    Message = message,
+                    Severity = (int)severity,
+                    User = _dbContext.Users.Find(userId) ?? throw new NotFoundException(userId.ToString(), typeof(User).ToString())
+                };
+
+                _dbContext.Notifications.Add(notification);
+
+                return _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error sending notification", ex);
+            }
         }
     }
 
