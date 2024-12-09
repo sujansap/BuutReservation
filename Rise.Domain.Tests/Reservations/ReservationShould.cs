@@ -1,6 +1,7 @@
 using Shouldly;
 using Rise.Domain.Reservations;
 using Rise.Domain.Tests.TestUtilities;
+using Rise.Domain.Boats;
 
 namespace Rise.Domain.Tests.Reservations
 {
@@ -190,6 +191,7 @@ namespace Rise.Domain.Tests.Reservations
 
             
             reservation.IsDeleted.ShouldBeTrue();
+            reservation.Battery.ShouldBe(null);
         }
 
         [Fact]
@@ -208,6 +210,28 @@ namespace Rise.Domain.Tests.Reservations
             Should.Throw<InvalidOperationException>(() => reservation.Cancel(isAdmin: false))
                 .Message.ShouldBe("Reservations can only be canceled at least 2 days before the reservation date unless canceled by an admin.");
         }
+
+        // TODO tests for cancel with battery
+        // [Fact]
+        // public void NotThrowException_WhenCancellationMomentIsValidAndHasBatteryAssigned()
+        // {
+        //     var reservation = new ReservationBuilder()
+        //         .WithTimeSlot(
+        //             new TimeSlotBuilder()
+        //                 .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2))) // Exactly 2 days
+        //                 .Build()
+        //         )
+        //         .WithBattery()
+        //         .Build();
+
+        //     reservation.Cancel();
+
+        //     reservation.IsDeleted.ShouldBeTrue();
+        //     reservation.Battery.ShouldBe(null);
+        // }
+
+        // TODO tests for AssignBattery
+
 
     }
 }

@@ -47,5 +47,16 @@ namespace Rise.Server.Tests.Utils
             };
         }
 
+        public static int GetId(this UserRole role)
+        {
+            return role switch
+            {
+                UserRole.Guest => 3,
+                UserRole.Member => 2,
+                UserRole.Administrator => 1,
+                _ => throw new ArgumentException($"No id defined for role {role}")
+            };
+        }
+
     }
 }

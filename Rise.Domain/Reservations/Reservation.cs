@@ -17,6 +17,17 @@ namespace Rise.Domain.Reservations
         public int UserId { get; set; }
         public required User User { get; set; }
 
+        private Battery? _battery;
+        public Battery? Battery 
+        { 
+            get => _battery;
+            set
+            {
+                _battery = value;
+            }
+        }
+
+        public User? PreviousBatteryHolder { get; private set; } = default;
 
         public void Cancel(bool isAdmin)
         {
@@ -42,6 +53,24 @@ namespace Rise.Domain.Reservations
             }
 
             IsDeleted = true;
+
+            PreviousBatteryHolder = _battery?.Mentor;
         }
+
+        public void AssignBattery(Battery? battery)
+        {
+            if (IsDeleted) throw new InvalidOperationException("Cannot assign battery to canceled reservation");
+
+            _battery?.RemoveReservation(this);
+            _battery?.DecreaseUsageStats();
+
+            _battery = battery;
+            _battery?.AddReservation(this);
+            _battery?.IncreaseUsageStats();
+
+            Reservation? previousReservation = battery?.ClosesPastReservation(TimeSlot);
+            PreviousBatteryHolder = previousReservation?.User;
+        }
+
     }
 }

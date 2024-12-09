@@ -71,20 +71,21 @@ namespace Rise.Client.Tests.Admins.Battery
             });
         }
 
-        // TODO tests admin navmenu
         [Test]
         public async Task ShouldUpdateBatteryDetails()
         {
             int batteryId = 1;
             BatteryDto battery = new() { Id = batteryId, Type = "Lithium", MentorId = 1 };
             BatteryUpdateDto updatedBattery = new() { Type = "Zink", MentorId = 2 };
-            await MockBatteryDetailsValid(batteryId, battery, 2000);
+            await MockBatteryDetailsValid(batteryId, battery, 5000);
             await NavigateToUrl(baseSuffix);
 
             ILocator placeholder = Page.GetByTestId("battery-details-placeholder");
             await Expect(placeholder).ToBeVisibleAsync();
             ILocator submitButton = Page.GetByTestId("battery-details-submit");
             await Expect(submitButton).ToBeDisabledAsync();
+
+            await Page.WaitForSelectorAsync("[data-testid=battery-details-placeholder]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
 
             // Check current data
             // ******************
@@ -107,6 +108,9 @@ namespace Rise.Client.Tests.Admins.Battery
             await submitButton.ClickAsync();
 
             await Expect(placeholder).ToBeVisibleAsync();
+
+            await Page.WaitForSelectorAsync("[data-testid=battery-details-placeholder]", new PageWaitForSelectorOptions() { State = WaitForSelectorState.Detached, Timeout = 0 });
+
 
             // Verify result
             // ************

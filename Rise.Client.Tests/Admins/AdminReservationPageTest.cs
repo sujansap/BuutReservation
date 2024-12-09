@@ -12,15 +12,7 @@ public class AdminReservationPageTest : CustomAuthenticatedPageTest
     [SetUp]
     public async Task SetUpAsync()
     {
-        base.GlobalSetUp();
         await LoginAsync(UserRole.Administrator);
-    }
-
-    [TearDown]
-    public async Task TearDownAsync()
-    {
-        await LogoutAsync();
-        await base.TearDown();
     }
 
     private async Task MockCancelReservationApi(int reservationId, int status = 200)
