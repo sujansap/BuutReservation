@@ -1,6 +1,7 @@
 using Shouldly;
 using Rise.Domain.Reservations;
 using Rise.Domain.Tests.TestUtilities;
+using Rise.Domain.Boats;
 
 namespace Rise.Domain.Tests.Reservations
 {
@@ -131,7 +132,30 @@ namespace Rise.Domain.Tests.Reservations
             reservation.Cancel();
 
             reservation.IsDeleted.ShouldBeTrue();
+            reservation.Battery.ShouldBe(null);
         }
+
+        // TODO tests for cancel with battery
+        // [Fact]
+        // public void NotThrowException_WhenCancellationMomentIsValidAndHasBatteryAssigned()
+        // {
+        //     var reservation = new ReservationBuilder()
+        //         .WithTimeSlot(
+        //             new TimeSlotBuilder()
+        //                 .WithDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2))) // Exactly 2 days
+        //                 .Build()
+        //         )
+        //         .WithBattery()
+        //         .Build();
+
+        //     reservation.Cancel();
+
+        //     reservation.IsDeleted.ShouldBeTrue();
+        //     reservation.Battery.ShouldBe(null);
+        // }
+
+        // TODO tests for AssignBattery
+
 
     }
 }

@@ -167,15 +167,17 @@ namespace Rise.Services.Reservations
         {
             var reservation = await _dbContext.Reservations
                 .Include(r => r.Boat)
-                .ThenInclude(b => b.Batteries)
-                .ThenInclude(battery => battery.Mentor)
                 .Include(r => r.TimeSlot)
+                .Include(r => r.PreviousBatteryHolder)
+                .Include(r => r.Battery)
+                    .ThenInclude(b => b!.Mentor)
                 .FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
-            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
-            Battery battery = reservation.Boat.Batteries[0];
-
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            DateOnly date = reservation.TimeSlot.Date;
+            DateOnly beforeBuffer = date.AddDays(-Reservation.MinDaysBetweenReservation);
+            User? previousBatteryHolder = today.CompareTo(beforeBuffer) >= 0 && 0 <= today.CompareTo(date) ? reservation.PreviousBatteryHolder : null;
 
             return new ReservationDetailsDto
             {
@@ -185,9 +187,16 @@ namespace Rise.Services.Reservations
                 Date = reservation.TimeSlot.Date,
                 IsDeleted = reservation.IsDeleted,
                 BoatPersonalName = reservation.Boat.PersonalName,
-                MentorName = battery.Mentor.FamilyName,
-                BatteryType = battery.Type
-
+                MentorName = reservation.Battery?.Mentor?.FamilyName,
+                BatteryId = reservation.Battery?.Id,
+                CurrentBatteryUserName = previousBatteryHolder?.FamilyName,
+                CurrentBatteryUserId = previousBatteryHolder?.Id,
+                CurrentHolderPhoneNumber = previousBatteryHolder?.PhoneNumber,
+                CurrentHolderEmail = previousBatteryHolder?.Email,
+                CurrentHolderStreet = previousBatteryHolder?.Address.Street,
+                CurrentHolderNumber = previousBatteryHolder?.Address.Number,
+                CurrentHolderCity = previousBatteryHolder?.Address.City,
+                CurrentHolderPostalCode = previousBatteryHolder?.Address.PostalCode
             };
         }
         public async Task CancelReservationAsync(int reservationId)
