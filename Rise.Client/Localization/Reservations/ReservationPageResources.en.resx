@@ -9,8 +9,6 @@
 	<data name="YourReservations">
 		<value>Your Reservations</value>
 	</data>
-
-
 	<data name="CreateReservation" xml:space="preserve">
 		<value>Create Reservation</value>
 	</data>
@@ -38,7 +36,6 @@
 	<data name="ErrorLoadingReservations">
 		<value>Something went wrong while fetching the reservations.</value>
 	</data>
-	<!-- New translations -->
 	<data name="UpcomingReservations" xml:space="preserve">
 		<value>Upcoming Reservations</value>
 	</data>
@@ -82,10 +79,22 @@
 		<value>No reservations found.</value>
 	</data>
 	<data name="Cancel Reservation" xml:space="preserve">
-  	<value>Cancel reservation</value>
+		<value>Cancel reservation</value>
 	</data>
 	<data name="DetailsDenied" xml:space="preserve">
-	<value>This reservation is canceled. You cannot view the details.</value>
+		<value>This reservation is canceled. You cannot view the details.</value>
+	</data>
+	<data name="Legend" xml:space="preserve">
+		<value>Legend</value>
+	</data>
+	<data name="YourReservationLegend" xml:space="preserve">
+		<value>Your reservation</value>
+	</data>
+	<data name="AvailableLegend" xml:space="preserve">
+		<value>Available</value>
+	</data>
+	<data name="FullyBookedLegend" xml:space="preserve">
+		<value>Fully booked</value>
 	</data>
 	<data name="PickupPerson" xml:space="preserve">
 		<value>Pickup person</value>
