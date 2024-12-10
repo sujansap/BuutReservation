@@ -55,7 +55,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             if (assignedUsersPage.Count == 0)
             {
                 _logger.LogInformation("No users found for role {Role}", role);
-                return CreateEmptyPaginationResult(page, pageSize);
+                return CreateEmptyPaginationResult<UserDto>(page, pageSize);
             }
 
             var auth0Users = await Task.WhenAll(assignedUsersPage.Select(user =>
@@ -70,7 +70,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             if (buutUserIds.Count == 0)
             {
                 _logger.LogWarning("No valid buutUserId found in Auth0 users for role {Role}", role);
-                return CreateEmptyPaginationResult(page, pageSize);
+                return CreateEmptyPaginationResult<UserDto>(page, pageSize);
             }
 
             // Get users from our database matching the paginated Auth0 users
@@ -154,11 +154,11 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             message, roleId, retries + 1, maxRetries + 1);
     }
 
-    private Pagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)
+    private static Pagination<T> CreateEmptyPaginationResult<T>(int page, int pageSize)
     {
-        return new Pagination<UserDto>
+        return new Pagination<T>
         {
-            Items = new List<UserDto>(),
+            Items = [],
             TotalCount = 0,
             Page = page,
             PageSize = pageSize
