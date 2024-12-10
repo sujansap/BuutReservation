@@ -57,7 +57,7 @@ namespace Rise.Server.Controllers.Users
         }
 
         /// <summary>
-        /// Adds memeber role to a user
+        /// Adds member role to a user
         /// </summary>
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
@@ -81,7 +81,7 @@ namespace Rise.Server.Controllers.Users
         /// <summary>
         /// Registers a new user
         /// </summary>
-        /// <param name="userDto">Dto with required user imformation for registration</param>
+        /// <param name="userDto">Dto with required user information for registration</param>
         /// <returns>The id of the registered user</returns>
         [HttpPost("register")]
         [AllowAnonymous]
