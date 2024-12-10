@@ -3,6 +3,8 @@ using Shouldly;
 using Rise.Shared.Users;
 using System.Net.Http.Json;
 using System.Net;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Rise.Server.Tests.Controllers.Users
 {
@@ -172,6 +174,186 @@ namespace Rise.Server.Tests.Controllers.Users
             failedResponse.StatusCode.ShouldBe(HttpStatusCode.Conflict);
 
             await DeleteAuth0UserByBuutUserId(userId);
+        }
+
+        [Fact]
+        public async Task GetUsersByFullName_NotLoggedIn_Unauthorized()
+        {
+            LogOutAsync();
+            var response = await _client.GetAsync("names");
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+
+        }
+
+
+        [Theory]
+        [InlineData(UserRole.Guest)]
+        [InlineData(UserRole.Member)]
+        public async Task GetUsersByFullName_NotAdmin_Forbidden(UserRole role)
+        {
+            LogOutAsync();
+            await LoginAsync(role);
+            var response = await _client.GetAsync("names");
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public async Task GetUsersByFullName_InvalidPage_BadRequest(int page)
+        {
+            await LoginAsync(UserRole.Administrator);
+
+            Dictionary<string, string?> queries = new()
+            {
+                ["page"] = page.ToString(),
+            };
+
+            string queryString = QueryHelpers.AddQueryString("names", queries);
+
+            var response = await _client.GetAsync(queryString);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+
+            problemDetails?.Errors["page"][0].ShouldBe("Page has to be a positive integer");
+
+            LogOutAsync();
+        }
+
+        [Theory]
+        [InlineData(4)]
+        [InlineData(3)]
+        [InlineData(-1)]
+        public async Task GetUsersByFullName_InvalidPageSize_BadRequest(int pageSize)
+        {
+            await LoginAsync(UserRole.Administrator);
+
+            Dictionary<string, string?> queries = new()
+            {
+                ["pageSize"] = pageSize.ToString(),
+            };
+
+            string queryString = QueryHelpers.AddQueryString("names", queries);
+
+            var response = await _client.GetAsync(queryString);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+
+            problemDetails?.Errors["pageSize"][0].ShouldBe("Page Size has to be at least 5");
+
+            LogOutAsync();
+        }
+
+        [Fact]
+        public async Task GetUsersByFullName_NoGivenFilterName_OK()
+        {
+            await LoginAsync(UserRole.Administrator);
+
+            int pageSize = 5;
+
+            // First Page
+            Dictionary<string, string?> queriesFirst = new()
+            {
+                ["pageSize"] = pageSize.ToString(),
+            };
+
+            string queryStringFirst = QueryHelpers.AddQueryString("names", queriesFirst);
+
+            var responseFirstPage = await _client.GetAsync(queryStringFirst);
+
+            responseFirstPage.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var firstPage = await responseFirstPage.Content.ReadFromJsonAsync<Pagination<UserNameDto>>();
+            firstPage.ShouldNotBeNull();
+
+            firstPage.Page.ShouldBe(1);
+            firstPage.PageSize.ShouldBe(pageSize);
+            firstPage.TotalCount.ShouldBe(9);
+            firstPage.HasNextPage.ShouldBeTrue();
+
+            List<UserNameDto> usersFirst = firstPage.Items.ToList();
+            usersFirst.Count.ShouldBe(pageSize);
+            usersFirst[0].FullName.ShouldBe("Barabich, Bas");
+            usersFirst[1].FullName.ShouldBe("Chin, Bindo");
+            usersFirst[2].FullName.ShouldBe("De Clerck, Kimberlie");
+            usersFirst[3].FullName.ShouldBe("de Clerk, Bram");
+            usersFirst[4].FullName.ShouldBe("Helks, Pushwant");
+
+
+            // Second Page
+            Dictionary<string, string?> queriesSecond = new()
+            {
+                ["pageSize"] = pageSize.ToString(),
+                ["page"] = "2",
+            };
+
+            string queryStringSecond = QueryHelpers.AddQueryString("names", queriesSecond);
+
+            var responseSecondPage = await _client.GetAsync(queryStringSecond);
+
+            responseSecondPage.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var secondPage = await responseSecondPage.Content.ReadFromJsonAsync<Pagination<UserNameDto>>();
+            secondPage.ShouldNotBeNull();
+
+            secondPage.Page.ShouldBe(2);
+            secondPage.PageSize.ShouldBe(pageSize);
+            secondPage.TotalCount.ShouldBe(9);
+            secondPage.HasNextPage.ShouldBeFalse();
+
+            List<UserNameDto> usersSecond = secondPage.Items.ToList();
+            usersSecond.Count.ShouldBe(4);
+            usersSecond[0].FullName.ShouldBe("Her De Gaver, Patrick");
+            usersSecond[1].FullName.ShouldBe("Montu, Sujan");
+            usersSecond[2].FullName.ShouldBe("Piatti, Simon");
+            usersSecond[3].FullName.ShouldBe("Serket, Xan");
+
+            LogOutAsync();
+        }
+
+        [Fact]
+        public async Task GetUsersByFullName_GivenFilterName_OK()
+        {
+            await LoginAsync(UserRole.Administrator);
+
+            int pageSize = 5;
+
+            // First Page
+            Dictionary<string, string?> queriesFirst = new()
+            {
+                ["pageSize"] = pageSize.ToString(),
+                ["partialName"] = "er",
+            };
+
+            string queryStringFirst = QueryHelpers.AddQueryString("names", queriesFirst);
+
+            var responseFirstPage = await _client.GetAsync(queryStringFirst);
+
+            responseFirstPage.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            var firstPage = await responseFirstPage.Content.ReadFromJsonAsync<Pagination<UserNameDto>>();
+            firstPage.ShouldNotBeNull();
+
+            firstPage.Page.ShouldBe(1);
+            firstPage.PageSize.ShouldBe(pageSize);
+            firstPage.TotalCount.ShouldBe(4);
+            firstPage.HasNextPage.ShouldBeFalse();
+
+            List<UserNameDto> usersFirst = firstPage.Items.ToList();
+            usersFirst.Count.ShouldBe(4);
+            usersFirst[0].FullName.ShouldBe("De Clerck, Kimberlie");
+            usersFirst[1].FullName.ShouldBe("de Clerk, Bram");
+            usersFirst[2].FullName.ShouldBe("Her De Gaver, Patrick");
+            usersFirst[3].FullName.ShouldBe("Serket, Xan");
+
+            LogOutAsync();
         }
     }
 }
