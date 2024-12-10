@@ -200,57 +200,6 @@ namespace Rise.Server.Tests.Controllers.Users
 
         }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        public async Task GetUsersByFullName_InvalidPage_BadRequest(int page)
-        {
-            await LoginAsync(UserRole.Administrator);
-
-            Dictionary<string, string?> queries = new()
-            {
-                ["page"] = page.ToString(),
-            };
-
-            string queryString = QueryHelpers.AddQueryString("names", queries);
-
-            var response = await _client.GetAsync(queryString);
-
-            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
-            problemDetails?.Errors["page"][0].ShouldBe("Page has to be a positive integer");
-
-            LogOutAsync();
-        }
-
-        [Theory]
-        [InlineData(4)]
-        [InlineData(3)]
-        [InlineData(-1)]
-        public async Task GetUsersByFullName_InvalidPageSize_BadRequest(int pageSize)
-        {
-            await LoginAsync(UserRole.Administrator);
-
-            Dictionary<string, string?> queries = new()
-            {
-                ["pageSize"] = pageSize.ToString(),
-            };
-
-            string queryString = QueryHelpers.AddQueryString("names", queries);
-
-            var response = await _client.GetAsync(queryString);
-
-            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-            var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
-            problemDetails?.Errors["pageSize"][0].ShouldBe("Page Size has to be at least 5");
-
-            LogOutAsync();
-        }
-
         [Fact]
         public async Task GetUsersByFullName_NoGivenFilterName_OK()
         {
@@ -270,50 +219,20 @@ namespace Rise.Server.Tests.Controllers.Users
 
             responseFirstPage.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-            var firstPage = await responseFirstPage.Content.ReadFromJsonAsync<Pagination<UserNameDto>>();
-            firstPage.ShouldNotBeNull();
+            var response = await responseFirstPage.Content.ReadFromJsonAsync<IEnumerable<UserNameDto>>();
+            response.ShouldNotBeNull();
 
-            firstPage.Page.ShouldBe(1);
-            firstPage.PageSize.ShouldBe(pageSize);
-            firstPage.TotalCount.ShouldBe(9);
-            firstPage.HasNextPage.ShouldBeTrue();
-
-            List<UserNameDto> usersFirst = firstPage.Items.ToList();
-            usersFirst.Count.ShouldBe(pageSize);
-            usersFirst[0].FullName.ShouldBe("Barabich, Bas");
-            usersFirst[1].FullName.ShouldBe("Chin, Bindo");
-            usersFirst[2].FullName.ShouldBe("De Clerck, Kimberlie");
-            usersFirst[3].FullName.ShouldBe("de Clerk, Bram");
-            usersFirst[4].FullName.ShouldBe("Helks, Pushwant");
-
-
-            // Second Page
-            Dictionary<string, string?> queriesSecond = new()
-            {
-                ["pageSize"] = pageSize.ToString(),
-                ["page"] = "2",
-            };
-
-            string queryStringSecond = QueryHelpers.AddQueryString("names", queriesSecond);
-
-            var responseSecondPage = await _client.GetAsync(queryStringSecond);
-
-            responseSecondPage.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-            var secondPage = await responseSecondPage.Content.ReadFromJsonAsync<Pagination<UserNameDto>>();
-            secondPage.ShouldNotBeNull();
-
-            secondPage.Page.ShouldBe(2);
-            secondPage.PageSize.ShouldBe(pageSize);
-            secondPage.TotalCount.ShouldBe(9);
-            secondPage.HasNextPage.ShouldBeFalse();
-
-            List<UserNameDto> usersSecond = secondPage.Items.ToList();
-            usersSecond.Count.ShouldBe(4);
-            usersSecond[0].FullName.ShouldBe("Her De Gaver, Patrick");
-            usersSecond[1].FullName.ShouldBe("Montu, Sujan");
-            usersSecond[2].FullName.ShouldBe("Piatti, Simon");
-            usersSecond[3].FullName.ShouldBe("Serket, Xan");
+            List<UserNameDto> users = response.ToList();
+            users.Count.ShouldBe(9);
+            users[0].FullName.ShouldBe("Barabich, Bas");
+            users[1].FullName.ShouldBe("Chin, Bindo");
+            users[2].FullName.ShouldBe("De Clerck, Kimberlie");
+            users[3].FullName.ShouldBe("de Clerk, Bram");
+            users[4].FullName.ShouldBe("Helks, Pushwant");
+            users[5].FullName.ShouldBe("Her De Gaver, Patrick");
+            users[6].FullName.ShouldBe("Montu, Sujan");
+            users[7].FullName.ShouldBe("Piatti, Simon");
+            users[8].FullName.ShouldBe("Serket, Xan");
 
             LogOutAsync();
         }
@@ -323,12 +242,8 @@ namespace Rise.Server.Tests.Controllers.Users
         {
             await LoginAsync(UserRole.Administrator);
 
-            int pageSize = 5;
-
-            // First Page
             Dictionary<string, string?> queriesFirst = new()
             {
-                ["pageSize"] = pageSize.ToString(),
                 ["partialName"] = "er",
             };
 
@@ -338,15 +253,10 @@ namespace Rise.Server.Tests.Controllers.Users
 
             responseFirstPage.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-            var firstPage = await responseFirstPage.Content.ReadFromJsonAsync<Pagination<UserNameDto>>();
-            firstPage.ShouldNotBeNull();
+            var userNames = await responseFirstPage.Content.ReadFromJsonAsync<IEnumerable<UserNameDto>>();
+            userNames.ShouldNotBeNull();
 
-            firstPage.Page.ShouldBe(1);
-            firstPage.PageSize.ShouldBe(pageSize);
-            firstPage.TotalCount.ShouldBe(4);
-            firstPage.HasNextPage.ShouldBeFalse();
-
-            List<UserNameDto> usersFirst = firstPage.Items.ToList();
+            List<UserNameDto> usersFirst = userNames.ToList();
             usersFirst.Count.ShouldBe(4);
             usersFirst[0].FullName.ShouldBe("De Clerck, Kimberlie");
             usersFirst[1].FullName.ShouldBe("de Clerk, Bram");

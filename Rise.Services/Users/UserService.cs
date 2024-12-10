@@ -383,18 +383,17 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
     }
 
-    public async Task<Pagination<UserNameDto>> GetUsersByFullName(string? partialName, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<UserNameDto>> GetUsersByFullName(string? partialName, CancellationToken cancellationToken = default)
     {
         try
         {
             Expression<Func<DomainUser, bool>> filterName = !string.IsNullOrEmpty(partialName) ? (u) => u.FullName.ToLower().Contains(partialName.ToLower()) : (u) => true;
 
             int totalCount = await _dbContext.Users.Where(filterName).CountAsync(cancellationToken);
-            int offset = (page - 1) * pageSize;
-            if (totalCount == 0 || totalCount - offset <= 0)
+            if (totalCount == 0)
             {
                 _logger.LogWarning("No users found that contain: {partialName}", partialName);
-                return CreateEmptyPaginationResult<UserNameDto>(page, pageSize);
+                return [];
             }
 
             List<UserNameDto> userDtos = await _dbContext.Users
@@ -408,18 +407,9 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 })
                 .OrderBy(u => u.FullName)
                 .AsNoTracking()
-                .Skip(offset)
-                .Take(pageSize)
                 .ToListAsync();
 
-            return new()
-            {
-                Items = userDtos,
-                TotalCount = totalCount,
-                Page = page,
-                PageSize = pageSize,
-                HasNextPage = totalCount - (offset + pageSize) > 0
-            };
+            return userDtos;
         }
         catch (Exception ex)
         {

@@ -30,13 +30,9 @@ public class UserAdminService(HttpClient httpClient) : IUserAdminService
         throw new NotImplementedException();
     }
 
-    public async Task<Pagination<UserNameDto>> GetUsersByFullName(string? partialName, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<UserNameDto>> GetUsersByFullName(string? partialName, CancellationToken cancellationToken = default)
     {
-        Dictionary<string, string?> queries = new()
-        {
-            ["page"] = page.ToString(),
-            ["pageSize"] = pageSize.ToString(),
-        };
+        Dictionary<string, string?> queries = [];
 
         if (partialName is not null)
         {
@@ -45,7 +41,7 @@ public class UserAdminService(HttpClient httpClient) : IUserAdminService
 
         string queryString = QueryHelpers.AddQueryString("names", queries);
 
-        var result = await _httpClient.GetFromJsonAsync<Pagination<UserNameDto>>(queryString, cancellationToken: cancellationToken);
+        var result = await _httpClient.GetFromJsonAsync<IEnumerable<UserNameDto>>(queryString, cancellationToken: cancellationToken);
         return result ?? throw new Exception("Failed to get user names");
     }
 }

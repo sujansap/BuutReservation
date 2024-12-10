@@ -97,8 +97,6 @@ namespace Rise.Server.Controllers.Users
         /// Get users by FullName
         /// </summary>
         /// <param name="partialName">A part of a name to use as substring for filtering</param>
-        /// <param name="page">Page number</param>
-        /// <param name="pageSize">Number of items per page</param>
         /// <returns>List of users matching that match given partial name</returns>
         [HttpGet("names")]
         [Authorize(Roles = nameof(UserRole.Administrator))]
@@ -108,19 +106,14 @@ namespace Rise.Server.Controllers.Users
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetUsersByFullName(
             [FromQuery]
-            string? partialName,
-            [FromQuery]
-            [Range(1, int.MaxValue, ErrorMessage = "Page has to be a positive integer")]
-            int page = 1,
-            [FromQuery]
-            [Range(5, int.MaxValue, ErrorMessage = "Page Size has to be at least 5")]
-            int pageSize = 10)
+            string? partialName
+            )
         {
-            _logger.LogInformation("GET api/User/names?partialName={PartialName}&page={Page}&pageSize={PageSize}", partialName, page, pageSize);
+            _logger.LogInformation("GET api/User/names?partialName={PartialName}", partialName);
 
             try
             {
-                var users = await _userService.GetUsersByFullName(partialName, page, pageSize);
+                var users = await _userService.GetUsersByFullName(partialName);
                 return Ok(users);
             }
             catch (Exception ex)
