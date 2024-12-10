@@ -20,7 +20,7 @@ namespace Rise.Server.Controllers.Users
         /// <param name="pageSize">Number of items per page</param>
         /// <returns>List of users matching the specified role</returns>
         [HttpGet]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pagination<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUsersByRole([FromQuery] UserRole role, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
@@ -44,7 +44,7 @@ namespace Rise.Server.Controllers.Users
         /// </summary>
         /// <returns>The details of a user</returns>
         [HttpGet("{userId}")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDetailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserDetails(int userId)
@@ -60,7 +60,7 @@ namespace Rise.Server.Controllers.Users
         /// <param name="request">Dto with id of the user to add member role to</param>
         /// <returns>Result of the operation</returns>
         [HttpPost("role")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMemberRole([FromBody] AddMemberRoleDto request)
@@ -101,10 +101,11 @@ namespace Rise.Server.Controllers.Users
         /// <param name="pageSize">Number of items per page</param>
         /// <returns>List of users matching that match given partial name</returns>
         [HttpGet("names")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pagination<UserNameDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetUsersByFullName(
             [FromQuery]
             string? partialName,
