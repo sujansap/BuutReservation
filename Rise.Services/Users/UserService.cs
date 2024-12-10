@@ -389,18 +389,14 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         {
             Expression<Func<DomainUser, bool>> filterName = !string.IsNullOrEmpty(partialName) ? (u) => u.FullName.ToLower().Contains(partialName.ToLower()) : (u) => true;
 
-            int totalCount = await _dbContext.Users.Where(filterName).CountAsync();
+            int totalCount = await _dbContext.Users.Where(filterName).CountAsync(cancellationToken);
+            int offset = (page - 1) * pageSize;
 
-            if (totalCount == 0)
+            if (totalCount == 0 || totalCount - offset <= 0)
             {
                 _logger.LogWarning("No users found that contain: {partialName}", partialName);
                 return CreateEmptyPaginationResult<UserNameDto>(page, pageSize);
             }
-
-            int offset = (page - 1) * pageSize;
-            int take = totalCount - offset;
-            if (take < 0)
-                take = 0;
 
             List<UserNameDto> userDtos = await _dbContext.Users
                 .Where(filterName)
@@ -414,7 +410,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 .OrderBy(u => u.FullName)
                 .AsNoTracking()
                 .Skip(offset)
-                .Take(take)
+                .Take(pageSize)
                 .ToListAsync();
 
             return new()
