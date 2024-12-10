@@ -12,6 +12,7 @@ using Auth0.Core.Exceptions;
 using Microsoft.Extensions.Logging;
 using Auth0.ManagementApi.Paging;
 using static Rise.Shared.Users.UserRegistrationModelDto;
+using System.Linq.Expressions;
 
 
 namespace Rise.Services.Users;
@@ -309,10 +310,9 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 Connection = "Username-Password-Authentication",
                 Password = userDto.Password,
                 AppMetadata = new Dictionary<string, object> {
-                     { "buutUserId", userId },
+                    { "buutUserId", userId },
                 }
-            }
-                       );
+            });
 
             await RunTaskWithRetries(async () => await SendAssignInitialRoleRequest(auth0User), 20);
 
@@ -380,6 +380,55 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 _ => ErrorMessages.User.UnexpectedError
             };
             throw new UniqueConstraintViolationException(message);
+        }
+    }
+
+    public async Task<Pagination<UserNameDto>> GetUsersByFullName(string? partialName, int page = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            Expression<Func<DomainUser, bool>> filterName = !string.IsNullOrEmpty(partialName) ? (u) => u.FullName.ToLower().Contains(partialName.ToLower()) : (u) => true;
+
+            int totalCount = await _dbContext.Users.Where(filterName).CountAsync();
+
+            if (totalCount == 0)
+            {
+                _logger.LogWarning("No users found that contain: {partialName}", partialName);
+                return CreateEmptyPaginationResult<UserNameDto>(page, pageSize);
+            }
+
+            int offset = (page - 1) * pageSize;
+            int take = totalCount - offset;
+            if (take < 0)
+                take = 0;
+
+            List<UserNameDto> userDtos = await _dbContext.Users
+                .Where(filterName)
+                .Select(u => new UserNameDto
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    FamilyName = u.FamilyName,
+                    FullName = u.FullName,
+                })
+                .OrderBy(u => u.FullName)
+                .AsNoTracking()
+                .Skip(offset)
+                .Take(take)
+                .ToListAsync();
+
+            return new()
+            {
+                Items = userDtos,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while retrieve user names with filter '{partialName}'", partialName);
+            throw new ApplicationException($"Failed to retrieve retrieve user names with filter '{partialName}'", ex);
         }
     }
 }

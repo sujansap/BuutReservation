@@ -1,8 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Rise.Domain.Users;
-using Rise.Shared.Infrastructure;
 using Rise.Shared.Users;
 
 namespace Rise.Server.Controllers.Users
@@ -93,6 +91,42 @@ namespace Rise.Server.Controllers.Users
             _logger.LogInformation("POST api/User/register");
             var userId = await _userService.RegisterUser(userDto);
             return CreatedAtAction(nameof(RegisterUser), userId);
+        }
+
+        /// <summary>
+        /// Get users by FullName
+        /// </summary>
+        /// <param name="partialName">A part of a name to use as substring for filtering</param>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Number of items per page</param>
+        /// <returns>List of users matching that match given partial name</returns>
+        [HttpGet("names")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pagination<UserNameDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetUsersByFullName(
+            [FromQuery]
+            string? partialName,
+            [FromQuery]
+            [Range(1, int.MaxValue)]
+            int page = 1,
+            [FromQuery]
+            [Range(5, int.MaxValue)]
+            int pageSize = 10)
+        {
+            _logger.LogInformation("GET api/User/names?partialName={PartialName}&page={Page}&pageSize={PageSize}", partialName, page, pageSize);
+
+            try
+            {
+                var users = await _userService.GetUsersByFullName(partialName, page, pageSize);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieve user names with filter: {PartialName}", partialName);
+                return BadRequest("Error retrieving user names");
+            }
         }
     }
 }
