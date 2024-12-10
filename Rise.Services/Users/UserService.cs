@@ -218,7 +218,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
         catch (ApiException ex)
         {
-            _logger.LogError(ex, "Auth0 api excpetion");
+            _logger.LogError(ex, "Auth0 api exception");
             throw new RoleAssigningFailedException(ex.Message);
         }
     }
@@ -293,7 +293,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
         }
         catch (ApiException ex)
         {
-            _logger.LogError(ex, "Auth0 api excpetion");
+            _logger.LogError(ex, "Auth0 api exception");
             throw new UserCreationFailedException(ex.Message);
         }
     }
