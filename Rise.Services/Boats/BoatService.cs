@@ -26,7 +26,18 @@ namespace Rise.Services.Boats
         {
             Battery battery = await FindBattery(id);
 
-            return new BatteryDto { Id = battery.Id, MentorId = battery.Mentor.Id, Type = battery.Type };
+            return new BatteryDto
+            {
+                Id = battery.Id,
+                Mentor = new()
+                {
+                    Id = battery.Mentor.Id,
+                    FirstName = battery.Mentor.FirstName,
+                    FamilyName = battery.Mentor.FamilyName,
+                    FullName = battery.Mentor.FullName,
+                },
+                Type = battery.Type
+            };
         }
 
         public async Task<BatteryDto> UpdateBattery(int id, BatteryUpdateDto newBattery)
@@ -40,7 +51,18 @@ namespace Rise.Services.Boats
 
             await _dbContext.SaveChangesAsync();
 
-            return new BatteryDto { Id = battery.Id, MentorId = battery.Mentor.Id, Type = battery.Type };
+            return new BatteryDto
+            {
+                Id = battery.Id,
+                Mentor = new()
+                {
+                    Id = battery.Mentor.Id,
+                    FirstName = battery.Mentor.FirstName,
+                    FamilyName = battery.Mentor.FamilyName,
+                    FullName = battery.Mentor.FullName,
+                },
+                Type = battery.Type
+            };
         }
     }
 }
