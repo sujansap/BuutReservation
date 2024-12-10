@@ -15,7 +15,7 @@ using Rise.Shared.Notifications;
 
 namespace Rise.Services.Reservations
 {
-    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider, INotificationService notificationService)
+    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider, IInternalNotificationService internalNotificationService)
         : AuthenticatedService(dbContext, authContextProvider), IReservationService
     {
 
@@ -126,11 +126,11 @@ namespace Rise.Services.Reservations
                 _dbContext.Reservations.Add(reservation);
                 await _dbContext.SaveChangesAsync();
 
-                await notificationService.SendNotificationToUser(
+                await internalNotificationService.SendNotificationToUser(
                 userId,
                 "Reservation Confirmed",
                 $"Your reservation on {timeSlot.Date.ToLongDateString()} {timeSlot.Start:HH:mm} - {timeSlot.End:HH:mm} has been confirmed with boat {boat.PersonalName}. Please arrive on time.",
-                SeverityEnum.Info
+                SeverityEnum.Success
                 );
 
                 return reservation.Id;
@@ -213,7 +213,7 @@ namespace Rise.Services.Reservations
             await _dbContext.SaveChangesAsync();
             try
             {
-                await notificationService.SendNotificationToUser(
+                await internalNotificationService.SendNotificationToUser(
                     userId,
                     "Reservation Cancelled",
                     $"Your reservation on {reservation.TimeSlot.Date.ToLongDateString()} {reservation.TimeSlot.Start:HH:mm} - {reservation.TimeSlot.End:HH:mm} has been cancelled.",

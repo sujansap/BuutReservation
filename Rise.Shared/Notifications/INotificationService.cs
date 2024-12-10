@@ -6,7 +6,6 @@ namespace Rise.Shared.Notifications
         Task<IEnumerable<NotificationDto>> GetUserNotifications(int? limit = null);
         Task MarkNotificationAsRead(int id);
         Task<int> GetUnreadNotificationCount();
-        Task SendNotificationToUser(int userId, string title, string message, SeverityEnum severity);
     }
 
 }

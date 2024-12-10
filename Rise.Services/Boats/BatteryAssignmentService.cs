@@ -2,25 +2,40 @@ using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Microsoft.Extensions.Logging;
 using Rise.Domain.Boats;
+using Rise.Shared.Notifications;
+using Rise.Shared.Reservations;
+using Rise.Domain.Reservations;
 
 namespace Rise.Services.Boats
 {
     public class BatteryAssignmentService(
         ApplicationDbContext dbContext,
-        ILogger<BatteryAssignmentService> logger)
+        ILogger<BatteryAssignmentService> logger,
+        IInternalNotificationService internalNotificationService)
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
         private readonly ILogger<BatteryAssignmentService> _logger = logger;
+        private readonly IInternalNotificationService _internalNotificationService = internalNotificationService;
 
         public async Task AssignAndOptimizeBatteries()
         {
             TimeInfo timeInfo = GetCurrentTimeInfo();
 
             _logger.LogInformation("Start assigning batteries for reservations oncoming three days");
-            await AssignBatteriesToReservations(timeInfo);
+            var assignedReservations = await AssignBatteriesToReservations(timeInfo);
             _logger.LogInformation("Done assigning batteries for reservations");
 
             await _dbContext.SaveChangesAsync();
+
+            foreach (var reservation in assignedReservations)
+            {
+                await _internalNotificationService.SendNotificationToUser(
+                    userId: reservation.UserId,
+                    title: "Battery Assigned",
+                    message: $"A battery has been assigned to your reservation for {reservation.TimeSlot.Date:d} at {reservation.TimeSlot.Start:t}.",
+                    severity: SeverityEnum.Info
+                );
+            }
         }
 
         private static TimeInfo GetCurrentTimeInfo()
@@ -34,7 +49,7 @@ namespace Rise.Services.Boats
             );
         }
 
-        private async Task AssignBatteriesToReservations(TimeInfo timeInfo)
+        private async Task<List<Reservation>> AssignBatteriesToReservations(TimeInfo timeInfo)
         {
             List<Boat> boats = await _dbContext.Boats
                 .Include(boat => boat.Reservations
@@ -62,10 +77,9 @@ namespace Rise.Services.Boats
                 .Include(boat => boat.Batteries)
                 .ToListAsync();
 
-            foreach (Boat boat in boats)
-            {
-                boat.AssignBatteriesToReservations(timeInfo.Now);
-            }
+            return boats
+                .SelectMany(b => b.AssignBatteriesToReservations(timeInfo.Now))
+                .ToList();
         }
     }
 

@@ -34,10 +34,6 @@ namespace Rise.Client.Notifications
             return _httpClient.PatchAsync($"read/{notificationId}", null);
         }
 
-        public Task SendNotificationToUser(int userId, string title, string message, SeverityEnum severity)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }
