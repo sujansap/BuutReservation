@@ -19,8 +19,9 @@ public class CruisePeriodService(HttpClient httpClient) : ICruisePeriodService
     return (await response.Content.ReadFromJsonAsync<CruisePeriodDetailedDto>())!;
   }
 
-  public Task<List<CruisePeriodDetailedDto>> GetCruisePeriods(bool futureOnly)
+  public async Task<List<CruisePeriodDetailedDto>> GetCruisePeriods(bool getFuturePeriods)
   {
-    throw new NotImplementedException();
+    var result = await _httpClient.GetFromJsonAsync<List<CruisePeriodDetailedDto>>($"?getFuturePeriods={getFuturePeriods}");
+    return result ?? new List<CruisePeriodDetailedDto>();
   }
 }

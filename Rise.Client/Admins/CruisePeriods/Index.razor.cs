@@ -1,21 +1,37 @@
 using Microsoft.AspNetCore.Components;
+using Rise.Client.Common;
 using Rise.Shared.TimeSlots;
 
 namespace Rise.Client.Admins.CruisePeriods
 {
+
     public partial class Index
     {
         [Inject]
         public required ICruisePeriodService CruisePeriodService { get; set; }
 
-        [Parameter]
-        public int? Id { get; set; }
+        public List<CruisePeriodDetailedDto> CruisePeriods { get; set; } = new();
 
-        public required CruisePeriodDetailedDto CruisePeriod { get; set; }
+        private bool ShowPastPeriods { get; set; }
+        private AsyncData<List<CruisePeriodDetailedDto>>? _asyncData;
 
-        public async Task<CruisePeriodDetailedDto> FetchCruisePeriod()
+        protected override void OnInitialized()
         {
-            return await CruisePeriodService.GetCruisePeriod(Id ?? 2);
+            ShowPastPeriods = false; // Default to showing future periods
+        }
+
+        public async Task<List<CruisePeriodDetailedDto>> FetchCruisePeriods()
+        {
+            return await CruisePeriodService.GetCruisePeriods(!ShowPastPeriods);
+        }
+
+        private async Task OnToggleChanged(bool toggled)
+        {
+            ShowPastPeriods = toggled;
+            if (_asyncData != null)
+            {
+                await _asyncData.FetchData();
+            }
         }
     }
 }
