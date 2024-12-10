@@ -4,5 +4,6 @@ namespace Rise.Shared.Users;
 
 public interface IUserService
 {
-    Task UpdateUserAsync(UserProfileDto userProfileDto);
+    Task<UserProfileDto> GetUserProfile();
+    Task UpdateUserAsync(UpdateUserProfileDto updateUserProfileDto);
 }

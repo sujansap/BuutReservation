@@ -22,6 +22,7 @@ using Rise.Shared.Boats;
 using Rise.Client.Admins.Battery;
 using Rise.Client.Admins.CruisePeriods;
 using Rise.Client.Register;
+using Rise.Client.Profile;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -80,6 +81,11 @@ builder.Services.AddHttpClient<IUserRegisterService, UserRegisterService>(client
 {
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/register");
 });
+
+builder.Services.AddHttpClient<IUserService, UserService>(client =>
+{
+    client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/User/");
+}).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<ICruisePeriodService, CruisePeriodService>(client =>
 {

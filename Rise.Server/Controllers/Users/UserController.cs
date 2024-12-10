@@ -23,13 +23,15 @@ namespace Rise.Server.Controllers.Users
         [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Pagination<UserDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUsersByRole([FromQuery] UserRole role, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             _logger.LogInformation("GET api/User?role={Role}&page={Page}&pageSize={PageSize}", role, page, pageSize);
 
             try
             {
-                var users = await _userService.GetUsersByRole(role, page, pageSize);
+                var users = await _userAdminService.GetUsersByRole(role, page, pageSize);
                 return Ok(users);
             }
             catch (Exception ex)
@@ -47,11 +49,28 @@ namespace Rise.Server.Controllers.Users
         [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDetailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetUserDetails(int userId)
         {
             _logger.LogInformation("GET api/User/{userId}", userId);
             var details = await _userAdminService.GetUserDetails(userId);
             return Ok(details);
+        }
+
+        /// <summary>
+        /// Gets the profile information of the logged in user
+        /// </summary>
+        /// <returns>The profile the logged in user</returns>
+        [HttpGet("profile")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserProfileDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            _logger.LogInformation("GET api/User/profile");
+            var userProfile = await _userService.GetUserProfile();
+            return Ok(userProfile);
         }
 
         /// <summary>
@@ -72,7 +91,7 @@ namespace Rise.Server.Controllers.Users
                 //adding other roles not implemented yet
                 return BadRequest("Role must be Member");
             }
-            await _userService.AddMemberRole(request.UserId);
+            await _userAdminService.AddMemberRole(request.UserId);
             return Ok();
         }
 
@@ -93,13 +112,20 @@ namespace Rise.Server.Controllers.Users
             return CreatedAtAction(nameof(RegisterUser), userId);
         }
 
+        /// <summary>
+        /// Updates the profile of the logged in user
+        /// </summary>
+        /// <param name="userProfileDto">Dto with to be updated user information</param>
+        /// <returns>No content</returns>
         [HttpPatch]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> UpdateUser([FromBody] UserProfileDto userProfileDto)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserProfileDto userProfileDto)
         {
+            _logger.LogInformation("PATCH api/User/");
             await _userService.UpdateUserAsync(userProfileDto);
             return NoContent();
         }

@@ -75,6 +75,7 @@ public record class UserRegistrationModelDto
             .WithMessage("The phone number provided is not valid");
 
             RuleFor(x => x.DateOfBirth)
+            .NotNull().WithMessage("Please provide your date of birth.")
             .NotEmpty().WithMessage("Please provide your date of birth.")
             .Must(BeAtLeast18YearsOld).WithMessage("You must be at least 18 years old to register.");
 

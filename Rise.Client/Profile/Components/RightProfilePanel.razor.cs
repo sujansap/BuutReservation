@@ -1,12 +1,17 @@
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.Users;
-using static Rise.Shared.Users.UserProfileDto;
+using static Rise.Shared.Users.UpdateUserProfileDto;
 
 namespace Rise.Client.Profile.Components;
 
 public partial class RightProfilePanel
 {
-    private UserProfileDto UserProfileDto = new()
+    [Inject]
+    public required ISnackbar SnackbarService { get; set; }
+    [Inject]
+    public required IUserService UserService { get; set; }
+    private UpdateUserProfileDto UpdateUserProfileDto = new()
     {
         Address = new()
         {
@@ -21,20 +26,11 @@ public partial class RightProfilePanel
         PhoneNumber = string.Empty,
     };
 
-    private UserProfileDto InitialProfileDto = new()
-    {
-        Address = new()
-        {
-            Street = "initial",
-            Number = "initial",
-            City = "initial",
-            PostalCode = "initial",
-            Country = "Belgium"
-        },
-        FamilyName = "initial",
-        FirstName = "initial",
-        PhoneNumber = "911",
-    };
+    [Parameter]
+    public required UserProfileDto InitialProfileDto { get; set; }
+
+    [Parameter]
+    public EventCallback<UserProfileDto> OnUserChanged { get; set; }
 
     private MudForm Form = null!;
 
@@ -42,26 +38,44 @@ public partial class RightProfilePanel
 
     private bool EditIsEnabled = false;
 
+    private bool IsLoading = false;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        SetUserProfileDtoToInitialState();
+
+        SetUserProfileDtoToInitialProfileDto();
     }
 
-    private void SaveChanges()
+    private async Task SaveChanges()
     {
-        Form.Validate();
-        if (Form.IsValid)
+        if (!FieldsHaveChanged())
         {
-            SetInitialStateToCurrentUserProfileDto();
+            ToggleEdit();
+            return;
+        }
+
+        IsLoading = true;
+        await Form.Validate();
+
+        if (Form.IsValid && FieldsHaveChanged())
+        {
+            await UserService.UpdateUserAsync(UpdateUserProfileDto);
+
+            SetInitialProfileDtoStateToCurrentUserProfileDto();
+            await OnUserChanged.InvokeAsync(InitialProfileDto);
+
+            SnackbarService.Add("you successfully updated your profile!", Severity.Success);
+
             Form.ResetValidation();
             ToggleEdit();
         }
+        IsLoading = false;
     }
 
     private void CancelEdit()
     {
-        SetUserProfileDtoToInitialState();
+        SetUserProfileDtoToInitialProfileDto();
         Form.ResetValidation();
         ToggleEdit();
     }
@@ -71,26 +85,53 @@ public partial class RightProfilePanel
         EditIsEnabled = !EditIsEnabled;
     }
 
-
-    private void SetUserProfileDtoToInitialState()
+    private void SetUserProfileDtoToInitialProfileDto()
     {
-        UserProfileDto = new UserProfileDto
+        UpdateUserProfileDto = new UpdateUserProfileDto
         {
             FirstName = InitialProfileDto.FirstName,
             FamilyName = InitialProfileDto.FamilyName,
             PhoneNumber = InitialProfileDto.PhoneNumber,
-            Address = InitialProfileDto.Address,
+            Address = new()
+            {
+                Street = InitialProfileDto.Address.Street,
+                Number = InitialProfileDto.Address.Number,
+                City = InitialProfileDto.Address.City,
+                PostalCode = InitialProfileDto.Address.PostalCode,
+                Country = InitialProfileDto.Address.Country,
+            }
         };
     }
 
-    private void SetInitialStateToCurrentUserProfileDto()
+    private void SetInitialProfileDtoStateToCurrentUserProfileDto()
     {
         InitialProfileDto = new UserProfileDto
         {
-            FirstName = UserProfileDto.FirstName,
-            FamilyName = UserProfileDto.FamilyName,
-            PhoneNumber = UserProfileDto.PhoneNumber,
-            Address = UserProfileDto.Address,
+            FirstName = UpdateUserProfileDto.FirstName,
+            FamilyName = UpdateUserProfileDto.FamilyName,
+            PhoneNumber = UpdateUserProfileDto.PhoneNumber,
+            Address = new()
+            {
+                Street = UpdateUserProfileDto.Address.Street,
+                Number = UpdateUserProfileDto.Address.Number,
+                City = UpdateUserProfileDto.Address.City,
+                PostalCode = UpdateUserProfileDto.Address.PostalCode,
+                Country = UpdateUserProfileDto.Address.Country,
+            },
+            DateOfBirth = InitialProfileDto.DateOfBirth,
+            Email = InitialProfileDto.Email,
         };
+    }
+
+    private bool FieldsHaveChanged()
+    {
+        return !UpdateUserProfileDto.FirstName.Equals(InitialProfileDto.FirstName) ||
+        !UpdateUserProfileDto.FamilyName.Equals(InitialProfileDto.FamilyName) ||
+        !UpdateUserProfileDto.PhoneNumber.Equals(InitialProfileDto.PhoneNumber) ||
+        !UpdateUserProfileDto.Address.Street.Equals(InitialProfileDto.Address.Street) ||
+        !UpdateUserProfileDto.Address.Number.Equals(InitialProfileDto.Address.Number) ||
+        !UpdateUserProfileDto.Address.City.Equals(InitialProfileDto.Address.City) ||
+        !UpdateUserProfileDto.Address.PostalCode.Equals(InitialProfileDto.Address.PostalCode) ||
+        !UpdateUserProfileDto.Address.Country.Equals(InitialProfileDto.Address.Country);
     }
 }

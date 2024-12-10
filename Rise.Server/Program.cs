@@ -114,6 +114,7 @@ try
     builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserAdminService, UserService>();
     builder.Services.AddScoped<IUserRegisterService, UserService>();
+    builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IBatteryService, BatteryService>();
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();

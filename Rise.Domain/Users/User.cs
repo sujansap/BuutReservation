@@ -15,7 +15,7 @@ namespace Rise.Domain.Users
         private string _firstName = default!;
         private string _familyName = default!;
         private string _phoneNumber = default!;
-        private DateTime? _dateOfBirth = default!;
+        private DateTime _dateOfBirth = default!;
         private UserAddress _address = default!;
 
         public required string Email
@@ -66,14 +66,14 @@ namespace Rise.Domain.Users
             }
         }
 
-        public required DateTime? DateOfBirth
+        public required DateTime DateOfBirth
         {
             get => _dateOfBirth;
             set
             {
                 Guard.Against.Null(value, nameof(DateOfBirth));
-                Guard.Against.OutOfSQLDateRange(value.Value, nameof(DateOfBirth));
-                Guard.Against.Expression((x) => x > DateTime.Today.AddYears(-18), value.Value, nameof(DateOfBirth));
+                Guard.Against.OutOfSQLDateRange(value, nameof(DateOfBirth));
+                Guard.Against.Expression((x) => x > DateTime.Today.AddYears(-18), value, nameof(DateOfBirth));
                 _dateOfBirth = value;
             }
         }
@@ -147,7 +147,7 @@ namespace Rise.Domain.Users
             }
 
         }
-        
+
         private readonly List<Reservation> reservations = [];
         public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
         private readonly List<Battery> guardedBatteries = [];

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Auth0.ManagementApi.Paging;
 using static Rise.Shared.Users.UserRegistrationModelDto;
 using Rise.Services.Auth;
+using Rise.Shared.Address;
 
 
 namespace Rise.Services.Users;
@@ -256,7 +257,7 @@ public class UserService(
             FirstName = userDto.FirstName,
             FamilyName = userDto.FamilyName,
             PhoneNumber = userDto.PhoneNumber,
-            DateOfBirth = userDto.DateOfBirth,
+            DateOfBirth = (DateTime) userDto.DateOfBirth!,
             Address = new()
             {
                 City = address.City,
@@ -392,9 +393,9 @@ public class UserService(
         }
     }
 
-    public async Task UpdateUserAsync(UserProfileDto userProfileDto)
+    public async Task UpdateUserAsync(UpdateUserProfileDto userProfileDto)
     {
-        int userId = (int) _authContextProvider.GetUserId()!;
+        int userId = (int)_authContextProvider.GetUserId()!;
 
         var user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
 
@@ -406,13 +407,44 @@ public class UserService(
         await _dbContext.SaveChangesAsync();
     }
 
-    private static DomainUser.UserAddress AddressDtoToUserAddress(UserProfileDto.AddressDto addressDto){
-        return new (){
-            City = addressDto.City ,
-            Country= addressDto.Country,
-            Number= addressDto.Number,
-            PostalCode= addressDto.PostalCode,
-            Street= addressDto.Street,
+    public async Task<UserProfileDto> GetUserProfile()
+    {
+        int userId = (int)_authContextProvider.GetUserId()!;
+
+        var user = await _dbContext.Users.FindAsync(userId) ?? throw new EntityNotFoundException(nameof(DomainUser), userId);
+
+        return new()
+        {
+            DateOfBirth = user.DateOfBirth,
+            Email = user.Email,
+            Address = UserAddressToAddressDto(user.Address),
+            FamilyName = user.FamilyName,
+            FirstName = user.FirstName,
+            PhoneNumber = user.PhoneNumber,
+        };
+    }
+
+    private static DomainUser.UserAddress AddressDtoToUserAddress(AddressDto addressDto)
+    {
+        return new()
+        {
+            City = addressDto.City,
+            Country = addressDto.Country,
+            Number = addressDto.Number,
+            PostalCode = addressDto.PostalCode,
+            Street = addressDto.Street,
+        };
+    }
+
+    private static AddressDto UserAddressToAddressDto(DomainUser.UserAddress address)
+    {
+        return new()
+        {
+            City = address.City,
+            Country = address.Country,
+            Number = address.Number,
+            PostalCode = address.PostalCode,
+            Street = address.Street,
         };
     }
 }

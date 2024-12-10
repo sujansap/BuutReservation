@@ -28,7 +28,7 @@ public partial class Index : ComponentBase
         Email = string.Empty,
         Password = string.Empty,
         PhoneNumber = string.Empty,
-        DateOfBirth = null,
+        DateOfBirth = default,
         Address = new UserRegistrationModelDto.AddressModel
         {
             Street = string.Empty,

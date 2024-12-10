@@ -2,23 +2,27 @@
 @using Microsoft.Extensions.Localization
 @using Rise.Client.Localization.Profile;
 @using MudBlazor
-@using Rise.Client.Common.Buttons
+@using Rise.Client.Common
 @using Rise.Client.Profile.Components
+@using Rise.Shared.Users
 @inject IStringLocalizer<ProfilePageResources> Localizer
 
 <PageTitle>@Localizer["TODO"]</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        <MudCard>
-            <MudStack Row="true" StretchItems="StretchItems.End">
-                <LeftProfilePanel>
+        <AsyncData @bind-Data="@UserProfileDto" DataFetcher="@FetchUserProfile" T="UserProfileDto"
+            TestIdPrefix="profile" @ref="AsyncDataRef" >
+            <MudCard>
+                <MudStack Row="true" StretchItems="StretchItems.End">
+                    <LeftProfilePanel UserProfileDto="@UserProfileDto" AuthContext="@context">
 
-                </LeftProfilePanel>
-                <RightProfilePanel>
+                    </LeftProfilePanel>
+                    <RightProfilePanel InitialProfileDto="@UserProfileDto" OnUserChanged="@HandleUserChanged">
 
-                </RightProfilePanel>
-            </MudStack>
-        </MudCard>
+                    </RightProfilePanel>
+                </MudStack>
+            </MudCard>
+        </AsyncData>
     </Authorized>
 </AuthorizeView>

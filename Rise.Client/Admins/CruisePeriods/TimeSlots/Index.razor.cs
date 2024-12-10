@@ -21,7 +21,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
         [Parameter]
         public int? Id { get; set; }
 
-        private MudForm? form;
+        private MudForm form = null!;
 
         private Validator validator = new();
 
