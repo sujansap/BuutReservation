@@ -32,7 +32,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     {
         await _managementApiClient.Users.RemoveRolesAsync(auth0User.UserId, new AssignRolesRequest
         {
-            Roles = new[] { role.Id }
+            Roles = [role.Id]
         });
     }
 
@@ -40,7 +40,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     {
         await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
         {
-            Roles = new[] { role.Id }
+            Roles = [role.Id]
         });
     }
     public async Task<Pagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
@@ -52,7 +52,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             // Get paginated users from Auth0
             var assignedUsersPage = await GetAuth0UsersWithRetry(auth0Role.Id, page, pageSize);
 
-            if (!assignedUsersPage.Any())
+            if (assignedUsersPage.Count == 0)
             {
                 _logger.LogInformation("No users found for role {Role}", role);
                 return CreateEmptyPaginationResult(page, pageSize);
@@ -62,12 +62,12 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 _managementApiClient.Users.GetAsync(user.UserId)));
 
             var buutUserIds = auth0Users
-                .Select(auth0User => auth0User.AppMetadata?["buutUserId"]?.ToString())
+                .Select<User, string?>(auth0User => auth0User.AppMetadata?["buutUserId"]?.ToString())
                 .Where(id => !string.IsNullOrEmpty(id))
                 .Distinct()
                 .ToList();
 
-            if (!buutUserIds.Any())
+            if (buutUserIds.Count == 0)
             {
                 _logger.LogWarning("No valid buutUserId found in Auth0 users for role {Role}", role);
                 return CreateEmptyPaginationResult(page, pageSize);
