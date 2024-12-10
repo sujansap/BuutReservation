@@ -124,6 +124,11 @@ namespace Rise.Server.Tests.Fixtures
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
+        protected void LogOutAsync()
+        {
+            _client.DefaultRequestHeaders.Authorization = null;
+        }
+
         private async Task<string?> SendLoginRequest(ResourceOwnerTokenRequest tokenRequest)
         {
             try
