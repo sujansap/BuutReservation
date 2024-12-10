@@ -109,10 +109,10 @@ namespace Rise.Server.Controllers.Users
             [FromQuery]
             string? partialName,
             [FromQuery]
-            [Range(1, int.MaxValue)]
+            [Range(1, int.MaxValue, ErrorMessage = "Page has to be a positive integer")]
             int page = 1,
             [FromQuery]
-            [Range(5, int.MaxValue)]
+            [Range(5, int.MaxValue, ErrorMessage = "Page Size has to be at least 5")]
             int pageSize = 10)
         {
             _logger.LogInformation("GET api/User/names?partialName={PartialName}&page={Page}&pageSize={PageSize}", partialName, page, pageSize);
