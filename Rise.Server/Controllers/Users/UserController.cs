@@ -113,7 +113,7 @@ namespace Rise.Server.Controllers.Users
 
             try
             {
-                var users = await _userService.GetUsersByFullName(partialName);
+                var users = await _userService.GetUsersByFullName(partialName?.Trim());
                 return Ok(users);
             }
             catch (Exception ex)

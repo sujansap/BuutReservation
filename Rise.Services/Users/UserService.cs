@@ -387,7 +387,7 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
     {
         try
         {
-            Expression<Func<DomainUser, bool>> filterName = !string.IsNullOrEmpty(partialName) ? (u) => u.FullName.ToLower().Contains(partialName.ToLower()) : (u) => true;
+            Expression<Func<DomainUser, bool>> filterName = !string.IsNullOrWhiteSpace(partialName) ? (u) => u.FullName.ToLower().Contains(partialName.ToLower()) : (u) => true;
 
             int totalCount = await _dbContext.Users.Where(filterName).CountAsync(cancellationToken);
             if (totalCount == 0)

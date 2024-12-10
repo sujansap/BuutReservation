@@ -36,7 +36,7 @@ public class UserAdminService(HttpClient httpClient) : IUserAdminService
 
         if (partialName is not null)
         {
-            queries["partialName"] = partialName;
+            queries["partialName"] = partialName.Trim();
         }
 
         string queryString = QueryHelpers.AddQueryString("names", queries);
