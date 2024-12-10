@@ -391,7 +391,6 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
 
             int totalCount = await _dbContext.Users.Where(filterName).CountAsync(cancellationToken);
             int offset = (page - 1) * pageSize;
-
             if (totalCount == 0 || totalCount - offset <= 0)
             {
                 _logger.LogWarning("No users found that contain: {partialName}", partialName);
@@ -418,7 +417,8 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
                 Items = userDtos,
                 TotalCount = totalCount,
                 Page = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                HasNextPage = totalCount - (offset + pageSize) > 0
             };
         }
         catch (Exception ex)
