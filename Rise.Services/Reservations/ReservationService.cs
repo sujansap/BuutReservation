@@ -177,7 +177,7 @@ namespace Rise.Services.Reservations
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             DateOnly date = reservation.TimeSlot.Date;
             DateOnly beforeBuffer = date.AddDays(-Reservation.MinDaysBetweenReservation);
-            User? previousBatteryHolder = today.CompareTo(beforeBuffer) >= 0 && 0 <= today.CompareTo(date) ? reservation.PreviousBatteryHolder : null;
+            User? previousBatteryHolder = beforeBuffer <= today && today <= date ? reservation.PreviousBatteryHolder : null;
 
             return new ReservationDetailsDto
             {
