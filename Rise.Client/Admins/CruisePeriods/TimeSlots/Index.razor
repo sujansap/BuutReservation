@@ -44,7 +44,7 @@
                             <MudItem xs="12" sm="5">
                                 <MudTimePicker @bind-Time="@StartTime" Label="@Localizer["StartTime"]" Class="mt-0"
                                     PickerVariant="PickerVariant.Dialog" Required="true" data-testid="time-slot-start"
-                                    TimeEditMode="TimeEditMode.Normal" />
+                                    TimeEditMode="TimeEditMode.Normal" @bind-Time:after="@HandleStartTimeChanged" />
                             </MudItem>
                             <MudItem xs="12" sm="5">
                                 <MudTimePicker @bind-Time="@EndTime" Label="@Localizer["EndTime"]" Class="mt-0"

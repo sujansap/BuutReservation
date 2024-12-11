@@ -35,6 +35,8 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
         {
             return $"{timeSlot.Start.ToString("HH:mm")} - {timeSlot.End.ToString("HH:mm")}";
         }
+
+
         protected override async Task OnInitializedAsync()
         {
             if (Id.HasValue)
@@ -50,7 +52,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
 
         public async Task<CruisePeriodDetailedDto> FetchCruisePeriod()
         {
-            return await CruisePeriodService.GetCruisePeriod(Id ?? 2);
+            return await CruisePeriodService.GetCruisePeriod(Id ?? 1);
         }
 
         private async Task AddTimeSlot()
@@ -102,13 +104,22 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
                 Console.WriteLine(AllTimeSlotsDto.TimeSlots.Count);
                 await TimeSlotService.CreateTimeSlot(AllTimeSlotsDto);
                 Snackbar.Add("Time slots saved successfully", Severity.Success);
-
-
+                await form.ResetAsync();
+                AllTimeSlotsDto.TimeSlots.Clear();
                 StateHasChanged();
             }
             catch (Exception)
             {
                 Snackbar.Add("Failed to save time slots", Severity.Error);
+            }
+        }
+
+        private async Task HandleStartTimeChanged()
+        {
+            if (StartTime.HasValue)
+            {
+                EndTime = StartTime.Value.Add(TimeSpan.FromHours(3));
+                StateHasChanged();
             }
         }
     }
