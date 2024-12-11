@@ -16,7 +16,7 @@ namespace Rise.Client.Services
             if (!response.IsSuccessStatusCode)
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                
+
                 // Map the backend error messages to localized keys
                 var localizedKey = errorMessage switch
                 {
@@ -29,7 +29,7 @@ namespace Rise.Client.Services
                 {
                     throw new Exception(localizedKey);
                 }
-                
+
                 throw new Exception($"Failed to cancel reservation with ID {reservationId}. Response: {response.ReasonPhrase}");
             }
         }
@@ -51,6 +51,11 @@ namespace Rise.Client.Services
                     ?? throw new Exception($"Failed to get reservation details for ID {reservationId}");
 
             return result;
+        }
+
+        public Task<int> GetReservationsCountAsync(DateOnly date)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
