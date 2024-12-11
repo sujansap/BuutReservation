@@ -6,7 +6,6 @@ namespace Rise.Shared.Pagination
         public int? NextId { get; set; }
         public int? PreviousId { get; set; }
         public bool IsFirstPage { get; set; }
-        public object Id { get; set; }
     }
 
 }
