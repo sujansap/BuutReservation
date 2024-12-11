@@ -197,7 +197,7 @@
 		</value>
 	</data>
 	<data name="BoatBatteries">
-		<value>Boat Batteries</value>
+		<value>Boot {0} Batteries</value>
 	</data>
 	<data name="AddBattery">
 		<value>Add Battery</value>

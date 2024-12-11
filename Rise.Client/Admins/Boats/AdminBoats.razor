@@ -31,9 +31,10 @@
 
                                 <!-- Boat Name -->
                                 <MudItem xs="12" Class="d-flex justify-center">
-                                    <MudText Typo="Typo.h6" data-testid="boat-name" Class="text-center">
+                                    <MudLink Href="@($"admin/boat/{boat.Id}")" Typo="Typo.h6" data-testid="boat-name"
+                                        Class="text-center">
                                         @boat.PersonalName
-                                    </MudText>
+                                    </MudLink>
                                 </MudItem>
 
                                 <MudItem xs="12">
@@ -61,6 +62,8 @@
                                         Variant="Variant.Filled" Size="Size.Medium" Class="mx-2"
                                         OnClick="@(() => DeleteBoat(boat.Id))" data-testid="delete-boat-button" />
                                 </MudItem>
+
+
                             </MudGrid>
                         </MudPaper>
                     </MudItem>

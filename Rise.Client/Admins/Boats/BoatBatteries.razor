@@ -20,7 +20,7 @@
             <MudItem xs="12">
                 <div class="d-flex justify-space-between align-center">
                     <MudText data-testid="boat-batteries-page-title" Typo="Typo.h4">
-                        @Localizer["BoatBatteries"]
+                        @String.Format(Localizer["BoatBatteries"], BoatId)
                     </MudText>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
                         data-testid="add-battery-button">
