@@ -53,7 +53,7 @@ namespace Rise.Client.Admins.Boats
             // TODO: Implement EditBoat logic
         }
 
-        private async Task DeleteBoat(int boatId)
+        private void DeleteBoat(int boatId)
         {
             // TODO: Implement DeleteBoat logic
         }
