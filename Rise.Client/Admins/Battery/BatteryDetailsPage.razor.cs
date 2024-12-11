@@ -39,6 +39,7 @@ namespace Rise.Client.Admins.Battery
         private BatteryUpdateDto batteryModel = DefaultBatteryUpdateDto;
 
         public required BatteryDto batteryInfo;
+        public required UserNameDto mentor = DefaultUserNameDto;
 
         private readonly BatteryUpdateDto.Validator batteryValidator = new();
 
@@ -63,8 +64,6 @@ namespace Rise.Client.Admins.Battery
 
         private async Task<IEnumerable<UserNameDto>> SearchUsers(string searchText, CancellationToken token)
         {
-            // TODO move page parameters
-            // TODO pass cancellation token
 
             if (searchText.Equals(batteryInfo.Mentor.FullName))
                 return [batteryInfo.Mentor];
@@ -77,6 +76,19 @@ namespace Rise.Client.Admins.Battery
         private static string UserNameDtoToString(UserNameDto user)
         {
             return user.FullName;
+        }
+
+        private void OnValueChangeBatteryInfo(BatteryDto battery)
+        {
+            batteryInfo = battery;
+            mentor = battery.Mentor;
+
+        }
+
+        private void OnValueChangeMentor(UserNameDto user)
+        {
+            mentor = user;
+            batteryModel.MentorId = user.Id;
         }
 
     }
