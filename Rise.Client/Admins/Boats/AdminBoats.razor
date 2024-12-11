@@ -16,71 +16,73 @@
             {
                 @foreach (var boat in boats)
                 {
-                    <MudItem xs="12" sm="6" md="4" data-testid="boat-card">
-                        <MudPaper Elevation="3" Class="pa-4">
-                            <MudGrid>
-                                <!-- Boat Icon -->
-                                <MudItem xs="12" Class="d-flex justify-center">
-                                    <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
-                                        Style="width: 70px; height: 70px; color: #40e0d0;" />
-                                </MudItem>
+                            <MudItem xs="12" sm="6" md="4" data-testid="boat-card">
+                                <MudPaper Elevation="3" Class="pa-4">
+                                    <MudGrid>
+                                        <!-- Top Menu -->
+                                        <MudItem xs="12" Class="d-flex justify-end">
+                                            <MudMenu Icon="@Icons.Material.Filled.MoreVert" data-testid="boat-menu">
+                                                <MudMenuItem Icon="@Icons.Material.Filled.Edit" 
+                                                    OnClick="@(() => EditBoat(boat.Id))" 
+                                                    data-testid="edit-boat-button">
+                                                    Edit
+                                                </MudMenuItem>
+                                                <MudMenuItem Icon="@Icons.Material.Filled.Delete" 
+                                                    OnClick="@(() => DeleteBoat(boat.Id))" 
+                                                    data-testid="delete-boat-button">
+                                                    Delete
+                                                </MudMenuItem>
+                                            </MudMenu>
+                                        </MudItem>
 
-                                <MudItem xs="12">
-                                    <MudDivider Class="my-4" />
-                                </MudItem>
+                                        <!-- Boat Icon -->
+                                        <MudItem xs="12" Class="d-flex justify-center">
+                                            <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Size="Size.Large"
+                                                Style="width: 70px; height: 70px; color: #40e0d0;" />
+                                        </MudItem>
 
-                                <!-- Boat Name -->
-                                <MudItem xs="12" Class="d-flex justify-center">
-                                    <MudLink Href="@($"admin/boat/{boat.Id}")" Typo="Typo.h6" data-testid="boat-name"
-                                        Class="text-center">
+                                        <MudItem xs="12">
+                                            <MudDivider Class="my-4" />
+                                        </MudItem>
+
+                                        <!-- Boat Name -->
+                                        <MudItem xs="12" Class="d-flex justify-center">
+                                            <MudLink Href="@($"admin/boat/{boat.Id}")" Typo="Typo.h6" data-testid="boat-name"
+                                                Class="text-center">
                                         @boat.PersonalName
-                                    </MudLink>
-                                </MudItem>
+                                            </MudLink>
+                                        </MudItem>
 
-                                <MudItem xs="12">
-                                    <MudDivider Class="my-4" />
-                                </MudItem>
+                                        <MudItem xs="12">
+                                            <MudDivider Class="my-4" />
+                                        </MudItem>
 
-                                <!-- Availability Dropdown -->
-                                <MudItem xs="6" Class="d-flex justify-start align-center">
-                                    <MudSelect T="bool" Value="boat.IsAvailable" Label="Availability"
-                                        ValueChanged="@(async (bool val) => await UpdateBoatAvailabilityAsync(boat.Id, val))"
-                                        Immediate="true">
-                                        <MudSelectItem T="bool" Value="true">Available</MudSelectItem>
-                                        <MudSelectItem T="bool" Value="false">Unavailable</MudSelectItem>
-                                    </MudSelect>
-
-                                </MudItem>
-
-                                <!-- Edit & Delete Buttons -->
-                                <MudItem xs="6" Class="d-flex justify-end align-center">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary"
-                                        Variant="Variant.Filled" Size="Size.Medium" Class="mx-2"
-                                        OnClick="@(() => EditBoat(boat.Id))" data-testid="edit-boat-button" />
-
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
-                                        Variant="Variant.Filled" Size="Size.Medium" Class="mx-2"
-                                        OnClick="@(() => DeleteBoat(boat.Id))" data-testid="delete-boat-button" />
-                                </MudItem>
-
-
-                            </MudGrid>
-                        </MudPaper>
-                    </MudItem>
+                                        <!-- Availability Dropdown -->
+                                        <MudItem xs="12" Class="d-flex justify-center">
+                                            <MudSelect T="bool" Value="boat.IsAvailable" Label="Availability"
+                                                ValueChanged="@(async (bool val) => await UpdateBoatAvailabilityAsync(boat.Id, val))"
+                                                Immediate="true">
+                                                <MudSelectItem T="bool" Value="true">Available</MudSelectItem>
+                                                <MudSelectItem T="bool" Value="false">Unavailable</MudSelectItem>
+                                            </MudSelect>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudPaper>
+                            </MudItem>
                 }
 
-                <MudItem xs="12" Class="d-flex justify-center mt-4">
-                    <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Large"
-                        OnClick="@HandleAddBoat" data-testid="add-boat-button" Class="ma-2" />
-                </MudItem>
+                    <MudItem xs="12" Class="d-flex justify-center mt-4">
+                        <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Large"
+                            OnClick="@HandleAddBoat" data-testid="add-boat-button" Class="ma-2" />
+                    </MudItem>
             }
             else
             {
-                <MudItem xs="12" Class="d-flex justify-center">
-                    <MudText Typo="Typo.h6" Color="Color.Secondary" data-testid="no-boats">
-                        No boats available.
-                    </MudText>
-                </MudItem>
+                    <MudItem xs="12" Class="d-flex justify-center">
+                        <MudText Typo="Typo.h6" Color="Color.Secondary" data-testid="no-boats">
+                            No boats available.
+                        </MudText>
+                    </MudItem>
             }
         </MudGrid>
     </AsyncData>
