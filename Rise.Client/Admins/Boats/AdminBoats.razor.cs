@@ -22,11 +22,6 @@ namespace Rise.Client.Admins.Boats
         [Inject]
         public required IDialogService DialogService { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            await LoadBoats();
-        }
-
         private async Task<List<BoatDto>?> LoadBoats()
         {
             return (await boatService.GetAllBoatsAsync()).ToList();
