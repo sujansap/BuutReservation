@@ -3,6 +3,7 @@
 @using Rise.Shared.TimeSlots
 @using static System.Net.WebRequestMethods
 @using Microsoft.Extensions.Localization
+@using Rise.Shared.Users;
 @inject IStringLocalizer<ReservationPageResources> Localizer
 
 <MudPaper Class="pa-2 h-fill" data-testid="time-slot-list">
@@ -16,12 +17,16 @@
         }
         else
         {
-            <MudStack>
-                @foreach (TimeSlotDto? timeSlot in TimeSlots)
-                {
-                    <TimeSlotComponent TimeSlot="@timeSlot" Date="@SelectedDate" RefetchData="@RefetchTimeSlotOverviewData" />
-                }
-            </MudStack>
+            <AsyncData DataFetcher="@FetchUserProfile" @bind-Data="@UserProfileDto" T="@UserProfileDto"
+                @ref="@AsyncUserDataRef" ShowContentWhenError="@false" TestIdPrefix="time-slot-list-inner">
+                <MudStack>
+                    @foreach (TimeSlotDto? timeSlot in TimeSlots)
+                    {
+                        <TimeSlotComponent UserProfileDto="@UserProfileDto" TimeSlot="@timeSlot" Date="@SelectedDate"
+                            RefetchData="@RefetchTimeSlotOverviewData" />
+                    }
+                </MudStack>
+            </AsyncData>
         }
     </AsyncData>
 </MudPaper>
