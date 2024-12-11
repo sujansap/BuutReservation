@@ -4,11 +4,8 @@ namespace Rise.Shared;
 
 public interface IBoatService
 {
-    public interface IBoatService
-{
-    Task<int> GetActiveBoatsCountAsync();
 
-}
+    Task<int> GetActiveBoatsCountAsync();
 
     /// <summary>
     /// Haalt een lijst van alle boten op, inclusief hun beschikbaarheid.
@@ -19,5 +16,6 @@ public interface IBoatService
     Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable);
 
     Task<int> CreateBoatAsync(CreateBoatDto createBoatDto);
+
 }
 

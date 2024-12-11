@@ -76,8 +76,9 @@ namespace Rise.Server.Controllers.Boats
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Er is een fout opgetreden bij het bijwerken van de beschikbaarheid");
-            }
                 return StatusCode(500, $"Er is een fout opgetreden: {ex.Message}");
+            }
+                
         }
 
         /// <summary>
