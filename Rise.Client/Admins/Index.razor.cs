@@ -25,16 +25,6 @@ namespace Rise.Client.Admins
         private int _reservationsCount;
         private int _usersCount;
 
-        protected override async Task OnInitializedAsync()
-        {
-            if (AsyncBoatsRef is not null)
-                await AsyncBoatsRef.FetchData();
-            if (AsyncReservationsRef is not null)
-                await AsyncReservationsRef.FetchData();
-            if (AsyncUsersRef is not null)
-                await AsyncUsersRef.FetchData();
-        }
-
         private Task<int> FetchBoatsCount()
         {
             return BoatService.GetActiveBoatsCountAsync();
