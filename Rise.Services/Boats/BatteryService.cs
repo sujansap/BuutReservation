@@ -5,6 +5,7 @@ using Rise.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Boats;
 using Rise.Domain.Exceptions;
+using Rise.Shared.Users;
 
 namespace Rise.Services.Boats
 {
@@ -19,6 +20,7 @@ namespace Rise.Services.Boats
             return await _dbContext.Batteries.Include(b => b.Mentor)
             .FirstOrDefaultAsync(b => b.Id == id) ?? throw new EntityNotFoundException(nameof(Battery), id);
         }
+
         public async Task<BatteryDto> GetBattery(int id)
         {
             Battery battery = await FindBattery(id);
@@ -61,5 +63,32 @@ namespace Rise.Services.Boats
                 Type = battery.Type
             };
         }
+
+        public async Task<IEnumerable<BatteryDto>> GetBatteriesByBoat(int boatId)
+        {
+            var boat = await _dbContext.Boats.FindAsync(boatId)
+                ?? throw new EntityNotFoundException(nameof(Boat), boatId);
+
+            var batteries = await _dbContext.Batteries
+                .Include(b => b.Mentor)
+                .Where(b => b.Boat.Id == boatId)
+                .Select(battery => new BatteryDto
+                {
+                    Id = battery.Id,
+                    Type = battery.Type,
+                    Mentor = new UserNameDto
+                    {
+                        Id = battery.Mentor.Id,
+                        FirstName = battery.Mentor.FirstName,
+                        FamilyName = battery.Mentor.FamilyName,
+                        FullName = battery.Mentor.FullName
+                    }
+                })
+                .ToListAsync();
+
+            return batteries;
+        }
+
+
     }
 }

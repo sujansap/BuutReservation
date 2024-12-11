@@ -17,6 +17,15 @@ namespace Rise.Shared.Boats
         /// <returns>The new version of the battery</returns>
         /// <exception cref="EntityNotFoundException">When the battery or mentor could not be found</exception>
         Task<BatteryDto> UpdateBattery(int id, BatteryUpdateDto newBattery);
+
+
+        /// <summary>
+        /// Get all batteries for a boat
+        ///</summary>
+        /// <param name="boatId">The ID of the boat to get batteries for.</param>
+        /// <returns>The batteries for the boat.</returns>
+        Task<IEnumerable<BatteryDto>> GetBatteriesByBoat(int boatId);
+
     }
 
 }
