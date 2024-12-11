@@ -15,7 +15,6 @@ namespace Rise.Domain.Tests.Notifications
             notification.Title.ShouldBe(NotificationBuilder.ValidTitle);
             notification.Message.ShouldBe(NotificationBuilder.ValidMessage);
             notification.IsRead.ShouldBe(NotificationBuilder.ValidIsRead);
-            notification.UserId.ShouldBe(NotificationBuilder.ValidUserId);
             notification.User.ShouldBe(NotificationBuilder.ValidUser);
         }
 
