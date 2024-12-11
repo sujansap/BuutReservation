@@ -29,7 +29,7 @@ namespace Rise.Domain.Reservations
 
         public User? PreviousBatteryHolder { get; private set; } = default;
 
-        public void Cancel()
+        public void Cancel(bool isAdmin)
         {
             if (IsDeleted)
             {
@@ -37,9 +37,19 @@ namespace Rise.Domain.Reservations
             }
 
             DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
-            if ((TimeSlot.Date.ToDateTime(TimeOnly.MinValue) - currentDate.ToDateTime(TimeOnly.MinValue)).TotalDays < MinDaysBetweenReservation)
+
+            if (TimeSlot.Date < currentDate)
             {
-                throw new InvalidOperationException("Reservations can only be canceled at least 2 days before the reservation date.");
+                throw new InvalidOperationException("Reservations in the past cannot be canceled.");
+            }
+
+
+            if (!isAdmin)
+            {
+                if ((TimeSlot.Date.ToDateTime(TimeOnly.MinValue) - currentDate.ToDateTime(TimeOnly.MinValue)).TotalDays < MinDaysBetweenReservation)
+                {
+                    throw new InvalidOperationException("Reservations can only be canceled at least 2 days before the reservation date unless canceled by an admin.");
+                }
             }
 
             IsDeleted = true;

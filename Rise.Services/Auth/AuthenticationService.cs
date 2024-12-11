@@ -15,7 +15,12 @@ public abstract class AuthenticatedService
                 $"{GetType().Name} requires a {nameof(authContextProvider)}"
             );
 
+            
+
+
+
         _dbContext = dbContext;
         _authContextProvider = authContextProvider;
     }
+
 }

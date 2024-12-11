@@ -41,7 +41,6 @@ public class CancelReservationTest : CustomAuthenticatedPageTest
         });
     }
 
-
     [Test]
     public async Task ShowMessageForCancelledReservation()
     {
@@ -67,7 +66,6 @@ public class CancelReservationTest : CustomAuthenticatedPageTest
         await Expect(cancelledMessage).ToBeVisibleAsync();
         await Expect(cancelledMessage).ToHaveTextAsync("Deze reservatie is geannuleerd. Je kan de details niet bekijken.");
     }
- 
 
     [Test]
     public async Task ShowsCancelConfirmationDialog()
@@ -250,7 +248,5 @@ public class CancelReservationTest : CustomAuthenticatedPageTest
 
             await Expect(Page.GetByTestId("cancel-reservation-button")).Not.ToBeVisibleAsync();
         }
-
-
 }
 
