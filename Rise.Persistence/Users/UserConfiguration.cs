@@ -18,6 +18,9 @@ namespace Rise.Persistence.Users
 
             builder.Property(x => x.FirstName).HasMaxLength(100).IsRequired();
             builder.Property(x => x.FamilyName).HasMaxLength(100).IsRequired();
+            builder.Property(x => x.FullName)
+            .HasComputedColumnSql($"\"{nameof(User.FamilyName)}\" || ', ' || \"{nameof(User.FirstName)}\"", stored: true)
+            .HasMaxLength(202).IsRequired();
             builder.Property(x => x.PhoneNumber).HasMaxLength(100).IsRequired();
             builder.Property(x => x.DateOfBirth).IsRequired();
 

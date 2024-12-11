@@ -20,6 +20,8 @@ namespace Rise.Services.Boats
             return await _dbContext.Boats
                 .CountAsync(b => !b.IsDeleted);
         }
+
+        
     }
 
 }

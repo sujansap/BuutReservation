@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rise.Persistence;
@@ -11,9 +12,11 @@ using Rise.Persistence;
 namespace Rise.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241210161831_FullNameComputedColumnUser")]
+    partial class FullNameComputedColumnUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,8 +311,8 @@ namespace Rise.Persistence.Migrations
                     b.Property<string>("FullName")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasMaxLength(202)
-                        .HasColumnType("character varying(202)")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
                         .HasComputedColumnSql("\"FamilyName\" || ', ' || \"FirstName\"", true);
 
                     b.Property<bool>("IsDeleted")
