@@ -33,4 +33,9 @@ public class UserAdminService : IUserAdminService
     {
         throw new NotImplementedException();
     }
+
+    public Task<int> GetActiveUsersCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }
