@@ -39,7 +39,7 @@ namespace Rise.Client.Admins.Boats
                 Console.WriteLine($"Updating boat {boatId} to {isAvailable}");
                 await boatService.UpdateBoatAvailabilityAsync(boatId, isAvailable);
                 snackbar.Add($"Boat availability updated to {(isAvailable ? "Available" : "Unavailable")}.", Severity.Success);
-                await LoadBoats();
+                boats = await LoadBoats();
             }
             catch (Exception ex)
             {

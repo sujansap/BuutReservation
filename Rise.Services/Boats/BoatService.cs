@@ -27,16 +27,16 @@ namespace Rise.Services.Boats
 
         public async Task<IEnumerable<BoatDto>> GetAllBoatsAsync()
         {
-
-
             var boats = await _dbContext.Boats
-                .Select(boat => new BoatDto
-                {
-                    Id = boat.Id,
-                    PersonalName = boat.PersonalName,
-                    IsAvailable = boat.IsAvailable
-                })
-                .ToListAsync();
+            .OrderBy(boat => !boat.IsAvailable)
+            .ThenBy(boat => boat.PersonalName)
+            .Select(boat => new BoatDto
+            {
+                Id = boat.Id,
+                PersonalName = boat.PersonalName,
+                IsAvailable = boat.IsAvailable
+            })
+            .ToListAsync();
 
             return boats;
         }
@@ -55,7 +55,10 @@ namespace Rise.Services.Boats
 
             boat.ChangeAvailability(isAvailable);
 
-            await CancelReservationsForBoat(boat.Id);
+            if (!isAvailable)
+            {
+                await CancelReservationsForBoat(boat.Id);
+            }
 
             await _dbContext.SaveChangesAsync();
         }
@@ -64,7 +67,7 @@ namespace Rise.Services.Boats
         {
             var reservations = await _dbContext.Reservations
                .Include(r => r.TimeSlot)
-               .Where(r => r.BoatId == boatId && r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now))
+               .Where(r => r.BoatId == boatId && r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now) && !r.IsDeleted)
                .ToListAsync();
 
             bool isAdmin = _authContextProvider.IsAdmin();
