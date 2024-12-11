@@ -49,23 +49,24 @@ namespace Rise.Domain.Boats
             DateOnly today = DateOnly.FromDateTime(now);
 
             return reservations
-                .Where(r => !r.IsDeleted &&
-                           today <= r.TimeSlot.Date &&
-                           r.TimeSlot.Date <= today.AddDays(Reservation.MinDaysBetweenReservation))
+                .Where(r =>
+                        !r.IsDeleted &&
+                        today <= r.TimeSlot.Date &&
+                        r.TimeSlot.Date <= today.AddDays(Reservation.MinDaysBetweenReservation)
+                    )
                 .OrderBy(r => r.TimeSlot.Date)
                 .ThenBy(r => r.TimeSlot.Start)
-                .Where(r => r.Battery == null)
+                .Where(r => r.Battery is null)
                 .Select(reservation =>
                 {
                     var battery = FindAvailableBattery(reservation.TimeSlot, now);
-                    if (battery != null)
+                    if (battery is not null)
                     {
-                        reservation.AssignBattery(battery);
-                        return reservation;
+                        return reservation.AssignBattery(battery);
                     }
                     return null;
                 })
-                .Where(r => r != null)
+                .Where(r => r is not null)
                 .ToList()!;
         }
 

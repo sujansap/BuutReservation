@@ -3,7 +3,6 @@ using Rise.Persistence;
 using Microsoft.Extensions.Logging;
 using Rise.Domain.Boats;
 using Rise.Shared.Notifications;
-using Rise.Shared.Reservations;
 using Rise.Domain.Reservations;
 
 namespace Rise.Services.Boats
@@ -27,15 +26,7 @@ namespace Rise.Services.Boats
 
             await _dbContext.SaveChangesAsync();
 
-            foreach (var reservation in assignedReservations)
-            {
-                await _internalNotificationService.SendNotificationToUser(
-                    userId: reservation.UserId,
-                    title: "Battery Assigned",
-                    message: $"A battery has been assigned to your reservation for {reservation.TimeSlot.Date:d} at {reservation.TimeSlot.Start:t}.",
-                    severity: SeverityEnum.Info
-                );
-            }
+            await _internalNotificationService.SendBatteryNotificationsToUsers(assignedReservations);
         }
 
         private static TimeInfo GetCurrentTimeInfo()
@@ -74,6 +65,8 @@ namespace Rise.Services.Boats
                             .ThenInclude(res => res.TimeSlot)
                 .Include(boat => boat.Reservations)
                     .ThenInclude(res => res.PreviousBatteryHolder)
+                .Include(boat => boat.Reservations)
+                    .ThenInclude(res => res.User)
                 .Include(boat => boat.Batteries)
                 .ToListAsync();
 

@@ -1,5 +1,4 @@
 using Ardalis.GuardClauses;
-using Auth0.ManagementApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Rise.Domain.Notifications;
 using Rise.Persistence;
