@@ -161,4 +161,19 @@
 	<data name="SaveTimeSlots">
 		<value>Save Time Slots</value>
 	</data>
+	<data name="CruisePeriods">
+		<value>Cruise Periods</value>
+	</data>
+	<data name="Past">
+		<value>Past</value>
+	</data>
+	<data name="Future">
+		<value>Future</value>
+	</data>
+	<data name="Period">
+		<value>Period</value>
+	</data>
+	<data name="AddTimeSlot">
+		<value>Add Time Slot</value>
+	</data>
 </root>

@@ -158,4 +158,19 @@
 	<data name="SaveTimeSlots">
 		<value>Tijdsloten Opslaan</value>
 	</data>
+	<data name="CruisePeriods">
+		<value>Vaarperiodes</value>
+	</data>
+	<data name="Past">
+		<value>Verleden</value>
+	</data>
+	<data name="Future">
+		<value>Toekomst</value>
+	</data>
+	<data name="Period">
+		<value>Periode</value>
+	</data>
+	<data name="AddTimeSlot">
+		<value>Tijdslot Toevoegen</value>
+	</data>
 </root>

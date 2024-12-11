@@ -21,5 +21,28 @@ namespace Rise.Services.TimeSlots
                 End = cruisePeriod.End
             };
         }
+
+        public async Task<List<CruisePeriodDetailedDto>> GetCruisePeriods(bool getFuturePeriods)
+        {
+            var today = DateTime.UtcNow.Date;
+            var query = _dbContext.CruisePeriods.AsQueryable();
+
+            query = getFuturePeriods
+                ? query.Where(cp => cp.End >= today) // include ongoing and future periods
+                : query.Where(cp => cp.End < today); // only truly past periods
+
+            var cruisePeriods = await query
+                .OrderBy(cp => cp.Start)
+                .Select(cp => new CruisePeriodDetailedDto
+                {
+                    Id = cp.Id,
+                    Start = cp.Start,
+                    End = cp.End
+                })
+                .ToListAsync();
+
+            return cruisePeriods;
+        }
+
     }
 }
