@@ -53,11 +53,6 @@ namespace Rise.Client.Services
             return result;
         }
 
-        public Task<int> GetReservationsCountAsync(DateOnly date)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<ItemsPageDto<ReservationDto>> GetUserReservations(int? cursor, bool? isNextPage, bool getPast = false, int pageSize = 5)
         {
             Dictionary<string, string?> queries = new()
@@ -79,5 +74,12 @@ namespace Rise.Client.Services
 
             return result;
         }
+
+        public async Task<int> GetReservationsCountAsync(DateOnly date)
+        {
+            var query = QueryHelpers.AddQueryString("count", "date", date.ToString("yyyy-MM-dd"));
+            return await _httpClient.GetFromJsonAsync<int>(query);
+        }
+
     }
 }

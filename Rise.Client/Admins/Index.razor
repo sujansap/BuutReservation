@@ -25,7 +25,18 @@
             <MudPaper Class="pa-4" Elevation="2">
                 <MudIcon Icon="@Icons.Material.Filled.Today" Class="mb-2" Color="Color.Primary" Size="Size.Large" />
                 <MudText Typo="Typo.h6">@Localizer["TodaysReservations"]</MudText>
-                <MudText Typo="Typo.h4">...</MudText>
+                @if (_loading)
+                {
+                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                }
+                else if (_error != null)
+                {
+                    <MudText Color="Color.Error">@_error</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h4">@_todayReservationsCount</MudText>
+                }
             </MudPaper>
         </MudItem>
 
@@ -42,6 +53,9 @@
         <MudCardHeader>
             <MudText Typo="Typo.h5">@Localizer["QuickActions"]</MudText>
         </MudCardHeader>
+        <MudCardContent>
+            <!-- Add quick action buttons here -->
+        </MudCardContent>
     </MudCard>
 
     <MudCard Class="mt-8">
@@ -53,4 +67,3 @@
         </MudCardContent>
     </MudCard>
 </MudContainer>
-
