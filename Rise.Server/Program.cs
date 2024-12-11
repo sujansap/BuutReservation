@@ -108,10 +108,11 @@ try
         options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
     });
 
+    builder.Services.AddScoped<INotificationService, NotificationService>();
+    builder.Services.AddScoped<IInternalNotificationService, InternalNotificationService>();
     builder.Services.AddScoped<ICruisePeriodService, CruisePeriodService>();
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
-    builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserAdminService, UserService>();
     builder.Services.AddScoped<IUserRegisterService, UserService>();
     builder.Services.AddScoped<IBatteryService, BatteryService>();

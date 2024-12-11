@@ -16,7 +16,6 @@ namespace Rise.Domain.Tests.TestUtilities
         private string title = ValidTitle;
         private string message = ValidMessage;
         private bool isRead = ValidIsRead;
-        private int userId = ValidUserId;
         private User user = ValidUser;
 
         public NotificationBuilder WithSeverity(int severity)
@@ -46,7 +45,6 @@ namespace Rise.Domain.Tests.TestUtilities
         public NotificationBuilder WithUser(User user)
         {
             this.user = user;
-            this.userId = user.Id;
             return this;
         }
 
@@ -58,7 +56,6 @@ namespace Rise.Domain.Tests.TestUtilities
                 Title = title,
                 Message = message,
                 IsRead = isRead,
-                UserId = userId,
                 User = user
             };
         }
