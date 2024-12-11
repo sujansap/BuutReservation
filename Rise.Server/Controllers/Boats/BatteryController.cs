@@ -59,6 +59,13 @@ namespace Rise.Server.Controllers.Boats
             return Ok(battery);
         }
 
+
+
+        /// <summary>
+        /// Get all batteries for a boat
+        /// </summary>
+        /// <param name="boatId">The boat id for which you want battries</param>
+        /// <returns>All the battries for a specfic boat</returns>
         [HttpGet("boat/{boatId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BatteryDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

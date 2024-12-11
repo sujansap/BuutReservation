@@ -193,4 +193,25 @@
 			Opslaan
 		</value>
 	</data>
+	<data name="BoatBatteries">
+		<value>Boot Batterijen</value>
+	</data>
+	<data name="AddBattery">
+		<value>Batterij Toevoegen</value>
+	</data>
+	<data name="NoBatteriesAvailable">
+		<value>Geen batterijen beschikbaar</value>
+	</data>
+	<data name="Edit">
+		<value>Bewerken</value>
+	</data>
+	<data name="Delete">
+		<value>Verwijderen</value>
+	</data>
+	<data name="Details">
+		<value>Details</value>
+	</data>
+	<data name="BatteryId">
+		<value>Batterij ID</value>
+	</data>
 </root>

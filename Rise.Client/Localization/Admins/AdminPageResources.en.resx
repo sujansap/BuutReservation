@@ -196,4 +196,25 @@
 			Save
 		</value>
 	</data>
+	<data name="BoatBatteries">
+		<value>Boat Batteries</value>
+	</data>
+	<data name="AddBattery">
+		<value>Add Battery</value>
+	</data>
+	<data name="NoBatteriesAvailable">
+		<value>No batteries available</value>
+	</data>
+	<data name="Edit">
+		<value>Edit</value>
+	</data>
+	<data name="Delete">
+		<value>Delete</value>
+	</data>
+	<data name="Details">
+		<value>Details</value>
+	</data>
+	<data name="BatteryId">
+		<value>Battery ID</value>
+	</data>
 </root>

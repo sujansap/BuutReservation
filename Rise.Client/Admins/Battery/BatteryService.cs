@@ -7,9 +7,10 @@ namespace Rise.Client.Admins.Battery
     {
         private readonly HttpClient _httpClient = httpClient;
 
-        public Task<IEnumerable<BatteryDto>> GetBatteriesByBoat(int boatId)
+        public async Task<IEnumerable<BatteryDto>> GetBatteriesByBoat(int boatId)
         {
-            throw new NotImplementedException();
+            return await _httpClient.GetFromJsonAsync<IEnumerable<BatteryDto>>($"boat/{boatId}")
+                ?? Array.Empty<BatteryDto>();
         }
 
         public async Task<BatteryDto> GetBattery(int id)
