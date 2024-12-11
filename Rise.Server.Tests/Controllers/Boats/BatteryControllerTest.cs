@@ -67,8 +67,10 @@ namespace Rise.Server.Tests.Controllers.Boats
 
             details.Id.ShouldBe(batteryId);
             details.Type.ShouldBe("Loodzuur");
-            details.MentorId.ShouldBe(batteryId);
-
+            details.Mentor.Id.ShouldBe(2);
+            details.Mentor.FullName.ShouldBe("de Clerk, Bram");
+            details.Mentor.FirstName.ShouldBe("Bram");
+            details.Mentor.FamilyName.ShouldBe("de Clerk");
 
         }
 
@@ -79,8 +81,6 @@ namespace Rise.Server.Tests.Controllers.Boats
             var response = await _client.PutAsJsonAsync(int.MaxValue.ToString(), new BatteryUpdateDto() { Type = validBatteryType, MentorId = validMentorId });
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-
-
         }
 
         [Theory]
@@ -139,8 +139,10 @@ namespace Rise.Server.Tests.Controllers.Boats
             BatteryDto newBattery = (await response.Content.ReadFromJsonAsync<BatteryDto>())!;
 
             newBattery.Type.ShouldBe(validBatteryType);
-            newBattery.MentorId.ShouldBe(validMentorId);
-
+            newBattery.Mentor.Id.ShouldBe(validMentorId);
+            newBattery.Mentor.FullName.ShouldBe("de Clerk, Bram");
+            newBattery.Mentor.FirstName.ShouldBe("Bram");
+            newBattery.Mentor.FamilyName.ShouldBe("de Clerk");
 
         }
     }

@@ -1,3 +1,5 @@
+using Rise.Shared.Users;
+
 namespace Rise.Shared.Boats
 {
     /// <summary>
@@ -7,7 +9,7 @@ namespace Rise.Shared.Boats
     {
         public required int Id { get; set; }
         public required string Type { get; set; }
-        public required int MentorId { get; set; }
+        public required UserNameDto Mentor { get; set; }
     }
 }
 

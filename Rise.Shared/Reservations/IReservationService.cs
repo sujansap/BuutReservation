@@ -36,6 +36,15 @@ namespace Rise.Shared.Reservations
         Task CancelReservationAsync(int reservationId);
 
         /// <summary>
+        /// Gets the count of reservations for a given date
+        /// </summary>
+        /// <param name="date">Date to get the count of reservations for</param>
+        /// <returns>
+        /// The count of reservations for the given date
+        /// </returns>
+        Task<int> GetReservationsCountAsync(DateOnly date);
+
+        /// <summary>
         /// Gets all reservations for admin overview
         /// </summary>
         /// <param name="cursor">Pagination cursor for the current page</param>
@@ -44,8 +53,6 @@ namespace Rise.Shared.Reservations
         /// <returns>A paginated list of all reservations</returns>
         Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10, bool showPastReservations = false);
     }
-
-
 
 }
 

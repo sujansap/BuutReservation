@@ -57,7 +57,7 @@ namespace Rise.Domain.Reservations
             PreviousBatteryHolder = _battery?.Mentor;
         }
 
-        public void AssignBattery(Battery? battery)
+        public Reservation AssignBattery(Battery? battery)
         {
             if (IsDeleted) throw new InvalidOperationException("Cannot assign battery to canceled reservation");
 
@@ -70,6 +70,7 @@ namespace Rise.Domain.Reservations
 
             Reservation? previousReservation = battery?.ClosesPastReservation(TimeSlot);
             PreviousBatteryHolder = previousReservation?.User;
+            return this;
         }
 
     }

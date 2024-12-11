@@ -2,25 +2,31 @@ using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Microsoft.Extensions.Logging;
 using Rise.Domain.Boats;
+using Rise.Shared.Notifications;
+using Rise.Domain.Reservations;
 
 namespace Rise.Services.Boats
 {
     public class BatteryAssignmentService(
         ApplicationDbContext dbContext,
-        ILogger<BatteryAssignmentService> logger)
+        ILogger<BatteryAssignmentService> logger,
+        IInternalNotificationService internalNotificationService)
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
         private readonly ILogger<BatteryAssignmentService> _logger = logger;
+        private readonly IInternalNotificationService _internalNotificationService = internalNotificationService;
 
         public async Task AssignAndOptimizeBatteries()
         {
             TimeInfo timeInfo = GetCurrentTimeInfo();
 
             _logger.LogInformation("Start assigning batteries for reservations oncoming three days");
-            await AssignBatteriesToReservations(timeInfo);
+            var assignedReservations = await AssignBatteriesToReservations(timeInfo);
             _logger.LogInformation("Done assigning batteries for reservations");
 
             await _dbContext.SaveChangesAsync();
+
+            await _internalNotificationService.SendBatteryNotificationsToUsers(assignedReservations);
         }
 
         private static TimeInfo GetCurrentTimeInfo()
@@ -34,7 +40,7 @@ namespace Rise.Services.Boats
             );
         }
 
-        private async Task AssignBatteriesToReservations(TimeInfo timeInfo)
+        private async Task<List<Reservation>> AssignBatteriesToReservations(TimeInfo timeInfo)
         {
             List<Boat> boats = await _dbContext.Boats
                 .Include(boat => boat.Reservations
@@ -59,13 +65,14 @@ namespace Rise.Services.Boats
                             .ThenInclude(res => res.TimeSlot)
                 .Include(boat => boat.Reservations)
                     .ThenInclude(res => res.PreviousBatteryHolder)
+                .Include(boat => boat.Reservations)
+                    .ThenInclude(res => res.User)
                 .Include(boat => boat.Batteries)
                 .ToListAsync();
 
-            foreach (Boat boat in boats)
-            {
-                boat.AssignBatteriesToReservations(timeInfo.Now);
-            }
+            return boats
+                .SelectMany(b => b.AssignBatteriesToReservations(timeInfo.Now))
+                .ToList();
         }
     }
 

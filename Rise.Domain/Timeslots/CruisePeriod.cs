@@ -43,16 +43,12 @@ public class CruisePeriod : Entity
     /// </exception>
     public void AddTimeSlot(TimeSlot timeSlot)
     {
-
-        Console.WriteLine("Adding time slot " + timeSlot.Id + " " + timeSlot.Date);
-
-
         bool duplicateExists = timeSlots.Any(ts =>
-           !ts.IsDeleted &&
-           ts.Date == timeSlot.Date &&
-           ts.Start == timeSlot.Start &&
-           ts.End == timeSlot.End &&
-           ts.CruisePeriod.Id == this.Id);
+            !ts.IsDeleted &&
+            ts.Date == timeSlot.Date &&
+            ts.Start == timeSlot.Start &&
+            ts.End == timeSlot.End &&
+            ts.CruisePeriod.Id == this.Id);
 
         if (duplicateExists)
         {

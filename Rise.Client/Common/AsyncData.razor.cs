@@ -89,7 +89,6 @@ namespace Rise.Client.Common
         {
             if (IsLoading) return;
 
-            Log.Information("Started loading");
             IsLoading = true;
             HasError = false;
             try

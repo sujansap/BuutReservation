@@ -53,6 +53,7 @@ namespace Rise.Domain.Users
                 _familyName = value;
             }
         }
+        public string FullName { get; private set; } = default!;
         public required string PhoneNumber
         {
             get => _phoneNumber;

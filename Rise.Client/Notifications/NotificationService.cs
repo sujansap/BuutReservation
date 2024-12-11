@@ -33,6 +33,7 @@ namespace Rise.Client.Notifications
         {
             return _httpClient.PatchAsync($"read/{notificationId}", null);
         }
+
     }
 
 }

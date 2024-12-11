@@ -165,6 +165,7 @@ namespace Rise.Server.Controllers
         /// <param name="cursor">The ID of a reservation to fetch relative to, for pagination.</param>
         /// <param name="isNextPage">If available, true to get the next page or false to get the previous page.</param>
         /// <param name="pageSize">Number of items to get in a page (default is 10).</param>
+        /// <param name="showPastReservations"></param>
         /// <returns>Paginated list of all reservations in the system.</returns>
         [HttpGet("all")]
         [Authorize(Roles = nameof(UserRole.Administrator))]
@@ -191,6 +192,23 @@ namespace Rise.Server.Controllers
         }
 
 
+
+
+        /// <summary>
+        /// Gets the count of reservations for a given date
+        /// </summary>
+        /// <param name="date">The date for which to get count of reservations</param>
+        /// <returns>The count of reservations for the date</returns>
+        [HttpGet("count")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetReservationsCount([FromQuery] DateOnly date)
+        {
+            var count = await _reservationService.GetReservationsCountAsync(date);
+            return Ok(count);
+        }
     }
 }
 
