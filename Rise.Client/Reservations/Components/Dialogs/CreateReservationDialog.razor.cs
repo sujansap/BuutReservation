@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Rise.Shared.Reservations;
 using Rise.Shared.TimeSlots;
+using Rise.Shared.Users;
 
 namespace Rise.Client.Reservations.Components.Dialogs
 {
@@ -14,6 +15,8 @@ namespace Rise.Client.Reservations.Components.Dialogs
         public DateOnly Date { get; set; }
         [Parameter]
         public required TimeSlotDto TimeSlot { get; set; }
+        [Parameter]
+        public required UserProfileDto UserProfileDto { get; set; }
         [Inject]
         private IReservationService ReservationService { get; set; } = default!;
 
@@ -21,7 +24,6 @@ namespace Rise.Client.Reservations.Components.Dialogs
         public required Func<Task> RefetchData { get; set; }
 
         private DialogState State { get; set; } = DialogState.Overview;
-        private UserDto User { get; set; } = new UserDto("John Doe", "john.doe@email.com");
 
         private void Close() => MudDialog.Close();
         private void Cancel() => MudDialog.Cancel();
@@ -44,13 +46,5 @@ namespace Rise.Client.Reservations.Components.Dialogs
             Pay,
             Success
         }
-
-
-    }
-    // TODO move to shared
-    public class UserDto(string name, string email)
-    {
-        public string Name { get; set; } = name;
-        public string Email { get; set; } = email;
     }
 }

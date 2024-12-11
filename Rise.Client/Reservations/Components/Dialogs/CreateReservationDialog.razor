@@ -15,13 +15,13 @@
         @switch (State)
         {
             case DialogState.Overview:
-                <CreateReservationOverviewContent User="@User" Date="@Date" TimeSlot="@TimeSlot" />
+                <CreateReservationOverviewContent UserProfileDto="@UserProfileDto" Date="@Date" TimeSlot="@TimeSlot" />
                 break;
             case DialogState.Pay:
                 <CreateReservationPaymentContent />
                 break;
             case DialogState.Success:
-                <CreatereservationSuccessConent User="@User" Date="@Date" TimeSlot="@TimeSlot" />
+                <CreatereservationSuccessConent UserProfileDto="@UserProfileDto" Date="@Date" TimeSlot="@TimeSlot" />
                 break;
 
         }

@@ -1,11 +1,9 @@
-using System;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazor.Utilities;
 using Rise.Client.Reservations.Components.Dialogs;
 using Rise.Shared.TimeSlots;
+using Rise.Shared.Users;
 
 namespace Rise.Client.Reservations.Components.TimeSlotList
 {
@@ -19,6 +17,8 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
         public DateOnly Date { get; set; }
         [Parameter, EditorRequired]
         public required Func<Task> RefetchData { get; set; }
+        [Parameter, EditorRequired]
+        public required UserProfileDto UserProfileDto { get; set; }
 
         private string StackStyle { get; set; } = GetStyle(AvailabilityEnum.Unavailable).style;
         private Color TextColor { get; set; } = GetColor(AvailabilityEnum.Unavailable);
@@ -75,7 +75,7 @@ namespace Rise.Client.Reservations.Components.TimeSlotList
                 return;
             }
 
-            var parameters = new DialogParameters<CreateReservationDialog> { { x => x.TimeSlot, TimeSlot }, { x => x.Date, Date }, { x => x.RefetchData, RefetchData } };
+            var parameters = new DialogParameters<CreateReservationDialog> { { x => x.TimeSlot, TimeSlot }, { x => x.Date, Date }, { x => x.RefetchData, RefetchData }, { x => x.UserProfileDto, UserProfileDto } };
             var options = new DialogOptions { CloseButton = true };
 
             var dialog = await DialogService.ShowAsync<CreateReservationDialog>("Create reservation", parameters, options);
