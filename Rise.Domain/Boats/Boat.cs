@@ -44,33 +44,30 @@ namespace Rise.Domain.Boats
                 b => b.IsAvailableForTimeSlot(timeSlot));
         }
 
-        public void AssignBatteriesToReservations(DateTime now)
+        public List<Reservation> AssignBatteriesToReservations(DateTime now)
         {
             DateOnly today = DateOnly.FromDateTime(now);
-            var reservationsByDate = reservations
-                .Where(r => !r.IsDeleted && today <= r.TimeSlot.Date && r.TimeSlot.Date <= today.AddDays(Reservation.MinDaysBetweenReservation))
-                .GroupBy(r => r.TimeSlot.Date)
-                .OrderBy(g => g.Key);
 
-            foreach (var dateGroup in reservationsByDate)
-            {
-                foreach (var reservation in dateGroup.OrderBy(r => r.TimeSlot.Start))
+            return reservations
+                .Where(r =>
+                        !r.IsDeleted &&
+                        today <= r.TimeSlot.Date &&
+                        r.TimeSlot.Date <= today.AddDays(Reservation.MinDaysBetweenReservation)
+                    )
+                .OrderBy(r => r.TimeSlot.Date)
+                .ThenBy(r => r.TimeSlot.Start)
+                .Where(r => r.Battery is null)
+                .Select(reservation =>
                 {
-                    if (reservation.Battery is null)
-                        AssignBatteryToReservation(reservation, now);
-                    else
-                        continue;
-                }
-            }
-        }
-
-        private void AssignBatteryToReservation(Reservation reservation, DateTime now)
-        {
-            Battery? availableBattery = FindAvailableBattery(reservation.TimeSlot, now);
-            if (availableBattery is not null)
-            {
-                reservation.AssignBattery(availableBattery);
-            }
+                    var battery = FindAvailableBattery(reservation.TimeSlot, now);
+                    if (battery is not null)
+                    {
+                        return reservation.AssignBattery(battery);
+                    }
+                    return null;
+                })
+                .Where(r => r is not null)
+                .ToList()!;
         }
 
     }

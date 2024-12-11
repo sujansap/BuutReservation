@@ -33,4 +33,9 @@ public class UserAdminService : IUserAdminService
     {
         throw new NotImplementedException();
     }
+
+    public async Task<int> GetActiveUsersCountAsync()
+    {
+        return await _httpClient.GetFromJsonAsync<int>("count");
+    }
 }

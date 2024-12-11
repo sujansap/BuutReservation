@@ -6,4 +6,5 @@ public interface IUserAdminService
     Task<UserDetailDto> GetUserDetails(int userId);
     Task AddMemberRole(int userId);
     Task<int> RegisterUser(UserRegistrationModelDto userDto);
+    Task<int> GetActiveUsersCountAsync();
 }

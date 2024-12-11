@@ -1,7 +1,5 @@
-using System;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rise.Domain.Notifications;
-using Rise.Domain.Users;
 
 namespace Rise.Persistence.Notifications
 {
@@ -17,7 +15,6 @@ namespace Rise.Persistence.Notifications
             builder
                 .HasOne(e => e.User)
                 .WithMany(e => e.Notifications)
-                .HasForeignKey(e => e.UserId)
                 .IsRequired(true);
         }
     }
