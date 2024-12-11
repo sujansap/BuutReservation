@@ -47,6 +47,20 @@ namespace Rise.Services.Boats
             boat.ChangeAvailability(isAvailable);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<int> CreateBoatAsync(CreateBoatDto createBoatDto)
+        {
+            Boat boat = new (){
+                PersonalName = createBoatDto.PersonalName,
+                IsAvailable = createBoatDto.IsAvailable,
+            };
+
+            await _dbContext.Boats.AddAsync(boat);
+
+            _dbContext.SaveChanges();
+
+            return boat.Id;
+        }
     }
 }
 

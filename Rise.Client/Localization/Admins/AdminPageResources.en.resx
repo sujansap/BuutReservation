@@ -134,4 +134,24 @@
 			Update
 		</value>
 	</data>
+	<data name="Availability">
+		<value>
+			Availability
+		</value>
+	</data>
+	<data name="Available">
+		<value>
+			Available
+		</value>
+	</data>
+	<data name="Unavailable">
+		<value>
+			Unavailable
+		</value>
+	</data>
+	<data name="Save">
+		<value>
+			Save
+		</value>
+	</data>
 </root>

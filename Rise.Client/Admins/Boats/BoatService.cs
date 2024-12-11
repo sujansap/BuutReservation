@@ -39,5 +39,15 @@ namespace Rise.Client.Services
                 throw new Exception($"Failed to update availability for boat with ID {boatId}. Status: {response.StatusCode}, Response: {response.ReasonPhrase}");
             }
         }
+
+        public async Task<int> CreateBoatAsync(CreateBoatDto createBoatDto){
+            var response = await _httpClient.PostAsJsonAsync("", createBoatDto);
+
+            if (!response.IsSuccessStatusCode){
+                throw new Exception($"Failed to create boat. Status: {response.StatusCode}, Response: {response.ReasonPhrase}");
+            }
+
+            return await response.Content.ReadFromJsonAsync<int>();
+        }
     }
 }

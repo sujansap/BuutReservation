@@ -1,13 +1,17 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Rise.Client.Admins.Boats.Dialogs;
 using Rise.Client.Common;
 using Rise.Shared;
+using Serilog;
 
 namespace Rise.Client.Admins.Boats
 {
-    public partial class AdminBoats
+    public partial class AdminBoats : ComponentBase
     {
         private List<BoatDto>? boats;
+
+        public required AsyncData<List<BoatDto>> AsyncDataRef { get; set; }
 
         [Inject]
         public required IBoatService boatService { get; set; }
@@ -15,21 +19,17 @@ namespace Rise.Client.Admins.Boats
         [Inject]
         public required ISnackbar snackbar { get; set; }
 
+        [Inject]
+        public required IDialogService DialogService { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             await LoadBoats();
         }
 
-        private async Task LoadBoats()
+        private async Task<List<BoatDto>?> LoadBoats()
         {
-            try
-            {
-                boats = (await boatService.GetAllBoatsAsync()).ToList();
-            }
-            catch (Exception ex)
-            {
-                snackbar.Add($"Error loading boats: {ex.Message}", Severity.Error);
-            }
+            return (await boatService.GetAllBoatsAsync()).ToList();
         }
 
         private async Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable)
@@ -58,9 +58,23 @@ namespace Rise.Client.Admins.Boats
             // TODO: Implement DeleteBoat logic
         }
 
-        private void AddBoat()
+        private async Task HandleAddBoat()
         {
-            // TODO: Implement AddBoat logic
+            var result = await ShowAddBoatDialog();
+            if (result?.Canceled == false)
+            {
+                boats = await LoadBoats();
+                StateHasChanged();
+            }
+        }
+
+        private async Task<DialogResult?> ShowAddBoatDialog()
+        {
+            var parameters = new DialogParameters<CreateBoatDialog> { };
+            var options = new DialogOptions { CloseButton = true };
+
+            var dialog = await DialogService.ShowAsync<CreateBoatDialog>("Create boat", parameters, options);
+            return await dialog.Result;
         }
     }
 }

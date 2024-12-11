@@ -1,4 +1,6 @@
-﻿namespace Rise.Shared;
+﻿using Rise.Shared.Boats;
+
+namespace Rise.Shared;
 
 public interface IBoatService
 {
@@ -10,4 +12,5 @@ public interface IBoatService
 
     Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable);
 
+    Task<int> CreateBoatAsync(CreateBoatDto createBoatDto);
 }

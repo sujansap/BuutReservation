@@ -13,7 +13,12 @@ namespace Rise.Domain.Boats
         public required string PersonalName
         {
             get => _personalName;
-            set => _personalName = Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName)).Trim();
+            set
+            {
+                Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName));
+                Guard.Against.LengthOutOfRange(value, 1, 64, nameof(PersonalName));
+                _personalName = value.Trim();
+            }
         }
 
         /// <summary>
@@ -26,6 +31,7 @@ namespace Rise.Domain.Boats
             get => _isAvailable;
             set => _isAvailable = Guard.Against.Null(value, nameof(IsAvailable), "Availability status cannot be null");
         }
+
         private readonly List<Reservation> reservations = [];
         public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 
@@ -53,8 +59,5 @@ namespace Rise.Domain.Boats
         {
             IsAvailable = isAvailable;
         }
-
-
-
     }
 }

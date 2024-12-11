@@ -1,5 +1,6 @@
 ﻿@page "/admin/boat"
 @using Rise.Shared.Boats
+@using Rise.Client.Common
 @inject NavigationManager NavigationManager
 
 @layout AdminLayout
@@ -8,7 +9,8 @@
     <MudText Typo="Typo.h4" Class="text-center mb-4">Boats</MudText>
     <MudDivider Class="mb-8" />
 
-    <AsyncData DataFetcher="@LoadBoats" T="List<BoatDto>" TestIdPrefix="admin-boats" ShowContentWhenError="true">
+    <AsyncData @bind-Data="@boats" @ref="AsyncDataRef" DataFetcher="@LoadBoats" T="List<Rise.Shared.BoatDto>"
+        TestIdPrefix="admin-boats" ShowContentWhenError="true">
         <MudGrid Spacing="6" Justify="Justify.Center">
             @if (boats?.Any() ?? false)
             {
@@ -66,7 +68,7 @@
 
                 <MudItem xs="12" Class="d-flex justify-center mt-4">
                     <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Large"
-                        OnClick="@AddBoat" data-testid="add-boat-button" Class="ma-2" />
+                        OnClick="@HandleAddBoat" data-testid="add-boat-button" Class="ma-2" />
                 </MudItem>
             }
             else

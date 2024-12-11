@@ -42,8 +42,6 @@ namespace Rise.Server
             {
                 return StatusCode(500, $"Er is een fout opgetreden: {ex.Message}");
             }
-
-
         }
 
         /// <summary>
@@ -72,6 +70,22 @@ namespace Rise.Server
                 _logger.LogError(ex, "Er is een fout opgetreden bij het bijwerken van de beschikbaarheid");
                 return StatusCode(500, $"Er is een fout opgetreden: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Creates a new boat.
+        /// </summary>
+        /// <returns>The id of the created boat.</returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> CreateBoat([FromBody] CreateBoatDto createBoatDto)
+        {
+            var boatId = await _boatService.CreateBoatAsync(createBoatDto);
+            return Ok(boatId);
+
         }
     }
 }

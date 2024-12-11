@@ -131,4 +131,24 @@
 			Einde
 		</value>
 	</data>
+	<data name="Availability">
+		<value>
+			Beschikbaarheid
+		</value>
+	</data>
+	<data name="Available">
+		<value>
+			Beschikbaar
+		</value>
+	</data>
+	<data name="Unavailable">
+		<value>
+			Niet Beschikbaar
+		</value>
+	</data>
+	<data name="Save">
+		<value>
+			Opslaan
+		</value>
+	</data>
 </root>
