@@ -23,6 +23,7 @@ using Rise.Server.Auth;
 using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
 using Rise.Shared.Boats;
+using Rise.Domain.Boats;
 
 try
 {
@@ -108,13 +109,16 @@ try
         options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
     });
 
+    builder.Services.AddScoped<INotificationService, NotificationService>();
+    builder.Services.AddScoped<IInternalNotificationService, InternalNotificationService>();
     builder.Services.AddScoped<ICruisePeriodService, CruisePeriodService>();
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
-    builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserAdminService, UserService>();
     builder.Services.AddScoped<IUserRegisterService, UserService>();
     builder.Services.AddScoped<IBatteryService, BatteryService>();
+    builder.Services.AddScoped<IBoatService, BoatService>();
+
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
     builder.Services.AddScoped<BatteryAssignmentService>();

@@ -44,4 +44,9 @@ public class UserAdminService(HttpClient httpClient) : IUserAdminService
         var result = await _httpClient.GetFromJsonAsync<IEnumerable<UserNameDto>>(queryString, cancellationToken: cancellationToken);
         return result ?? throw new Exception("Failed to get user names");
     }
+
+    public async Task<int> GetActiveUsersCountAsync()
+    {
+        return await _httpClient.GetFromJsonAsync<int>("count");
+    }
 }

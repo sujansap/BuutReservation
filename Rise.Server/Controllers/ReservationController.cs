@@ -148,6 +148,23 @@ namespace Rise.Server.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        /// <summary>
+        /// Gets the count of reservations for a given date
+        /// </summary>
+        /// <param name="date">The date for which to get count of reservations</param>
+        /// <returns>The count of reservations for the date</returns>
+        [HttpGet("count")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetReservationsCount([FromQuery] DateOnly date)
+        {
+            var count = await _reservationService.GetReservationsCountAsync(date);
+            return Ok(count);
+        }
     }
 }
 

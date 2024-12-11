@@ -417,6 +417,16 @@ public class UserService(ApplicationDbContext dbContext, IManagementApiClient ma
             throw new ApplicationException($"Failed to retrieve retrieve user names with filter '{partialName}'", ex);
         }
     }
+
+    /// <summary>
+    /// Gets the number of active users in the system.
+    /// </summary>
+    /// <returns>Amount of active users in the system</returns>
+    public async Task<int> GetActiveUsersCountAsync()
+    {
+        return await _dbContext.Users
+            .CountAsync(u => !u.IsDeleted);
+    }
 }
 
 

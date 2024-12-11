@@ -122,5 +122,26 @@ namespace Rise.Server.Controllers.Users
                 return BadRequest("Error retrieving user names");
             }
         }
+
+
+        [HttpGet("count")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetActiveUsersCount()
+        {
+            _logger.LogInformation("GET api/User/count");
+            try
+            {
+                var count = await _userService.GetActiveUsersCountAsync();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active users count");
+                return BadRequest("Error retrieving users count");
+            }
+        }
     }
 }
