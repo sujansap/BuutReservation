@@ -23,6 +23,7 @@ using Rise.Server.Auth;
 using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
 using Rise.Shared.Boats;
+using Rise.Domain.Boats;
 
 try
 {
@@ -116,6 +117,8 @@ try
     builder.Services.AddScoped<IUserAdminService, UserService>();
     builder.Services.AddScoped<IUserRegisterService, UserService>();
     builder.Services.AddScoped<IBatteryService, BatteryService>();
+    builder.Services.AddScoped<IBoatService, BoatService>();
+
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
     builder.Services.AddScoped<BatteryAssignmentService>();

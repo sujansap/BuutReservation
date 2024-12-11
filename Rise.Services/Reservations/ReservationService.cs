@@ -226,6 +226,12 @@ namespace Rise.Services.Reservations
             }
         }
 
+        public async Task<int> GetReservationsCountAsync(DateOnly date)
+        {
+            return await _dbContext.Reservations
+                .CountAsync(r => r.TimeSlot.Date == date && !r.IsDeleted);
+        }
+
     }
 }
 
