@@ -177,7 +177,7 @@ namespace Rise.Services.Reservations
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             DateOnly date = reservation.TimeSlot.Date;
             DateOnly beforeBuffer = date.AddDays(-Reservation.MinDaysBetweenReservation);
-            User? previousBatteryHolder = today.CompareTo(beforeBuffer) >= 0 && 0 <= today.CompareTo(date) ? reservation.PreviousBatteryHolder : null;
+            User? previousBatteryHolder = beforeBuffer <= today && today <= date ? reservation.PreviousBatteryHolder : null;
 
             return new ReservationDetailsDto
             {
@@ -201,15 +201,25 @@ namespace Rise.Services.Reservations
         }
         public async Task CancelReservationAsync(int reservationId)
         {
+            bool isAdmin = _authContextProvider.IsAdmin();
+
             int userId = (int)_authContextProvider.GetUserId()!;
 
-            var reservation = await _dbContext.Reservations
+            var query = _dbContext.Reservations
                 .Include(r => r.TimeSlot)
-                .Where(r => r.UserId == userId)
-                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                .Include(r => r.User)
+                .AsQueryable();
+
+            if (!isAdmin)
+            {
+                query = query.Where(r => r.UserId == userId);
+            }
+
+            var reservation = await query.FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
-            reservation.Cancel();
+            reservation.Cancel(isAdmin);
+
             await _dbContext.SaveChangesAsync();
             try
             {
@@ -231,6 +241,44 @@ namespace Rise.Services.Reservations
             return await _dbContext.Reservations
                 .CountAsync(r => r.TimeSlot.Date == date && !r.IsDeleted);
         }
+
+        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10, bool showPastReservations = false)
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            return await PaginationService.GetPaginatedResultsAsync<Reservation, ReservationDto>(
+                queryableDbSet: _dbContext.Reservations
+                    .Include(r => r.User)
+                    .Include(r => r.TimeSlot)
+                    .Include(r => r.Boat)
+                    .Where(r => showPastReservations ? r.TimeSlot.Date < today : r.TimeSlot.Date >= today)
+                    .AsQueryable(),
+                filterLambda: r => true,
+                orderingExpressions: new List<OrderingExpression<Reservation, object>>
+                {
+            new() { OrderLambda = r => r.TimeSlot.Date, IsDescending = false },
+            new() { OrderLambda = r => r.Id, IsDescending = false }
+                },
+                projection: r => new ReservationDto
+                {
+                    Id = r.Id,
+                    Start = r.TimeSlot.Start,
+                    End = r.TimeSlot.End,
+                    Date = r.TimeSlot.Date,
+                    BoatId = r.BoatId,
+                    IsDeleted = r.IsDeleted,
+                    BoatPersonalName = r.Boat.PersonalName,
+                    UserName = r.User.FamilyName
+                },
+                cursor: cursor,
+                isNextPage: isNextPage,
+                pageSize: pageSize
+            );
+        }
+
+
+
+
 
     }
 }

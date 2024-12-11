@@ -91,6 +91,42 @@
 		<value>De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
 			Vaargebied: van de Meulestedebrug tot aan het Keizerspark.</value>
 	</data>
+		<data name="AdminReservations">
+		<value>RESERVATIONS</value>
+	</data>
+
+	<data name="User">
+		<value>Gebruiker</value>
+	</data>
+	<data name="Date">
+		<value>Datum</value>
+	</data>
+	<data name="Time">
+		<value>Tijd</value>
+	</data>
+	<data name="Boat">
+		<value>Boot</value>
+	</data>
+	<data name="Cancel">
+		<value>Annuleren</value>
+	</data>
+	<data name="Previous">
+		<value>Vorige</value>
+	</data>
+	<data name="Next">
+		<value>Volgende</value>
+	</data>
+	<data name="PastReservations">
+		<value>Verleden reservaties</value>
+	</data>
+	<data name="UpcomingReservations">
+		<value>Komende reservaties</value>
+	</data>
+	<data name="Cancelled">
+		<value>Geannuleerd</value>
+	</data>
+	
+
 	<data name="Battery">
 		<value>
 			Batterij

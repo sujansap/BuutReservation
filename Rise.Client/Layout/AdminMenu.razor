@@ -7,9 +7,17 @@
 @*add here items for admin menu*@
 
 
+<MudNavLink data-testid="nav-admin-reservations" Href="/admin">
+    DASHBOARD
+</MudNavLink>
 <MudNavLink data-testid="nav-admin-guests" Href="/admin/guests">
     @Localizer["NewUsers"]
 </MudNavLink>
+
+<MudNavLink data-testid="nav-admin-reservations" Href="/admin/reservations">
+    @Localizer["AdminReservations"]
+</MudNavLink>
+
 <MudNavLink data-testid="nav-admin-cruise-period" Href="/admin/cruise_period">
     @Localizer["CruisePeriod"]
 </MudNavLink>

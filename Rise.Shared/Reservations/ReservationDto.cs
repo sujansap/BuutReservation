@@ -11,4 +11,6 @@ public record ReservationDto : BaseDto
     public bool IsDeleted { get; set; }
     public int BoatId { get; set; } // to later get the boat info or the boat photo
     public string BoatPersonalName { get; set; } = default!; // to show the name in own reservation list
+
+    public string UserName { get; set; } = default!;
 }
