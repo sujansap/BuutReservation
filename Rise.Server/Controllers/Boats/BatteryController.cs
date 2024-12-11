@@ -58,5 +58,7 @@ namespace Rise.Server.Controllers.Boats
             _logger.LogDebug("PUT done updating battery: {id}. New information {battery}", id, battery);
             return Ok(battery);
         }
+
+
     }
 }

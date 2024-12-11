@@ -81,6 +81,8 @@ namespace Rise.Client.Tests.Layout
             await Page.GetByTestId("culture-selector-desktop").First.ClickAsync();
             await Expect(Page.GetByTestId(id)).ToContainTextAsync(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
+            await Hydration();
+
             await Expect(Page.GetByTestId(id)).ToContainTextAsync(english);
         }
 
@@ -99,14 +101,15 @@ namespace Rise.Client.Tests.Layout
         {
             await Page.SetViewportSizeAsync(959, 1920);
             await NavigateToUrl("/");
+
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Page.GetByTestId("culture-selector-mobile").First.ClickAsync();
             await Expect(Page.GetByTestId(id)).ToContainTextAsync(dutch);
             await Page.GetByTestId("en (US)").ClickAsync();
+            await Hydration();
+
             await Page.GetByTestId("nav-drawer-open-button").ClickAsync();
             await Expect(Page.GetByTestId(id)).ToContainTextAsync(english);
-
-
         }
     }
 }

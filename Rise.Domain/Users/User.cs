@@ -53,6 +53,7 @@ namespace Rise.Domain.Users
                 _familyName = value;
             }
         }
+        public string FullName { get; private set; } = default!;
         public required string PhoneNumber
         {
             get => _phoneNumber;
@@ -154,5 +155,8 @@ namespace Rise.Domain.Users
         public IReadOnlyList<Battery> GuardedBatteries => guardedBatteries.AsReadOnly();
         private readonly List<Notification> notifications = [];
         public IReadOnlyList<Notification> Notifications => notifications.AsReadOnly();
+
+        private readonly List<Reservation> holdsBatteries = [];
+        public IReadOnlyList<Reservation> HoldsBatteries => holdsBatteries.AsReadOnly();
     }
 }

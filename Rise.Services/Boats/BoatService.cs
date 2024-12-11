@@ -1,19 +1,27 @@
-using Rise.Shared.Boats;
-using Rise.Services.Auth;
-using Rise.Persistence;
-using Rise.Domain.Users;
+using System;
 using Microsoft.EntityFrameworkCore;
+using Rise.Persistence;
+using Rise.Services.Auth;
+using Rise.Shared.Boats;
 using Rise.Shared;
 using Rise.Domain.Exceptions;
 using Rise.Domain.Boats;
 
 namespace Rise.Services.Boats
 {
-    public class BoatService : AuthenticatedService, IBoatService
+    public class BoatService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+         : AuthenticatedService(dbContext, authContextProvider), IBoatService
     {
-        public BoatService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-            : base(dbContext, authContextProvider)
+
+
+        /// <summary>
+        /// get the count of active boats
+        /// </summary>
+        /// <returns>the count of active boats </returns>        
+        public async Task<int> GetActiveBoatsCountAsync()
         {
+            return await _dbContext.Boats
+                .CountAsync(b => !b.IsDeleted);
         }
 
         public async Task<IEnumerable<BoatDto>> GetAllBoatsAsync()
@@ -61,7 +69,8 @@ namespace Rise.Services.Boats
 
             return boat.Id;
         }
+        
     }
-}
 
+}
 

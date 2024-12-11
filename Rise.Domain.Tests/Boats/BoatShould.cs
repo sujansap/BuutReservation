@@ -1,6 +1,7 @@
 using Rise.Domain.Boats;
 using Rise.Domain.Reservations;
 using Rise.Domain.Tests.TestUtilities;
+using Rise.Domain.TimeSlots;
 using Shouldly;
 
 namespace Rise.Domain.Tests.Boats
@@ -20,6 +21,7 @@ namespace Rise.Domain.Tests.Boats
 
             b.PersonalName.ShouldBe(ValidPersonalNameFormatted);
             b.Reservations.ShouldBeEmpty();
+            b.Batteries.ShouldBeEmpty();
         }
 
         [Theory]
@@ -82,5 +84,61 @@ namespace Rise.Domain.Tests.Boats
             batteries.Count.ShouldBe(1);
             batteries.ShouldContain(battery);
         }
+
+        [Fact]
+        public void BeAbleToAddReservationWithValidReservation()
+        {
+            Boat boat = new BoatBuilder().Build();
+            boat.Reservations.ShouldBeEmpty();
+
+            Reservation reservation = new ReservationBuilder().Build();
+            boat.AddReservation(reservation);
+
+            boat.Reservations.ShouldNotBeEmpty();
+            boat.Reservations.ShouldContain(reservation);
+        }
+
+        [Fact]
+        public void NotBeAbleToAddReservationWithInvalidReservation()
+        {
+            Boat boat = new BoatBuilder().Build();
+            boat.Reservations.ShouldBeEmpty();
+
+            Action act = () =>
+            {
+                boat.AddReservation(null!);
+            };
+
+            act.ShouldThrow<ArgumentException>()
+                .ParamName.ShouldBe("reservation");
+        }
+
+        [Fact]
+        public void DoesNotFindAvailableReservationWhenNoBatteries()
+        {
+            Boat boat = new BoatBuilder().Build();
+
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
+
+            boat.FindAvailableBattery(timeSlot, DateTime.Now).ShouldBeNull();
+        }
+
+        [Fact]
+        public void ThrowExceptionAvailableReservationWhenNoTimeSlot()
+        {
+            Boat boat = new BoatBuilder().Build();
+
+            Action act = () =>
+            {
+                boat.FindAvailableBattery(null!, DateTime.Now);
+            };
+
+            act.ShouldThrow<ArgumentException>()
+                .ParamName.ShouldBe("timeSlot");
+        }
+
+        // TODO tests FindAvailableBattery
+
+        // TODO tests AssignBatteriesToReservations
     }
 }

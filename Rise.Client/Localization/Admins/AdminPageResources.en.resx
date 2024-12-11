@@ -109,6 +109,9 @@
 			End
 		</value>
 	</data>
+	<data name="AddCruisePeriod">
+		<value>Add Cruise Period</value>
+	</data>
 	<data name="Battery">
 		<value>
 			Battery
@@ -133,6 +136,45 @@
 		<value>
 			Update
 		</value>
+	</data>
+	<data name="ManageTimeSlots">
+		<value>Manage Time Slots</value>
+	</data>
+	<data name="NewCruisePeriod">
+		<value>New Cruise Period</value>
+	</data>
+	<data name="StartTime">
+		<value>Start Time</value>
+	</data>
+	<data name="EndTime">
+		<value>End Time</value>
+	</data>
+	<data name="Add">
+		<value>Add</value>
+	</data>
+	<data name="FixedDailyTimeSlots">
+		<value>Fixed Daily Time Slots</value>
+	</data>
+	<data name="NoTimeSlotsMessage">
+		<value>No time slots have been added yet</value>
+	</data>
+	<data name="SaveTimeSlots">
+		<value>Save Time Slots</value>
+	</data>
+	<data name="CruisePeriods">
+		<value>Cruise Periods</value>
+	</data>
+	<data name="Past">
+		<value>Past</value>
+	</data>
+	<data name="Future">
+		<value>Future</value>
+	</data>
+	<data name="Period">
+		<value>Period</value>
+	</data>
+	<data name="AddTimeSlot">
+		<value>Add Time Slot</value>
 	</data>
 	<data name="Availability">
 		<value>

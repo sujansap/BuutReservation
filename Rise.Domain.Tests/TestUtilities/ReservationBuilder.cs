@@ -14,6 +14,7 @@ namespace Rise.Domain.Tests.TestUtilities
         private TimeSlot timeSlot = ValidTimeSlot;
         private Boat boat = ValidBoat;
         private User user = ValidUser;
+        private Battery? battery = default;
 
         public ReservationBuilder WithBoat(Boat boat)
         {
@@ -33,6 +34,12 @@ namespace Rise.Domain.Tests.TestUtilities
             return this;
         }
 
+        public ReservationBuilder WithBattery(Battery battery)
+        {
+            this.battery = battery;
+            return this;
+        }
+
         public Reservation Build()
         {
             return new()
@@ -40,6 +47,7 @@ namespace Rise.Domain.Tests.TestUtilities
                 Boat = boat,
                 TimeSlot = timeSlot,
                 User = user,
+                Battery = battery
             };
         }
     }

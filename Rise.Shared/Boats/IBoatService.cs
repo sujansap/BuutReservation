@@ -1,9 +1,15 @@
-﻿using Rise.Shared.Boats;
+using Rise.Shared.Boats;
 
 namespace Rise.Shared;
 
 public interface IBoatService
 {
+    public interface IBoatService
+{
+    Task<int> GetActiveBoatsCountAsync();
+
+}
+
     /// <summary>
     /// Haalt een lijst van alle boten op, inclusief hun beschikbaarheid.
     /// </summary>
@@ -14,3 +20,4 @@ public interface IBoatService
 
     Task<int> CreateBoatAsync(CreateBoatDto createBoatDto);
 }
+

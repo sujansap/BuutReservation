@@ -26,5 +26,15 @@ namespace Rise.Shared.Reservations
 
         Task CancelReservationAsync(int reservationId);
 
+        /// <summary>
+        /// Gets the count of reservations for a given date
+        /// </summary>
+        /// <param name="date">Date to get the count of reservations for</param>
+        /// <returns>
+        /// The count of reservations for the given date
+        /// </returns>
+        Task<int> GetReservationsCountAsync(DateOnly date);
+
+
     }
 }

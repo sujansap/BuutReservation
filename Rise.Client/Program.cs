@@ -97,12 +97,6 @@ builder.Services.AddHttpClient<IBoatService, BoatService>(client =>
     client.BaseAddress = new Uri($"{builder.HostEnvironment.BaseAddress}api/Boat/");
 }).AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-
-
-
-
-
-
 var host = builder.Build();
 
 const string defaultCulture = "nl-BE";

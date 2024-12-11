@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using Rise.Shared;
 using Rise.Shared.Boats;
 
@@ -7,6 +7,12 @@ namespace Rise.Client.Services
     public class BoatService(HttpClient httpClient) : IBoatService
     {
         private readonly HttpClient _httpClient = httpClient;
+
+        public async Task<int> GetActiveBoatsCountAsync()
+        {
+            var result = await _httpClient.GetFromJsonAsync<int>("count");
+            return result;
+        }
 
         /// <summary>
         /// Haalt alle boten op.

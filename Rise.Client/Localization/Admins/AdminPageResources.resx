@@ -131,6 +131,48 @@
 			Einde
 		</value>
 	</data>
+	<data name="AddCruisePeriod">
+		<value>Voeg Vaarperiode</value>
+	</data>
+	<data name="ManageTimeSlots">
+		<value>Beheer Tijdsloten</value>
+	</data>
+	<data name="NewCruisePeriod">
+		<value>Nieuwe Vaarperiode</value>
+	</data>
+	<data name="StartTime">
+		<value>Starttijd</value>
+	</data>
+	<data name="EndTime">
+		<value>Eindtijd</value>
+	</data>
+	<data name="Add">
+		<value>Toevoegen</value>
+	</data>
+	<data name="FixedDailyTimeSlots">
+		<value>Vaste Dagelijkse Tijdsloten</value>
+	</data>
+	<data name="NoTimeSlotsMessage">
+		<value>Er zijn nog geen tijdsloten toegevoegd</value>
+	</data>
+	<data name="SaveTimeSlots">
+		<value>Tijdsloten Opslaan</value>
+	</data>
+	<data name="CruisePeriods">
+		<value>Vaarperiodes</value>
+	</data>
+	<data name="Past">
+		<value>Verleden</value>
+	</data>
+	<data name="Future">
+		<value>Toekomst</value>
+	</data>
+	<data name="Period">
+		<value>Periode</value>
+	</data>
+	<data name="AddTimeSlot">
+		<value>Tijdslot Toevoegen</value>
+	</data>
 	<data name="Availability">
 		<value>
 			Beschikbaarheid
