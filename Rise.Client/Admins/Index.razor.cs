@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components;
+using Rise.Client.Common;
 using Rise.Shared.Reservations;
 using Rise.Shared.Users;
-
+using Rise.Shared.Boats;
 
 namespace Rise.Client.Admins
 {
@@ -13,37 +14,41 @@ namespace Rise.Client.Admins
         [Inject]
         private IUserAdminService UserService { get; set; } = default!;
 
-        private int _todayReservationsCount;
-        private int _activeUsersCount;
-        private bool _loading = true;
-        private string? _error;
+        [Inject]
+        private IBoatService BoatService { get; set; } = default!;
+
+        private AsyncData<int>? AsyncBoatsRef;
+        private AsyncData<int>? AsyncReservationsRef;
+        private AsyncData<int>? AsyncUsersRef;
+
+        private int _boatsCount;
+        private int _reservationsCount;
+        private int _usersCount;
 
         protected override async Task OnInitializedAsync()
         {
-            try
-            {
-                var today = DateOnly.FromDateTime(DateTime.Today);
-                var reservationsTask = ReservationService.GetReservationsCountAsync(today);
-                var usersTask = UserService.GetActiveUsersCountAsync();
+            if (AsyncBoatsRef is not null)
+                await AsyncBoatsRef.FetchData();
+            if (AsyncReservationsRef is not null)
+                await AsyncReservationsRef.FetchData();
+            if (AsyncUsersRef is not null)
+                await AsyncUsersRef.FetchData();
+        }
 
-                await Task.WhenAll(reservationsTask, usersTask);
+        private Task<int> FetchBoatsCount()
+        {
+            return BoatService.GetActiveBoatsCountAsync();
+        }
 
-                _todayReservationsCount = await reservationsTask;
-                _activeUsersCount = await usersTask;
-            }
-            catch (Exception ex)
-            {
-                _error = ex.Message;
-            }
-            finally
-            {
-                _loading = false;
-            }
+        private Task<int> FetchReservationsCount()
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            return ReservationService.GetReservationsCountAsync(today);
+        }
+
+        private Task<int> FetchUsersCount()
+        {
+            return UserService.GetActiveUsersCountAsync();
         }
     }
-
-
 }
-
-
-

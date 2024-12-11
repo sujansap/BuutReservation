@@ -1,8 +1,9 @@
 ﻿@page "/admin"
 @using MudBlazor
-@using Rise.Client.Localization.Admins;
+@using Rise.Client.Localization.Admins
 @using Microsoft.Extensions.Localization
 @using Rise.Shared.Users
+@using Rise.Client.Common
 @inject IStringLocalizer<AdminPageResources> Localizer
 @layout AdminLayout
 @attribute [Authorize(Roles = nameof(UserRole.Administrator))]
@@ -13,11 +14,12 @@
     <MudGrid>
         <MudItem xs="12" sm="6" md="4">
             <MudPaper Class="pa-4" Elevation="2">
-                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Class="mb-2" Color="Color.Primary"
-                    Size="Size.Large" />
+                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Class="mb-2" Color="Color.Primary" Size="Size.Large" />
                 <MudText Typo="Typo.h6">@Localizer["TotalBoats"]</MudText>
-                <MudText Typo="Typo.h4">...</MudText>
-                <MudText Typo="Typo.body2">...</MudText>
+                <AsyncData DataFetcher="@FetchBoatsCount" @bind-Data="@_boatsCount" T="int" @ref="AsyncBoatsRef"
+                    ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert" TestIdPrefix="boats-count">
+                    <MudText Typo="Typo.h4">@_boatsCount</MudText>
+                </AsyncData>
             </MudPaper>
         </MudItem>
 
@@ -25,18 +27,10 @@
             <MudPaper Class="pa-4" Elevation="2">
                 <MudIcon Icon="@Icons.Material.Filled.Today" Class="mb-2" Color="Color.Primary" Size="Size.Large" />
                 <MudText Typo="Typo.h6">@Localizer["TodaysReservations"]</MudText>
-                @if (_loading)
-                {
-                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-                }
-                else if (_error != null)
-                {
-                    <MudText Color="Color.Error">@_error</MudText>
-                }
-                else
-                {
-                    <MudText Typo="Typo.h4">@_todayReservationsCount</MudText>
-                }
+                <AsyncData DataFetcher="@FetchReservationsCount" @bind-Data="@_reservationsCount" T="int" @ref="AsyncReservationsRef"
+                    ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert" TestIdPrefix="reservations-count">
+                    <MudText Typo="Typo.h4">@_reservationsCount</MudText>
+                </AsyncData>
             </MudPaper>
         </MudItem>
 
@@ -44,18 +38,10 @@
             <MudPaper Class="pa-4" Elevation="2">
                 <MudIcon Icon="@Icons.Material.Filled.People" Class="mb-2" Color="Color.Primary" Size="Size.Large" />
                 <MudText Typo="Typo.h6">@Localizer["ActiveMembers"]</MudText>
-                @if (_loading)
-                {
-                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-                }
-                else if (_error != null)
-                {
-                    <MudText Color="Color.Error">@_error</MudText>
-                }
-                else
-                {
-                    <MudText Typo="Typo.h4">@_activeUsersCount</MudText>
-                }
+                <AsyncData DataFetcher="@FetchUsersCount" @bind-Data="@_usersCount" T="int" @ref="AsyncUsersRef"
+                    ErrorDisplayMethod="AsyncErrorDisplayMethod.SnackBarAlert" TestIdPrefix="users-count">
+                    <MudText Typo="Typo.h4">@_usersCount</MudText>
+                </AsyncData>
             </MudPaper>
         </MudItem>
     </MudGrid>
