@@ -77,7 +77,7 @@ namespace Rise.Domain.Tests.Notifications
         [Fact]
         public void ThrowWhenUserIsNull()
         {
-            Should.Throw<NullReferenceException>(() =>
+            Should.Throw<ArgumentException>(() =>
                 new NotificationBuilder()
                     .WithUser(null!)
                     .Build()
