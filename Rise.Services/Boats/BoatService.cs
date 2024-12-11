@@ -54,7 +54,20 @@ namespace Rise.Services.Boats
                 ?? throw new EntityNotFoundException(nameof(Boat), boatId);
 
             boat.ChangeAvailability(isAvailable);
+
+            await CancelReservationsForBoat(boat.Id);
+
             await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task CancelReservationsForBoat(int boatId)
+        {
+            var reservations = await _dbContext.Reservations
+               .Include(r => r.TimeSlot)
+               .Where(r => r.BoatId == boatId)
+               .ToListAsync();
+
+            reservations.ForEach(reservation => reservation.Cancel());
         }
 
         public async Task<int> CreateBoatAsync(CreateBoatDto createBoatDto)
