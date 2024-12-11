@@ -6,6 +6,7 @@ using Rise.Shared.Boats;
 using Rise.Shared;
 using Rise.Domain.Exceptions;
 using Rise.Domain.Boats;
+using Rise.Shared.Users;
 
 namespace Rise.Services.Boats
 {
@@ -58,7 +59,8 @@ namespace Rise.Services.Boats
 
         public async Task<int> CreateBoatAsync(CreateBoatDto createBoatDto)
         {
-            Boat boat = new (){
+            Boat boat = new()
+            {
                 PersonalName = createBoatDto.PersonalName,
                 IsAvailable = createBoatDto.IsAvailable,
             };
@@ -69,7 +71,9 @@ namespace Rise.Services.Boats
 
             return boat.Id;
         }
-        
+
+
+
     }
 
 }

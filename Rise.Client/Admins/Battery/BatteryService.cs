@@ -7,6 +7,11 @@ namespace Rise.Client.Admins.Battery
     {
         private readonly HttpClient _httpClient = httpClient;
 
+        public Task<IEnumerable<BatteryDto>> GetBatteriesByBoat(int boatId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<BatteryDto> GetBattery(int id)
         {
             var response = await _httpClient.GetAsync(id.ToString());
