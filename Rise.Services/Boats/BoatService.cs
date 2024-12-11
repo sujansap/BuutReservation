@@ -64,10 +64,11 @@ namespace Rise.Services.Boats
         {
             var reservations = await _dbContext.Reservations
                .Include(r => r.TimeSlot)
-               .Where(r => r.BoatId == boatId)
+               .Where(r => r.BoatId == boatId && r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now))
                .ToListAsync();
 
-            reservations.ForEach(reservation => reservation.Cancel());
+            bool isAdmin = _authContextProvider.IsAdmin();
+            reservations.ForEach(reservation => reservation.Cancel(isAdmin));
         }
 
         public async Task<int> CreateBoatAsync(CreateBoatDto createBoatDto)
