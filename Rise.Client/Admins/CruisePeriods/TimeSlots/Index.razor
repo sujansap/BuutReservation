@@ -12,6 +12,8 @@
 
 @layout AdminLayout
 
+<BackButton Href="/admin/cruise_period" data-testid="back-to-cruise-period-list-button" />
+
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
     <AsyncData DataFetcher="@FetchCruisePeriod" @bind-Data="@CruisePeriod" T="CruisePeriodDetailedDto"
         TestIdPrefix="cruise-period-details">
