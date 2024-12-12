@@ -133,7 +133,7 @@ namespace Rise.Server.Controllers.Users
 
             try
             {
-                var users = await _userService.GetUsersByFullName(partialName?.Trim());
+                var users = await _userAdminService.GetUsersByFullName(partialName?.Trim());
                 return Ok(users);
             }
             catch (Exception ex)
@@ -154,7 +154,7 @@ namespace Rise.Server.Controllers.Users
             _logger.LogInformation("GET api/User/count");
             try
             {
-                var count = await _userService.GetActiveUsersCountAsync();
+                var count = await _userAdminService.GetActiveUsersCountAsync();
                 return Ok(count);
             }
             catch (Exception ex)

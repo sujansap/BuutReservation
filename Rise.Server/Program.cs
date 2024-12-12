@@ -23,9 +23,6 @@ using Rise.Server.Auth;
 using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
 using Rise.Shared.Boats;
-using Rise.Domain.Boats;
-using Rise.Services.Boats;
-using Rise.Client.Register;
 using Rise.Shared;
 
 try

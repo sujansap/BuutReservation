@@ -10,7 +10,7 @@ namespace Rise.Server.Controllers
     [ApiController]
     [Route("api/[controller]")]
 
-    public class ReservationController : ControllerBase
+    public class ReservationController(ILogger<ReservationController> logger, IReservationService reservationService) : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger = logger;
         private readonly IReservationService _reservationService = reservationService;
