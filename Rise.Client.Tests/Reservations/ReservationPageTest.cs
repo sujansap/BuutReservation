@@ -485,6 +485,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ReservationDialogShouldCloseWhenCloseButtonIsClicked()
         {
             //Arrange
+            await MockProfileApi();
             await OpenCreateReservationDialog();
 
             ILocator dialog = Page.GetByTestId("reservation-dialog");
@@ -498,6 +499,7 @@ namespace Rise.Client.Tests.Reservations
         public async Task ReservationDialogShouldProceedWhenCreateButtonIsClicked()
         {
             //Arrange
+            await MockProfileApi();
             await OpenCreateReservationDialog();
 
             // Act
@@ -516,6 +518,7 @@ namespace Rise.Client.Tests.Reservations
         [Test]
         public async Task CreatingReservationShouldDisplayReservationOnCalendar()
         {
+            await MockProfileApi();
             await OpenCreateReservationDialog();
             var today = DateOnly.FromDateTime(DateTime.Now);
             // Create the reservation
