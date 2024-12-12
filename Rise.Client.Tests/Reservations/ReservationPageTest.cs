@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
+using Rise.Shared.Address;
 using Rise.Shared.TimeSlots;
 using Rise.Shared.Users;
 
@@ -19,6 +20,41 @@ namespace Rise.Client.Tests.Reservations
         private static string DateToCalendarIdentifier(DateOnly date)
         {
             return $"[identifier='{date:d/MM/yyyy}']";
+        }
+
+        private readonly UserProfileDto profileDto = new()
+        {
+            Email = "guest@guest.com",
+            FirstName = "Guest",
+            FamilyName = "GuestFamilyName",
+            PhoneNumber = "0123456789",
+            Address = new AddressDto()
+            {
+                Street = "StreetName",
+                City = "Belgium",
+                Country = "CountryName",
+                Number = "StreetNumber",
+                PostalCode = "CityPostalCode",
+            },
+            DateOfBirth = new DateTime(2002, 2, 2)
+        };
+
+        private async Task MockProfileApi(int delayMs = 0)
+        {
+            await Page.RouteAsync($"*/**/api/User/profile**", async route =>
+            {
+
+                if (delayMs > 0)
+                    await Task.Delay(delayMs);
+
+                var response = profileDto;
+
+                await route.FulfillAsync(new()
+                {
+                    ContentType = "application/json",
+                    Body = System.Text.Json.JsonSerializer.Serialize(response)
+                });
+            });
         }
 
         private async Task MockAvailableDays()
@@ -66,7 +102,7 @@ namespace Rise.Client.Tests.Reservations
                     End = new TimeOnly(15, 0, 0),
                     IsBookedByUser = false
                 },
-                new()
+                new ()
                 {
                     Id = 3,
                     Start = new TimeOnly(15, 0, 0),
@@ -118,6 +154,7 @@ namespace Rise.Client.Tests.Reservations
         private async Task MockTimeSlotAndSelectAvailableDay()
         {
             await MockTimeSlot();
+            await MockProfileApi();
             await SelectAvailableDayOnCalendar();
         }
 
