@@ -1,46 +1,97 @@
-using Rise.Shared.Boats;
-using Rise.Services.Auth;
-using Rise.Persistence;
-using Rise.Domain.Users;
+using System;
 using Microsoft.EntityFrameworkCore;
-using Rise.Domain.Boats;
+using Rise.Persistence;
+using Rise.Services.Auth;
+using Rise.Shared.Boats;
+using Rise.Shared;
 using Rise.Domain.Exceptions;
+using Rise.Domain.Boats;
+using Rise.Shared.Users;
 
 namespace Rise.Services.Boats
 {
-    public class BatteryService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
-        : AuthenticatedService(dbContext, authContextProvider), IBatteryService
+    public class BoatService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+         : AuthenticatedService(dbContext, authContextProvider), IBoatService
     {
+
+
         /// <summary>
-        /// Gets the battery by id
+        /// get the count of active boats
         /// </summary>
-        /// <param name="id">battery id</param>
-        /// <returns></returns>
-        /// <exception cref="EntityNotFoundException">When the battery does not exist with given id</exception>
-        public async Task<Battery> FindBattery(int id)
+        /// <returns>the count of active boats </returns>        
+        public async Task<int> GetActiveBoatsCountAsync()
         {
-            return await _dbContext.Batteries.Include(b => b.Mentor)
-            .FirstOrDefaultAsync(b => b.Id == id) ?? throw new EntityNotFoundException(nameof(Battery), id);
-        }
-        public async Task<BatteryDto> GetBattery(int id)
-        {
-            Battery battery = await FindBattery(id);
-
-            return new BatteryDto { Id = battery.Id, MentorId = battery.Mentor.Id, Type = battery.Type };
+            return await _dbContext.Boats
+                .CountAsync(b => !b.IsDeleted);
         }
 
-        public async Task<BatteryDto> UpdateBattery(int id, BatteryUpdateDto newBattery)
+        public async Task<IEnumerable<BoatDto>> GetAllBoatsAsync()
         {
-            Battery battery = await FindBattery(id);
+            var boats = await _dbContext.Boats
+            .OrderBy(boat => !boat.IsAvailable)
+            .ThenBy(boat => boat.PersonalName)
+            .Select(boat => new BoatDto
+            {
+                Id = boat.Id,
+                PersonalName = boat.PersonalName,
+                IsAvailable = boat.IsAvailable
+            })
+            .ToListAsync();
 
-            User? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == newBattery.MentorId) ?? throw new EntityNotFoundException(nameof(User), newBattery.MentorId);
+            return boats;
+        }
 
-            battery.Mentor = user;
-            battery.Type = newBattery.Type;
+
+        /// <summary>
+        /// Updates the availability of a specific boat by its ID.
+        /// </summary>
+        /// <param name="boatId">The ID of the boat to update.</param>
+        /// <param name="isAvailable">The new availability status of the boat.</param>
+        /// <returns>Task representing the asynchronous operation.</returns>
+        public async Task UpdateBoatAvailabilityAsync(int boatId, bool isAvailable)
+        {
+            Boat boat = await _dbContext.Boats.FindAsync(boatId)
+                ?? throw new EntityNotFoundException(nameof(Boat), boatId);
+
+            boat.ChangeAvailability(isAvailable);
+
+            if (!isAvailable)
+            {
+                await CancelReservationsForBoat(boat.Id);
+            }
 
             await _dbContext.SaveChangesAsync();
-
-            return new BatteryDto { Id = battery.Id, MentorId = battery.Mentor.Id, Type = battery.Type };
         }
+
+        private async Task CancelReservationsForBoat(int boatId)
+        {
+            var reservations = await _dbContext.Reservations
+               .Include(r => r.TimeSlot)
+               .Where(r => r.BoatId == boatId && r.TimeSlot.Date >= DateOnly.FromDateTime(DateTime.Now) && !r.IsDeleted)
+               .ToListAsync();
+
+            bool isAdmin = _authContextProvider.IsAdmin();
+            reservations.ForEach(reservation => reservation.Cancel(isAdmin));
+        }
+
+        public async Task<int> CreateBoatAsync(CreateBoatDto createBoatDto)
+        {
+            Boat boat = new()
+            {
+                PersonalName = createBoatDto.PersonalName,
+                IsAvailable = createBoatDto.IsAvailable,
+            };
+
+            await _dbContext.Boats.AddAsync(boat);
+
+            _dbContext.SaveChanges();
+
+            return boat.Id;
+        }
+
+
+
     }
+
 }
+

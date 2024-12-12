@@ -11,4 +11,10 @@ public interface IAuthContextProvider
     /// </summary>
     /// <returns>The userId if user exists, null if user could not be found</returns>
     int? GetUserId();
+    /// <summary>
+    /// Checks if the user is an Admin
+    /// </summary>
+    /// <returns>if the user is an admin</returns>
+    bool IsAdmin();
+
 }

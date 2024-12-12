@@ -11,10 +11,11 @@ using Rise.Services.Auth;
 using Rise.Services.Pagination;
 using Rise.Shared.Pagination;
 using Rise.Shared.Reservations;
+using Rise.Shared.Notifications;
 
 namespace Rise.Services.Reservations
 {
-    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider)
+    public class ReservationService(ApplicationDbContext dbContext, IAuthContextProvider authContextProvider, IInternalNotificationService internalNotificationService)
         : AuthenticatedService(dbContext, authContextProvider), IReservationService
     {
 
@@ -124,6 +125,14 @@ namespace Rise.Services.Reservations
             {
                 _dbContext.Reservations.Add(reservation);
                 await _dbContext.SaveChangesAsync();
+
+                await internalNotificationService.SendNotificationToUser(
+                userId,
+                "Reservation Confirmed",
+                $"Your reservation on {timeSlot.Date.ToLongDateString()} {timeSlot.Start:HH:mm} - {timeSlot.End:HH:mm} has been confirmed with boat {boat.PersonalName}. Please arrive on time.",
+                SeverityEnum.Success
+                );
+
                 return reservation.Id;
             }
             catch (DbUpdateException ex)
@@ -158,15 +167,17 @@ namespace Rise.Services.Reservations
         {
             var reservation = await _dbContext.Reservations
                 .Include(r => r.Boat)
-                .ThenInclude(b => b.Batteries)
-                .ThenInclude(battery => battery.Mentor)
                 .Include(r => r.TimeSlot)
+                .Include(r => r.PreviousBatteryHolder)
+                .Include(r => r.Battery)
+                    .ThenInclude(b => b!.Mentor)
                 .FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
-            //voorlopig de eerste batterij dat bij de boot hoort later Batterij logica
-            Battery battery = reservation.Boat.Batteries[0];
-
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            DateOnly date = reservation.TimeSlot.Date;
+            DateOnly beforeBuffer = date.AddDays(-Reservation.MinDaysBetweenReservation);
+            User? previousBatteryHolder = beforeBuffer <= today && today <= date ? reservation.PreviousBatteryHolder : null;
 
             return new ReservationDetailsDto
             {
@@ -176,24 +187,98 @@ namespace Rise.Services.Reservations
                 Date = reservation.TimeSlot.Date,
                 IsDeleted = reservation.IsDeleted,
                 BoatPersonalName = reservation.Boat.PersonalName,
-                MentorName = battery.Mentor.FamilyName,
-                BatteryType = battery.Type
-
+                MentorName = reservation.Battery?.Mentor?.FamilyName,
+                BatteryId = reservation.Battery?.Id,
+                CurrentBatteryUserName = previousBatteryHolder?.FamilyName,
+                CurrentBatteryUserId = previousBatteryHolder?.Id,
+                CurrentHolderPhoneNumber = previousBatteryHolder?.PhoneNumber,
+                CurrentHolderEmail = previousBatteryHolder?.Email,
+                CurrentHolderStreet = previousBatteryHolder?.Address.Street,
+                CurrentHolderNumber = previousBatteryHolder?.Address.Number,
+                CurrentHolderCity = previousBatteryHolder?.Address.City,
+                CurrentHolderPostalCode = previousBatteryHolder?.Address.PostalCode
             };
         }
         public async Task CancelReservationAsync(int reservationId)
         {
+            bool isAdmin = _authContextProvider.IsAdmin();
+
             int userId = (int)_authContextProvider.GetUserId()!;
 
-            var reservation = await _dbContext.Reservations
+            var query = _dbContext.Reservations
                 .Include(r => r.TimeSlot)
-                .Where(r => r.UserId == userId)
-                .FirstOrDefaultAsync(r => r.Id == reservationId)
+                .Include(r => r.User)
+                .AsQueryable();
+
+            if (!isAdmin)
+            {
+                query = query.Where(r => r.UserId == userId);
+            }
+
+            var reservation = await query.FirstOrDefaultAsync(r => r.Id == reservationId)
                 ?? throw new EntityNotFoundException(nameof(Reservation), reservationId);
 
-            reservation.Cancel();
+            reservation.Cancel(isAdmin);
+
             await _dbContext.SaveChangesAsync();
+            try
+            {
+                await internalNotificationService.SendNotificationToUser(
+                    userId,
+                    "Reservation Cancelled",
+                    $"Your reservation on {reservation.TimeSlot.Date.ToLongDateString()} {reservation.TimeSlot.Start:HH:mm} - {reservation.TimeSlot.End:HH:mm} has been cancelled.",
+                    SeverityEnum.Info
+                );
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
+
+        public async Task<int> GetReservationsCountAsync(DateOnly date)
+        {
+            return await _dbContext.Reservations
+                .CountAsync(r => r.TimeSlot.Date == date && !r.IsDeleted);
+        }
+
+        public async Task<ItemsPageDto<ReservationDto>> GetAllReservations(int? cursor, bool? isNextPage, int pageSize = 10, bool showPastReservations = false)
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            return await PaginationService.GetPaginatedResultsAsync<Reservation, ReservationDto>(
+                queryableDbSet: _dbContext.Reservations
+                    .Include(r => r.User)
+                    .Include(r => r.TimeSlot)
+                    .Include(r => r.Boat)
+                    .Where(r => showPastReservations ? r.TimeSlot.Date < today : r.TimeSlot.Date >= today)
+                    .AsQueryable(),
+                filterLambda: r => true,
+                orderingExpressions: new List<OrderingExpression<Reservation, object>>
+                {
+            new() { OrderLambda = r => r.TimeSlot.Date, IsDescending = false },
+            new() { OrderLambda = r => r.Id, IsDescending = false }
+                },
+                projection: r => new ReservationDto
+                {
+                    Id = r.Id,
+                    Start = r.TimeSlot.Start,
+                    End = r.TimeSlot.End,
+                    Date = r.TimeSlot.Date,
+                    BoatId = r.BoatId,
+                    IsDeleted = r.IsDeleted,
+                    BoatPersonalName = r.Boat.PersonalName,
+                    UserName = r.User.FamilyName
+                },
+                cursor: cursor,
+                isNextPage: isNextPage,
+                pageSize: pageSize
+            );
+        }
+
+
+
+
 
     }
 }

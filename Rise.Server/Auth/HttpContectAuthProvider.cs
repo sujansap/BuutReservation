@@ -23,4 +23,12 @@ public class HttpContextAuthProvider(IHttpContextAccessor httpContextAccessor) :
         return userId;
     }
 
+    public bool IsAdmin()
+    {
+        if (User is null)
+            return false;
+
+        return User.IsInRole("Administrator");
+    }
+
 }

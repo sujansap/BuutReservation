@@ -20,9 +20,12 @@ namespace Rise.Server.Controllers
         }
 
         /// <summary>
-        /// Gets all notifications for the current user.
+        /// Retrieves a list of notifications for the current user.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="limit">An optional limit to the number of notifications returned. Must be a non-negative integer.</param>
+        /// <returns>A list of notifications for the current user.</returns>
+        /// <response code="200">Returns the list of notifications.</response>
+        /// <response code="400">The limit parameter contains an invalid value (e.g., negative).</response>
         [HttpGet("me")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<NotificationDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -48,6 +51,12 @@ namespace Rise.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves the count of unread notifications for the current user.
+        /// </summary>
+        /// <returns>The number of unread notifications.</returns>
+        /// <response code="200">Returns the count of unread notifications.</response>
+        /// <response code="500">An internal server error occurred while processing the request.</response>
         [HttpGet("me/unread/count")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -66,12 +75,13 @@ namespace Rise.Server.Controllers
         }
 
         /// <summary>
-        /// Marks a notification as read.
+        /// Marks a specific notification as read.
         /// </summary>
-        /// <param name="id">The ID of the notification to mark as read.</param>
-        /// <returns></returns>
+        /// <param name="id">The ID of the notification to mark as read. Must be a positive integer.</param>
+        /// <returns>No content on success.</returns>
         /// <response code="204">The notification was successfully marked as read.</response>
-        /// <response code="500">An error occurred while marking the notification as read.</response>
+        /// <response code="404">The notification with the specified ID was not found.</response>
+        /// <response code="500">An internal server error occurred while processing the request.</response>
         [HttpPatch("read/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

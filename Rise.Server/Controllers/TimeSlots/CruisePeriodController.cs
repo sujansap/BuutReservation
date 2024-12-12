@@ -29,6 +29,18 @@ namespace Rise.Server.Controllers.TimeSlots
             _logger.LogInformation("GET done fetching Cruise Period {id}", [id]);
             return Ok(cruisePeriod);
         }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CruisePeriodDetailedDto>))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetCruisePeriods([FromQuery] bool getFuturePeriods = true)
+        {
+            _logger.LogInformation("GET Cruise Periods (getFuturePeriods: {getFuturePeriods})", getFuturePeriods);
+            var cruisePeriods = await _cruisePeriodService.GetCruisePeriods(getFuturePeriods);
+            return Ok(cruisePeriods);
+        }
+
     }
 }
 

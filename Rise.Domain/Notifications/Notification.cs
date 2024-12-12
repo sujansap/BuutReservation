@@ -9,7 +9,6 @@ namespace Rise.Domain.Notifications
         private string _title = default!;
         private string _message = default!;
         private bool _isRead;
-        private int _userId;
         private User _user = default!;
 
         public int Severity
@@ -49,15 +48,6 @@ namespace Rise.Domain.Notifications
             {
                 Guard.Against.Null(value, nameof(IsRead), "IsRead can not be null.");
                 _isRead = value;
-            }
-        }
-
-        public int UserId
-        {
-            get => _userId; set
-            {
-                Guard.Against.Null(value, nameof(UserId), "User Id can not be null.");
-                _userId = value;
             }
         }
 

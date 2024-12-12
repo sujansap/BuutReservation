@@ -12,6 +12,8 @@
 
 @layout AdminLayout
 
+<BackButton Href="/admin/cruise_period" data-testid="back-to-cruise-period-list-button" />
+
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
     <AsyncData DataFetcher="@FetchCruisePeriod" @bind-Data="@CruisePeriod" T="CruisePeriodDetailedDto"
         TestIdPrefix="cruise-period-details">
@@ -42,7 +44,7 @@
                             <MudItem xs="12" sm="5">
                                 <MudTimePicker @bind-Time="@StartTime" Label="@Localizer["StartTime"]" Class="mt-0"
                                     PickerVariant="PickerVariant.Dialog" Required="true" data-testid="time-slot-start"
-                                    TimeEditMode="TimeEditMode.Normal" />
+                                    TimeEditMode="TimeEditMode.Normal" @bind-Time:after="@HandleStartTimeChanged" />
                             </MudItem>
                             <MudItem xs="12" sm="5">
                                 <MudTimePicker @bind-Time="@EndTime" Label="@Localizer["EndTime"]" Class="mt-0"
@@ -71,7 +73,7 @@
                 else
                 {
                     <MudPaper Class="pa-4" Elevation="0" data-testid="time-slots-list">
-                        <MudList Dense="true" Clickable="true" T="TimeSpan">
+                        <MudList Dense="true" T="TimeSpan">
                             @foreach (var timeSlot in AllTimeSlotsDto.TimeSlots.OrderBy(t => t.Start))
                             {
                                 <MudListItem data-testid="time-slot-item">

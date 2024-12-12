@@ -12,6 +12,7 @@ using Auth0.Core.Exceptions;
 using Microsoft.Extensions.Logging;
 using Auth0.ManagementApi.Paging;
 using static Rise.Shared.Users.UserRegistrationModelDto;
+using System.Linq.Expressions;
 using Rise.Services.Auth;
 using Rise.Shared.Address;
 
@@ -42,7 +43,7 @@ public class UserService(
     {
         await _managementApiClient.Users.RemoveRolesAsync(auth0User.UserId, new AssignRolesRequest
         {
-            Roles = new[] { role.Id }
+            Roles = [role.Id]
         });
     }
 
@@ -50,7 +51,7 @@ public class UserService(
     {
         await _managementApiClient.Users.AssignRolesAsync(auth0User.UserId, new AssignRolesRequest
         {
-            Roles = new[] { role.Id }
+            Roles = [role.Id]
         });
     }
     public async Task<Pagination<UserDto>> GetUsersByRole(UserRole role, int page = 1, int pageSize = 10)
@@ -62,25 +63,25 @@ public class UserService(
             // Get paginated users from Auth0
             var assignedUsersPage = await GetAuth0UsersWithRetry(auth0Role.Id, page, pageSize);
 
-            if (!assignedUsersPage.Any())
+            if (assignedUsersPage.Count == 0)
             {
                 _logger.LogInformation("No users found for role {Role}", role);
-                return CreateEmptyPaginationResult(page, pageSize);
+                return CreateEmptyPaginationResult<UserDto>(page, pageSize);
             }
 
             var auth0Users = await Task.WhenAll(assignedUsersPage.Select(user =>
                 _managementApiClient.Users.GetAsync(user.UserId)));
 
             var buutUserIds = auth0Users
-                .Select(auth0User => auth0User.AppMetadata?["buutUserId"]?.ToString())
+                .Select<User, string?>(auth0User => auth0User.AppMetadata?["buutUserId"]?.ToString())
                 .Where(id => !string.IsNullOrEmpty(id))
                 .Distinct()
                 .ToList();
 
-            if (!buutUserIds.Any())
+            if (buutUserIds.Count == 0)
             {
                 _logger.LogWarning("No valid buutUserId found in Auth0 users for role {Role}", role);
-                return CreateEmptyPaginationResult(page, pageSize);
+                return CreateEmptyPaginationResult<UserDto>(page, pageSize);
             }
 
             // Get users from our database matching the paginated Auth0 users
@@ -164,11 +165,11 @@ public class UserService(
             message, roleId, retries + 1, maxRetries + 1);
     }
 
-    private Pagination<UserDto> CreateEmptyPaginationResult(int page, int pageSize)
+    private static Pagination<T> CreateEmptyPaginationResult<T>(int page, int pageSize)
     {
-        return new Pagination<UserDto>
+        return new Pagination<T>
         {
-            Items = new List<UserDto>(),
+            Items = [],
             TotalCount = 0,
             Page = page,
             PageSize = pageSize
@@ -228,7 +229,7 @@ public class UserService(
         }
         catch (ApiException ex)
         {
-            _logger.LogError(ex, "Auth0 api excpetion");
+            _logger.LogError(ex, "Auth0 api exception");
             throw new RoleAssigningFailedException(ex.Message);
         }
     }
@@ -303,7 +304,7 @@ public class UserService(
         }
         catch (ApiException ex)
         {
-            _logger.LogError(ex, "Auth0 api excpetion");
+            _logger.LogError(ex, "Auth0 api exception");
             throw new UserCreationFailedException(ex.Message);
         }
     }
@@ -319,10 +320,9 @@ public class UserService(
                 Connection = "Username-Password-Authentication",
                 Password = userDto.Password,
                 AppMetadata = new Dictionary<string, object> {
-                     { "buutUserId", userId },
+                    { "buutUserId", userId },
                 }
-            }
-                       );
+            });
 
             await RunTaskWithRetries(async () => await SendAssignInitialRoleRequest(auth0User), 20);
 
@@ -391,6 +391,51 @@ public class UserService(
             };
             throw new UniqueConstraintViolationException(message);
         }
+    }
+
+    public async Task<IEnumerable<UserNameDto>> GetUsersByFullName(string? partialName, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            Expression<Func<DomainUser, bool>> filterName = !string.IsNullOrWhiteSpace(partialName) ? (u) => u.FullName.ToLower().Contains(partialName.ToLower()) : (u) => true;
+
+            int totalCount = await _dbContext.Users.Where(filterName).CountAsync(cancellationToken);
+            if (totalCount == 0)
+            {
+                _logger.LogWarning("No users found that contain: {partialName}", partialName);
+                return [];
+            }
+
+            List<UserNameDto> userDtos = await _dbContext.Users
+                .Where(filterName)
+                .Select(u => new UserNameDto
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    FamilyName = u.FamilyName,
+                    FullName = u.FullName,
+                })
+                .OrderBy(u => u.FullName)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return userDtos;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while retrieve user names with filter '{partialName}'", partialName);
+            throw new ApplicationException($"Failed to retrieve retrieve user names with filter '{partialName}'", ex);
+        }
+    }
+
+    /// <summary>
+    /// Gets the number of active users in the system.
+    /// </summary>
+    /// <returns>Amount of active users in the system</returns>
+    public async Task<int> GetActiveUsersCountAsync()
+    {
+        return await _dbContext.Users
+            .CountAsync(u => !u.IsDeleted);
     }
 
     public async Task UpdateUserAsync(UpdateUserProfileDto userProfileDto)

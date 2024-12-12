@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -8,7 +9,6 @@ using Auth0.Core.Exceptions;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Rise.Domain.Users;
 using Rise.Server.Tests.Utils;
 using Rise.Shared.Users;
 using Shouldly;
@@ -32,6 +32,9 @@ namespace Rise.Server.Tests.Fixtures
         //     DbAdapter = DbAdapter.Postgres,
         //     WithReseed = true
         // };
+
+        private static readonly ConcurrentDictionary<UserRole, SemaphoreSlim> roleSemaphores = new();
+        private static readonly ConcurrentDictionary<UserRole, string?> roleSessionStorage = new();
         protected readonly ApiWebApplicationFactory _factory;
         protected readonly HttpClient _client;
         private readonly AuthenticationApiClient _authenticationApiClient;
@@ -84,40 +87,62 @@ namespace Rise.Server.Tests.Fixtures
 
         protected async Task LoginAsync(UserRole testLoginRole)
         {
-            var clientId = _factory.Configuration["Auth0:BlazorClientId"];
-            var clientSecret = _factory.Configuration["Auth0:BlazorClientSecret"];
-            var audience = _factory.Configuration["Auth0:Audience"];
+            roleSessionStorage.TryGetValue(testLoginRole, out string? token);
 
-            var tokenRequest = new ResourceOwnerTokenRequest
+            if (token is null)
             {
-                ClientId = clientId,
-                ClientSecret = clientSecret,
-                Scope = "openid profile email",
-                Audience = audience,
-                Username = testLoginRole.GetEmail(),
-                Password = testLoginRole.GetPassword(),
-            };
+                var semaphore = roleSemaphores.GetOrAdd(testLoginRole, _ => new SemaphoreSlim(1, 1));
 
-            var task = SendCreateUserRequest(testLoginRole);
-            await RunTaskWithRetries(async () => await SendLoginRequest(tokenRequest), 50);
+                await semaphore.WaitAsync();
+
+                try
+                {
+                    var clientId = _factory.Configuration["Auth0:BlazorClientId"];
+                    var clientSecret = _factory.Configuration["Auth0:BlazorClientSecret"];
+                    var audience = _factory.Configuration["Auth0:Audience"];
+
+                    var tokenRequest = new ResourceOwnerTokenRequest
+                    {
+                        ClientId = clientId,
+                        ClientSecret = clientSecret,
+                        Scope = "openid profile email",
+                        Audience = audience,
+                        Username = testLoginRole.GetEmail(),
+                        Password = testLoginRole.GetPassword(),
+                    };
+
+                    token = await RunTaskWithRetries(async () => await SendLoginRequest(tokenRequest), (string? t) => t is null);
+
+                    if (token is null) throw new Exception("Failed to fetch login token");
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        private async Task<bool> SendLoginRequest(ResourceOwnerTokenRequest tokenRequest)
+        protected void LogOutAsync()
+        {
+            _client.DefaultRequestHeaders.Authorization = null;
+        }
+
+        private async Task<string?> SendLoginRequest(ResourceOwnerTokenRequest tokenRequest)
         {
             try
             {
-                var tokenResponse = await _authenticationApiClient.GetTokenAsync(tokenRequest);
-                var token = tokenResponse.AccessToken;
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                return true;
+                AccessTokenResponse? tokenResponse = await _authenticationApiClient.GetTokenAsync(tokenRequest);
+                string token = tokenResponse.AccessToken;
+                return token;
             }
             catch (RateLimitApiException ex)
             {
                 Console.WriteLine(ex.ToString());
-                Console.WriteLine($"Rate limit exceeded. Retrying after 1 seconds...");
+                Console.WriteLine($"Rate limit exceeded. Retrying in a little while...");
                 //Delay so that auth0 api doesn't throw a rate limit exception
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                return false;
+                return null;
             }
         }
 
@@ -125,8 +150,8 @@ namespace Rise.Server.Tests.Fixtures
         {
             try
             {
-                var task = SendCreateUserRequest(testLoginRole);
-                await RunTaskWithRetries(async () => await SendCreateUserRequest(testLoginRole), 50);
+                UserCreateRequest request = MakeUserCreateRequest(testLoginRole.GetId(), testLoginRole);
+                await RunTaskWithRetries(async () => await SendCreateUserRequest(testLoginRole, request), (t) => !t);
             }
             catch (ErrorApiException)
             {
@@ -135,26 +160,37 @@ namespace Rise.Server.Tests.Fixtures
             }
         }
 
-        private async Task<bool> SendCreateUserRequest(UserRole testLoginRole)
+        private static UserCreateRequest MakeUserCreateRequest(int testId, UserRole testLoginRole)
+        {
+            return MakeUserCreateRequest(testId, testLoginRole.GetUserName(), testLoginRole.GetEmail(), testLoginRole.GetPassword());
+        }
+
+        private static UserCreateRequest MakeUserCreateRequest(int testId, string username, string email, string password)
+        {
+            return new UserCreateRequest
+            {
+                UserName = username,
+                Email = email,
+                Connection = "Username-Password-Authentication",
+                Password = password,
+                AppMetadata = new Dictionary<string, object>
+                        {
+                            { "buutUserId", testId.ToString() },
+                        }
+            };
+        }
+
+        private async Task<bool> SendCreateUserRequest(UserRole testLoginRole, UserCreateRequest request)
         {
             try
             {
-                var user = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
-                {
-                    UserName = testLoginRole.GetUserName(),
-                    Email = testLoginRole.GetEmail(),
-                    Connection = "Username-Password-Authentication",
-                    Password = testLoginRole.GetPassword(),
-                    AppMetadata = new Dictionary<string, object>
-                        {
-                            { "buutUserId", "1" },
-                        }
-                });
+                var user = await _managementApiClient.Users.CreateAsync(request);
 
                 _createdUserIds.Add(user.UserId);
 
                 var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = testLoginRole.GetRole() });
                 var role = roles.FirstOrDefault() ?? throw new Exception($"Role '{testLoginRole.GetRole()}' not found");
+
                 await _managementApiClient.Users.AssignRolesAsync(user.UserId, new AssignRolesRequest
                 {
                     Roles = [role.Id]
@@ -165,22 +201,23 @@ namespace Rise.Server.Tests.Fixtures
             catch (RateLimitApiException ex)
             {
                 Console.WriteLine(ex.ToString());
-                Console.WriteLine($"Rate limit exceeded. Retrying after 2 seconds...");
+                Console.WriteLine($"Rate limit exceeded. Retrying in a little while...");
                 //Delay so that auth0 api doesn't throw a rate limit exception
-                await Task.Delay(TimeSpan.FromSeconds(2));
-                return false;
             }
+            return false;
         }
 
-        private static async Task RunTaskWithRetries(Func<Task<bool>> callback, int retryLimit)
+        private static async Task<T?> RunTaskWithRetries<T>(Func<Task<T?>> callback, Predicate<T?> isSuccessful, int retryLimit = 10)
         {
-            var retries = 0;
-            var isSuccess = false;
-            while (retries <= retryLimit && !isSuccess)
+            int retries = 0;
+            T? result = default;
+            while (retries <= retryLimit && isSuccessful(result))
             {
-                isSuccess = await callback();
-                retries++;
+                result = await callback();
+                // Exponential delay to avoid race conditions
+                await Task.Delay(2 ^ retries++ * 1_000);
             }
+            return result;
         }
 
         protected async Task TestForbiddenAccessForEndpoint(string url, UserRole testLoginRole, string httpMethod)
@@ -217,7 +254,7 @@ namespace Rise.Server.Tests.Fixtures
         {
             try
             {
-                await RunTaskWithRetries(async () => await SendDeleteAuth0UserRequest(buutUserId), 50);
+                await RunTaskWithRetries(async () => await SendDeleteAuth0UserRequest(buutUserId), (t) => !t, 15);
             }
             catch (Exception ex)
             {
@@ -235,74 +272,45 @@ namespace Rise.Server.Tests.Fixtures
                     await _managementApiClient.Users.DeleteAsync(user.UserId);
                     return true;
                 }
-                return false;
             }
             catch (RateLimitApiException ex)
             {
                 Console.WriteLine(ex.ToString());
-                Console.WriteLine($"Rate limit exceeded. Retrying after 2 seconds...");
+                Console.WriteLine($"Delete Rate limit exceeded. Retrying in a little bit...");
                 //Delay so that auth0 api doesn't throw a rate limit exception
-                await Task.Delay(TimeSpan.FromSeconds(2));
-                return false;
             }
+
+            return false;
         }
 
         public async Task RegisterValidAuth0User()
         {
-            await RunTaskWithRetries(async () => await RegisterValidUser(), 20);
+            await RunTaskWithRetries(RegisterValidUser, (u) => !u);
         }
 
         private async Task<bool> RegisterValidUser()
         {
             try
             {
-
-                const int buutUserId = 3;
+                const int buutUserId = 6;
                 const string email = "user3@example.com";
                 const string password = "SecureP@ssw0rd123!";
-                const UserRole roleName = UserRole.Guest;
+                const UserRole role = UserRole.Guest;
 
-                // Create the user
-                var user = await _managementApiClient.Users.CreateAsync(new UserCreateRequest
-                {
-                    UserName = email,
-                    Email = email,
-                    Connection = "Username-Password-Authentication",
-                    Password = password,
-                    AppMetadata = new Dictionary<string, object>
-            {
-                { "buutUserId", buutUserId }
-            }
-                });
+                UserCreateRequest request = MakeUserCreateRequest(buutUserId, email, email, password);
 
-                _createdUserIds.Add(user.UserId);
-
-                // Assign a role to the user
-                var roles = await _managementApiClient.Roles.GetAllAsync(new GetRolesRequest { NameFilter = roleName.ToString() });
-                var role = roles.FirstOrDefault() ?? throw new Exception($"Role '{roleName}' not found");
-
-                await _managementApiClient.Users.AssignRolesAsync(user.UserId, new AssignRolesRequest
-                {
-                    Roles = new[] { role.Id }
-                });
-
-                Console.WriteLine($"User with buutUserId {buutUserId} created successfully.");
-
-                return true;
+                return await SendCreateUserRequest(role, request);
             }
             catch (RateLimitApiException ex)
             {
                 Console.WriteLine($"Rate limit exceeded: {ex.Message}. Retrying...");
-                await Task.Delay(TimeSpan.FromSeconds(2));
-                return false;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to create user: {ex.Message}");
-                return false;
-
             }
 
+            return false;
         }
 
 

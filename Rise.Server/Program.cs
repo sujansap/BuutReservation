@@ -14,6 +14,8 @@ using Rise.Shared.Notifications;
 using Rise.Services.Notifications;
 using Rise.Shared.Users;
 using Rise.Services.Users;
+using Rise.Services.Boats;
+using Rise.Server.Workers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Auth0Net.DependencyInjection;
@@ -21,8 +23,10 @@ using Rise.Server.Auth;
 using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
 using Rise.Shared.Boats;
+using Rise.Domain.Boats;
 using Rise.Services.Boats;
 using Rise.Client.Register;
+using Rise.Shared;
 
 try
 {
@@ -108,22 +112,28 @@ try
         options.UseTriggers(options => options.AddTrigger<EntityBeforeSaveTrigger>());
     });
 
+    builder.Services.AddScoped<INotificationService, NotificationService>();
+    builder.Services.AddScoped<IInternalNotificationService, InternalNotificationService>();
     builder.Services.AddScoped<ICruisePeriodService, CruisePeriodService>();
     builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
     builder.Services.AddScoped<IReservationService, ReservationService>();
-    builder.Services.AddScoped<INotificationService, NotificationService>();
     builder.Services.AddScoped<IUserAdminService, UserService>();
     builder.Services.AddScoped<IUserRegisterService, UserService>();
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IBatteryService, BatteryService>();
+    builder.Services.AddScoped<IBoatService, BoatService>();
+
     builder.Services.AddHttpContextAccessor()
                 .AddScoped<IAuthContextProvider, HttpContextAuthProvider>();
+    builder.Services.AddScoped<BatteryAssignmentService>();
 
     //validation using fluent validation
     builder.Services.AddValidatorsFromAssemblyContaining<CreateReservationDto.Validator>();
     builder.Services.AddFluentValidationAutoValidation();
 
     builder.Services.AddLocalization();
+
+    builder.Services.AddHostedService<BatteryAssignmentWorker>();
 
     var app = builder.Build();
 

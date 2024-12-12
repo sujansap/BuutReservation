@@ -9,8 +9,8 @@ namespace Rise.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = nameof(UserRole.Member))]
-    public class ReservationController(IReservationService reservationService, ILogger<ReservationController> logger) : ControllerBase
+
+    public class ReservationController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger = logger;
         private readonly IReservationService _reservationService = reservationService;
@@ -33,6 +33,7 @@ namespace Rise.Server.Controllers
         /// <param name="pageSize">Number of items to get in a page.</param>
         /// <returns>List of reservations</returns>
         [HttpGet("me")]
+        [Authorize(Roles = nameof(UserRole.Member))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -80,6 +81,7 @@ namespace Rise.Server.Controllers
         /// <param name="reservationDto">The details of the reservation to create</param>
         /// <returns>The deatils of the created reservation</returns>
         [HttpPost]
+        [Authorize(Roles = nameof(UserRole.Member))]
         [NoQueryParameters]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -101,6 +103,7 @@ namespace Rise.Server.Controllers
         /// <response code="404">If no reservation with the specified ID is found.</response>
         /// <response code="500">If an error occurs while retrieving the reservation details.</response>
         [HttpGet("{id}")]
+        [Authorize(Roles = nameof(UserRole.Member))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservationDetailsDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -125,10 +128,13 @@ namespace Rise.Server.Controllers
         }
 
         [HttpPatch("cancel/{id}")]
+        [Authorize(Roles = $"{nameof(UserRole.Administrator)},{nameof(UserRole.Member)}")]
+
         public async Task<IActionResult> CancelReservation(int id)
         {
             try
             {
+                bool isAdmin = User.IsInRole("Administrator");
                 await _reservationService.CancelReservationAsync(id);
                 return NoContent();
             }
@@ -141,6 +147,61 @@ namespace Rise.Server.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Gets all reservations in the system with pagination support for admins.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint is accessible only by admins and supports pagination. 
+        /// The admin can fetch reservations for all users in the system.
+        /// </remarks>
+        /// <param name="cursor">The ID of a reservation to fetch relative to, for pagination.</param>
+        /// <param name="isNextPage">If available, true to get the next page or false to get the previous page.</param>
+        /// <param name="pageSize">Number of items to get in a page (default is 10).</param>
+        /// <param name="showPastReservations"></param>
+        /// <returns>Paginated list of all reservations in the system.</returns>
+        [HttpGet("all")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemsPageDto<ReservationDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllReservations(
+            [FromQuery] int? cursor,
+            [FromQuery] bool? isNextPage,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] bool showPastReservations = false)
+
+        {
+            try
+            {
+                var reservations = await _reservationService.GetAllReservations(cursor, isNextPage, pageSize, showPastReservations);
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching all reservations.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving reservations.");
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Gets the count of reservations for a given date
+        /// </summary>
+        /// <param name="date">The date for which to get count of reservations</param>
+        /// <returns>The count of reservations for the date</returns>
+        [HttpGet("count")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetReservationsCount([FromQuery] DateOnly date)
+        {
+            var count = await _reservationService.GetReservationsCountAsync(date);
+            return Ok(count);
         }
     }
 }

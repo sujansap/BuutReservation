@@ -17,8 +17,19 @@ namespace Rise.Domain.Reservations
         public int UserId { get; set; }
         public required User User { get; set; }
 
-        // TODO: een andmin kan wel aanpassen tot net voor de reservatie
-        public void Cancel()
+        private Battery? _battery;
+        public Battery? Battery 
+        { 
+            get => _battery;
+            set
+            {
+                _battery = value;
+            }
+        }
+
+        public User? PreviousBatteryHolder { get; private set; } = default;
+
+        public void Cancel(bool isAdmin)
         {
             if (IsDeleted)
             {
@@ -26,12 +37,41 @@ namespace Rise.Domain.Reservations
             }
 
             DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
-            if ((TimeSlot.Date.ToDateTime(TimeOnly.MinValue) - currentDate.ToDateTime(TimeOnly.MinValue)).TotalDays < MinDaysBetweenReservation)
+
+            if (TimeSlot.Date < currentDate)
             {
-                throw new InvalidOperationException("Reservations can only be canceled at least 2 days before the reservation date.");
+                throw new InvalidOperationException("Reservations in the past cannot be canceled.");
+            }
+
+
+            if (!isAdmin)
+            {
+                if ((TimeSlot.Date.ToDateTime(TimeOnly.MinValue) - currentDate.ToDateTime(TimeOnly.MinValue)).TotalDays < MinDaysBetweenReservation)
+                {
+                    throw new InvalidOperationException("Reservations can only be canceled at least 2 days before the reservation date unless canceled by an admin.");
+                }
             }
 
             IsDeleted = true;
+
+            PreviousBatteryHolder = _battery?.Mentor;
         }
+
+        public Reservation AssignBattery(Battery? battery)
+        {
+            if (IsDeleted) throw new InvalidOperationException("Cannot assign battery to canceled reservation");
+
+            _battery?.RemoveReservation(this);
+            _battery?.DecreaseUsageStats();
+
+            _battery = battery;
+            _battery?.AddReservation(this);
+            _battery?.IncreaseUsageStats();
+
+            Reservation? previousReservation = battery?.ClosesPastReservation(TimeSlot);
+            PreviousBatteryHolder = previousReservation?.User;
+            return this;
+        }
+
     }
 }
