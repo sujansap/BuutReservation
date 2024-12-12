@@ -13,7 +13,7 @@
     <Authorized>
         <AsyncData @bind-Data="@UserProfileDto" DataFetcher="@FetchUserProfile" T="UserProfileDto"
             TestIdPrefix="profile" @ref="AsyncDataRef" >
-            <MudCard>
+            <MudCard data-testid="profile-card">
                 <MudStack Row="true" StretchItems="StretchItems.End">
                     <LeftProfilePanel UserProfileDto="@UserProfileDto" AuthContext="@context">
 

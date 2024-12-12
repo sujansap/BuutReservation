@@ -57,6 +57,7 @@ namespace Rise.Client.Tests.Reservations
                 });
             });
         }
+        
         private async Task MockPastReservationsApi()
         {
             await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
@@ -98,6 +99,7 @@ namespace Rise.Client.Tests.Reservations
                 });
             });
         }
+
         [Test]
         public async Task RedirectsToReservationDetails_WhenViewDetailsButtonClicked()
         {
@@ -115,10 +117,6 @@ namespace Rise.Client.Tests.Reservations
             await Expect(Page).ToHaveURLAsync($"/reservations/{ValidReservation.Id}");
         }
 
-
-
-
-
         private async Task MockReservationsApiError()
         {
             await Page.RouteAsync("*/**/api/Reservation/me**", async route =>
@@ -126,8 +124,6 @@ namespace Rise.Client.Tests.Reservations
                 await route.FulfillAsync(new() { Status = 400, Body = "Bad Request" });
             });
         }
-
-
 
         [Test]
         public async Task HasTabs()
@@ -137,7 +133,6 @@ namespace Rise.Client.Tests.Reservations
             await Page.GetByTestId("tab-your-reservations").IsVisibleAsync();
         }
 
-
         [Test]
         public async Task DoesNotHaveLegendComponent()
         {
@@ -145,7 +140,6 @@ namespace Rise.Client.Tests.Reservations
             ILocator legend = Page.GetByTestId("custom-calendar-legend");
             await Expect(legend).ToHaveCountAsync(0);
         }
-
 
         [Test]
         public async Task HasCorrectAmountOfReservations()

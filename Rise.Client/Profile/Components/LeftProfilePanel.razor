@@ -9,13 +9,13 @@
 
             </MudIcon>
         </MudAvatar>
-        <MudText Class="mb-2">
-            @UserProfileDto.FirstName @UserProfileDto.FamilyName
+        <MudText Class="mb-2" data-testid="profile-full-name">
+            @($"{UserProfileDto.FirstName} {UserProfileDto.FamilyName}")
         </MudText>
-        <MudText Class="mb-2">
+        <MudText Class="mb-2" data-testid="profile-date-of-birth">
             @UserProfileDto.DateOfBirth.ToString("dd/MM/yyyy")
         </MudText>
-        <MudText Class="mb-2">
+        <MudText Class="mb-2" data-testid="profile-roles">
             @{
                 var roles = AuthContext.User.Claims
                 .Where(c => c.Type.Contains("role"))
