@@ -60,5 +60,27 @@ namespace Rise.Server.Controllers.Boats
         }
 
 
+
+        /// <summary>
+        /// Get all batteries for a boat
+        /// </summary>
+        /// <param name="boatId">The boat id for which you want battries</param>
+        /// <returns>All the battries for a specfic boat</returns>
+        [HttpGet("boat/{boatId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BatteryDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetBatteriesByBoat(
+        [Range(0, int.MaxValue, ErrorMessage = "Boat id must be positive")]
+        int boatId)
+        {
+            _logger.LogInformation("GET batteries for boat: {boatId}", boatId);
+            IEnumerable<BatteryDto> batteries = await _batteryService.GetBatteriesByBoat(boatId);
+            _logger.LogInformation("GET done fetching batteries for boat: {boatId}", boatId);
+            return Ok(batteries);
+        }
+
+
     }
 }

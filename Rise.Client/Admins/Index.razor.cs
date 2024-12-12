@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Rise.Client.Common;
 using Rise.Shared.Reservations;
 using Rise.Shared.Users;
-using Rise.Shared.Boats;
+using Rise.Shared;
 
 namespace Rise.Client.Admins
 {

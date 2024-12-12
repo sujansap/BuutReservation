@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rise.Persistence;
@@ -11,9 +12,11 @@ using Rise.Persistence;
 namespace Rise.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241208175006_AddBoatAvailability")]
+    partial class AddBoatAvailability
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,11 +58,6 @@ namespace Rise.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("NOW()");
-
-                    b.Property<int>("UsageCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -165,9 +163,6 @@ namespace Rise.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BatteryId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("BoatId")
                         .HasColumnType("integer");
 
@@ -181,9 +176,6 @@ namespace Rise.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("PreviousBatteryHolderId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("TimeSlotId")
                         .HasColumnType("integer");
 
@@ -196,10 +188,6 @@ namespace Rise.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BatteryId");
-
-                    b.HasIndex("PreviousBatteryHolderId");
 
                     b.HasIndex("TimeSlotId");
 
@@ -310,13 +298,6 @@ namespace Rise.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasMaxLength(202)
-                        .HasColumnType("character varying(202)")
-                        .HasComputedColumnSql("\"FamilyName\" || ', ' || \"FirstName\"", true);
-
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -373,19 +354,11 @@ namespace Rise.Persistence.Migrations
 
             modelBuilder.Entity("Rise.Domain.Reservations.Reservation", b =>
                 {
-                    b.HasOne("Rise.Domain.Boats.Battery", "Battery")
-                        .WithMany("Reservations")
-                        .HasForeignKey("BatteryId");
-
                     b.HasOne("Rise.Domain.Boats.Boat", "Boat")
                         .WithMany("Reservations")
                         .HasForeignKey("BoatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Rise.Domain.Users.User", "PreviousBatteryHolder")
-                        .WithMany("HoldsBatteries")
-                        .HasForeignKey("PreviousBatteryHolderId");
 
                     b.HasOne("Rise.Domain.TimeSlots.TimeSlot", "TimeSlot")
                         .WithMany("Reservations")
@@ -399,11 +372,7 @@ namespace Rise.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Battery");
-
                     b.Navigation("Boat");
-
-                    b.Navigation("PreviousBatteryHolder");
 
                     b.Navigation("TimeSlot");
 
@@ -465,11 +434,6 @@ namespace Rise.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Rise.Domain.Boats.Battery", b =>
-                {
-                    b.Navigation("Reservations");
-                });
-
             modelBuilder.Entity("Rise.Domain.Boats.Boat", b =>
                 {
                     b.Navigation("Batteries");
@@ -490,8 +454,6 @@ namespace Rise.Persistence.Migrations
             modelBuilder.Entity("Rise.Domain.Users.User", b =>
                 {
                     b.Navigation("GuardedBatteries");
-
-                    b.Navigation("HoldsBatteries");
 
                     b.Navigation("Notifications");
 

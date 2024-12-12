@@ -22,6 +22,7 @@ using Rise.Shared.Boats;
 using Rise.Client.Admins.Battery;
 using Rise.Client.Admins.CruisePeriods;
 using Rise.Client.Register;
+using Rise.Shared;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

@@ -176,4 +176,66 @@
 	<data name="AddTimeSlot">
 		<value>Add Time Slot</value>
 	</data>
+	<data name="Availability">
+		<value>
+			Availability
+		</value>
+	</data>
+	<data name="Available">
+		<value>
+			Available
+		</value>
+	</data>
+	<data name="Unavailable">
+		<value>
+			Unavailable
+		</value>
+	</data>
+	<data name="Save">
+		<value>
+			Save
+		</value>
+	</data>
+	<data name="BoatBatteries">
+		<value>Boot {0} Batteries</value>
+	</data>
+	<data name="AddBattery">
+		<value>Add Battery</value>
+	</data>
+	<data name="NoBatteriesAvailable">
+		<value>No batteries available</value>
+	</data>
+	<data name="Edit">
+		<value>Edit</value>
+	</data>
+	<data name="Delete">
+		<value>Delete</value>
+	</data>
+	<data name="Details">
+		<value>Details</value>
+	</data>
+	<data name="BatteryId">
+		<value>Battery ID</value>
+	</data>
+	<data name="NoBoatsAvailable">
+		<value>No boats available</value>
+	</data>
+	<data name="Boats">
+		<value>Boats</value>
+	</data>
+	<data name="PersonalName">
+		<value>Personal Name</value>
+	</data>
+	<data name="AddBoat">
+		<value>Add Boat</value>
+	</data>
+	<data name="EditBoat">
+		<value>Edit Boat</value>
+	</data>
+	<data name="DeleteBoat">
+		<value>Delete Boat</value>
+	</data>
+	<data name="Mentor">
+		<value>Mentor</value>
+	</data>
 </root>

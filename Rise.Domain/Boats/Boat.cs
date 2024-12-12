@@ -10,8 +10,25 @@ namespace Rise.Domain.Boats
         public required string PersonalName
         {
             get => _personalName;
-            set => _personalName = Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName)).Trim();
+            set
+            {
+                Guard.Against.NullOrWhiteSpace(value, nameof(PersonalName));
+                Guard.Against.LengthOutOfRange(value, 1, 64, nameof(PersonalName));
+                _personalName = value.Trim();
+            }
         }
+
+        /// <summary>
+        /// Indicates whether the boat is available for reservations
+        /// </summary>
+        private bool _isAvailable = true;
+
+        public bool IsAvailable
+        {
+            get => _isAvailable;
+            set => _isAvailable = Guard.Against.Null(value, nameof(IsAvailable), "Availability status cannot be null");
+        }
+
         private readonly List<Reservation> reservations = [];
         public IReadOnlyList<Reservation> Reservations => reservations.AsReadOnly();
 
@@ -70,5 +87,13 @@ namespace Rise.Domain.Boats
                 .ToList()!;
         }
 
+        /// <summary>
+        /// Updates the availability of the boat
+        /// </summary>
+        /// <param name="isAvailable">New availability status</param>
+        public void ChangeAvailability(bool isAvailable)
+        {
+            IsAvailable = isAvailable;
+        }
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Rise.Domain.Boats;
 
@@ -12,6 +13,12 @@ namespace Rise.Persistence.Boats
         {
             base.Configure(builder);
             builder.Property(x => x.PersonalName).HasMaxLength(64);
+
+            builder.Property(x => x.IsAvailable)
+            .IsRequired()
+            .HasDefaultValue(true);
+
+            
         }
     }
 }

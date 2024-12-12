@@ -73,7 +73,7 @@
                 else
                 {
                     <MudPaper Class="pa-4" Elevation="0" data-testid="time-slots-list">
-                        <MudList Dense="true" Clickable="true" T="TimeSpan">
+                        <MudList Dense="true" T="TimeSpan">
                             @foreach (var timeSlot in AllTimeSlotsDto.TimeSlots.OrderBy(t => t.Start))
                             {
                                 <MudListItem data-testid="time-slot-item">

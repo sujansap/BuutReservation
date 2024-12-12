@@ -91,7 +91,7 @@
 		<value>De bootjes hebben als vaste ligplaats de verlaagde kade in de Terneuzenlaan.
 			Vaargebied: van de Meulestedebrug tot aan het Keizerspark.</value>
 	</data>
-		<data name="AdminReservations">
+	<data name="AdminReservations">
 		<value>RESERVATIONS</value>
 	</data>
 
@@ -125,7 +125,7 @@
 	<data name="Cancelled">
 		<value>Geannuleerd</value>
 	</data>
-	
+
 
 	<data name="Battery">
 		<value>
@@ -208,5 +208,67 @@
 	</data>
 	<data name="AddTimeSlot">
 		<value>Tijdslot Toevoegen</value>
+	</data>
+	<data name="Availability">
+		<value>
+			Beschikbaarheid
+		</value>
+	</data>
+	<data name="Available">
+		<value>
+			Beschikbaar
+		</value>
+	</data>
+	<data name="Unavailable">
+		<value>
+			Niet Beschikbaar
+		</value>
+	</data>
+	<data name="Save">
+		<value>
+			Opslaan
+		</value>
+	</data>
+	<data name="BoatBatteries">
+		<value>Boot {0} Batterijen</value>
+	</data>
+	<data name="AddBattery">
+		<value>Batterij Toevoegen</value>
+	</data>
+	<data name="NoBatteriesAvailable">
+		<value>Geen batterijen beschikbaar</value>
+	</data>
+	<data name="Edit">
+		<value>Bewerken</value>
+	</data>
+	<data name="Delete">
+		<value>Verwijderen</value>
+	</data>
+	<data name="Details">
+		<value>Details</value>
+	</data>
+	<data name="BatteryId">
+		<value>Batterij ID</value>
+	</data>
+	<data name="NoBoatsAvailable">
+		<value>Geen boten beschikbaar</value>
+	</data>
+	<data name="Boats">
+		<value>Boten</value>
+	</data>
+	<data name="PersonalName">
+		<value>Persoonlijke Naam</value>
+	</data>
+	<data name="AddBoat">
+		<value>Boot Toevoegen</value>
+	</data>
+	<data name="EditBoat">
+		<value>Boot Bewerken</value>
+	</data>
+	<data name="DeleteBoat">
+		<value>Boot Verwijderen</value>
+	</data>
+	<data name="Mentor">
+		<value>Mentor</value>
 	</data>
 </root>

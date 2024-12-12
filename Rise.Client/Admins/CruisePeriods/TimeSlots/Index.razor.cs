@@ -24,7 +24,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
         [Parameter]
         public int? Id { get; set; }
 
-        private MudForm? form;
+        private MudForm form = default!;
         private Validator validator = new();
         private TimeSpan? StartTime { get; set; }
         private TimeSpan? EndTime { get; set; }
@@ -139,7 +139,7 @@ namespace Rise.Client.Admins.CruisePeriods.TimeSlots
             }
         }
 
-        private async Task HandleStartTimeChanged()
+        private void HandleStartTimeChanged()
         {
             if (StartTime.HasValue)
             {

@@ -5,9 +5,9 @@ namespace Rise.Persistence.Seeders.Boats;
 internal class BoatSeeder(ApplicationDbContext dbContext) : GeneralSeeder<Boat>(dbContext)
 {
 
-    public readonly Boat Limba = new() { PersonalName = "Limba", };
-    public readonly Boat Leith = new() { PersonalName = "Leith", };
-    public readonly Boat Lubeck = new() { PersonalName = "Lubeck", };
+    public readonly Boat Limba = new() { PersonalName = "Limba", IsAvailable = true };
+    public readonly Boat Leith = new() { PersonalName = "Leith", IsAvailable = true };
+    public readonly Boat Lubeck = new() { PersonalName = "Lubeck", IsAvailable = true };
 
     protected override DbSet<Boat> DbSet => _dbContext.Boats;
 
