@@ -23,7 +23,7 @@ public class ProfilePageTest : CustomAuthenticatedPageTest
             Number = "StreetNumber",
             PostalCode = "CityPostalCode",
         },
-        DateOfBirth = new DateTime(2000, 1, 1)
+        DateOfBirth = new DateTime(2002, 2, 2)
     };
 
     [SetUp]
@@ -84,30 +84,53 @@ public class ProfilePageTest : CustomAuthenticatedPageTest
     [Test]
     public async Task ShowsUserProfile()
     {
-        await MockProfileApi(5000);
+        await MockProfileApi();
         await NavigateToUrl(ProfilePageUrl);
 
-        await Page.WaitForSelectorAsync("[data-testid='profile-loading-progress']", new() { State = WaitForSelectorState.Visible });
-
-        await Expect(Page.GetByTestId("profile-loading-progress")).ToBeVisibleAsync();
-
-        await Page.WaitForSelectorAsync("[data-testid='profile-loading-progress']", new() { State = WaitForSelectorState.Hidden });
-
         await Expect(Page.GetByTestId("profile-full-name")).ToHaveTextAsync($"{profileDto.FirstName} {profileDto.FamilyName}");
-
-        var dateOfBirth = Page.GetByTestId("profile-date-of-birth");
-        await Expect(dateOfBirth).ToBeVisibleAsync();
-        await Expect(dateOfBirth).ToHaveTextAsync($"{profileDto.DateOfBirth:dd/MM/yyyy}");
-
+        await Expect(Page.GetByTestId("profile-date-of-birth")).ToHaveTextAsync($"{profileDto.DateOfBirth:dd/MM/yyyy}");
         await Expect(Page.GetByTestId("profile-roles")).ToHaveTextAsync($"{nameof(UserRole.Guest)}");
-        await Expect(Page.GetByTestId("profile-first-name")).ToHaveTextAsync($"{profileDto.FirstName}");
-        await Expect(Page.GetByTestId("profile-last-name")).ToHaveTextAsync($"{profileDto.FamilyName}");
-        await Expect(Page.GetByTestId("profile-phone-number")).ToHaveTextAsync($"{profileDto.PhoneNumber}");
-        await Expect(Page.GetByTestId("profile-street")).ToHaveTextAsync($"{profileDto.Address.Street}");
-        await Expect(Page.GetByTestId("profile-number")).ToHaveTextAsync($"{profileDto.Address.Number}");
-        await Expect(Page.GetByTestId("profile-city")).ToHaveTextAsync($"{profileDto.Address.City}");
-        await Expect(Page.GetByTestId("profile-postal-code")).ToHaveTextAsync($"{profileDto.Address.PostalCode}");
-        await Expect(Page.GetByTestId("profile-country")).ToHaveTextAsync($"{profileDto.Address.Country}");
+
+        var firstName = Page.GetByTestId("profile-first-name");
+        await Expect(firstName).ToHaveValueAsync($"{profileDto.FirstName}");
+        await Expect(firstName).ToBeDisabledAsync();
+
+        var family = Page.GetByTestId("profile-family-name");
+        await Expect(family).ToHaveValueAsync($"{profileDto.FamilyName}");
+        await Expect(family).ToBeDisabledAsync();
+
+        var phone = Page.GetByTestId("profile-phone-number");
+        await Expect(phone).ToHaveValueAsync($"{profileDto.PhoneNumber}");
+        await Expect(phone).ToBeDisabledAsync();
+
+        var street = Page.GetByTestId("profile-street");
+        await Expect(street).ToHaveValueAsync($"{profileDto.Address.Street}");
+        await Expect(street).ToBeDisabledAsync();
+
+        var number = Page.GetByTestId("profile-number");
+        await Expect(number).ToHaveValueAsync($"{profileDto.Address.Number}");
+        await Expect(number).ToBeDisabledAsync();
+
+        var city = Page.GetByTestId("profile-city");
+        await Expect(city).ToHaveValueAsync($"{profileDto.Address.City}");
+        await Expect(city).ToBeDisabledAsync();
+
+        var postal = Page.GetByTestId("profile-postal-code");
+        await Expect(postal).ToHaveValueAsync($"{profileDto.Address.PostalCode}");
+        await Expect(postal).ToBeDisabledAsync();
+
+        var country = Page.GetByTestId("profile-country");
+        await Expect(country).ToHaveValueAsync($"{profileDto.Address.Country}");
+        await Expect(country).ToBeDisabledAsync();
+
+        var edit = Page.GetByTestId("profile-edit-button");
+        await Expect(edit).ToBeVisibleAsync();
+
+        var save = Page.GetByTestId("profile-save-button");
+        var cancel = Page.GetByTestId("profile-cancel-button");
+
+        await Expect(save).ToBeHiddenAsync();
+        await Expect(cancel).ToBeHiddenAsync();
     }
 
 }

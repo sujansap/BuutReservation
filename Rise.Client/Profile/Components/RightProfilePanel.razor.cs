@@ -60,7 +60,18 @@ public partial class RightProfilePanel
 
         if (Form.IsValid && FieldsHaveChanged())
         {
-            await UserService.UpdateUserAsync(UpdateUserProfileDto);
+            ToggleEdit();
+            try
+            {
+                await UserService.UpdateUserAsync(UpdateUserProfileDto);
+            }
+            catch (Exception e)
+            {
+                SnackbarService.Add($"Sonething went wrong: {e.Message}", Severity.Error);
+                IsLoading = false;
+                ToggleEdit();
+                return;
+            }
 
             SetInitialProfileDtoStateToCurrentUserProfileDto();
             await OnUserChanged.InvokeAsync(InitialProfileDto);
@@ -68,7 +79,6 @@ public partial class RightProfilePanel
             SnackbarService.Add("you successfully updated your profile!", Severity.Success);
 
             Form.ResetValidation();
-            ToggleEdit();
         }
         IsLoading = false;
     }

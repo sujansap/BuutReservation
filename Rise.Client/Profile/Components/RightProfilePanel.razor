@@ -59,19 +59,20 @@
     </MudForm>
     @if (IsLoading)
     {
-        <MudProgressCircular>
-
-        </MudProgressCircular>
+        <div style="text-align: center;">
+            <MudProgressCircular Indeterminate="true" data-testid="profile-save-loading">
+            </MudProgressCircular>
+        </div>
     }
     else
     {
         <MudStack Row="true" Class="mb-4" Justify="Justify.FlexEnd">
             @if (EditIsEnabled)
             {
-                <PrimaryButton OnClick="@SaveChanges">
+                <PrimaryButton OnClick="@SaveChanges" data-testid="profile-save-button">
                     @Localizer["Save"]
                 </PrimaryButton>
-                <CancelButton OnClick="@CancelEdit">
+                <CancelButton OnClick="@CancelEdit" data-testid="profile-cancel-button">
                     @Localizer["Cancel"]
                 </CancelButton>
             }

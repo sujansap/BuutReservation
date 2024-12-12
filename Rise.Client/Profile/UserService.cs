@@ -21,7 +21,7 @@ public class UserService(HttpClient httpClient) : IUserService
         var response = await _httpClient.PatchAsJsonAsync("", updateUserProfileDto);
         if (response.StatusCode != HttpStatusCode.NoContent)
         {
-            throw new Exception("Failed to update profile");
+            throw new Exception($"Failed to update profile: Status: {response.StatusCode}, Response: {response.ReasonPhrase}");
         }
     }
 }

@@ -14,7 +14,7 @@ public partial class Index : ComponentBase
     public required IUserService UserService { get; set; }
 
     public required AsyncData<UserProfileDto> AsyncDataRef { get; set; }
-    private UserProfileDto UserProfileDto { get; set; } = default!;
+    private UserProfileDto? UserProfileDto { get; set; }
 
     private async Task<UserProfileDto> FetchUserProfile()
     {

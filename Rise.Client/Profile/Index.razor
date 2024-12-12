@@ -12,8 +12,8 @@
 <AuthorizeView>
     <Authorized>
         <AsyncData @bind-Data="@UserProfileDto" DataFetcher="@FetchUserProfile" T="UserProfileDto"
-            TestIdPrefix="profile" @ref="AsyncDataRef" >
-            <MudCard data-testid="profile-card">
+            TestIdPrefix="profile" @ref="AsyncDataRef">
+            <MudCard>
                 <MudStack Row="true" StretchItems="StretchItems.End">
                     <LeftProfilePanel UserProfileDto="@UserProfileDto" AuthContext="@context">
 
