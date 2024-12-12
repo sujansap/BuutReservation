@@ -24,14 +24,14 @@
 
                 <MudStack>
                     <MudText Typo="Typo.subtitle2">@Localizer["Name"]</MudText>
-                    <MudText>@User.Name</MudText>
+                    <MudText>@UserProfileDto.FirstName</MudText>
                 </MudStack>
 
                 <MudDivider Class="my-3" />
 
                 <MudStack>
                     <MudText Typo="Typo.subtitle2">@Localizer["Email"]</MudText>
-                    <MudText>@User.Email</MudText>
+                    <MudText>@UserProfileDto.Email</MudText>
                 </MudStack>
             </MudStack>
         </MudPaper>

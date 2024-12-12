@@ -75,6 +75,7 @@ public record class UserRegistrationModelDto
             .WithMessage("The phone number provided is not valid");
 
             RuleFor(x => x.DateOfBirth)
+            .NotNull().WithMessage("Please provide your date of birth.")
             .NotEmpty().WithMessage("Please provide your date of birth.")
             .Must(BeAtLeast18YearsOld).WithMessage("You must be at least 18 years old to register.");
 
@@ -109,7 +110,7 @@ public record class UserRegistrationModelDto
             return dateOfBirth.HasValue && dateOfBirth.Value <= DateTime.Today.AddYears(-18);
         }
 
-        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        public Func<object, string, Task<IEnumerable<string>>>  ValidateValue => async (model, propertyName) =>
         {
             var result = await ValidateAsync(ValidationContext<UserRegistrationModelDto>.CreateWithOptions((UserRegistrationModelDto)model, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)

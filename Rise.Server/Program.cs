@@ -23,9 +23,6 @@ using Rise.Server.Auth;
 using Rise.Services.Auth;
 using Microsoft.OpenApi.Models;
 using Rise.Shared.Boats;
-using Rise.Domain.Boats;
-using Rise.Services.Boats;
-using Rise.Client.Register;
 using Rise.Shared;
 
 try
@@ -119,6 +116,7 @@ try
     builder.Services.AddScoped<IReservationService, ReservationService>();
     builder.Services.AddScoped<IUserAdminService, UserService>();
     builder.Services.AddScoped<IUserRegisterService, UserService>();
+    builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<IBatteryService, BatteryService>();
     builder.Services.AddScoped<IBoatService, BoatService>();
 
