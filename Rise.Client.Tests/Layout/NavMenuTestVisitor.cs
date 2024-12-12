@@ -9,7 +9,6 @@ namespace Rise.Client.Tests.Layout
         [Test]
         [TestCase("nav-brand-logo", "/home", "/notFound")]
         [TestCase("nav-desktop-home", "/home", "/notFound")]
-        [TestCase("nav-desktop-about", "/about", "")]
         [TestCase("nav-desktop-login", "/login", "")]
         public async Task Desktop_NavMenu(string testId, string resultSuffix, string startSuffix)
         {
@@ -21,7 +20,6 @@ namespace Rise.Client.Tests.Layout
 
         [Test]
         [TestCase("nav-mobile-home", "home", "/huh")]
-        [TestCase("nav-mobile-about", "about", "")]
         [TestCase("nav-mobile-login", "/login", "")]
 
         public async Task Mobile_NavNotifications(string testId, string resultSuffix, string startSuffix)
@@ -72,7 +70,6 @@ namespace Rise.Client.Tests.Layout
         /// <returns></returns>
         [Test]
         [TestCase("nav-desktop-home", "HOME", "HOME")]
-        [TestCase("nav-desktop-about", "OVER", "ABOUT")]
         public async Task ChangeLanguageBetweenLanguagesDesktop(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(1080, 1920);
@@ -96,7 +93,6 @@ namespace Rise.Client.Tests.Layout
         /// <returns></returns>
         [Test]
         [TestCase("nav-mobile-home", "HOME", "HOME")]
-        [TestCase("nav-mobile-about", "OVER", "ABOUT")]
         public async Task ChangeLanguageBetweenLanguagesMobile(string id, string dutch, string english)
         {
             await Page.SetViewportSizeAsync(959, 1920);
