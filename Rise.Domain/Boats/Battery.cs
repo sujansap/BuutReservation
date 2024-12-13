@@ -10,11 +10,8 @@ namespace Rise.Domain.Boats
         private string _type = default!;
         private readonly List<Reservation> _reservations = [];
         private int _usageCount;
-        private DateTime? _lastUsedAt;
 
         public int UsageCount => _usageCount;
-        public DateTime? LastUsedAt => _lastUsedAt;
-        public User? CurrentHolder { get; private set; }
 
         private User _mentor = default!;
         public required User Mentor
@@ -32,10 +29,15 @@ namespace Rise.Domain.Boats
             set => _type = Guard.Against.NullOrWhiteSpace(value, nameof(Type), "Battery type cannot be null or empty");
         }
 
-        private void UpdateUsageStats(DateTime? lastUsed)
+        public void IncreaseUsageStats()
         {
             _usageCount++;
-            _lastUsedAt = lastUsed ?? DateTime.UtcNow;
+        }
+
+        public void DecreaseUsageStats()
+        {
+            Guard.Against.NegativeOrZero(UsageCount);
+            _usageCount--;
         }
 
         public void AddReservation(Reservation reservation)
@@ -63,18 +65,30 @@ namespace Rise.Domain.Boats
                 });
         }
 
-        public void AssignToHolder(User? user, DateTime? lastUsed)
+        public Reservation? ClosesPastReservation(TimeSlot timeSlot)
         {
-            CurrentHolder = user is not null ? user : Mentor;
-            UpdateUsageStats(lastUsed);
+            Guard.Against.Null(timeSlot);
+
+            DateTime startTimeSlot = timeSlot.StartDateTime;
+            IEnumerable<Reservation> pastReservations = Reservations.Where(r => r.TimeSlot.Date <= timeSlot.Date);
+
+            Reservation? closesReservation = pastReservations.OrderBy(
+                r => startTimeSlot.Subtract(r.TimeSlot.StartDateTime).TotalMinutes
+            ).FirstOrDefault();
+
+            return closesReservation;
         }
 
-        public bool HasSufficientChargingTime(DateTime currentTime)
+        public Reservation? ClosesFutureReservation(TimeSlot timeSlot)
         {
-            if (LastUsedAt == null) return true;
+            DateTime startTimeSlot = timeSlot.StartDateTime;
+            IEnumerable<Reservation> futureReservations = Reservations.Where(r => r.TimeSlot.Date >= timeSlot.Date);
 
-            double hoursSinceLastUse = (currentTime - LastUsedAt.Value).TotalHours;
-            return hoursSinceLastUse >= rechargeBufferHours;
+            Reservation? closesReservation = futureReservations.OrderBy(
+                r => r.TimeSlot.StartDateTime.Subtract(startTimeSlot).TotalMinutes
+            ).FirstOrDefault();
+
+            return closesReservation;
         }
     }
 }

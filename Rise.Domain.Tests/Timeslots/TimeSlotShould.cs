@@ -180,5 +180,21 @@ namespace Rise.Domain.Tests.TimeSlots
             timeSlot.Date.ShouldBe(newDate);
         }
 
+        [Fact]
+        public void CorrectlyMakeStartDateTime()
+        {
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
+
+            timeSlot.StartDateTime.ShouldBe(timeSlot.Date.ToDateTime(timeSlot.Start));
+        }
+
+        [Fact]
+        public void CorrectlyMakeEndDateTime()
+        {
+            TimeSlot timeSlot = new TimeSlotBuilder().Build();
+
+            timeSlot.StartDateTime.ShouldBe(timeSlot.Date.ToDateTime(timeSlot.End));
+        }
+
     }
 }

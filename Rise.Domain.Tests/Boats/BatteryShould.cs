@@ -17,6 +17,7 @@ public class BatteryShould
         battery.Type.ShouldBe(BatteryBuilder.ValidBatteryType);
         battery.Boat.ShouldBe(BatteryBuilder.ValidBoat);
         battery.Mentor.ShouldBe(BatteryBuilder.ValidMentor);
+        battery.UsageCount.ShouldBe(0);
     }
 
     [Theory]
@@ -136,11 +137,12 @@ public class BatteryShould
             .ParamName.ShouldBe("reservation");
     }
 
-    private static SortedDictionary<DateOnly, List<Reservation>> CreateTestReservations(Boat boat, int timeLength = 3, int timeBuffer = 4)
+    // TODO move to Boat
+    public static SortedDictionary<DateOnly, List<Reservation>> CreateTestReservations(Boat boat, int timeLength = 3, int timeBuffer = 4, int daysFromMiddle = 2)
     {
         CruisePeriod cruisePeriod = new CruisePeriodBuilder()
-                .WithStart(DateTime.Today.AddDays(-2))
-                .WithEnd(DateTime.Today.AddDays(3).AddMinutes(-1))
+                .WithStart(DateTime.Today.AddDays(-daysFromMiddle))
+                .WithEnd(DateTime.Today.AddDays(daysFromMiddle + 1).AddMinutes(-1))
                 .Build();
 
         int totalDays = (int)cruisePeriod.End.Subtract(cruisePeriod.Start).TotalDays;
@@ -243,77 +245,152 @@ public class BatteryShould
     }
 
     [Fact]
-    public void BeAbleToAssignMentorAsHolder()
+    public void BeAbleToIncreaseAndDecreaseUsageStats()
     {
-        Battery battery = new BatteryBuilder().Build();
+        Battery battery = new BatteryBuilder()
+        .Build();
 
-        battery.CurrentHolder.ShouldBeNull();
+        DateTime currentTime = DateTime.Now;
+
         battery.UsageCount.ShouldBe(0);
-        battery.LastUsedAt.ShouldBeNull();
 
-        battery.AssignToHolder(null, null);
+        battery.IncreaseUsageStats();
 
-        battery.CurrentHolder.ShouldBe(battery.Mentor);
         battery.UsageCount.ShouldBe(1);
-        battery.LastUsedAt.ShouldNotBeNull();
-        ((DateTime)battery.LastUsedAt).ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+
+        battery.DecreaseUsageStats();
+
+        battery.UsageCount.ShouldBe(0);
     }
 
     [Fact]
-    public void BeAbleToAssignUserAsHolder()
+    public void NotBeAbleToDecreaseUsageStatsWhenNotUsed()
     {
-        Battery battery = new BatteryBuilder().Build();
-        User user = new UserBuilder().Build();
-        DateTime dateTime = DateTime.MaxValue;
+        Battery battery = new BatteryBuilder()
+        .Build();
 
-        battery.CurrentHolder.ShouldBeNull();
         battery.UsageCount.ShouldBe(0);
-        battery.LastUsedAt.ShouldBeNull();
 
-        battery.AssignToHolder(user, dateTime);
+        Action act = () =>
+        {
+            battery.DecreaseUsageStats();
+        };
 
-        battery.CurrentHolder.ShouldBe(user);
-        battery.UsageCount.ShouldBe(1);
-        battery.LastUsedAt.ShouldBe(dateTime);
-    }
 
-    [Fact]
-    public void BeSufficientRechargedWhenNeverUsed()
-    {
-        Battery battery = new BatteryBuilder().Build();
-        DateTime currentTime = DateTime.Now;
-
-        battery.LastUsedAt.ShouldBeNull();
-
-        battery.HasSufficientChargingTime(currentTime).ShouldBeTrue();
-    }
-
-    [Theory]
-    [InlineData(4)]
-    [InlineData(7)]
-    public void BeSufficientRechargedWhenGivenTime(int timeDifference)
-    {
-        Battery battery = new BatteryBuilder().Build();
-        DateTime currentTime = DateTime.Now;
-        DateTime lastUsedAt = currentTime.AddHours(-timeDifference);
-
-        battery.AssignToHolder(null, lastUsedAt);
-
-        battery.HasSufficientChargingTime(currentTime).ShouldBeTrue();
+        act.ShouldThrow<ArgumentException>()
+            .ParamName.ShouldBe("UsageCount");
     }
 
     [Theory]
     [InlineData(0)]
-    [InlineData(3)]
-    public void NotBeSufficientRechargedWhenNotGivenTime(int timeDifference)
+    [InlineData(1)]
+    [InlineData(2)]
+    public void BeAbleToGetClosesPastReservationToTimeSlotWhenReservationsBefore(int daysFromMiddle)
     {
-        Battery battery = new BatteryBuilder().Build();
-        DateTime currentTime = DateTime.Now;
-        DateTime lastUsedAt = currentTime.AddHours(-timeDifference);
+        Battery battery = new BatteryBuilder()
+        .Build();
 
-        battery.AssignToHolder(null, lastUsedAt);
+        battery.Reservations.ShouldBeEmpty();
 
-        battery.HasSufficientChargingTime(currentTime).ShouldBeFalse();
+        // Make reservations
+        SortedDictionary<DateOnly, List<Reservation>> reservations = CreateTestReservations(battery.Boat, 6, 6, 6);
+
+        int half = reservations.Count / 2;
+        int index = daysFromMiddle <= half ? half - daysFromMiddle : 0;
+
+        DateOnly date = reservations.Keys.Take(index).Last();
+        List<Reservation> datedReservation = reservations[date];
+        Reservation reservation = datedReservation.First();
+
+        foreach (var group in reservations)
+        {
+            group.Value.ForEach(battery.AddReservation);
+        }
+
+        Reservation? closesReservation = battery?.ClosesPastReservation(reservation.TimeSlot);
+
+        closesReservation.ShouldBe(reservation);
+    }
+
+    [Fact]
+    public void BeAbleToGetNoClosesPastReservationToTimeSlotWhenNoReservationsBefore()
+    {
+        Battery battery = new BatteryBuilder()
+        .Build();
+
+        battery.Reservations.ShouldBeEmpty();
+
+        // Make reservations
+        SortedDictionary<DateOnly, List<Reservation>> reservations = CreateTestReservations(battery.Boat, 6, 6, 1);
+
+        DateOnly date = reservations.Keys.First();
+        List<Reservation> datedReservation = reservations[date];
+        Reservation reservation = datedReservation.First();
+
+        foreach (var group in reservations)
+        {
+            group.Value.ForEach(battery.AddReservation);
+        }
+
+        Reservation? closesReservation = battery?.ClosesPastReservation(reservation.TimeSlot);
+
+        closesReservation.ShouldBe(reservation);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void BeAbleToGetClosesFutureReservationToTimeSlotWhenReservationsAfter(int daysFromMiddle)
+    {
+        Battery battery = new BatteryBuilder()
+        .Build();
+
+        battery.Reservations.ShouldBeEmpty();
+
+        // Make reservations
+        SortedDictionary<DateOnly, List<Reservation>> reservations = CreateTestReservations(battery.Boat, 6, 6, 6);
+
+        int half = reservations.Count / 2;
+        int index = daysFromMiddle <= reservations.Count ? half + daysFromMiddle : reservations.Count;
+
+        DateOnly date = reservations.Keys.TakeLast(index).First();
+        List<Reservation> datedReservation = reservations[date];
+        Reservation reservation = datedReservation.First();
+
+        foreach (var group in reservations)
+        {
+            group.Value.ForEach(battery.AddReservation);
+        }
+
+        Reservation? closesReservation = battery?.ClosesPastReservation(reservation.TimeSlot);
+
+        closesReservation.ShouldBe(reservation);
+    }
+
+    [Fact]
+    public void BeAbleToGetNoClosesFutureReservationToTimeSlotWhenNoReservationsAfter()
+    {
+        Battery battery = new BatteryBuilder()
+        .Build();
+
+        battery.Reservations.ShouldBeEmpty();
+
+        // Make reservations
+        SortedDictionary<DateOnly, List<Reservation>> reservations = CreateTestReservations(battery.Boat, 6, 6, 1);
+
+        DateOnly date = reservations.Keys.Last();
+        List<Reservation> datedReservation = reservations[date];
+        Reservation reservation = datedReservation.Last();
+
+        foreach (var group in reservations)
+        {
+            group.Value.ForEach(battery.AddReservation);
+        }
+
+        Reservation? closesReservation = battery?.ClosesPastReservation(reservation.TimeSlot);
+
+        closesReservation.ShouldBe(reservation);
     }
 }
 

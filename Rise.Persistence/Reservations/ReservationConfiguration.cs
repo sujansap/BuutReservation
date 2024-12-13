@@ -46,6 +46,11 @@ namespace Rise.Persistence.Reservations
                 .HasIndex(e => new { e.UserId, e.TimeSlotId })
                 .IsUnique()
                 .HasDatabaseName("IX_Unique_User_TimeSlot");
+
+            builder
+                .HasOne(e => e.PreviousBatteryHolder)
+                .WithMany(e => e.HoldsBatteries)
+                .IsRequired(false);
         }
     }
 }

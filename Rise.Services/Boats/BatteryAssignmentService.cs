@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Rise.Persistence;
 using Microsoft.Extensions.Logging;
 using Rise.Domain.Boats;
-using Rise.Domain.Reservations;
 
 namespace Rise.Services.Boats
 {
@@ -17,12 +16,9 @@ namespace Rise.Services.Boats
         {
             TimeInfo timeInfo = GetCurrentTimeInfo();
 
-            // TODO handle completed reservations
-            await HandleCompletedReservations(timeInfo);
-
-            // TODO assign to upcoming reservations
+            _logger.LogInformation("Start assigning batteries for reservations oncoming three days");
             await AssignBatteriesToReservations(timeInfo);
-
+            _logger.LogInformation("Done assigning batteries for reservations");
 
             await _dbContext.SaveChangesAsync();
         }
@@ -38,48 +34,32 @@ namespace Rise.Services.Boats
             );
         }
 
-        private async Task HandleCompletedReservations(TimeInfo timeInfo)
-        {
-            var completedReservations = await _dbContext.Reservations
-                .Include(r => r.Battery)
-                    .ThenInclude(b => b!.Mentor)
-                .Include(r => r.User)
-                .Where(r =>
-                    r.Battery! != null! &&
-                    (r.TimeSlot.Date < timeInfo.Today ||
-                    (r.TimeSlot.Date == timeInfo.Today && r.TimeSlot.End <= timeInfo.CurrentTime)))
-                .ToListAsync();
-
-            // TODO handle logic for reservation that were canceled
-            foreach (Reservation reservation in completedReservations)
-            {
-                reservation.AssignLastUserToBattery();
-            }
-        }
-
         private async Task AssignBatteriesToReservations(TimeInfo timeInfo)
         {
             List<Boat> boats = await _dbContext.Boats
                 .Include(boat => boat.Reservations
                     .Where(
                     res =>
-                    (timeInfo.Today == res.TimeSlot.Date && timeInfo.CurrentTime < res.TimeSlot.Start) ||
-                    (timeInfo.Today < res.TimeSlot.Date && (
-                        res.TimeSlot.Date < timeInfo.ThreeDaysFromNow ||
-                        (res.TimeSlot.Date == timeInfo.ThreeDaysFromNow && res.TimeSlot.Start < timeInfo.CurrentTime)
-                    )))
+                    res.Battery! == null! &&
+                    timeInfo.Today <= res.TimeSlot.Date ||
+                        res.TimeSlot.Date <= timeInfo.ThreeDaysFromNow
+                    )
                     .OrderBy(res => res.TimeSlot.Date)
                     .ThenBy(res => res.TimeSlot.Start)
                 )
                     .ThenInclude(res => res.TimeSlot)
-                .Include(boat => boat.Reservations.Where(res =>
-                    res.Battery! != null!
-                ))
+                .Include(boat => boat.Reservations)
                     .ThenInclude(res => res.Battery)
                         .ThenInclude(bat => bat!.Mentor)
                 .Include(boat => boat.Reservations)
                     .ThenInclude(res => res.Battery)
-                        .ThenInclude(bat => bat!.CurrentHolder)
+                        .ThenInclude(bat => bat!.Reservations.Where(
+                            res => res.TimeSlot.Date <= timeInfo.Today
+                            ))
+                            .ThenInclude(res => res.TimeSlot)
+                .Include(boat => boat.Reservations)
+                    .ThenInclude(res => res.PreviousBatteryHolder)
+                .Include(boat => boat.Batteries)
                 .ToListAsync();
 
             foreach (Boat boat in boats)

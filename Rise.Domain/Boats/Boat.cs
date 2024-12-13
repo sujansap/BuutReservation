@@ -31,22 +31,24 @@ namespace Rise.Domain.Boats
             batteries.Add(battery);
         }
 
-        public Battery? FindAvailableBatteryAsync(TimeSlot timeSlot, DateTime currentTime)
+        public Battery? FindAvailableBattery(TimeSlot timeSlot, DateTime currentTime)
         {
             Guard.Against.Null(timeSlot);
             Guard.Against.Null(currentTime);
 
             IEnumerable<Battery> compatibleBatteries = batteries
                 .OrderBy(b => b.UsageCount)
-                .ThenBy(b => b.LastUsedAt ?? DateTime.MinValue);
+                .ThenBy(b => b.Type);
 
             return compatibleBatteries.FirstOrDefault(
-                b => b.HasSufficientChargingTime(currentTime) && b.IsAvailableForTimeSlot(timeSlot));
+                b => b.IsAvailableForTimeSlot(timeSlot));
         }
 
         public void AssignBatteriesToReservations(DateTime now)
         {
+            DateOnly today = DateOnly.FromDateTime(now);
             var reservationsByDate = reservations
+                .Where(r => !r.IsDeleted && today <= r.TimeSlot.Date && r.TimeSlot.Date <= today.AddDays(Reservation.MinDaysBetweenReservation))
                 .GroupBy(r => r.TimeSlot.Date)
                 .OrderBy(g => g.Key);
 
@@ -64,11 +66,10 @@ namespace Rise.Domain.Boats
 
         private void AssignBatteryToReservation(Reservation reservation, DateTime now)
         {
-            Battery? availableBattery = FindAvailableBatteryAsync(reservation.TimeSlot, now);
+            Battery? availableBattery = FindAvailableBattery(reservation.TimeSlot, now);
             if (availableBattery is not null)
             {
-                reservation.Battery = availableBattery;
-                reservation.AssignLastUserToBattery();
+                reservation.AssignBattery(availableBattery);
             }
         }
 
